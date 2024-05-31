@@ -88,7 +88,7 @@
                         <h4 data-toc-skip class="author">Manuel
 Rademaker</h4>
                         <h4 data-toc-skip class="date">Last edited:
-2024-05-20</h4>
+2024-05-31</h4>
             <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/HEAD/vignettes/Terminology.Rmd" class="external-link"><code>vignettes/Terminology.Rmd</code></a></small>
       <div class="hidden name"><code>Terminology.Rmd</code></div>
     </div>
@@ -196,8 +196,11 @@ concept they seek to represent, i.e., there may be a validity gap.</p>
 methods centered around the use of <a href="#commonfactor">common
 factors</a> as statistical <a href="#proxy">proxies</a> for the <a href="#concept">concepts</a> under investigation. Factor-based methods
 are also called covariance-based methods as focal parameters are
-retrived such that the difference between the model-implied <span class="math inline">\(\boldsymbol{\mathbf{\Sigma}}(\theta)\)</span> and
-the empirical indicator covariance matrix <span class="math inline">\(\boldsymbol{\mathbf{S}}\)</span> is minimized.</p>
+retrived such that the difference between the model-implied
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝚺</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\boldsymbol{\mathbf{\Sigma}}(\theta)</annotation></semantics></math>
+and the empirical indicator covariance matrix
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐒</mi><annotation encoding="application/x-tex">\boldsymbol{\mathbf{S}}</annotation></semantics></math>
+is minimized.</p>
 </div>
 <div class="section level3">
 <h3 id="indicator">Indicator<a class="anchor" aria-label="anchor" href="#indicator"></a>
@@ -280,13 +283,15 @@ sum of a true score and an error score. The term is closely linked to
 the <a href="#commonfactor">latent variable/common factor</a> model in
 that the true score of a set of indicators are linear functions of some
 underlying common factor. Mathematically speaking, the correspondence is
-<span class="math inline">\(\eta_{jk} =
-\lambda_{jk}\eta_j\)</span><br>
-where <span class="math inline">\(\eta_{jk}\)</span> is the true score,
-<span class="math inline">\(\eta_j\)</span> the underlying latent
-variable and <span class="math inline">\(\lambda_{jk}\)</span> the
-loading. Despite some differences, the term true score can generally be
-used synommenoulsy to the terms common factor and latent variable in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>η</mi><mrow><mi>j</mi><mi>k</mi></mrow></msub><mo>=</mo><msub><mi>λ</mi><mrow><mi>j</mi><mi>k</mi></mrow></msub><msub><mi>η</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">\eta_{jk} = \lambda_{jk}\eta_j</annotation></semantics></math><br>
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mrow><mi>j</mi><mi>k</mi></mrow></msub><annotation encoding="application/x-tex">\eta_{jk}</annotation></semantics></math>
+is the true score,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\eta_j</annotation></semantics></math>
+the underlying latent variable and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>λ</mi><mrow><mi>j</mi><mi>k</mi></mrow></msub><annotation encoding="application/x-tex">\lambda_{jk}</annotation></semantics></math>
+the loading. Despite some differences, the term true score can generally
+be used synommenoulsy to the terms common factor and latent variable in
 <strong>cSEM</strong> without risking a misunderstanding.</p>
 </div>
 <div class="section level3">

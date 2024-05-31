@@ -90,7 +90,7 @@
                         <h4 data-toc-skip class="author">Manuel
 Rademaker</h4>
                         <h4 data-toc-skip class="date">Last edited:
-2024-05-20</h4>
+2024-05-31</h4>
             <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/HEAD/vignettes/Using-assess.Rmd" class="external-link"><code>vignettes/Using-assess.Rmd</code></a></small>
       <div class="hidden name"><code>Using-assess.Rmd</code></div>
     </div>
@@ -122,13 +122,21 @@ criterion</strong>.</p>
 </ul>
 </li>
 <li>
-<strong>Congeneric reliability</strong> (<span class="math inline">\(\rho_C\)</span>), also known as e.g.: composite
-reliability, construct reliability, (unidimensional) omega, Jöreskog’s
-<span class="math inline">\(\rho\)</span>, <span class="math inline">\(\rho_A\)</span>, or <span class="math inline">\(\rho_B\)</span>.</li>
+<strong>Congeneric reliability</strong>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mi>C</mi></msub><annotation encoding="application/x-tex">\rho_C</annotation></semantics></math>),
+also known as e.g.: composite reliability, construct reliability,
+(unidimensional) omega, Jöreskog’s
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ρ</mi><annotation encoding="application/x-tex">\rho</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mi>A</mi></msub><annotation encoding="application/x-tex">\rho_A</annotation></semantics></math>,
+or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mi>B</mi></msub><annotation encoding="application/x-tex">\rho_B</annotation></semantics></math>.</li>
 <li>
-<strong>Tau-equivalent reliability</strong> (<span class="math inline">\(\rho_T\)</span>), also known as e.g.: Cronbach
-alpha, alpha, <span class="math inline">\(\alpha\)</span>, coefficient
-alpha, Guttman’s <span class="math inline">\(\lambda_3\)</span>,
+<strong>Tau-equivalent reliability</strong>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mi>T</mi></msub><annotation encoding="application/x-tex">\rho_T</annotation></semantics></math>),
+also known as e.g.: Cronbach alpha, alpha,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>,
+coefficient alpha, Guttman’s
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>λ</mi><mn>3</mn></msub><annotation encoding="application/x-tex">\lambda_3</annotation></semantics></math>,
 KR-20.</li>
 <li>Distance measures
 <ul>
@@ -141,9 +149,11 @@ KR-20.</li>
 </li>
 <li>Fit indices
 <ul>
-<li>The <span class="math inline">\(\chi^2\)</span>-<strong>statistic</strong>
+<li>The
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>χ</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\chi^2</annotation></semantics></math>-<strong>statistic</strong>
 </li>
-<li>The <span class="math inline">\(\chi^2/df\)</span>-<strong>statistic</strong>
+<li>The
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>χ</mi><mn>2</mn></msup><mi>/</mi><mi>d</mi><mi>f</mi></mrow><annotation encoding="application/x-tex">\chi^2/df</annotation></semantics></math>-<strong>statistic</strong>
 </li>
 <li>The <strong>comparative fit index</strong> (CFI)</li>
 <li>The <strong>goodness-of-fit index</strong> (GFI)</li>
@@ -156,7 +166,7 @@ KR-20.</li>
 <li>The <strong>comparative fit index</strong> (CFI)</li>
 <li>The <strong>incremental fit index</strong> (IFI)</li>
 <li>The <strong>root mean square outer residual covariance</strong>
-(<span class="math inline">\(\text{RMS}_{\theta}\)</span>)</li>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mtext mathvariant="normal">RMS</mtext><mi>θ</mi></msub><annotation encoding="application/x-tex">\text{RMS}_{\theta}</annotation></semantics></math>)</li>
 </ul>
 </li>
 <li>The <strong>Goodness-of-Fit</strong> (GoF) proposed by <span class="citation">Tenenhaus, Amanto, and Vinzi (2004)</span>.</li>
@@ -164,8 +174,12 @@ KR-20.</li>
 structural equations as well as for Mode B regression equations (if
 <code>.approach_weights = "PLS-PM"</code>).</li>
 <li>The coefficient of determination and the adjusted coefficient of
-determination (<span class="math inline">\(R^2\)</span> and <span class="math inline">\(R^2_{adj}\)</span>)</li>
-<li>A measure of the <strong>effect size</strong> (Cohen’s <span class="math inline">\(f^2\)</span>).</li>
+determination
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>R</mi><mn>2</mn></msup><annotation encoding="application/x-tex">R^2</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mrow><mi>a</mi><mi>d</mi><mi>j</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">R^2_{adj}</annotation></semantics></math>)</li>
+<li>A measure of the <strong>effect size</strong> (Cohen’s
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>f</mi><mn>2</mn></msup><annotation encoding="application/x-tex">f^2</annotation></semantics></math>).</li>
 <li>Direct, indirect and total effect assessment.</li>
 <li>Several model selection criteria as described in <span class="citation">Sharma et al. (2019)</span>.</li>
 </ul>
@@ -275,7 +289,9 @@ that yields inconsistent estimates (by setting
 <code>.disattenuate = FALSE</code> in <code><a href="../reference/csem.html">csem()</a></code> when the
 estimated model contains constructs modeled as common factors)
 <code><a href="../reference/assess.html">assess()</a></code> will still estimate all quantities, however,
-quantities such as the AVE or the congeneric reliability <span class="math inline">\(\rho_C\)</span> inherit inconsistency.</p>
+quantities such as the AVE or the congeneric reliability
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mi>C</mi></msub><annotation encoding="application/x-tex">\rho_C</annotation></semantics></math>
+inherit inconsistency.</p>
 </div>
 </div>
 </div>
@@ -296,30 +312,46 @@ help files.</p>
 exist. For ease of comparison to extant literature the most common
 definitions are given below:</p>
 <ul>
-<li>The AVE for a generic construct/latent variable <span class="math inline">\(\eta\)</span> is an estimate of how much of the
-variation of its indicators is due to the assumed latent variable.
-Consequently, the share of unexplained, i.e. error variation is 1 -
-AVE.</li>
-<li>The AVE for a generic construct/latent variable <span class="math inline">\(\eta\)</span> is the share of the total indicator
-variance (i.e., the sum of the indicator variances of all indicators
-connected to the construct), that is captured by the (indicator) true
-scores.</li>
-<li>The AVE for a generic construct/latent variable <span class="math inline">\(\eta\)</span> is the ratio of the sum of the
-(indicator) true score variances (explained variation) relative to the
-sum of the total indicator variances (total variation, i.e., the sum of
-the indicator variances of all indicators connected to the
-construct).</li>
-<li>Since for the regression of <span class="math inline">\(x_k\)</span>
-on <span class="math inline">\(\eta_k\)</span>, the R squared (<span class="math inline">\(R^2_k)\)</span> is equal to the share of variation
-of <span class="math inline">\(x_k\)</span> explained by <span class="math inline">\(\eta_k\)</span> relative to the total variation of
-<span class="math inline">\(x_k\)</span>, the AVE for a generic
-construct/latent variable <span class="math inline">\(\eta\)</span> is
-equal to the average over all <span class="math inline">\(R^2_k\)</span>.</li>
-<li>The AVE for a generic construct/latent variable <span class="math inline">\(\eta\)</span> is the sum of the squared
-correlation between indicator <span class="math inline">\(x_k\)</span>
-and the (indicator) true score <span class="math inline">\(\eta_k\)</span> relative to the sum of the
-indicator variances of all indicators connected to the construct in
-question.</li>
+<li>The AVE for a generic construct/latent variable
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>η</mi><annotation encoding="application/x-tex">\eta</annotation></semantics></math>
+is an estimate of how much of the variation of its indicators is due to
+the assumed latent variable. Consequently, the share of unexplained,
+i.e. error variation is 1 - AVE.</li>
+<li>The AVE for a generic construct/latent variable
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>η</mi><annotation encoding="application/x-tex">\eta</annotation></semantics></math>
+is the share of the total indicator variance (i.e., the sum of the
+indicator variances of all indicators connected to the construct), that
+is captured by the (indicator) true scores.</li>
+<li>The AVE for a generic construct/latent variable
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>η</mi><annotation encoding="application/x-tex">\eta</annotation></semantics></math>
+is the ratio of the sum of the (indicator) true score variances
+(explained variation) relative to the sum of the total indicator
+variances (total variation, i.e., the sum of the indicator variances of
+all indicators connected to the construct).</li>
+<li>Since for the regression of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mi>k</mi></msub><annotation encoding="application/x-tex">x_k</annotation></semantics></math>
+on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mi>k</mi></msub><annotation encoding="application/x-tex">\eta_k</annotation></semantics></math>,
+the R squared
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>R</mi><mi>k</mi><mn>2</mn></msubsup><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">R^2_k)</annotation></semantics></math>
+is equal to the share of variation of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mi>k</mi></msub><annotation encoding="application/x-tex">x_k</annotation></semantics></math>
+explained by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mi>k</mi></msub><annotation encoding="application/x-tex">\eta_k</annotation></semantics></math>
+relative to the total variation of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mi>k</mi></msub><annotation encoding="application/x-tex">x_k</annotation></semantics></math>,
+the AVE for a generic construct/latent variable
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>η</mi><annotation encoding="application/x-tex">\eta</annotation></semantics></math>
+is equal to the average over all
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mi>k</mi><mn>2</mn></msubsup><annotation encoding="application/x-tex">R^2_k</annotation></semantics></math>.</li>
+<li>The AVE for a generic construct/latent variable
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>η</mi><annotation encoding="application/x-tex">\eta</annotation></semantics></math>
+is the sum of the squared correlation between indicator
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mi>k</mi></msub><annotation encoding="application/x-tex">x_k</annotation></semantics></math>
+and the (indicator) true score
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mi>k</mi></msub><annotation encoding="application/x-tex">\eta_k</annotation></semantics></math>
+relative to the sum of the indicator variances of all indicators
+connected to the construct in question.</li>
 </ul>
 <p>It is important to stress that, although different in wording, all
 definitions are synonymous!</p>
@@ -336,29 +368,36 @@ meaning.</p>
 <h4 id="formulae">Formulae<a class="anchor" aria-label="anchor" href="#formulae"></a>
 </h4>
 <p>Using the results and notation derived and defined in the <a href="https://floschuberth.github.io/cSEM/articles/Notation.html" class="external-link">Notation</a>
-help file, the AVE for a generic construct is: <span class="math display">\[ AVE = \frac{\text{Sum indicator true score
-variances}}{\text{Sum indicator variances}} =  \frac{\sum
-Var(\eta_k)}{\sum Var(x_k)} = \frac{\sum\lambda^2_k}{\sum(\lambda^2_k +
-Var(\varepsilon_k))}\]</span> If <span class="math inline">\(x_k\)</span> is standardized (i.e., <span class="math inline">\(Var(x_k) = 1\)</span>) the denominator reduces to
-<span class="math inline">\(K\)</span> and the AVE for a generic
-construct is: <span class="math display">\[ AVE = \frac{1}{K}\sum
-\lambda^2_k = \frac{1}{K}\sum \rho_{x_k, \eta}^2\]</span> As an
-important consequence, the AVE is closely tied to the communality.
-<strong>Communality</strong> (<span class="math inline">\(COM_k\)</span>) is definied as the proportion of
-variation in an indicator that is explained by its common factor.
-Empirically, it is the square of the standardized loading of the <span class="math inline">\(k\)</span>’th indicator (<span class="math inline">\(\lambda^2_k\)</span>). Since indicators,
-scores/proxies and subsequently loadings are always standardized in
-<strong>cSEM</strong>, the squared loading is simply the squared
-correlation between the indicator and its related construct/common
-factor. The AVE is also directly related to the <strong>indicator
-reliability</strong>, defined as the squared correlation between an
-indicator <span class="math inline">\(k\)</span> and its related proxy
-true score (see section <a href="#reliability">Reliability</a> below),
-which is again simply <span class="math inline">\(\lambda^2_k\)</span>.
+help file, the AVE for a generic construct is:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mi>V</mi><mi>E</mi><mo>=</mo><mfrac><mtext mathvariant="normal">Sum indicator true score variances</mtext><mtext mathvariant="normal">Sum indicator variances</mtext></mfrac><mo>=</mo><mfrac><mrow><mo>∑</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>η</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mo>∑</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>=</mo><mfrac><mrow><mo>∑</mo><msubsup><mi>λ</mi><mi>k</mi><mn>2</mn></msubsup></mrow><mrow><mo>∑</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>λ</mi><mi>k</mi><mn>2</mn></msubsup><mo>+</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ε</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex"> AVE = \frac{\text{Sum indicator true score variances}}{\text{Sum indicator variances}} =  \frac{\sum Var(\eta_k)}{\sum Var(x_k)} = \frac{\sum\lambda^2_k}{\sum(\lambda^2_k + Var(\varepsilon_k))}</annotation></semantics></math>
+If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mi>k</mi></msub><annotation encoding="application/x-tex">x_k</annotation></semantics></math>
+is standardized (i.e.,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">Var(x_k) = 1</annotation></semantics></math>)
+the denominator reduces to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>
+and the AVE for a generic construct is:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mi>V</mi><mi>E</mi><mo>=</mo><mfrac><mn>1</mn><mi>K</mi></mfrac><mo>∑</mo><msubsup><mi>λ</mi><mi>k</mi><mn>2</mn></msubsup><mo>=</mo><mfrac><mn>1</mn><mi>K</mi></mfrac><mo>∑</mo><msubsup><mi>ρ</mi><mrow><msub><mi>x</mi><mi>k</mi></msub><mo>,</mo><mi>η</mi></mrow><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex"> AVE = \frac{1}{K}\sum \lambda^2_k = \frac{1}{K}\sum \rho_{x_k, \eta}^2</annotation></semantics></math>
+As an important consequence, the AVE is closely tied to the communality.
+<strong>Communality</strong>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mi>O</mi><msub><mi>M</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">COM_k</annotation></semantics></math>)
+is definied as the proportion of variation in an indicator that is
+explained by its common factor. Empirically, it is the square of the
+standardized loading of the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>’th
+indicator
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>λ</mi><mi>k</mi><mn>2</mn></msubsup><annotation encoding="application/x-tex">\lambda^2_k</annotation></semantics></math>).
+Since indicators, scores/proxies and subsequently loadings are always
+standardized in <strong>cSEM</strong>, the squared loading is simply the
+squared correlation between the indicator and its related
+construct/common factor. The AVE is also directly related to the
+<strong>indicator reliability</strong>, defined as the squared
+correlation between an indicator
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+and its related proxy true score (see section <a href="#reliability">Reliability</a> below), which is again simply
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>λ</mi><mi>k</mi><mn>2</mn></msubsup><annotation encoding="application/x-tex">\lambda^2_k</annotation></semantics></math>.
 Therefore in <strong>cSEM</strong> we always have:</p>
-<p><span class="math display">\[ AVE = \frac{1}{K}\sum COM_k =
-\frac{1}{K}\sum \text{Indicator reliability}_k =
-\frac{1}{K}\sum\lambda^2_k =  \frac{1}{K}\sum R^2_k \]</span></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mi>V</mi><mi>E</mi><mo>=</mo><mfrac><mn>1</mn><mi>K</mi></mfrac><mo>∑</mo><mi>C</mi><mi>O</mi><msub><mi>M</mi><mi>k</mi></msub><mo>=</mo><mfrac><mn>1</mn><mi>K</mi></mfrac><mo>∑</mo><msub><mtext mathvariant="normal">Indicator reliability</mtext><mi>k</mi></msub><mo>=</mo><mfrac><mn>1</mn><mi>K</mi></mfrac><mo>∑</mo><msubsup><mi>λ</mi><mi>k</mi><mn>2</mn></msubsup><mo>=</mo><mfrac><mn>1</mn><mi>K</mi></mfrac><mo>∑</mo><msubsup><mi>R</mi><mi>k</mi><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex"> AVE = \frac{1}{K}\sum COM_k = \frac{1}{K}\sum \text{Indicator reliability}_k = \frac{1}{K}\sum\lambda^2_k =  \frac{1}{K}\sum R^2_k </annotation></semantics></math></p>
 </div>
 <div class="section level4">
 <h4 id="implementation">Implementation<a class="anchor" aria-label="anchor" href="#implementation"></a>
@@ -379,8 +418,9 @@ Therefore in <strong>cSEM</strong> we always have:</p>
 </h4>
 <p>Degrees of freedom are calculated as the difference between the
 number of non-redundant free elements of the empirical indicator
-correlation matrix <span class="math inline">\(\boldsymbol{\mathbf{S}}\)</span> and the model
-parameters.</p>
+correlation matrix
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐒</mi><annotation encoding="application/x-tex">\boldsymbol{\mathbf{S}}</annotation></semantics></math>
+and the model parameters.</p>
 <p>Although, composite-based estimators retrieve parameters of the
 postulated models by forming composites, which involves the estimation
 of weights the computation of the degrees of freedom eventually depends
@@ -392,31 +432,41 @@ maximum likelihood estimation of the same model.</p>
 <div class="section level4">
 <h4 id="formulae-1">Formulae<a class="anchor" aria-label="anchor" href="#formulae-1"></a>
 </h4>
-<p><span class="math display">\[
-\begin{align}
-\text{df} &amp;= \text{# non-redundant off-diagonal elements of the
-empirical indicator correlation matrix $\boldsymbol{\mathbf{S}}$} \\
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mtext mathvariant="normal">df</mtext></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mrow><mrow><mtext mathvariant="normal"># non-redundant off-diagonal elements of the empirical indicator correlation matrix </mtext><mspace width="0.333em"></mspace></mrow><mi>𝐒</mi></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>−</mo><mtext mathvariant="normal"># model parameters</mtext></mtd></mtr></mtable><annotation encoding="application/x-tex"> 
+\begin{align} 
+\text{df} &amp;= \text{# non-redundant off-diagonal elements of the empirical indicator correlation matrix $\boldsymbol{\mathbf{S}}$} \\
       &amp;- \text{# model parameters}
 \end{align}
-\]</span></p>
+</annotation></semantics></math></p>
 <p>If the model contains only linear terms the model parameters are:</p>
 <ul>
 <li># free correlations between exogenous constructs</li>
 <li># specified correlations between endogenous constructs</li>
 <li># structural parameters</li>
 </ul>
-<p>In addition, for each construct <span class="math inline">\(\eta_j\)</span>:</p>
+<p>In addition, for each construct
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\eta_j</annotation></semantics></math>:</p>
 <ul>
-<li># of loadings if <span class="math inline">\(\eta_j\)</span> is
-modeled as a common factor</li>
+<li># of loadings if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\eta_j</annotation></semantics></math>
+is modeled as a common factor</li>
 <li># of specified measurement error correlations between items of
-constructs <span class="math inline">\(\eta_j\)</span> if <span class="math inline">\(\eta_j\)</span> is modeled as a common factor</li>
-<li># of weights of <span class="math inline">\(\eta_j\)</span>
-<strong>minus 1</strong> if <span class="math inline">\(\eta_j\)</span>
+constructs
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\eta_j</annotation></semantics></math>
+if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\eta_j</annotation></semantics></math>
+is modeled as a common factor</li>
+<li># of weights of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\eta_j</annotation></semantics></math><strong>minus 1</strong> if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\eta_j</annotation></semantics></math>
 is modeled as a composite. One weight per block is fixed and hence not
 counted as a model parameter since the variance of the composite is
 scaled to be unity.</li>
-<li># of non-redundant off-diagonal elements of <span class="math inline">\(\boldsymbol{\mathbf{\Sigma}}_j\)</span> if <span class="math inline">\(\eta_j\)</span> is modeled as a composite.</li>
+<li># of non-redundant off-diagonal elements of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>𝚺</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\boldsymbol{\mathbf{\Sigma}}_j</annotation></semantics></math>
+if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\eta_j</annotation></semantics></math>
+is modeled as a composite.</li>
 </ul>
 <p>If the model contains second-order terms the model parameters are
 similar:</p>
@@ -426,19 +476,30 @@ similar:</p>
 <li># structural parameters. Note: relations between constructs
 measuring/forming the second-order construct are not path!</li>
 </ul>
-<p>In addition, for each construct <span class="math inline">\(\eta_j\)</span> (including the second-order
-constructs):</p>
+<p>In addition, for each construct
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\eta_j</annotation></semantics></math>
+(including the second-order constructs):</p>
 <ul>
-<li># of loadings if <span class="math inline">\(\eta_j\)</span> is
-modeled as a common factor</li>
+<li># of loadings if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\eta_j</annotation></semantics></math>
+is modeled as a common factor</li>
 <li># of specified measurement error correlations between items of
-constructs <span class="math inline">\(\eta_j\)</span> if <span class="math inline">\(\eta_j\)</span> is modeled as a common factor</li>
-<li># of weights of <span class="math inline">\(\eta_j\)</span>
-<strong>minus 1</strong> if <span class="math inline">\(\eta_j\)</span>
+constructs
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\eta_j</annotation></semantics></math>
+if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\eta_j</annotation></semantics></math>
+is modeled as a common factor</li>
+<li># of weights of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\eta_j</annotation></semantics></math><strong>minus 1</strong> if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\eta_j</annotation></semantics></math>
 is modeled as a composite. One weight per block is fixed and hence not
 counted as a model parameter since the variance of the composite is
 scaled to be unity.</li>
-<li># of non-redundant off-diagonal elements of <span class="math inline">\(\boldsymbol{\mathbf{\Sigma}}_j\)</span> if <span class="math inline">\(\eta_j\)</span> is modeled as a composite.</li>
+<li># of non-redundant off-diagonal elements of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>𝚺</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\boldsymbol{\mathbf{\Sigma}}_j</annotation></semantics></math>
+if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\eta_j</annotation></semantics></math>
+is modeled as a composite.</li>
 </ul>
 <div class="section level5">
 <h5 id="notes">Notes<a class="anchor" aria-label="anchor" href="#notes"></a>
@@ -447,9 +508,13 @@ scaled to be unity.</li>
 <li>If all constructs are allowed to freely covary, i.e., there is no
 structural model and no structural parameters, all constructs are
 considered exogenous.</li>
-<li>If the strucutral model contains nonlinear terms (e.g., <span class="math inline">\(\eta^2_1\)</span> or <span class="math inline">\(\eta_1\eta_2\)</span>), degrees of freedom
-computation is currently unclear (at least to us). A warning is printed
-to inform the user that the calculation is may not be correct.</li>
+<li>If the strucutral model contains nonlinear terms (e.g.,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>η</mi><mn>1</mn><mn>2</mn></msubsup><annotation encoding="application/x-tex">\eta^2_1</annotation></semantics></math>
+or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>η</mi><mn>1</mn></msub><msub><mi>η</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">\eta_1\eta_2</annotation></semantics></math>),
+degrees of freedom computation is currently unclear (at least to us). A
+warning is printed to inform the user that the calculation is may not be
+correct.</li>
 </ol>
 </div>
 </div>
@@ -508,11 +573,14 @@ of a fit index with a (more or less) arbitrary cutoff value.</p>
 <p>The definitions of fit indices calculated by <code><a href="../reference/assess.html">assess()</a></code>
 are given in the following:</p>
 <ul>
-<li>The <span class="math inline">\(\chi^2\)</span>-<strong>statistic</strong> is the
-value of the fitting function times the sample size minus 1.</li>
-<li>The <span class="math inline">\(\chi^2/df\)</span>-ratio is the
-<span class="math inline">\(\chi^2\)</span>-statistic divided by its
-degrees of freedom.</li>
+<li>The
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>χ</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\chi^2</annotation></semantics></math>-<strong>statistic</strong>
+is the value of the fitting function times the sample size minus 1.</li>
+<li>The
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>χ</mi><mn>2</mn></msup><mi>/</mi><mi>d</mi><mi>f</mi></mrow><annotation encoding="application/x-tex">\chi^2/df</annotation></semantics></math>-ratio
+is the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>χ</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\chi^2</annotation></semantics></math>-statistic
+divided by its degrees of freedom.</li>
 <li>The <strong>goodness-of-fit index</strong> (GFI) measures the
 relative increase in fit of the specified model compared to no model at
 all.</li>
@@ -539,11 +607,11 @@ specified model and the distance between the fit of the baseline model
 and the expected fit of the specified model. Its definition differs only
 marginally from the definition of the NNFI.</li>
 <li>The <strong>root mean square outer residual covariance</strong>
-(<span class="math inline">\(\text{RMS}_{\theta}\)</span>) is defined as
-the square root of the mean squared covariances of the residuals of the
-outer model. The calculation of the indicator’s residual covariance
-matrix involves the calculation of the construct’s covariance matrix.
-See <span class="citation">Lohmöller (1989)</span>.
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mtext mathvariant="normal">RMS</mtext><mi>θ</mi></msub><annotation encoding="application/x-tex">\text{RMS}_{\theta}</annotation></semantics></math>)
+is defined as the square root of the mean squared covariances of the
+residuals of the outer model. The calculation of the indicator’s
+residual covariance matrix involves the calculation of the construct’s
+covariance matrix. See <span class="citation">Lohmöller (1989)</span>.
 <!-- this is not stated more precisely. That is why, two alternatives are possible: -->
 <!--  - the restrictions of the structural model are taken into account basing -->
 <!--    the calculation on the model-implied construct covariance matrix. -->
@@ -553,11 +621,11 @@ See <span class="citation">Lohmöller (1989)</span>.
 </li>
 </ul>
 <p>It should be stressed again that (with the possible exception of the
-<span class="math inline">\(\text{RMS}_{\theta}\)</span>) none of the
-above mentioned fit indices were originally designed for composite
-models. The indices RMSEA and CFI are non-centrality based and require
-specific assumptions on model and data typically made in CFA. The same
-applies for IFI and NNFI since their calculation relies on the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mtext mathvariant="normal">RMS</mtext><mi>θ</mi></msub><annotation encoding="application/x-tex">\text{RMS}_{\theta}</annotation></semantics></math>)
+none of the above mentioned fit indices were originally designed for
+composite models. The indices RMSEA and CFI are non-centrality based and
+require specific assumptions on model and data typically made in CFA.
+The same applies for IFI and NNFI since their calculation relies on the
 properties (primarily the expectation) of the test statistic when data
 follows a normal distribution. In general, those assumptions are not
 made in composite models and composite-based estimators, respectively.
@@ -574,35 +642,46 @@ limitations of fit indices in mind.</p>
 <h4 id="formulae-2">Formulae<a class="anchor" aria-label="anchor" href="#formulae-2"></a>
 </h4>
 <p>The exact formulae of the fit indices as implemented in
-<strong>cSEM</strong> are given in the following. The term <span class="math inline">\(F = F(\boldsymbol{\mathbf{S}},
-\boldsymbol{\mathbf{\Sigma}}(\hat{\boldsymbol{\mathbf{\theta}}})) =
-F(\boldsymbol{\mathbf{S}}, \hat{\boldsymbol{\mathbf{\Sigma}}})\)</span>
+<strong>cSEM</strong> are given in the following. The term
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mo>=</mo><mi>F</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐒</mi><mo>,</mo><mi>𝚺</mi><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>𝛉</mi><mo accent="true">̂</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>F</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐒</mi><mo>,</mo><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F = F(\boldsymbol{\mathbf{S}}, \boldsymbol{\mathbf{\Sigma}}(\hat{\boldsymbol{\mathbf{\theta}}})) = F(\boldsymbol{\mathbf{S}}, \hat{\boldsymbol{\mathbf{\Sigma}}})</annotation></semantics></math>
 stands for the value of the maximum likelihood fitting function
-evaluated at <span class="math inline">\(\boldsymbol{\mathbf{S}}\)</span> (the empirical
-covariance matrix of the indicators) and <span class="math inline">\(\hat{\boldsymbol{\mathbf{\Sigma}}}\)</span> (the
-estimated model-implied covariance matrix of the indicators). The value
-of the maximum likelihood fitting function is computed by
+evaluated at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐒</mi><annotation encoding="application/x-tex">\boldsymbol{\mathbf{S}}</annotation></semantics></math>
+(the empirical covariance matrix of the indicators) and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\hat{\boldsymbol{\mathbf{\Sigma}}}</annotation></semantics></math>
+(the estimated model-implied covariance matrix of the indicators). The
+value of the maximum likelihood fitting function is computed by
 <code><a href="../reference/distance_measures.html">calculateDML()</a></code>.
 <!-- In the context of composite-based estimators, the distance measures $d_{G}$  -->
 <!-- (geodesic distance), $d_{L}$ (squared Euclidean distance) and $d_{ML}$ -->
 <!-- (maximum likelihood distance) serve as fitting functions. --></p>
 <div class="section level5">
-<h5 id="the-chi2-statistic">The <span class="math inline">\(\chi^2\)</span>-statistic<a class="anchor" aria-label="anchor" href="#the-chi2-statistic"></a>
+<h5 id="the-chi2-statistic">The
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>χ</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\chi^2</annotation></semantics></math>-statistic<a class="anchor" aria-label="anchor" href="#the-chi2-statistic"></a>
 </h5>
-<p>The <span class="math inline">\(\chi^2\)</span>-<strong>statistic</strong> is
-defined as: <span class="math display">\[ \chi^2 = (N-1)\cdot F\]</span>
-where <span class="math inline">\(N\)</span> is the sample size.</p>
+<p>The
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>χ</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\chi^2</annotation></semantics></math>-<strong>statistic</strong>
+is defined as:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>χ</mi><mn>2</mn></msup><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mi>F</mi></mrow><annotation encoding="application/x-tex"> \chi^2 = (N-1)\cdot F</annotation></semantics></math>
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
+is the sample size.</p>
 <p>Main reference: <span class="citation">K. G. Jöreskog
 (1969)</span></p>
 </div>
 <div class="section level5">
-<h5 id="the-chi2textdf-ratio">The <span class="math inline">\(\chi^2/\text{df}\)</span>-ratio<a class="anchor" aria-label="anchor" href="#the-chi2textdf-ratio"></a>
+<h5 id="the-chi2textdf-ratio">The
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>χ</mi><mn>2</mn></msup><mi>/</mi><mtext mathvariant="normal">df</mtext></mrow><annotation encoding="application/x-tex">\chi^2/\text{df}</annotation></semantics></math>-ratio<a class="anchor" aria-label="anchor" href="#the-chi2textdf-ratio"></a>
 </h5>
-<p>The <span class="math inline">\(\chi^2/\text{df}\)</span>-<strong>statistic</strong>
-is defined as: <span class="math display">\[ \chi^2 = (N-1)\cdot
-F/\text{df}_M\]</span> where <span class="math inline">\(N\)</span> the
-sample size and <span class="math inline">\(\text{df}_M\)</span> the
-degrees of freedom of the estimated model.</p>
+<p>The
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>χ</mi><mn>2</mn></msup><mi>/</mi><mtext mathvariant="normal">df</mtext></mrow><annotation encoding="application/x-tex">\chi^2/\text{df}</annotation></semantics></math>-<strong>statistic</strong>
+is defined as:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>χ</mi><mn>2</mn></msup><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mi>F</mi><mi>/</mi><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub></mrow><annotation encoding="application/x-tex"> \chi^2 = (N-1)\cdot F/\text{df}_M</annotation></semantics></math>
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
+the sample size and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub><annotation encoding="application/x-tex">\text{df}_M</annotation></semantics></math>
+the degrees of freedom of the estimated model.</p>
 <p>Main reference: <span class="citation">K. G. Jöreskog
 (1969)</span></p>
 </div>
@@ -610,30 +689,38 @@ degrees of freedom of the estimated model.</p>
 <h5 id="the-goodness-of-fit-index-gfi">The goodness-of-fit index (GFI)<a class="anchor" aria-label="anchor" href="#the-goodness-of-fit-index-gfi"></a>
 </h5>
 <p>The GFI is generally defined in analogy to the coefficient of
-determination (<span class="math inline">\(R^2\)</span>) known from
-regression analysis as 1 minus the share of the weighted unexplained
-variance (SSE; the difference between <span class="math inline">\(\boldsymbol{\mathbf{S}}\)</span> and <span class="math inline">\(\hat{\boldsymbol{\mathbf{\Sigma}}}\)</span>)
-relative to the weighted total variance (SST; the variance of <span class="math inline">\(\boldsymbol{\mathbf{S}}\)</span>): <span class="math display">\[ GFI = 1 -
-\frac{\text{trace}\left\{\left(\boldsymbol{\mathbf{W}}^{-\frac{1}{2}}\lbrack\boldsymbol{\mathbf{S}}
--
-\hat{\boldsymbol{\mathbf{\Sigma}}}\rbrack\boldsymbol{\mathbf{W}}^{-\frac{1}{2}}\right)^2\right\}}{\text{trace}\left\{\left(\boldsymbol{\mathbf{W}}^{-\frac{1}{2}}\boldsymbol{\mathbf{S}}\boldsymbol{\mathbf{W}}^{-\frac{1}{2}}\right)^2\right\}}
-\]</span> The matrix <span class="math inline">\(\boldsymbol{\mathbf{W}}\)</span> is a weight
-matrix. Depending on the estimation technique used to obtain <span class="math inline">\(\hat{\boldsymbol{\mathbf{\theta}}}\)</span>
+determination
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>R</mi><mn>2</mn></msup><annotation encoding="application/x-tex">R^2</annotation></semantics></math>)
+known from regression analysis as 1 minus the share of the weighted
+unexplained variance (SSE; the difference between
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐒</mi><annotation encoding="application/x-tex">\boldsymbol{\mathbf{S}}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\hat{\boldsymbol{\mathbf{\Sigma}}}</annotation></semantics></math>)
+relative to the weighted total variance (SST; the variance of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐒</mi><annotation encoding="application/x-tex">\boldsymbol{\mathbf{S}}</annotation></semantics></math>):
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mi>F</mi><mi>I</mi><mo>=</mo><mn>1</mn><mo>−</mo><mfrac><mrow><mtext mathvariant="normal">trace</mtext><mrow><mo stretchy="true" form="prefix">{</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>𝐖</mi><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><mo stretchy="false" form="prefix">[</mo><mi>𝐒</mi><mo>−</mo><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover><mo stretchy="false" form="postfix">]</mo><msup><mi>𝐖</mi><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo stretchy="true" form="postfix">}</mo></mrow></mrow><mrow><mtext mathvariant="normal">trace</mtext><mrow><mo stretchy="true" form="prefix">{</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>𝐖</mi><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><mi>𝐒</mi><msup><mi>𝐖</mi><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo stretchy="true" form="postfix">}</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex"> GFI = 1 - \frac{\text{trace}\left\{\left(\boldsymbol{\mathbf{W}}^{-\frac{1}{2}}\lbrack\boldsymbol{\mathbf{S}} - \hat{\boldsymbol{\mathbf{\Sigma}}}\rbrack\boldsymbol{\mathbf{W}}^{-\frac{1}{2}}\right)^2\right\}}{\text{trace}\left\{\left(\boldsymbol{\mathbf{W}}^{-\frac{1}{2}}\boldsymbol{\mathbf{S}}\boldsymbol{\mathbf{W}}^{-\frac{1}{2}}\right)^2\right\}} </annotation></semantics></math>
+The matrix
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐖</mi><annotation encoding="application/x-tex">\boldsymbol{\mathbf{W}}</annotation></semantics></math>
+is a weight matrix. Depending on the estimation technique used to obtain
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>𝛉</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\hat{\boldsymbol{\mathbf{\theta}}}</annotation></semantics></math>
 different types of GFI may be computed by choosing a particular
 weight.</p>
 <ol style="list-style-type: decimal">
-<li>If <span class="math inline">\(\boldsymbol{\mathbf{W}} =
-\hat{\boldsymbol{\mathbf{\Sigma}}}\)</span>, the GFI is based on the SSE
-and the SST from a maximum likelihood estimation.</li>
-<li>If <span class="math inline">\(\boldsymbol{\mathbf{W}} =
-\hat{\boldsymbol{\mathbf{S}}}\)</span>, the GFI is based on SSE and the
-SST from a generalized least squares (GLS) estimation.</li>
-<li>If <span class="math inline">\(\boldsymbol{\mathbf{W}} =
-\hat{\boldsymbol{\mathbf{I}}}\)</span>, the GFI is based on SSE and the
-SST from a unweighted least squares (ULS) estimation.</li>
+<li>If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐖</mi><mo>=</mo><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover></mrow><annotation encoding="application/x-tex">\boldsymbol{\mathbf{W}} = \hat{\boldsymbol{\mathbf{\Sigma}}}</annotation></semantics></math>,
+the GFI is based on the SSE and the SST from a maximum likelihood
+estimation.</li>
+<li>If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐖</mi><mo>=</mo><mover><mi>𝐒</mi><mo accent="true">̂</mo></mover></mrow><annotation encoding="application/x-tex">\boldsymbol{\mathbf{W}} = \hat{\boldsymbol{\mathbf{S}}}</annotation></semantics></math>,
+the GFI is based on SSE and the SST from a generalized least squares
+(GLS) estimation.</li>
+<li>If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐖</mi><mo>=</mo><mover><mi>𝐈</mi><mo accent="true">̂</mo></mover></mrow><annotation encoding="application/x-tex">\boldsymbol{\mathbf{W}} = \hat{\boldsymbol{\mathbf{I}}}</annotation></semantics></math>,
+the GFI is based on SSE and the SST from a unweighted least squares
+(ULS) estimation.</li>
 </ol>
-<p>Note that for any quadratic matrix , we have: <span class="math inline">\(\text{trace}(\boldsymbol{\mathbf{X}}^2) =
-\sum_{i,j} x^2_i\)</span>.</p>
+<p>Note that for any quadratic matrix , we have:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">trace</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>𝐗</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mo>∑</mo><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub><msubsup><mi>x</mi><mi>i</mi><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">\text{trace}(\boldsymbol{\mathbf{X}}^2) = \sum_{i,j} x^2_i</annotation></semantics></math>.</p>
 <p>Main references: <span class="citation">Karl G. Jöreskog and Sörbom
 (1982)</span>, <span class="citation">Mulaik et al. (1989)</span> and
 <span class="citation">Tanaka and Huba (1985)</span></p>
@@ -641,31 +728,38 @@ SST from a unweighted least squares (ULS) estimation.</li>
 <div class="section level5">
 <h5 id="the-standardized-root-mean-square-residual-srmr">The standardized root mean square residual (SRMR)<a class="anchor" aria-label="anchor" href="#the-standardized-root-mean-square-residual-srmr"></a>
 </h5>
-<p>The SRMR is defined as <span class="math display">\[  \text{SRMR} =
-\sqrt{2 \sum_{j=1}^{K} \sum_{i=1}^{j} \frac{ \lbrack (s_{ij} -
-\hat{\sigma}_{ij})/(s_{ii} s_{jj})^{1/2} \rbrack^{2}}{K (K+1)}}
-\]</span> where <span class="math inline">\(K\)</span> stands for the
-number of indicators, <span class="math inline">\(s_{ij}\)</span> for
-the empirical covariance between indicators <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>, and <span class="math inline">\(\hat{\sigma}_{ij}\)</span> for the estimated
-model-implied counterpart. The SRMR describes with which distance the
-observed correlations are reproduced on average by the model. Therefore,
-smaller values are associated with a better fit. If data is
-standardized, <span class="math inline">\(s_{ii} = s_{jj} = 1\)</span>
-holds, and the formula reduces to: <span class="math display">\[  \text{SRMR} = \sqrt{2 \sum_{j=1}^{K}
-\sum_{i=1}^{j} \frac{(s_{ij} - \hat{\sigma}_{ij})^2}{K(K+1)}}
-\]</span></p>
+<p>The SRMR is defined as
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">SRMR</mtext><mo>=</mo><msqrt><mrow><mn>2</mn><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></munderover><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>j</mi></munderover><mfrac><mrow><mo stretchy="false" form="prefix">[</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>s</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>−</mo><msub><mover><mi>σ</mi><mo accent="true">̂</mo></mover><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>s</mi><mrow><mi>i</mi><mi>i</mi></mrow></msub><msub><mi>s</mi><mrow><mi>j</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mn>1</mn><mi>/</mi><mn>2</mn></mrow></msup><msup><mo stretchy="false" form="postfix">]</mo><mn>2</mn></msup></mrow><mrow><mi>K</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>K</mi><mo>+</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow></msqrt></mrow><annotation encoding="application/x-tex">  \text{SRMR} = \sqrt{2 \sum_{j=1}^{K} \sum_{i=1}^{j} \frac{ \lbrack (s_{ij} - \hat{\sigma}_{ij})/(s_{ii} s_{jj})^{1/2} \rbrack^{2}}{K (K+1)}} </annotation></semantics></math>
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>
+stands for the number of indicators,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">s_{ij}</annotation></semantics></math>
+for the empirical covariance between indicators
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>σ</mi><mo accent="true">̂</mo></mover><mrow><mi>i</mi><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">\hat{\sigma}_{ij}</annotation></semantics></math>
+for the estimated model-implied counterpart. The SRMR describes with
+which distance the observed correlations are reproduced on average by
+the model. Therefore, smaller values are associated with a better fit.
+If data is standardized,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>s</mi><mrow><mi>i</mi><mi>i</mi></mrow></msub><mo>=</mo><msub><mi>s</mi><mrow><mi>j</mi><mi>j</mi></mrow></msub><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">s_{ii} = s_{jj} = 1</annotation></semantics></math>
+holds, and the formula reduces to:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">SRMR</mtext><mo>=</mo><msqrt><mrow><mn>2</mn><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></munderover><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>j</mi></munderover><mfrac><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>s</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>−</mo><msub><mover><mi>σ</mi><mo accent="true">̂</mo></mover><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mrow><mi>K</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>K</mi><mo>+</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow></msqrt></mrow><annotation encoding="application/x-tex">  \text{SRMR} = \sqrt{2 \sum_{j=1}^{K} \sum_{i=1}^{j} \frac{(s_{ij} - \hat{\sigma}_{ij})^2}{K(K+1)}} </annotation></semantics></math></p>
 <p>Main reference: <span class="citation">Bentler (2006)</span></p>
 </div>
 <div class="section level5">
 <h5 id="the-root-mean-square-error-of-approximation-rmsea">The root mean square error of approximation (RMSEA)<a class="anchor" aria-label="anchor" href="#the-root-mean-square-error-of-approximation-rmsea"></a>
 </h5>
-<p>The RMSEA is defined as <span class="math display">\[ \hat{\epsilon}
+<p>The RMSEA is defined as <span class="math display">$$ \hat{\epsilon}
 = \sqrt{\frac{\hat{F}_0}{\text{df}_{M}}} \quad \text{where} \quad
 \hat{F}_{0} = \max \Bigl( 0, F - \frac{\text{df}_{M}}{N-1} \Bigr)
-\]</span> In this formula, <span class="math inline">\(\text{df}_{M}\)</span> stands for the degrees of
-freedom of the specified model (see the <a href="#df">Degrees of
-Freedom</a> section for details on how the degrees of freedom are
-calculated). The term <span class="math inline">\(\hat{F}_{0}\)</span>
+$$</span> In this formula,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub><annotation encoding="application/x-tex">\text{df}_{M}</annotation></semantics></math>
+stands for the degrees of freedom of the specified model (see the <a href="#df">Degrees of Freedom</a> section for details on how the degrees
+of freedom are calculated). The term
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>F</mi><mo accent="true">̂</mo></mover><mn>0</mn></msub><annotation encoding="application/x-tex">\hat{F}_{0}</annotation></semantics></math>
 is an estimator for the discrepancy due to approximation. Thus, the
 RMSEA measures the discrepancy due to approximation per degree of
 freedom.</p>
@@ -677,45 +771,52 @@ freedom.</p>
 </h5>
 <p>The fit indices NFI and NNFI were among the first fit indices to be
 introduced <span class="citation">(Bentler and Bonett 1980)</span>. They
-are defined as: <span class="math display">\[ \text{NFI} = \frac{F_{B} -
-F_{M}}{F_{B}} \quad \text{and} \quad \text{NNFI} =
-\frac{F_{B}/\text{df}_{B} - F_{M}/\text{df}_{M}}{F_{B}/\text{df}_{B} -
-1/(N-1)} \]</span> The term <span class="math inline">\(F_{B}\)</span>
-refers to the value of the fitting function in the null model, <span class="math inline">\(F_{M}\)</span> to the value of the fitting
-function in the model under consideration. Thus, the NFI measures the
-increase in fit relative to the fit of the null model when specifying
-the model. The intuition of NNFI is that (in factor-based methods) the
-expectation of <span class="math inline">\(F_{M}/\text{df}_{M}\)</span>
-is equal to <span class="math inline">\(1/N-1\)</span>. This does not
-automatically hold for composite-based estimators.</p>
+are defined as:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">NFI</mtext><mo>=</mo><mfrac><mrow><msub><mi>F</mi><mi>B</mi></msub><mo>−</mo><msub><mi>F</mi><mi>M</mi></msub></mrow><msub><mi>F</mi><mi>B</mi></msub></mfrac><mspace width="1.0em"></mspace><mtext mathvariant="normal">and</mtext><mspace width="1.0em"></mspace><mtext mathvariant="normal">NNFI</mtext><mo>=</mo><mfrac><mrow><msub><mi>F</mi><mi>B</mi></msub><mi>/</mi><msub><mtext mathvariant="normal">df</mtext><mi>B</mi></msub><mo>−</mo><msub><mi>F</mi><mi>M</mi></msub><mi>/</mi><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub></mrow><mrow><msub><mi>F</mi><mi>B</mi></msub><mi>/</mi><msub><mtext mathvariant="normal">df</mtext><mi>B</mi></msub><mo>−</mo><mn>1</mn><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \text{NFI} = \frac{F_{B} - F_{M}}{F_{B}} \quad \text{and} \quad \text{NNFI} = \frac{F_{B}/\text{df}_{B} - F_{M}/\text{df}_{M}}{F_{B}/\text{df}_{B} - 1/(N-1)} </annotation></semantics></math>
+The term
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>F</mi><mi>B</mi></msub><annotation encoding="application/x-tex">F_{B}</annotation></semantics></math>
+refers to the value of the fitting function in the null model,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>F</mi><mi>M</mi></msub><annotation encoding="application/x-tex">F_{M}</annotation></semantics></math>
+to the value of the fitting function in the model under consideration.
+Thus, the NFI measures the increase in fit relative to the fit of the
+null model when specifying the model. The intuition of NNFI is that (in
+factor-based methods) the expectation of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mi>M</mi></msub><mi>/</mi><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub></mrow><annotation encoding="application/x-tex">F_{M}/\text{df}_{M}</annotation></semantics></math>
+is equal to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><mi>N</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">1/N-1</annotation></semantics></math>.
+This does not automatically hold for composite-based estimators.</p>
 <p>The NNFI measures the relative departure of the numerator’s term from
 it’s expectation (in the denominator). That is why, the NNFI is not
-normed and can take values larger than <span class="math inline">\(1\)</span>.</p>
+normed and can take values larger than
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math>.</p>
 <p>Main reference: <span class="citation">Bentler and Bonett
 (1980)</span></p>
 </div>
 <div class="section level5">
 <h5 id="the-comparative-fit-index-cfi">The comparative fit index (CFI)<a class="anchor" aria-label="anchor" href="#the-comparative-fit-index-cfi"></a>
 </h5>
-<p>The CFI is defined as: <span class="math display">\[ \text{CFI} = 1 -
-\frac{\max(0, (N-1) F_{M}-\text{df}_{M})}{\max(0, (N-1)
-F_{M}-\text{df}_{M}, (N-1)F_{B}-\text{df}_{B})} \]</span> Like the
-RMSEA, the CFI is a non-centrality based index. It measures the increase
-in fit (that is to say the reduction in non-centrality) when specifying
-the model under consideration relative to the fit of the null model. The
-CFI is a normed index with a value of <span class="math inline">\(1\)</span> indicating the best fit. Since it makes
-use of the assumptions in factor-based methods, its intuition does not
-apply to composite-based estimators.</p>
+<p>The CFI is defined as:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">CFI</mtext><mo>=</mo><mn>1</mn><mo>−</mo><mfrac><mrow><mo>max</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>F</mi><mi>M</mi></msub><mo>−</mo><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mo>max</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>F</mi><mi>M</mi></msub><mo>−</mo><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub><mo>,</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>F</mi><mi>B</mi></msub><mo>−</mo><msub><mtext mathvariant="normal">df</mtext><mi>B</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \text{CFI} = 1 - \frac{\max(0, (N-1) F_{M}-\text{df}_{M})}{\max(0, (N-1) F_{M}-\text{df}_{M}, (N-1)F_{B}-\text{df}_{B})} </annotation></semantics></math>
+Like the RMSEA, the CFI is a non-centrality based index. It measures the
+increase in fit (that is to say the reduction in non-centrality) when
+specifying the model under consideration relative to the fit of the null
+model. The CFI is a normed index with a value of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math>
+indicating the best fit. Since it makes use of the assumptions in
+factor-based methods, its intuition does not apply to composite-based
+estimators.</p>
 <p>Main reference: <span class="citation">Bentler (1990)</span>.</p>
 </div>
 <div class="section level5">
 <h5 id="the-incremental-fit-index-ifi">The incremental fit index (IFI)<a class="anchor" aria-label="anchor" href="#the-incremental-fit-index-ifi"></a>
 </h5>
-<p>The IFI is defined as: <span class="math display">\[ \text{IFI} =
-\frac{F_{B} - F_{M}}{F_{B} - df_{M}/(N-1)} \]</span> The rationale
-underlying the IFI is that the term <span class="math inline">\(F_{B} -
-F_{M}\)</span> (in the numerator) is compared with its expectation <span class="math inline">\(F_{B} - \text{df}_{M}/(N-1)\)</span> (in the
-denominator).</p>
+<p>The IFI is defined as:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">IFI</mtext><mo>=</mo><mfrac><mrow><msub><mi>F</mi><mi>B</mi></msub><mo>−</mo><msub><mi>F</mi><mi>M</mi></msub></mrow><mrow><msub><mi>F</mi><mi>B</mi></msub><mo>−</mo><mi>d</mi><msub><mi>f</mi><mi>M</mi></msub><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \text{IFI} = \frac{F_{B} - F_{M}}{F_{B} - df_{M}/(N-1)} </annotation></semantics></math>
+The rationale underlying the IFI is that the term
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mi>B</mi></msub><mo>−</mo><msub><mi>F</mi><mi>M</mi></msub></mrow><annotation encoding="application/x-tex">F_{B} - F_{M}</annotation></semantics></math>
+(in the numerator) is compared with its expectation
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mi>B</mi></msub><mo>−</mo><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_{B} - \text{df}_{M}/(N-1)</annotation></semantics></math>
+(in the denominator).</p>
 <p>Main reference: <span class="citation">Bollen (1989)</span></p>
 </div>
 <div class="section level5">
@@ -788,11 +889,13 @@ and notation of the <a href="https://floschuberth.github.io/cSEM/articles/Notati
 and <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">Termniology</a>
 help files, reliability of a generic measurement is defined as:</p>
 <ol style="list-style-type: decimal">
-<li>The amount of proxy true score variance, <span class="math inline">\(Var(\bar\eta)\)</span>, relative to the the proxy
-or test score variance, <span class="math inline">\(Var(\hat\eta)\)</span>.</li>
+<li>The amount of proxy true score variance,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>η</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Var(\bar\eta)</annotation></semantics></math>,
+relative to the the proxy or test score variance,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>η</mi><mo accent="true">̂</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Var(\hat\eta)</annotation></semantics></math>.</li>
 <li>This is identical to the squared correlation between the common
-factor and its proxy/composite or test score: <span class="math inline">\(\rho_{\eta, \hat\eta}^2 = Cor(\eta,
-\hat\eta)^2\)</span>.</li>
+factor and its proxy/composite or test score:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>ρ</mi><mrow><mi>η</mi><mo>,</mo><mover><mi>η</mi><mo accent="true">̂</mo></mover></mrow><mn>2</mn></msubsup><mo>=</mo><mi>C</mi><mi>o</mi><mi>r</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>η</mi><mo>,</mo><mover><mi>η</mi><mo accent="true">̂</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\rho_{\eta, \hat\eta}^2 = Cor(\eta, \hat\eta)^2</annotation></semantics></math>.</li>
 </ol>
 <p>This “kind” of reliability is commonly referred to as
 <strong>internal consistency reliability</strong>.</p>
@@ -804,30 +907,40 @@ candidates for their corresponding (internal consistency) reliabilities
 measure:</p>
 <ol style="list-style-type: decimal">
 <li>
-<strong>Parallel</strong> – Assumption: <span class="math inline">\(\eta_{kj} = \eta_j \longrightarrow \lambda_{kj} =
-\lambda_j\)</span> and <span class="math inline">\(Var(\varepsilon_{kj})
-= Var(\varepsilon_j)\)</span>.</li>
+<strong>Parallel</strong> – Assumption:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>η</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>η</mi><mi>j</mi></msub><mo>→</mo><msub><mi>λ</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>λ</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">\eta_{kj} = \eta_j \longrightarrow \lambda_{kj} = \lambda_j</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ε</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ε</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Var(\varepsilon_{kj}) = Var(\varepsilon_j)</annotation></semantics></math>.</li>
 <li>
-<strong>Tau-equivalent</strong> – Assumption: <span class="math inline">\(\eta_{kj} = \eta_j \longrightarrow \lambda_{kj} =
-\lambda_j\)</span> and <span class="math inline">\(Var(\varepsilon_{kj})
-\neq Var(\varepsilon_{lj})\)</span>.</li>
+<strong>Tau-equivalent</strong> – Assumption:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>η</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>η</mi><mi>j</mi></msub><mo>→</mo><msub><mi>λ</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>λ</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">\eta_{kj} = \eta_j \longrightarrow \lambda_{kj} = \lambda_j</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ε</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>≠</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ε</mi><mrow><mi>l</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Var(\varepsilon_{kj}) \neq Var(\varepsilon_{lj})</annotation></semantics></math>.</li>
 <li>
-<strong>Congeneric</strong> – Assumption: <span class="math inline">\(\eta_{kj} = \lambda_{kj}\eta_j\)</span> and <span class="math inline">\(Var(\varepsilon_{kj}) \neq
-Var(\varepsilon_{lj})\)</span>.</li>
+<strong>Congeneric</strong> – Assumption:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>η</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>λ</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><msub><mi>η</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">\eta_{kj} = \lambda_{kj}\eta_j</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ε</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>≠</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ε</mi><mrow><mi>l</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Var(\varepsilon_{kj}) \neq Var(\varepsilon_{lj})</annotation></semantics></math>.</li>
 </ol>
-<p>In principal the test score <span class="math inline">\(\hat\eta\)</span> is a weighted linear
-combinations of the indicators, i.e., a proxy or stand-in for the true
-score/common factor. Historically, however, the test score is generally
-assumed to be a simple sum score, i.e., a weighted sum of indicators
-with all weights assumed to be equal to one. Hence, well-known
-reliability measures such as Jöreskog’s <span class="math inline">\(\rho\)</span> or Cronbach’s <span class="math inline">\(\alpha\)</span> are defined with respect to a test
-score that indeed represents a simple sum score. Yet, all reliability
-measures originally developed assuming a sum score may equally well be
-computed with respect to a composite, i.e., a weighted score with
-weights not necessarily equal to one.</p>
-<p>Apart form the distinction between congeneric (i.e., Jöreskog’s <span class="math inline">\(\rho\)</span>) and tau-equivalent reliability
-(i.e., Cronbach’s <span class="math inline">\(\alpha\)</span>) we
-therefore distinguish between reliability estimates based on a test
+<p>In principal the test score
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>η</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\hat\eta</annotation></semantics></math>
+is a weighted linear combinations of the indicators, i.e., a proxy or
+stand-in for the true score/common factor. Historically, however, the
+test score is generally assumed to be a simple sum score, i.e., a
+weighted sum of indicators with all weights assumed to be equal to one.
+Hence, well-known reliability measures such as Jöreskog’s
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ρ</mi><annotation encoding="application/x-tex">\rho</annotation></semantics></math>
+or Cronbach’s
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
+are defined with respect to a test score that indeed represents a simple
+sum score. Yet, all reliability measures originally developed assuming a
+sum score may equally well be computed with respect to a composite,
+i.e., a weighted score with weights not necessarily equal to one.</p>
+<p>Apart form the distinction between congeneric (i.e., Jöreskog’s
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ρ</mi><annotation encoding="application/x-tex">\rho</annotation></semantics></math>)
+and tau-equivalent reliability (i.e., Cronbach’s
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>)
+we therefore distinguish between reliability estimates based on a test
 score (composite) that uses the weights of the weight approach used to
 obtain <code>.object</code> and a test score (proxy) based on unit
 weights. The former is indicated by adding “<strong>weighted</strong>”
@@ -838,84 +951,112 @@ to the original name.</p>
 </h4>
 <p>The most general formula for reliability is the <strong>(weighted)
 congeneric reliability</strong>:</p>
-<p><span class="math display">\[ \rho_{C; \text{weighted}} =
-\frac{Var(\bar\eta)}{Var(\hat\eta_k)} =
-\frac{(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\lambda}})^2}{\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\Sigma}}\boldsymbol{\mathbf{w}}}\]</span>
-Assuming <span class="math inline">\(\boldsymbol{\mathbf{w}} =
-\boldsymbol{\mathbf{\iota}}\)</span>, i.e., unit weights, the
-“classical” formula for congeneric reliability (i.e., Jöreskog’s <span class="math inline">\(\rho\)</span>), follows: <span class="math display">\[ \rho_C = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} =
-\frac{\left(\sum\lambda_k\right)^2}{\left(\sum\lambda_k\right)^2 +
-Var(\bar\varepsilon)}\]</span> Using the assumptions imposed by the
-tau-equivalent measurement model we obtain the <strong>(weighted)
-tau-equivalent reliability, i.e., (weighted) Cronbach’s
-alpha)</strong>:</p>
-<p><span class="math display">\[ \rho_{T; \text{weighted}}  =
-\frac{\lambda^2(\sum w_k)^2}{\lambda^2(\sum w_k)^2 + \sum
-w_k^2Var(\varepsilon_k)}
-= \frac{\bar\sigma_x(\sum w_k)^2}{\bar\sigma_x[(\sum w_k)^2 - \sum
-w_k^2] + \sum w_k^2Var(x_k)}\]</span> where we used the fact that if
-<span class="math inline">\(\lambda_k = \lambda\)</span>
-(tau-equivalence), <span class="math inline">\(\lambda^2\)</span> equals
-the average covariance between indicators: <span class="math display">\[\bar\sigma_x =
-\frac{1}{K(K-1)}\sum^K_{k=1}\sum^K_{l=1} \sigma_{kl}\]</span> Again,
-assuming <span class="math inline">\(w_k = 1\)</span>, i.e., unit
-weights, the “classical” formula for tau-equivalent reliability
-(Cronbach’s <span class="math inline">\(\alpha\)</span>) follows: <span class="math display">\[ \rho_T = \frac{\lambda^2K^2}{\lambda^2K^2 + \sum
-Var(\bar\varepsilon_k)}
-= \frac{\bar\sigma_xK^2}{\bar\sigma_x[K^2 - K] + K Var(x_k)}\]</span>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mrow><mi>C</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext></mrow></msub><mo>=</mo><mfrac><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>η</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>η</mi><mo accent="true">̂</mo></mover><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>=</mo><mfrac><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mi>𝛌</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mrow><mi>𝐰</mi><mi>′</mi><mi>𝚺</mi><mi>𝐰</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \rho_{C; \text{weighted}} = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\lambda}})^2}{\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\Sigma}}\boldsymbol{\mathbf{w}}}</annotation></semantics></math>
+Assuming
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐰</mi><mo>=</mo><mi>𝛊</mi></mrow><annotation encoding="application/x-tex">\boldsymbol{\mathbf{w}} = \boldsymbol{\mathbf{\iota}}</annotation></semantics></math>,
+i.e., unit weights, the “classical” formula for congeneric reliability
+(i.e., Jöreskog’s
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ρ</mi><annotation encoding="application/x-tex">\rho</annotation></semantics></math>),
+follows:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mi>C</mi></msub><mo>=</mo><mfrac><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>η</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>η</mi><mo accent="true">̂</mo></mover><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>=</mo><mfrac><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>λ</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mrow><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>λ</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>+</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>ε</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \rho_C = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{\left(\sum\lambda_k\right)^2}{\left(\sum\lambda_k\right)^2 + Var(\bar\varepsilon)}</annotation></semantics></math>
+Using the assumptions imposed by the tau-equivalent measurement model we
+obtain the <strong>(weighted) tau-equivalent reliability, i.e.,
+(weighted) Cronbach’s alpha)</strong>:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mrow><mi>T</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext></mrow></msub><mo>=</mo><mfrac><mrow><msup><mi>λ</mi><mn>2</mn></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow><mrow><msup><mi>λ</mi><mn>2</mn></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>+</mo><mo>∑</mo><msubsup><mi>w</mi><mi>k</mi><mn>2</mn></msubsup><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ε</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>=</mo><mfrac><mrow><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow><mrow><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>−</mo><mo>∑</mo><msubsup><mi>w</mi><mi>k</mi><mn>2</mn></msubsup><mo stretchy="true" form="postfix">]</mo></mrow><mo>+</mo><mo>∑</mo><msubsup><mi>w</mi><mi>k</mi><mn>2</mn></msubsup><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \rho_{T; \text{weighted}}  = \frac{\lambda^2(\sum w_k)^2}{\lambda^2(\sum w_k)^2 + \sum w_k^2Var(\varepsilon_k)}
+ = \frac{\bar\sigma_x(\sum w_k)^2}{\bar\sigma_x[(\sum w_k)^2 - \sum w_k^2] + \sum w_k^2Var(x_k)}</annotation></semantics></math>
+where we used the fact that if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mi>k</mi></msub><mo>=</mo><mi>λ</mi></mrow><annotation encoding="application/x-tex">\lambda_k = \lambda</annotation></semantics></math>
+(tau-equivalence),
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>λ</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\lambda^2</annotation></semantics></math>
+equals the average covariance between indicators:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><mo>=</mo><mfrac><mn>1</mn><mrow><mi>K</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>K</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><munderover><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></munderover><munderover><mo>∑</mo><mrow><mi>l</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></munderover><msub><mi>σ</mi><mrow><mi>k</mi><mi>l</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\bar\sigma_x = \frac{1}{K(K-1)}\sum^K_{k=1}\sum^K_{l=1} \sigma_{kl}</annotation></semantics></math>
+Again, assuming
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mi>k</mi></msub><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">w_k = 1</annotation></semantics></math>,
+i.e., unit weights, the “classical” formula for tau-equivalent
+reliability (Cronbach’s
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>)
+follows:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mi>T</mi></msub><mo>=</mo><mfrac><mrow><msup><mi>λ</mi><mn>2</mn></msup><msup><mi>K</mi><mn>2</mn></msup></mrow><mrow><msup><mi>λ</mi><mn>2</mn></msup><msup><mi>K</mi><mn>2</mn></msup><mo>+</mo><mo>∑</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>ε</mi><mo accent="true">‾</mo></mover><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>=</mo><mfrac><mrow><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><msup><mi>K</mi><mn>2</mn></msup></mrow><mrow><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><msup><mi>K</mi><mn>2</mn></msup><mo>−</mo><mi>K</mi><mo stretchy="true" form="postfix">]</mo></mrow><mo>+</mo><mi>K</mi><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \rho_T = \frac{\lambda^2K^2}{\lambda^2K^2 + \sum Var(\bar\varepsilon_k)}
+ = \frac{\bar\sigma_xK^2}{\bar\sigma_x[K^2 - K] + K Var(x_k)}</annotation></semantics></math>
 Using the assumptions imposed by the parallel measurement model we
 obtain the <strong>parallel reliability</strong>:</p>
-<p><span class="math display">\[ \rho_P = \frac{\lambda^2(\sum
-w_k)^2}{\lambda^2(\sum w_k)^2 + Var(\varepsilon)\sum w_k^2} =
-\frac{\bar\sigma_x(\sum w_k)^2}{\bar\sigma_x[(\sum w_k)^2 - \sum w_k^2]
-+ Var(x)\sum w_k^2} \]</span></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mi>P</mi></msub><mo>=</mo><mfrac><mrow><msup><mi>λ</mi><mn>2</mn></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow><mrow><msup><mi>λ</mi><mn>2</mn></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>+</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>ε</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>∑</mo><msubsup><mi>w</mi><mi>k</mi><mn>2</mn></msubsup></mrow></mfrac><mo>=</mo><mfrac><mrow><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow><mrow><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>−</mo><mo>∑</mo><msubsup><mi>w</mi><mi>k</mi><mn>2</mn></msubsup><mo stretchy="true" form="postfix">]</mo></mrow><mo>+</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>∑</mo><msubsup><mi>w</mi><mi>k</mi><mn>2</mn></msubsup></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \rho_P = \frac{\lambda^2(\sum w_k)^2}{\lambda^2(\sum w_k)^2 + Var(\varepsilon)\sum w_k^2} = 
+ \frac{\bar\sigma_x(\sum w_k)^2}{\bar\sigma_x[(\sum w_k)^2 - \sum w_k^2] + Var(x)\sum w_k^2} </annotation></semantics></math></p>
 <p>In <strong>cSEM</strong> indicators are always standardized and
-weights are chosen such that <span class="math inline">\(Var(\hat\eta_k)
-= 1\)</span>. This is done by scaling the weight vector <span class="math inline">\(\boldsymbol{\mathbf{w}}\)</span> by <span class="math inline">\((\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\Sigma}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}\)</span>.
-This simplifies the formulae: <span class="math display">\[
+weights are chosen such that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>η</mi><mo accent="true">̂</mo></mover><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">Var(\hat\eta_k) = 1</annotation></semantics></math>.
+This is done by scaling the weight vector
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐰</mi><annotation encoding="application/x-tex">\boldsymbol{\mathbf{w}}</annotation></semantics></math>
+by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mi>𝚺</mi><mi>𝐰</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\Sigma}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}</annotation></semantics></math>.
+This simplifies the formulae:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>ρ</mi><mrow><mi>C</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><msub><mi>λ</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mi>𝛌</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>ρ</mi><mrow><mi>T</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext></mrow></msub><mo>=</mo><msub><mi>ρ</mi><mrow><mi>P</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msub><mover><mi>ρ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd></mtr></mtable><annotation encoding="application/x-tex">
 \begin{align}
-\rho_{C; \text{weighted}} &amp;= (\sum w_k\lambda_k)^2 =
-(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\lambda}})^2 \\
-\rho_{T; \text{weighted}} = \rho_{P; \text{weighted}}
-&amp;=  \bar\rho_x(\sum w_k)^2 \\
+\rho_{C; \text{weighted}} &amp;= (\sum w_k\lambda_k)^2 = (\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\lambda}})^2 \\
+\rho_{T; \text{weighted}} = \rho_{P; \text{weighted}} &amp;=  \bar\rho_x(\sum w_k)^2 \\
 \end{align}
-\]</span> where <span class="math inline">\(\bar\rho_x =
-\bar\sigma_x\)</span> is the average correlation between indicators.
-Consequently, parallel and tau-equivalent reliability are always
-identical in <strong>cSEM</strong>.</p>
-<p>So far formulae have been motivated theoretically. Since <span class="math inline">\(\boldsymbol{\mathbf{\Sigma}}\)</span> is unknown
-it can be replaced by <span class="math inline">\(\boldsymbol{\mathbf{S}}\)</span> (the empirical
-indicator correlation matrix) or <span class="math inline">\(\hat{\boldsymbol{\mathbf{\Sigma}}}\)</span> (the
-model-implied indicator correlation matrix), however, <span class="math inline">\(\boldsymbol{\mathbf{S}}\)</span> and <span class="math inline">\(\hat{\boldsymbol{\mathbf{\Sigma}}}\)</span> are
-generally not equal. The practical implication is that if <span class="math inline">\(\rho_{C}\)</span> is computed as <span class="math inline">\((\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\lambda}})^2\)</span>
-using unit weights the weights can in fact be scaled by both <span class="math inline">\((\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{S}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}\)</span>
-or <span class="math inline">\((\boldsymbol{\mathbf{w}}'\hat{\boldsymbol{\mathbf{\Sigma}}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}\)</span>!
-Similarly, <span class="math inline">\(\rho_{C;
-\text{weighted}}\)</span> can be computed using weights scaled using
-either <span class="math inline">\(\boldsymbol{\mathbf{S}}\)</span> or
-<span class="math inline">\(\hat{\boldsymbol{\mathbf{\Sigma}}}\)</span>.
+</annotation></semantics></math> where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>ρ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><mo>=</mo><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub></mrow><annotation encoding="application/x-tex">\bar\rho_x = \bar\sigma_x</annotation></semantics></math>
+is the average correlation between indicators. Consequently, parallel
+and tau-equivalent reliability are always identical in
+<strong>cSEM</strong>.</p>
+<p>So far formulae have been motivated theoretically. Since
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝚺</mi><annotation encoding="application/x-tex">\boldsymbol{\mathbf{\Sigma}}</annotation></semantics></math>
+is unknown it can be replaced by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐒</mi><annotation encoding="application/x-tex">\boldsymbol{\mathbf{S}}</annotation></semantics></math>
+(the empirical indicator correlation matrix) or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\hat{\boldsymbol{\mathbf{\Sigma}}}</annotation></semantics></math>
+(the model-implied indicator correlation matrix), however,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐒</mi><annotation encoding="application/x-tex">\boldsymbol{\mathbf{S}}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\hat{\boldsymbol{\mathbf{\Sigma}}}</annotation></semantics></math>
+are generally not equal. The practical implication is that if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mi>C</mi></msub><annotation encoding="application/x-tex">\rho_{C}</annotation></semantics></math>
+is computed as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mi>𝛌</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\lambda}})^2</annotation></semantics></math>
+using unit weights the weights can in fact be scaled by both
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mi>𝐒</mi><mi>𝐰</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{S}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}</annotation></semantics></math>
+or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover><mi>𝐰</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\hat{\boldsymbol{\mathbf{\Sigma}}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}</annotation></semantics></math>!
+Similarly,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mrow><mi>C</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext></mrow></msub><annotation encoding="application/x-tex">\rho_{C; \text{weighted}}</annotation></semantics></math>
+can be computed using weights scaled using either
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐒</mi><annotation encoding="application/x-tex">\boldsymbol{\mathbf{S}}</annotation></semantics></math>
+or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\hat{\boldsymbol{\mathbf{\Sigma}}}</annotation></semantics></math>.
 Consequently there are in fact four types of congeneric reliability
 depending the type of weight and the type of scaling for the weights.
 Hence, the calculation is of “the” congeneric reliability is always:
-<span class="math display">\[(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\lambda}})^2\]</span>
-where <span class="math inline">\(\boldsymbol{\mathbf{w}}\)</span> can
-be:</p>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mi>𝛌</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\lambda}})^2</annotation></semantics></math>
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐰</mi><annotation encoding="application/x-tex">\boldsymbol{\mathbf{w}}</annotation></semantics></math>
+can be:</p>
 <ol style="list-style-type: decimal">
-<li>a vector of unit weights scaled by <span class="math inline">\((\boldsymbol{\mathbf{w}}'\hat{\boldsymbol{\mathbf{\Sigma}}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}\)</span>.
+<li>a vector of unit weights scaled by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover><mi>𝐰</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\hat{\boldsymbol{\mathbf{\Sigma}}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}</annotation></semantics></math>.
 This is typically what people refer to as <em>the</em> congeneric
-reliability (Jöreskog’s <span class="math inline">\(\rho\)</span>). We
-label this type of reliability estimate <span class="math inline">\(\rho_C\)</span>.</li>
-<li>a vector of unit weights scaled by <span class="math inline">\((\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{S}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}\)</span>.
+reliability (Jöreskog’s
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ρ</mi><annotation encoding="application/x-tex">\rho</annotation></semantics></math>).
+We label this type of reliability estimate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mi>C</mi></msub><annotation encoding="application/x-tex">\rho_C</annotation></semantics></math>.</li>
+<li>a vector of unit weights scaled by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mi>𝐒</mi><mi>𝐰</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{S}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}</annotation></semantics></math>.
 This has no known name. Its usefulness is an open question. We label
-this type of reliability estimate <span class="math inline">\(\rho_{C;mm}\)</span>.</li>
+this type of reliability estimate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mrow><mi>C</mi><mo>;</mo><mi>m</mi><mi>m</mi></mrow></msub><annotation encoding="application/x-tex">\rho_{C;mm}</annotation></semantics></math>.</li>
 <li>a vector of weights obtained using a composite-based estimator
-(e.g. PLS-PM) scaled by <span class="math inline">\((\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{S}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}\)</span>.
-This is Dijkstra Henseler’s <span class="math inline">\(\rho_A\)</span>.
-We label this type of reliability estimate <span class="math inline">\(\rho_{C;\text{weighted}}\)</span>.</li>
+(e.g. PLS-PM) scaled by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mi>𝐒</mi><mi>𝐰</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{S}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}</annotation></semantics></math>.
+This is Dijkstra Henseler’s
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mi>A</mi></msub><annotation encoding="application/x-tex">\rho_A</annotation></semantics></math>.
+We label this type of reliability estimate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mrow><mi>C</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext></mrow></msub><annotation encoding="application/x-tex">\rho_{C;\text{weighted}}</annotation></semantics></math>.</li>
 <li>a vector of weights obtained using a composite-based estimator
-(e.g. PLS-PM) scaled by <span class="math inline">\((\boldsymbol{\mathbf{w}}'\hat{\boldsymbol{\mathbf{\Sigma}}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}\)</span>.
+(e.g. PLS-PM) scaled by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover><mi>𝐰</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\hat{\boldsymbol{\mathbf{\Sigma}}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}</annotation></semantics></math>.
 This has no known name. Its usefulness is an open question. We label
-this type of reliability estimate <span class="math inline">\(\rho_{C;\text{weighted};mm}\)</span>
+this type of reliability estimate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mrow><mi>C</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext><mo>;</mo><mi>m</mi><mi>m</mi></mrow></msub><annotation encoding="application/x-tex">\rho_{C;\text{weighted};mm}</annotation></semantics></math>
 </li>
 </ol>
 <div class="section level5">
@@ -965,31 +1106,40 @@ reliability estimates found in the literature</caption>
 <tbody>
 <tr class="odd">
 <td align="center">Parallel reliability</td>
-<td align="center"><span class="math inline">\(\rho_P\)</span></td>
+<td align="center"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mi>P</mi></msub><annotation encoding="application/x-tex">\rho_P</annotation></semantics></math></td>
 <td align="center">Spearman-Brown formula, Spearman-Brown prophecy,
 Standardized alpha, Split-half reliability</td>
 </tr>
 <tr class="even">
 <td align="center">Tau-equivalent reliability</td>
-<td align="center"><span class="math inline">\(\rho_T\)</span></td>
-<td align="center">Cronbach’s alpha, <span class="math inline">\(\alpha\)</span>, Coefficient alpha Guttmans <span class="math inline">\(\lambda_3\)</span>, KR-20</td>
+<td align="center"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mi>T</mi></msub><annotation encoding="application/x-tex">\rho_T</annotation></semantics></math></td>
+<td align="center">Cronbach’s alpha,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>,
+Coefficient alpha Guttmans
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>λ</mi><mn>3</mn></msub><annotation encoding="application/x-tex">\lambda_3</annotation></semantics></math>,
+KR-20</td>
 </tr>
 <tr class="odd">
 <td align="center">Tau-equivalent reliability weighted</td>
-<td align="center"><span class="math inline">\(\rho_{T;\text{weighted}}\)</span></td>
+<td align="center"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mrow><mi>T</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext></mrow></msub><annotation encoding="application/x-tex">\rho_{T;\text{weighted}}</annotation></semantics></math></td>
 <td align="center">–</td>
 </tr>
 <tr class="even">
 <td align="center">Congeneric reliability</td>
-<td align="center"><span class="math inline">\(\rho_C\)</span></td>
-<td align="center">Composite reliability, Jöreskog’s <span class="math inline">\(\rho\)</span>, Construct reliability, <span class="math inline">\(\omega\)</span>, reliability coefficient,
-Dillon-Goldsteins’s <span class="math inline">\(\rho\)</span>
+<td align="center"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mi>C</mi></msub><annotation encoding="application/x-tex">\rho_C</annotation></semantics></math></td>
+<td align="center">Composite reliability, Jöreskog’s
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ρ</mi><annotation encoding="application/x-tex">\rho</annotation></semantics></math>,
+Construct reliability,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ω</mi><annotation encoding="application/x-tex">\omega</annotation></semantics></math>,
+reliability coefficient, Dillon-Goldsteins’s
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ρ</mi><annotation encoding="application/x-tex">\rho</annotation></semantics></math>
 </td>
 </tr>
 <tr class="odd">
 <td align="center">Congeneric reliability weighted</td>
-<td align="center"><span class="math inline">\(\rho_{C;\text{weighted}}\)</span></td>
-<td align="center">Dijkstra-Henseler’s <span class="math inline">\(\rho_A\)</span>
+<td align="center"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mrow><mi>C</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext></mrow></msub><annotation encoding="application/x-tex">\rho_{C;\text{weighted}}</annotation></semantics></math></td>
+<td align="center">Dijkstra-Henseler’s
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mi>A</mi></msub><annotation encoding="application/x-tex">\rho_A</annotation></semantics></math>
 </td>
 </tr>
 </tbody>
@@ -1023,21 +1173,27 @@ or a vector of values to <code>.alpha</code>.</p>
 </h4>
 <p>Calculate the Goodness of Fit (GoF) proposed by <span class="citation">Tenenhaus, Amanto, and Vinzi (2004)</span>. Note that,
 contrary to what the name suggests, the GoF is <strong>not</strong> a
-measure of (overall) model fit in a <span class="math inline">\(\chi^2\)</span>-fit test sense. See e.g. <span class="citation">Henseler and Sarstedt (2012)</span> for a
-discussion.</p>
+measure of (overall) model fit in a
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>χ</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\chi^2</annotation></semantics></math>-fit
+test sense. See e.g. <span class="citation">Henseler and Sarstedt
+(2012)</span> for a discussion.</p>
 </div>
 <div class="section level4">
 <h4 id="formulae-4">Formulae<a class="anchor" aria-label="anchor" href="#formulae-4"></a>
 </h4>
 <p>The GoF is defined as:</p>
-<p><span class="math display">\[\text{GoF} = \sqrt{\varnothing
-\text{COM}_k \times \varnothing R^2_{structural}} =
-\sqrt{\frac{1}{k}\sum^K_{k=1} \lambda^2_k + \frac{1}{M} \sum^M_{m = 1}
-R^2_{m;structural}} \]</span> where <span class="math inline">\(COM_k\)</span> is the communality of indicator
-<span class="math inline">\(k\)</span>, i.e. the variance in the
-indicator that is explained by its connected latent variable and <span class="math inline">\(R^2_{m; structural}\)</span> the R squared of the
-<span class="math inline">\(m\)</span>’th equation of the structural
-model.</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">GoF</mtext><mo>=</mo><msqrt><mrow><mi>⌀</mi><msub><mtext mathvariant="normal">COM</mtext><mi>k</mi></msub><mo>×</mo><mi>⌀</mi><msubsup><mi>R</mi><mrow><mi>s</mi><mi>t</mi><mi>r</mi><mi>u</mi><mi>c</mi><mi>t</mi><mi>u</mi><mi>r</mi><mi>a</mi><mi>l</mi></mrow><mn>2</mn></msubsup></mrow></msqrt><mo>=</mo><msqrt><mrow><mfrac><mn>1</mn><mi>k</mi></mfrac><munderover><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></munderover><msubsup><mi>λ</mi><mi>k</mi><mn>2</mn></msubsup><mo>+</mo><mfrac><mn>1</mn><mi>M</mi></mfrac><munderover><mo>∑</mo><mrow><mi>m</mi><mo>=</mo><mn>1</mn></mrow><mi>M</mi></munderover><msubsup><mi>R</mi><mrow><mi>m</mi><mo>;</mo><mi>s</mi><mi>t</mi><mi>r</mi><mi>u</mi><mi>c</mi><mi>t</mi><mi>u</mi><mi>r</mi><mi>a</mi><mi>l</mi></mrow><mn>2</mn></msubsup></mrow></msqrt></mrow><annotation encoding="application/x-tex">\text{GoF} = \sqrt{\varnothing \text{COM}_k \times \varnothing R^2_{structural}} = 
+\sqrt{\frac{1}{k}\sum^K_{k=1} \lambda^2_k + \frac{1}{M} \sum^M_{m = 1} R^2_{m;structural}} </annotation></semantics></math>
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mi>O</mi><msub><mi>M</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">COM_k</annotation></semantics></math>
+is the communality of indicator
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>,
+i.e. the variance in the indicator that is explained by its connected
+latent variable and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mrow><mi>m</mi><mo>;</mo><mi>s</mi><mi>t</mi><mi>r</mi><mi>u</mi><mi>c</mi><mi>t</mi><mi>u</mi><mi>r</mi><mi>a</mi><mi>l</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">R^2_{m; structural}</annotation></semantics></math>
+the R squared of the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>’th
+equation of the structural model.</p>
 </div>
 <div class="section level4">
 <h4 id="implementation-4">Implementation<a class="anchor" aria-label="anchor" href="#implementation-4"></a>
