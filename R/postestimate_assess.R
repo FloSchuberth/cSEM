@@ -482,16 +482,21 @@ assess <- function(
     out[["SRMR"]] <- calculateSRMR(.object, ...)
   }
   
-  if(any(.quality_criterion %in% c("all", "FIT")) & (.object$Information$Arguments$.approach_weights %in% c("GSCA", "IGSCA"))) {
-    out[["FIT"]] <- calculateFIT(.object)
-  }
-  
-  if(any(.quality_criterion %in% c("all", "FIT_m")) & (.object$Information$Arguments$.approach_weights %in% c("GSCA", "IGSCA"))) {
-    out[["FIT_m"]] <- calculateFIT_m(.object)
-  }
-  
-  if(any(.quality_criterion %in% c("all", "FIT_s")) & (.object$Information$Arguments$.approach_weights %in% c("GSCA", "IGSCA"))) {
-    out[["FIT_s"]] <- calculateFIT_s(.object)
+  if(!is.null(.object$Information$Arguments$.approach_weights)) {
+    if (any(.quality_criterion %in% c("all", "FIT")) &
+        (.object$Information$Arguments$.approach_weights %in% c("GSCA", "IGSCA"))) {
+      out[["FIT"]] <- calculateFIT(.object)
+    }
+    
+    if (any(.quality_criterion %in% c("all", "FIT_m")) &
+        (.object$Information$Arguments$.approach_weights %in% c("GSCA", "IGSCA"))) {
+      out[["FIT_m"]] <- calculateFIT_m(.object)
+    }
+    
+    if (any(.quality_criterion %in% c("all", "FIT_s")) &
+        (.object$Information$Arguments$.approach_weights %in% c("GSCA", "IGSCA"))) {
+      out[["FIT_s"]] <- calculateFIT_s(.object)
+    }
   }
   
   if(any(.quality_criterion %in% c("all", "fl_criterion"))) {
