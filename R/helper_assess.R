@@ -2038,7 +2038,7 @@ calculateFIT_m <- function(.object = NULL) {
   SS_unexplained_indicator_variance <- sum(diag(t(Z - Gamma %*% C - DU) %*% (Z - Gamma %*% C - DU)))
   SS_total_indicator_variance <- sum(diag(t(Z) %*% Z)) 
   
-  FIT <- 1 - (SS_unexplained_indicator_variance / SS_total_indicator_variance)
+  FIT_m <- 1 - (SS_unexplained_indicator_variance / SS_total_indicator_variance)
   
   return(FIT_m)
 }
@@ -2054,7 +2054,7 @@ calculateFIT_s <- function(.object = NULL) {
   SS_unexplained_construct_variance <- sum(diag(t(Gamma - Gamma %*% B) %*% (Gamma - Gamma %*% B)))
   SS_total_construct_variance <- sum(diag(t(Gamma) %*% (Gamma)))
   
-  FIT <- 1 - (SS_unexplained_construct_variance / SS_total_construct_variance)
+  FIT_s <- 1 - (SS_unexplained_construct_variance / SS_total_construct_variance)
   
   return(FIT_s)
 }
