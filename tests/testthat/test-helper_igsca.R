@@ -169,3 +169,7 @@ testthat::expect_success(testthat::expect_equal(igsca_sim_m_table,
 
 # all.equal(igsca_sim_m_table, igsca_gscapro)
 
+
+# Comparing Different Ways of Fitting Group Models ------------------------
+
+
