@@ -2008,12 +2008,20 @@ calculateSRMR <- function(
 #' @export
 calculateFIT <- function(.object = NULL) {
   
-  # As shown in the GSCA_m publication in Hwang et al (2017)
+  # As shown in the GSCA_m publication (Hwang et al., 2017)
   Gamma <- .object$Estimates$Construct_scores
   Psi <- cbind(.object$Information$Data, Gamma)
   # I am fairly confident the transpose of B is what's needed
   # See Gamma[1,] %*% t(...$Path_estimates)
-  A <- cbind(.object$Estimates$Loading_estimates, t(.object$Estimates$Path_estimates))
+  if (!is.null(.object$Estimates$Path_estimates)) {
+    # If there's a structural model
+    A <- cbind(.object$Estimates$Loading_estimates,
+               t(.object$Estimates$Path_estimates))
+  }
+  else if (is.null(.object$Estimates$Path_estimates)) {
+    # If no structural model
+    A <- .object$Estimates$Loading_estimates
+  }
   
   if (!is.null(.object$Estimates$UniqueComponent)) {
     S <- cbind(.object$Estimates$UniqueComponent, matrix(data = 0, nrow = nrow(Gamma), ncol = ncol(Gamma)))
@@ -2038,7 +2046,15 @@ calculateFIT_m <- function(.object = NULL) {
   Z <- .object$Information$Data
   Gamma <- .object$Estimates$Construct_scores
   C <- .object$Estimates$Loading_estimates
-  DU <- .object$Estimates$UniqueComponent  
+  if (!is.null(.object$Estimates$UniqueComponent)) {
+    DU <- cbind(.object$Estimates$UniqueComponent, matrix(data = 0, nrow = nrow(Gamma), ncol = ncol(Gamma)))
+    
+  } else if (is.null(.object$Estimates$UniqueComponent)) {
+    # UniqueComponent should be NULL when GSCA and not GSCA_m/I-GSCA is run 
+    DU <- matrix(data = 0, nrow(Psi), ncol = ncol(Psi))  
+    
+  }
+  
   
   SS_unexplained_indicator_variance <- sum(diag(t(Z - Gamma %*% C - DU) %*% (Z - Gamma %*% C - DU)))
   SS_total_indicator_variance <- sum(diag(t(Z) %*% Z)) 
@@ -2055,7 +2071,13 @@ calculateFIT_s <- function(.object = NULL) {
   Gamma <- .object$Estimates$Construct_scores
   # I am fairly confident the transpose of B is what's needed
   # See Gamma[1,] %*% t(B)
-  B <- t(.object$Estimates$Path_estimates)
+  if (!is.null(.object$Estimates$Path_estimates)) {
+    B <- t(.object$Estimates$Path_estimates)
+  }
+  else if (is.null(.object$Estimates$Path_estimates)) {
+    B <- matrix(data = 0, nrow = ncol(Gamma), ncol = ncol(Gamma))
+  }
+  
   
   SS_unexplained_construct_variance <- sum(diag(t(Gamma - Gamma %*% B) %*% (Gamma - Gamma %*% B)))
   SS_total_construct_variance <- sum(diag(t(Gamma) %*% (Gamma)))
