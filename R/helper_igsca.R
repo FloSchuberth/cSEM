@@ -288,7 +288,7 @@ igsca <-
 #' Initializes the values for I-GSCA by using modified Generalized Structured Component Analysis (GSCA) to estimate the model.
 #' 
 #' @inheritParams igsca
-#' 
+#' @importFrom MASS ginv 
 #' @author Michael S. Truong
 #' @returns Returns a list of starting values for:
 #' * Weights (W)
@@ -540,7 +540,7 @@ updateCompositeTheta <-
 #' @param b_index Index of Path Coefficients
 #' @param n_case Number of Cases
 #' @param indicator_type Vector of whether each indicator corresponds to a common factor or composite
-#'
+#' @importFrom MASS ginv 
 #' @return List of matrices:
 #'
 #' * (1) Uniqueness terms (D) and (U)
@@ -719,4 +719,95 @@ getIgscaInputs <-
 warnIgscaFeatures <- function() {
 
   warning("The list of current suspected and confirmed limitations of the R IGSCA limitations if found here: https://github.com/FloSchuberth/cSEM/wiki/Notes-on-I%E2%80%90GSCA-Implementation#current-limitations")
+}
+
+#' Block Diagonalize Estimated Parameter Matrices to Facilitate Computation of FIT Statistics
+#' 
+#' Block diagonalizes the estimated paramater matrices as shown on Equations
+#' 3.28-3.29 on page 111 of \insertCite{Hwang2014;textual}{cSEM}. Should only be used on multi-group models
+#' 
+#' @inheritParams tidy.cSEMResults
+#' 
+#' @return cSEMResults in single-group data structure with block diagonalized parameter estimates
+#' @export
+#' @importFrom Matrix bdiag
+diagonalizeMultiGroupIgscaEstimates <- function(x) {
+  
+  if (!identical(names(x), c("Estimates", "Information"))) {
+    # Multi-Group Code
+    
+
+    ## Extract Matrices ------------------------------------------------------
+    # Extract Estimated Matrices
+    # TODO: Test whether the following code works
+    
+    estimates_to_be_extracted <- list(
+      "Path_estimates",
+      "Loading_estimates",
+      "Weight_estimates",
+      "Construct_scores",
+      "UniqueComponent"
+    )
+    
+    names(estimates_to_be_extracted) <- unlist(estimates_to_be_extracted)
+    
+    extraction <- lapply(X = estimates_to_be_extracted,
+           function(matrix_name, multigroup_output) {
+             extraction <- lapply(
+               multigroup_output,
+               function(onegroup_output, matrix_name) {
+                 return(onegroup_output[["Estimates"]][[matrix_name]])
+                 
+               },
+               matrix_name = matrix_name
+             )
+             return(extraction)
+             
+           }, multigroup_output = x)
+    
+    # Extract Data
+    extraction$Data <- lapply(x, function(onegroup_output) {
+      return(onegroup_output[["Information"]][["Data"]])
+    })
+    extraction <- mapply(function(extract, extract_name){
+      # We don't keep it as a sparse matrix because that might break
+      # functionality with other functions unless much more of Matrix is
+      # imported
+    
+      bdiaged <- Matrix::bdiag(extract)
+      colnames(bdiaged) <- rep(colnames(extract[[1]]), times = length(extract))
+      if (!(extract_name %in% c("Data", "Construct_scores", "UniqueComponent"))) {
+        rownames(bdiaged) <- rep(rownames(extract[[1]]), times = length(extract))
+      }
+      
+      return(as.matrix(bdiaged))
+    },
+    extract = extraction,
+    extract_name = names(extraction),
+    SIMPLIFY = FALSE
+    )
+    
+    
+    
+    ## Create Surrogate Output -----------------------------------------------
+    surrogate_out <- list()
+     # Insert the diagonalized matrices into the surrogate
+     ## It's not simple to take x[[1]] as the surrogate structure because it has
+     ## many estimatates (such as reliabilities) that are specific to the group
+     ## model
+    
+    for (extract_name in names(extraction)[which(names(extraction) != "Data")]) {
+      surrogate_out[["Estimates"]][[extract_name]] <- extraction[[extract_name]]
+    }
+    
+    surrogate_out[["Information"]][["Data"]] <- extraction[["Data"]]
+    
+    return(surrogate_out)
+    
+    
+  } else if (identical(names(x), c("Estimates", "Information"))){
+    # Single-Group Code
+    stop("This function is only meant for multi-group models.")
+    
+  }
 }

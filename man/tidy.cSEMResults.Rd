@@ -32,6 +32,7 @@ description of the column names are as follows:
 
 \item{term}{The result of \code{paste(lhs, op, rhs)}}
 \item{op}{The operator in the model syntax (e.g., \verb{~~} for correlation, \verb{<~} for weights, \verb{=~} for loadings, and \code{~} for path estimates)}
+\item{group}{The group as specified by \code{.id} in the \code{\link[=csem]{csem()}}.}
 \item{estimate}{The parameter estimate}
 \item{construct.type}{Whether the modelled construct is a common factor or composite variable}
 \item{std.error}{}
@@ -45,5 +46,5 @@ This method and documentation is based on the \code{tidy} method for \code{lavaa
 \strong{Cautionary Note}: As with all \code{tidy()} methods, mis-specified arguments may be silently ignored.
 }
 \author{
-Michael s. truong
+Michael S. Truong
 }

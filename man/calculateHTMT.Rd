@@ -36,7 +36,8 @@ to compute the 1-alpha\% quantile of the bootstrap HTMT values. For possible
 choices see \code{\link[=infer]{infer()}}. Ignored
 if \code{.inference = FALSE}. Defaults to "\emph{CI_percentile}".}
 
-\item{.inference}{Logical. Should critical values be computed? Defaults to \code{FALSE}.}
+\item{.inference}{Logical. Should critical values be computed? Defaults to
+\code{FALSE}.}
 
 \item{.only_common_factors}{Logical. Should only concepts modeled as common
 factors be included when calculating one of the following quality criteria:
