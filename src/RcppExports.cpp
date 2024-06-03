@@ -11,21 +11,22 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// ckronecker
-arma::mat ckronecker(arma::mat X, arma::mat Y);
-RcppExport SEXP _cSEM_ckronecker(SEXP XSEXP, SEXP YSEXP) {
+// kroneckerC
+arma::mat kroneckerC(arma::mat& X, arma::mat& Y, arma::uvec& idx);
+RcppExport SEXP _cSEM_kroneckerC(SEXP XSEXP, SEXP YSEXP, SEXP idxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
-    rcpp_result_gen = Rcpp::wrap(ckronecker(X, Y));
+    Rcpp::traits::input_parameter< arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< arma::uvec& >::type idx(idxSEXP);
+    rcpp_result_gen = Rcpp::wrap(kroneckerC(X, Y, idx));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_cSEM_ckronecker", (DL_FUNC) &_cSEM_ckronecker, 2},
+    {"_cSEM_kroneckerC", (DL_FUNC) &_cSEM_kroneckerC, 3},
     {NULL, NULL, 0}
 };
 

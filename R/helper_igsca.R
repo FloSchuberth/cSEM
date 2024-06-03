@@ -330,8 +330,9 @@ initializeIgscaEstimates <- function(Z0, W0, B0) {
   imp <- 100000000
   while ((it <= 300) && (imp > 0.0001)) {
     it <- it + 1
-    Phi = ckronecker(diag(TRep), Gamma)
-    Phi <- Phi[, aindex]
+    # Phi = kroencker(diag(TRep), Gamma)
+    # Phi <- Phi[, aindex]
+    Phi <- kroneckerC(diag(TRep), Gamma, aindex)
     A[aindex] <- solve(t(Phi) %*% Phi, t(Phi)) %*% vecPsi
     
     for (p in seq_len(P)) {
@@ -348,8 +349,9 @@ initializeIgscaEstimates <- function(Z0, W0, B0) {
       Delta <- (W %*% H1 %*% A) - (V %*% H2)
       vecZDelta <- c(Z %*% Delta)
       
-      XI <- ckronecker(t(beta), Z)
-      XI <- XI[, windex_p]
+      # XI <- kroencker(t(beta), Z)
+      # XI <- XI[, windex_p]
+      XI <- kroneckerC(t(beta), Z, windex_p)
       Theta <- MASS::ginv(t(XI) %*% XI) %*% t(XI) %*% vecZDelta
       zw <- Z[, windex_p] %*% Theta
       
@@ -523,9 +525,11 @@ updateCompositeTheta <-
     
     vecZDelta <- c(X %*% Delta)
     beta <- e - A[gamma_idx, ]
-    XI <- ckronecker(t(beta), X)
-    XI <- XI[, windex_gamma_idx]
+    # XI <- kroencker(t(beta), X)
+    # XI <- XI[, windex_gamma_idx]
     
+    # TODO: Maybe properly convert windex_gamma_idx?
+    XI <- kroneckerC(t(beta), X, which(windex_gamma_idx))
     Theta <- solve((t(XI) %*% XI), t(XI)) %*% vecZDelta
     return(Theta)
   }
@@ -561,13 +565,15 @@ updateCBDU <-
            b_index,
            n_case) {
     t1 <- c(X)
-    M1 <- ckronecker(diag(n_indicators), Gamma)
-    M1 <- M1[, c_index]
+    # M1 <- kroencker(diag(n_indicators), Gamma)
+    # M1 <- M1[, c_index]
+    M1 <- kroneckerC(diag(n_indicators), Gamma, c_index)
     C[c_index] <- MASS::ginv(t(M1) %*% M1) %*% (t(M1) %*% t1)
     
     t2 <- c(Gamma)
-    M2 <- ckronecker(diag(n_constructs), Gamma)
-    M2 <- M2[, b_index]
+    # M2 <- kroencker(diag(n_constructs), Gamma)
+    # M2 <- M2[, b_index]
+    M2 <- kroneckerC(diag(n_constructs), Gamma, b_index)
     B[b_index] <- MASS::ginv(t(M2) %*% M2) %*% (t(M2) %*% t2)
     
     # Solution for Q is copied from estimators_weights.R
