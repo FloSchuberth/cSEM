@@ -25,7 +25,6 @@
 #' 
 
 
-
 calculateMAE <- function(resid){
   return(apply(na.omit(resid), 2, function(x) mean(abs(x))))
 }

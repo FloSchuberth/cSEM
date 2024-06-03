@@ -18,6 +18,7 @@
 #'   .disattenuate                = args_default()$.disattenuate,
 #'   .dominant_indicators         = args_default()$.dominant_indicators,
 #'   .estimate_structural         = args_default()$.estimate_structural,
+#'   .GSCA_modes                  = args_default()$.GSCA_modes,
 #'   .id                          = args_default()$.id,
 #'   .instruments                 = args_default()$.instruments,
 #'   .iter_max                    = args_default()$.iter_max,
@@ -50,6 +51,7 @@ foreman <- function(
   .disattenuate                = args_default()$.disattenuate,
   .dominant_indicators         = args_default()$.dominant_indicators,
   .estimate_structural         = args_default()$.estimate_structural,
+  .GSCA_modes                  = args_default()$.GSCA_modes,
   .id                          = args_default()$.id,
   .instruments                 = args_default()$.instruments,
   .iter_max                    = args_default()$.iter_max,
@@ -138,15 +140,31 @@ foreman <- function(
         .starting_values          = .starting_values
       )
     }
-
-  } else if(.approach_weights == "unit") {
-            
-    W <- calculateWeightsUnit(
-      .S                        = S,
-      .csem_model               = csem_model,
-      .starting_values          = .starting_values
+    
+  } else if (.approach_weights == "IGSCA") {
+    
+    
+    W <- calculateWeightsIGSCA(
+      .data = X_cleaned,
+      .csem_model = csem_model,
+      .tolerance = .tolerance,
+      .iter_max = .iter_max,
+      .dominant_indicators = .dominant_indicators,
+      .conv_criterion = .conv_criterion
     )
-  } else if(.approach_weights %in% c("bartlett", "regression")) {
+    
+    # Transpose weights and loadings matrix for compatibility with calculateReliabilities()
+    W$W <- t(W$W)
+    W$C <- t(W$C)
+    # Transpose path coefficients matrix for comparability with IGSCA
+    W$B <- t(W$B)
+    
+  } else if (.approach_weights == "unit") {
+    W <- calculateWeightsUnit(.S                        = S,
+                              .csem_model               = csem_model,
+                              .starting_values          = .starting_values)
+  } else if (.approach_weights %in% c("bartlett", "regression")) {
+    
     
     # Note:  1. "bartlett" and "regression" weights are calculated later in the 
     #        calculateReliabilities() function. Here only placeholders for
@@ -162,13 +180,13 @@ foreman <- function(
   }
 
   ## Dominant indicators:
-  if(!is.null(.dominant_indicators)) {
+  if(!is.null(.dominant_indicators) && (.approach_weights != "IGSCA")) {
     W$W <- setDominantIndicator(
       .W = W$W, 
       .dominant_indicators = .dominant_indicators,
       .S = S)
   }
-
+  
   LambdaQ2W <- calculateReliabilities(
     .X                = X,
     .S                = S,
@@ -195,7 +213,12 @@ foreman <- function(
   Theta <- S - t(Lambda) %*% Lambda
   
   ## Calculate proxies/scores
-  H <- X %*% t(Weights)
+  if (.approach_weights == "IGSCA") {
+    H <- W$Construct_scores
+  } else if (.approach_weights != "IGSCA") {
+    H <- X %*% t(Weights)
+  }
+  
   
   ## Calculate proxy covariance matrix
   C <- calculateCompositeVCV(.S = S, .W = Weights)
@@ -216,6 +239,9 @@ foreman <- function(
       .P              = P,
       .Q              = Q
     ) 
+    if (.approach_weights == "IGSCA") {
+      estim_results$Path_estimates <- W$B
+    }
   } else {
     estim_results <- NULL
   }
@@ -236,6 +262,16 @@ foreman <- function(
       "Indicator_VCV"          = S,
       "Proxy_VCV"              = C,
       "Construct_VCV"          = P,
+      "D2"                     = if(.approach_weights == "IGSCA"){
+        W$D_squared
+      } else {
+        NULL
+      },
+      "UniqueComponent"        = if(.approach_weights == "IGSCA"){
+        W$UniqueComponent
+      } else {
+        NULL
+      },
       "Reliabilities"          = Q^2,
       "R2"                     = if(.estimate_structural) {
         estim_results$R2
@@ -259,7 +295,11 @@ foreman <- function(
       }
     ),
     "Information" = list(
-      "Data"          = X,
+      "Data"          = if(.approach_weights == "IGSCA"){
+        W$Data # TODO: identical(W$Data, X) is FALSE for IGSCA, should revisit this later
+      } else {
+        X
+      },
       "Model"         = csem_model,
       "Arguments"     = args_used,
       "Type_of_indicator_correlation" = Cor$cor_type,

@@ -67,7 +67,9 @@ Imports:
     stats,
     symmoments,
     TruncatedNormal,
-    utils
+    utils,
+    Rcpp,
+    generics
 RdMacros: Rdpack, lifecycle
 RoxygenNote: 7.3.1
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
@@ -81,8 +83,12 @@ Suggests:
     rmarkdown,
     rootSolve,
     listviewer,
-    testthat,
+    testthat (>= 3.0.0),
     ggplot2,
     openxlsx,
-    graphics
+    graphics,
+    waldo
+Config/testthat/edition: 3
 VignetteBuilder: knitr
+LinkingTo: 
+    Rcpp, RcppArmadillo

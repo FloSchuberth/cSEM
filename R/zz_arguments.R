@@ -68,7 +68,7 @@
 #'   is used. Defaults to "*mean*".
 #' @param .approach_weights Character string. Approach used to
 #'   obtain composite weights. One of: "*PLS-PM*", "*SUMCORR*", "*MAXVAR*",
-#'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*PCA*", "*unit*", "*bartlett*", 
+#'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*IGSCA*", "*PCA*", "*unit*", "*bartlett*", 
 #'   or "*regression*". Defaults to "*PLS-PM*".
 #' @param .args_used A list of function argument names whose value was modified 
 #'   by the user.
@@ -97,7 +97,7 @@
 #' @param .closed_form_ci Logical. Should a closed-form confidence interval be computed?
 #'   Defaults to `FALSE`.
 #' @param .conv_criterion Character string. The criterion to use for the convergence check.
-#'   One of: "*diff_absolute*", "*diff_squared*", or "*diff_relative*". Defaults
+#'   One of: "*diff_absolute*", "*diff_squared*", "*diff_relative*", or "*sum_diff_absolute*". Defaults
 #'   to "*diff_absolute*".
 #' @param .csem_model A (possibly incomplete) [cSEMModel]-list.
 #' @param .csem_resample A list resulting from a call to [resamplecSEMResults()].
@@ -141,6 +141,14 @@
 #'   already?. Defaults to `FALSE`.
 #' @param .full_output Logical. Should the full output of summarize be printed.
 #'   Defaults to `TRUE`.
+#' @param .GSCA_modes Either a named list specifying the mode that should be
+#'   used for each composite in the form `"composite_name" = mode`, a single
+#'   character string giving the mode that should be used for all composites.
+#'   Possible single character string choices for `mode` are: "*canon*" for
+#'   canonical composites, or "*nomo*" for nomological composites, or `NULL` for
+#'   default behavior. Default behavior is to estimate nomological composites.
+#'   Passed to (I-)GSCA estimating functions in [cSEM::calculateWeightsGSCA()]
+#'   or [cSEM::calculateWeightsIGSCA()]. Defaults to `NULL`.
 #' @param .H The (N x J) matrix of construct scores.
 #' @param .handle_inadmissibles Character string. How should inadmissible results 
 #'   be treated? One of "*drop*", "*ignore*", or "*replace*". If "*drop*", all
@@ -151,10 +159,13 @@
 #'   For "*replace*" resampling continues until there are exactly `.R` admissible solutions.
 #'   Depending on the frequency of inadmissible solutions this may significantly increase
 #'   computing time. Defaults to "*drop*".
-#' @param .id Character string or integer. A character string giving the name or 
+#' @param .id Character string or integer. A character string giving the name or
 #'   an integer of the position of the column of `.data` whose levels are used
-#'   to split `.data` into groups. Defaults to `NULL`.
-#' @param .inference Logical. Should critical values be computed? Defaults to `FALSE`.
+#'   to split `.data` into groups. Values of the column referred to by `.id`
+#'   cannot be solely comprised of `Estimates` or `Information` as these are
+#'   internal identifiers for [cSEM::csem()] functionality. Defaults to `NULL`.
+#' @param .inference Logical. Should critical values be computed? Defaults to
+#'   `FALSE`.
 #' @param .independent Character string. The name of the independent variable.
 #' @param .instruments A named list of vectors of instruments. The names
 #'   of the list elements are the names of the dependent (LHS) constructs of the structural
@@ -448,7 +459,7 @@ args_default <- function(.choices = FALSE) {
     .approach_score_benchmark= c("mean", "median", "mode", "round"),
     .approach_score_target   = c("mean", "median", "mode"),
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
-                                 "GSCA", "PCA", "unit", "bartlett", "regression"), 
+                                 "GSCA", "IGSCA", "PCA", "unit", "bartlett", "regression"), 
     .arguments               = NULL,
     .attributes              = NULL,
     .benchmark               = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR","NA"),
@@ -461,7 +472,7 @@ args_default <- function(.choices = FALSE) {
                                  "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
     .ci_colnames             = NULL,
     .closed_form_ci          = FALSE, 
-    .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative"),
+    .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative", "sum_diff_absolute", "mean_diff_absolute"),
     .csem_model              = NULL,
     .csem_resample           = NULL,
     .cv_folds                = 10,
@@ -481,6 +492,7 @@ args_default <- function(.choices = FALSE) {
     .first_resample          = NULL,
     .force                   = FALSE,
     .full_output             = TRUE,
+    .GSCA_modes              = NULL,
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
@@ -529,7 +541,7 @@ args_default <- function(.choices = FALSE) {
                                  "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
                                  "cfi", "cn", "gfi", "ifi", "nfi", "nnfi", 
                                  "reliability",
-                                 "rmsea", "rms_theta", "srmr",
+                                 "rmsea", "rms_theta", "srmr", "FIT", "FIT_m", "FIT_s",
                                  "gof", "htmt", "htmt2", "r2", "r2_adj",
                                  "rho_T", "rho_T_weighted", "vif", 
                                  "vifmodeB"),

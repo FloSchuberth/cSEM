@@ -194,9 +194,10 @@
 #' the estimation for each level separately. Note, the more levels
 #' the group-identifier-column has, the more estimation runs are required.
 #' This can considerably slow down estimation, especially if resampling is
-#' requested. For the latter it will generally be faster to use 
-#' `.eval_plan = "multisession"` or `.eval_plan = "multicore"`.
-#' } 
+#' requested. For the latter it will generally be faster to use `.eval_plan =
+#' "multisession"` or `.eval_plan = "multicore"`. *Warning*: [cSEM::csem()] does
+#' not support having only 2 group levels called "Estimates" and "Information",
+#' as this conflicts with internal functionality.}
 #' \subsection{Inference:}{
 #' Inference is done via resampling. See [resamplecSEMResults()] and [infer()] for details.
 #' }
@@ -209,15 +210,17 @@
 #' .approach_nl           = c("sequential", "replace"),
 #' .approach_paths        = c("OLS", "2SLS"),
 #' .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
-#'                            "MINVAR", "GENVAR","GSCA", "PCA",
+#'                            "MINVAR", "GENVAR","GSCA", "IGSCA", "PCA",
 #'                            "unit", "bartlett", "regression"),
-#' .conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative"),
+#' .conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative",
+#'                            "sum_diff_absolute", "mean_diff_absolute"),
 #' .disattenuate          = TRUE,
 #' .dominant_indicators   = NULL,
 #' .estimate_structural   = TRUE,
 #' .id                    = NULL,
 #' .instruments           = NULL,
 #' .iter_max              = 100,
+#' .GSCA_modes            = NULL,
 #' .normality             = FALSE,
 #' .PLS_approach_cf       = c("dist_squared_euclid", "dist_euclid_weighted", 
 #'                            "fisher_transformed", "mean_arithmetic",
@@ -312,15 +315,16 @@ csem <- function(
   .approach_nl           = c("sequential", "replace"),
   .approach_paths        = c("OLS", "2SLS"),
   .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
-                             "MINVAR", "GENVAR","GSCA", "PCA",
+                             "MINVAR", "GENVAR","GSCA", "IGSCA", "PCA",
                              "unit", "bartlett", "regression"),
-  .conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative"),
+  .conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative", "sum_diff_absolute", "mean_diff_absolute"),
   .disattenuate          = TRUE,
   .dominant_indicators   = NULL,
   .estimate_structural   = TRUE,
   .id                    = NULL,
   .instruments           = NULL,
   .iter_max              = 100,
+  .GSCA_modes            = NULL,
   .normality             = FALSE,
   .PLS_approach_cf       = c("dist_squared_euclid", "dist_euclid_weighted", 
                              "fisher_transformed", "mean_arithmetic",
@@ -414,6 +418,12 @@ csem <- function(
         )
     }
     
+    if(identical(unique(.data[,.id]), c("Estimates", "Information"))) {
+      stop(
+        'csem does not support group levels called "Estimates" and "Information", as this conflicts with internal functionality.'
+      )
+    }
+    
     if(is.matrix(.data)) {
       .data <- as.data.frame(.data)
     }
@@ -455,7 +465,7 @@ csem <- function(
     out <- do.call(foreman, args_needed)
     
   }
-
+  
   ## Set class for output
   # See the details section of ?UseMethod() to learn how method dispatch works
   # for objects with multiple classes
