@@ -435,6 +435,18 @@ calculateReliabilities <- function(
         if ((.disattenuate &
             all(.csem_model$construct_type == "Common factor")) || .approach_weights == "IGSCA") {
           
+          if (.approach_weights == "IGSCA") {
+            # FIXME: Temporary Code to try to get IGSCA to work
+            # browser()
+            W <- scaleWeights(.S, W)
+            Lambda   <- W %*% .S * .csem_model$measurement
+            for (j in rownames(Lambda)) {
+              # Lambda[j, ] <- .W$C[j, ]
+              Q[j]        <- c(W[j, ] %*% Lambda[j, ])
+            }
+            # browser()
+          } else if (.approach_weights == "GSCA") {
+          
           # Currently, GSCAm only supports pure common factor models. This may change
           # in the future.
           
@@ -445,6 +457,7 @@ calculateReliabilities <- function(
             Lambda[j, ] <- .W$C[j, ]
             Q[j]        <- c(W[j, ] %*% Lambda[j, ])
           }
+            }
         }
       
     } else if(.approach_weights %in% c("unit", "bartlett", "regression", "PCA", 
