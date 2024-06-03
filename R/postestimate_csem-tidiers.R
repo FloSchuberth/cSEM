@@ -60,7 +60,6 @@ tidy.cSEMResults <- function(x,
   }
   
  out <- lapply(summarized_cSEMResults_list, function(summarized_cSEMResults, parameters) {
-   
    ## Selection ---------------------------------------------------------------
    if (parameters == "all") {
      
@@ -76,8 +75,10 @@ tidy.cSEMResults <- function(x,
      
      # Add type of effect as column
      # See user1317221_G on April 26/2015 https://stackoverflow.com/a/29878732
+   
      effect_estimates <- mapply(function(df, df_name) {
-       df$op <- rep(df_name, nrow(df))
+       # If there are no indirect effects, then the matrix will be NULL
+       try(df$op <- rep(df_name, nrow(df)), silent = TRUE)
        return(df)
      },
      effect_estimates,
@@ -86,6 +87,8 @@ tidy.cSEMResults <- function(x,
      
      
      out <- c(general_estimates, effect_estimates)
+     
+     out <- out[!(unlist(lapply(out, is.null)))]
      
    } else if (parameters != "Effect_estimates") {
      out <- summarized_cSEMResults[["Estimates"]][parameters] 
@@ -96,20 +99,19 @@ tidy.cSEMResults <- function(x,
      # Add type of effect as column
      # See user1317221_G on April 26/2015 https://stackoverflow.com/a/29878732
      effect_estimates <- mapply(function(df, df_name) {
-       df$op <- rep(df_name, nrow(df))
+       try(df$op <- rep(df_name, nrow(df)), silent = TRUE)
        return(df)
      },
      effect_estimates,
      names(effect_estimates),
      SIMPLIFY = FALSE)
      
-     out <- effect_estimates
+     out <- effect_estimates[!(unlist(lapply(effect_estimates, is.null)))]
      
    } 
    
    # Take out the empty data.frames to facilitate the later concatenation
-   out <- out[sapply(out, function(x)
-     nrow(x) > 0)]
+   out <- out[sapply(out, function(x) nrow(x) > 0)]
    # Add operand as op column
    out <- mapply(function(df, df_name) {
      if ((df_name %in% c("Direct_effect", "Indirect_effect", "Total_effect"))) {
