@@ -96,8 +96,6 @@ igsca <-
   n_constructs <- ncol(W0)
   n_total_var <- n_indicators + n_constructs
   
-  
-  
   w_index <- which(c(W0) == 1) 
   c_index <- which(c(C0) == 1)
   b_index <- which(c(B0) == 1)
@@ -416,7 +414,7 @@ initializeAlsEstimates <- function(Z0, W0, B0, n_indicators, n_case, n_construct
   
   # Initialize matrix to hold V
   V <- cbind(diag(n_indicators), W)
-  # Standardize and Norm Data Matrix 
+  # Standardize Data Matrix
   Z <- scale(Z0, center = TRUE, scale = TRUE) / sqrt(n_case - 1)
   # Create Initial Construct Scores Matrix
   Gamma <- Z %*% W
@@ -530,7 +528,7 @@ updateCompositeTheta <-
     # XI <- kroencker(t(beta), X)
     # XI <- XI[, windex_gamma_idx]
     
-    # TODO: Maybe properly convert windex_gamma_idx for proper indexing by numeric column indices?
+    # TODO: Maybe properly convert windex_gamma_idx?
     XI <- kroneckerC(t(beta), X, which(windex_gamma_idx))
     Theta <- solve((t(XI) %*% XI), t(XI)) %*% vecZDelta
     return(Theta)
@@ -569,7 +567,6 @@ updateCBDU <-
     t1 <- c(X)
     # M1 <- kroencker(diag(n_indicators), Gamma)
     # M1 <- M1[, c_index]
-    
     M1 <- kroneckerC(diag(n_indicators), Gamma, c_index)
     C[c_index] <- MASS::ginv(t(M1) %*% M1) %*% (t(M1) %*% t1)
     
