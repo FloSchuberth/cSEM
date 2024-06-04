@@ -150,7 +150,8 @@ foreman <- function(
       .tolerance = .tolerance,
       .iter_max = .iter_max,
       .dominant_indicators = .dominant_indicators,
-      .conv_criterion = .conv_criterion
+      .conv_criterion = .conv_criterion,
+      .S              = S
     )
     
     # Transpose weights and loadings matrix for compatibility with calculateReliabilities()

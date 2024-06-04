@@ -14,7 +14,8 @@ igsca(
   .dominant_indicators,
   .iter_max = 100,
   .tolerance = 1e-04,
-  .conv_criterion
+  .conv_criterion,
+  .S = args_default()$.S
 )
 }
 \arguments{
@@ -62,6 +63,8 @@ the optimization.}
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
 One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
 to "\emph{diff_absolute}".}
+
+\item{.S}{The (K x K) empirical indicator correlation matrix.}
 }
 \value{
 List of 4 matrices that make up a fitted I-GSCA Model:

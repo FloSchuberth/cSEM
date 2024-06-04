@@ -13,7 +13,8 @@ updateCompositeTheta(
   n_total_var,
   tot,
   n_constructs,
-  gamma_idx
+  gamma_idx,
+  .S = args_default()$.S
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ updateCompositeTheta(
 \item{n_constructs}{Number of constructs}
 
 \item{gamma_idx}{Index of which construct we are examining}
+
+\item{.S}{The (K x K) empirical indicator correlation matrix.}
 }
 \value{
 Theta: A matrix that will later be used to update the weights for the composite variable.

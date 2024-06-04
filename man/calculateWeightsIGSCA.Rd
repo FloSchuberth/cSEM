@@ -11,7 +11,8 @@ calculateWeightsIGSCA(
   .dominant_indicators = args_default()$.dominant_indicators,
   .GSCA_modes = args_default()$.GSCA_modes,
   .iter_max = args_default()$.iter_max,
-  .tolerance = args_default()$.tolerance
+  .tolerance = args_default()$.tolerance,
+  .S = args_default()$.S
 )
 }
 \arguments{
@@ -56,6 +57,8 @@ or \code{\link[=calculateWeightsIGSCA]{calculateWeightsIGSCA()}}. Defaults to \c
 path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero,
 meaning there are no path-coefficients) between ALS iterations before ending
 the optimization.}
+
+\item{.S}{The (K x K) empirical indicator correlation matrix.}
 }
 \value{
 List of matrices of the fitted I-GSCA Model

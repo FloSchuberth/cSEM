@@ -11,7 +11,8 @@ initializeAlsEstimates(
   n_indicators,
   n_case,
   n_constructs,
-  indicator_type
+  indicator_type,
+  .S = args_default()$.S
 )
 }
 \arguments{
@@ -35,6 +36,8 @@ order of Gamma construct variables should match the order in C0 and W0.}
 (rows of W0 and C0) corresponds to a common factor variable (1) or a
 composite variable (0). This vector is important for computing the
 uniqueness terms (D) because it zeros the entries for composite indicators.}
+
+\item{.S}{The (K x K) empirical indicator correlation matrix.}
 }
 \value{
 List of matrices to put through the Alternating Least Squared (ALS) algorithm:

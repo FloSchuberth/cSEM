@@ -4,7 +4,7 @@
 \alias{initializeIgscaEstimates}
 \title{R Implementation of gsca_inione.m from Heungsun Hwang}
 \usage{
-initializeIgscaEstimates(Z0, W0, B0)
+initializeIgscaEstimates(Z0, W0, B0, .S = args_default()$.S)
 }
 \arguments{
 \item{Z0}{Data matrix of N cases (measurements) x J indicators with named
@@ -16,6 +16,8 @@ corresponding Gamma construct variables (columns).}
 \item{B0}{Square indicator matrix of path coefficients:
 from-construct-variable (rows) and to-construct-variable (columns). The
 order of Gamma construct variables should match the order in C0 and W0.}
+
+\item{.S}{The (K x K) empirical indicator correlation matrix.}
 }
 \value{
 Returns a list of starting values for:
@@ -26,7 +28,8 @@ Returns a list of starting values for:
 }
 }
 \description{
-Initializes the values for I-GSCA by using modified Generalized Structured Component Analysis (GSCA) to estimate the model.
+Initializes the values for I-GSCA by using modified Generalized Structured
+Component Analysis (GSCA) to estimate the model.
 }
 \author{
 Michael S. Truong

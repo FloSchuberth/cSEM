@@ -37,6 +37,7 @@
 #'   meaning there are no path-coefficients) between ALS iterations before ending
 #'   the optimization.
 #' @inheritParams csem
+#' @inheritParams csem_arguments
 #' 
 #' @author Michael S. Truong
 #' @return List of 4 matrices that make up a fitted I-GSCA Model: 
@@ -88,7 +89,8 @@
 #' .dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion =
 #' "sum_diff_absolute")
 igsca <-
-  function(Z0, W0, C0, B0, con_type, indicator_type, .dominant_indicators, .iter_max = 100, .tolerance = 0.0001, .conv_criterion) {
+  function(Z0, W0, C0, B0, con_type, indicator_type, .dominant_indicators, .iter_max = 100, .tolerance = 0.0001, .conv_criterion, .S = args_default()$.S) {
+    
   
 ## Initialize Computational Variables -----------------------------------------------------
   n_case <- nrow(Z0)
@@ -120,7 +122,8 @@ igsca <-
     n_indicators = n_indicators,
     n_case = n_case,
     n_constructs = n_constructs,
-    indicator_type = indicator_type
+    indicator_type = indicator_type,
+    .S = .S
   )
   
   list2env(prepared_for_ALS[c("W", "C", "B", "V", "Z", "D", "U", "Gamma")],
@@ -183,7 +186,8 @@ igsca <-
               tot = tot, # Changes per gamma_idx iteration
               n_constructs = n_constructs,
               n_total_var = n_total_var,
-              windex_gamma_idx = windex_gamma_idx # Changes per gamma_idx iteration
+              windex_gamma_idx = windex_gamma_idx, # Changes per gamma_idx iteration
+              .S = .S
             )
           
         } else if (con_type[gamma_idx] == "Common factor") {
@@ -285,9 +289,11 @@ igsca <-
 
 #' R Implementation of gsca_inione.m from Heungsun Hwang
 #' 
-#' Initializes the values for I-GSCA by using modified Generalized Structured Component Analysis (GSCA) to estimate the model.
+#' Initializes the values for I-GSCA by using modified Generalized Structured
+#' Component Analysis (GSCA) to estimate the model.
 #' 
 #' @inheritParams igsca
+#' @inheritParams csem_arguments
 #' @importFrom MASS ginv 
 #' @author Michael S. Truong
 #' @returns Returns a list of starting values for:
@@ -295,7 +301,7 @@ igsca <-
 #' * Loadings (C)
 #' * Path Coefficients (B)  
 #'
-initializeIgscaEstimates <- function(Z0, W0, B0) {
+initializeIgscaEstimates <- function(Z0, W0, B0, .S = args_default()$.S) {
   
   N <- nrow(Z0)
   J <- nrow(W0)
@@ -330,7 +336,7 @@ initializeIgscaEstimates <- function(Z0, W0, B0) {
   imp <- 100000000
   while ((it <= 300) && (imp > 0.0001)) {
     it <- it + 1
-    # Phi = kroencker(diag(TRep), Gamma)
+    # Phi = kronecker(diag(TRep), Gamma)
     # Phi <- Phi[, aindex]
     Phi <- kroneckerC(diag(TRep), Gamma, aindex)
     A[aindex] <- solve(t(Phi) %*% Phi, t(Phi)) %*% vecPsi
@@ -347,12 +353,19 @@ initializeIgscaEstimates <- function(Z0, W0, B0) {
       H1[p, p] <- 0
       H2[t_lil, t_lil] <- 0
       Delta <- (W %*% H1 %*% A) - (V %*% H2)
-      vecZDelta <- c(Z %*% Delta)
+      # vecZDelta <- c(Z %*% Delta)
       
-      # XI <- kroencker(t(beta), Z)
+      # XI <- kronecker(t(beta), Z)
       # XI <- XI[, windex_p]
-      XI <- kroneckerC(t(beta), Z, windex_p)
-      Theta <- MASS::ginv(t(XI) %*% XI) %*% t(XI) %*% vecZDelta
+      
+      # XI <- kroneckerC(t(beta), Z, windex_p)
+      # Theta <- MASS::ginv(t(XI) %*% XI) %*% t(XI) %*% vecZDelta
+      
+      # Kronecker bypass -- as shown in calculateWeightsGSCA.R
+      Theta <- MASS::ginv(as.numeric(beta%*%t(beta))*.S[windex_p,windex_p]) %*%
+        t(beta %*% t(Delta) %*% .S[,windex_p])
+      
+      
       zw <- Z[, windex_p] %*% Theta
       
       
@@ -384,6 +397,7 @@ initializeIgscaEstimates <- function(Z0, W0, B0) {
 #' Internal I-GSCA function
 #' 
 #' @inheritParams igsca
+#' @inheritParams csem_arguments
 #' @param n_indicators Number of indicators
 #' @param n_case Number of measurements
 #' @param n_constructs Number of constructs
@@ -396,7 +410,7 @@ initializeIgscaEstimates <- function(Z0, W0, B0) {
 #' * Estimated Uniqueness Errors vector (D)
 #' * Estimated Related to Uniqueness Errors vector (U)
 #' * Estimated Construct Scores matrix (Gamma)
-initializeAlsEstimates <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, indicator_type) {
+initializeAlsEstimates <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, indicator_type, .S = args_default()$.S) {
   
   # Initialize Bindpoints for list2env
   W <- matrix()
@@ -407,7 +421,8 @@ initializeAlsEstimates <- function(Z0, W0, B0, n_indicators, n_case, n_construct
     initializeIgscaEstimates(
       Z0 = Z0,
       W0 = apply(W0 != 0, 2, as.numeric),
-      B0 = apply(B0 != 0, 2, as.numeric)
+      B0 = apply(B0 != 0, 2, as.numeric),
+      .S = .S
     )
   
   list2env(initial_est[c("W", "C", "B")], envir = environment())
@@ -507,12 +522,13 @@ updateCommonFactorTheta <- function(WW, windex_gamma_idx, gamma_idx) {
 #' @param tot Index dependent on which construct variable we are examining
 #' @param n_constructs Number of constructs
 #' @param gamma_idx Index of which construct we are examining
-#'
+#' @inheritParams csem_arguments
+#' @importFrom MASS ginv 
 #' @return Theta: A matrix that will later be used to update the weights for the composite variable.
 #' 
 #'
 updateCompositeTheta <-
-  function(W, A, V, X, windex_gamma_idx, n_total_var, tot, n_constructs, gamma_idx) {
+  function(W, A, V, X, windex_gamma_idx, n_total_var, tot, n_constructs, gamma_idx, .S = args_default()$.S) {
     
     e <- matrix(0, nrow = 1, ncol = n_total_var)
     e[tot] <- 1
@@ -523,14 +539,22 @@ updateCompositeTheta <-
     Delta <- (W %*% H2 %*% A) - (V %*% H1)
     
     
-    vecZDelta <- c(X %*% Delta)
+    # vecZDelta <- c(X %*% Delta) # Commented out because no longer computing kronecker product
     beta <- e - A[gamma_idx, ]
-    # XI <- kroencker(t(beta), X)
+    # XI <- kronecker(t(beta), X)
     # XI <- XI[, windex_gamma_idx]
     
-    # TODO: Maybe properly convert windex_gamma_idx?
-    XI <- kroneckerC(t(beta), X, which(windex_gamma_idx))
-    Theta <- solve((t(XI) %*% XI), t(XI)) %*% vecZDelta
+    
+    
+    # XI <- kroneckerC(t(beta), X, which(windex_gamma_idx))
+    # Theta <- solve((t(XI) %*% XI), t(XI)) %*% vecZDelta
+    
+    # Kronecker bypass -- as shown in calculateWeightsGSCA.R
+    # TODO: Bypassing the kronecker product this way leads to minor differences in results,
+    # but the original matlab solution may already have been inaccurate due to matrix inversion.
+    Theta <- MASS::ginv(as.numeric(beta %*% t(beta)) * .S[windex_gamma_idx, windex_gamma_idx]) %*%
+      t(beta %*% t(Delta) %*% .S[, windex_gamma_idx])
+    
     return(Theta)
   }
 
@@ -564,18 +588,28 @@ updateCBDU <-
            n_constructs,
            b_index,
            n_case) {
+
+## Loading Update ----------------------------------------------------------
+
+    
     t1 <- c(X)
-    # M1 <- kroencker(diag(n_indicators), Gamma)
+    # M1 <- kronecker(diag(n_indicators), Gamma)
     # M1 <- M1[, c_index]
     M1 <- kroneckerC(diag(n_indicators), Gamma, c_index)
     C[c_index] <- MASS::ginv(t(M1) %*% M1) %*% (t(M1) %*% t1)
+
+# Path Coefficients Update ------------------------------------------------
+
     
     t2 <- c(Gamma)
-    # M2 <- kroencker(diag(n_constructs), Gamma)
+    # M2 <- kronecker(diag(n_constructs), Gamma)
     # M2 <- M2[, b_index]
     M2 <- kroneckerC(diag(n_constructs), Gamma, b_index)
     B[b_index] <- MASS::ginv(t(M2) %*% M2) %*% (t(M2) %*% t2)
-    
+
+
+## Uniqueness Component Update ---------------------------------------------
+
     # Solution for Q is copied from estimators_weights.R
     Q <- qr.Q(qr(Gamma), complete =  TRUE)
     F_o <- Q[, (n_constructs + 1):n_case]
