@@ -5,7 +5,3 @@ kroneckerC <- function(X, Y, idx) {
     .Call(`_cSEM_kroneckerC`, X, Y, idx)
 }
 
-kroneckerCsp <- function(X, Y, idx) {
-    .Call(`_cSEM_kroneckerCsp`, X, Y, idx)
-}
-

@@ -24,23 +24,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// kroneckerCsp
-arma::sp_mat kroneckerCsp(arma::mat& X, arma::mat& Y, arma::uvec& idx);
-RcppExport SEXP _cSEM_kroneckerCsp(SEXP XSEXP, SEXP YSEXP, SEXP idxSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat& >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat& >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< arma::uvec& >::type idx(idxSEXP);
-    rcpp_result_gen = Rcpp::wrap(kroneckerCsp(X, Y, idx));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_cSEM_kroneckerC", (DL_FUNC) &_cSEM_kroneckerC, 3},
-    {"_cSEM_kroneckerCsp", (DL_FUNC) &_cSEM_kroneckerCsp, 3},
     {NULL, NULL, 0}
 };
 

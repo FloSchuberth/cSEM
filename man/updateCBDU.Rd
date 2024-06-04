@@ -16,7 +16,8 @@ updateCBDU(
   c_index,
   n_constructs,
   b_index,
-  n_case
+  n_case,
+  con_type
 )
 }
 \arguments{
@@ -43,6 +44,10 @@ updateCBDU(
 \item{b_index}{Index of Path Coefficients}
 
 \item{n_case}{Number of Cases}
+
+\item{con_type}{A vector that denotes whether each construct variable
+(columns in W0 and C0) is a common factor or composite. Its length should
+be equal to the number of columns of W0 and C0.}
 }
 \value{
 List of matrices:
