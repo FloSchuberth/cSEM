@@ -442,17 +442,37 @@ initializeAlsEstimates <- function(Z0, W0, B0, n_indicators, n_case, n_construct
   Q <- qr.Q(qr(Gamma), complete =  TRUE)
   F_o <- Q[, (n_constructs + 1):n_case, drop = FALSE]
   
-  # svd between R and Matlab by Ahmed Fasih on February 1/2017 https://stackoverflow.com/a/41972818
-  svd_out <- (D %*% t(Z) %*% F_o) |>
-    {
-      \(mx) svd(mx, nu = nrow(mx),  nv = ncol(mx))
-    }()
-  u <- svd_out$u
-  v <- svd_out$v
+  if (n_case <= n_indicators) {
+    # I don't know if the following warning is necessary given that it should
+    # still work -- this is said to come from the old gsca_m implementation in
+    # estimators_weights.R
+    # 
+    # This also comes from the Supplementary Material to GSCA_m, so I think it
+    # should work
+    # 
+    # warning("Model may not be correctly estimated because the number of cases is less than the number of indicators and the handling is experimental.")
+    
+    # From estimator_weights.R, which is from one of the older GSCA_m implementations
+    # Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, (n_constructs+1):n_case, drop = FALSE]
+    s          <- svd(D %*% t(Z) %*% F_o)
+    Utilde    <- s$v %*% t(s$u)
+    U          <- F_o %*% Utilde # Gamma_orth = F_o
+    
+  } else if (n_case > n_indicators) {
+    # svd between R and Matlab by Ahmed Fasih on February 1/2017
+    # https://stackoverflow.com/a/41972818
+    
+    svd_out <- (D %*% t(Z) %*% F_o) |>
+      {
+        \(mx) svd(mx, nu = nrow(mx),  nv = ncol(mx))
+      }()
+    u <- svd_out$u
+    v <- svd_out$v
+    # Utilde deviates from Matlab because of the SVD
+    Utilde <- v[, 1:n_indicators] %*% t(u)
+    U <- F_o %*% Utilde  
+  }
   
-  # Utilde deviates from Matlab because of the SVD
-  Utilde <- v[, 1:n_indicators] %*% t(u)
-  U <- F_o %*% Utilde
   D <- diag(diag(t(U) %*% Z))
   D[indicator_type == "Composite", indicator_type == "Composite"] <- 0
   
@@ -649,15 +669,29 @@ updateCBDU <-
     Q <- qr.Q(qr(Gamma), complete =  TRUE)
     F_o <- Q[, (n_constructs + 1):n_case]
     
-    # svd between R and Matlab by Ahmed Fasih on February 1/2017 https://stackoverflow.com/a/41972818
-    svd_out2 <- (D %*% t(Z) %*% F_o) |>
-      {
-        \(mx) svd(mx, nu = nrow(mx),  nv = ncol(mx))
-      }()
-    u <- svd_out2$u
-    v <- svd_out2$v
-    Utilde <- v[, 1:n_indicators] %*% t(u)
-    U <- F_o %*% Utilde
+    
+    if (n_case <= n_indicators) {
+      
+      # From estimator_weights.R, which is from one of the older GSCA_m implementations
+      # Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, (n_constructs+1):n_case, drop = FALSE]
+      s          <- svd(D %*% t(Z) %*% F_o)
+      Utilde    <- s$v %*% t(s$u)
+      U          <- F_o %*% Utilde # Gamma_orth = F_o
+    } else if (n_case > n_indicators) {
+      # svd between R and Matlab by Ahmed Fasih on February 1/2017
+      # https://stackoverflow.com/a/41972818
+      
+      svd_out <- (D %*% t(Z) %*% F_o) |>
+        {
+          \(mx) svd(mx, nu = nrow(mx),  nv = ncol(mx))
+        }()
+      u <- svd_out$u
+      v <- svd_out$v
+      # Utilde deviates from Matlab because of the SVD
+      Utilde <- v[, 1:n_indicators] %*% t(u)
+      U <- F_o %*% Utilde  
+    }
+    
     D <- diag(diag(t(U) %*% Z))
     D[indicator_type == "Composite", indicator_type == "Composite"] <- 0
     
