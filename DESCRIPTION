@@ -69,7 +69,9 @@ Imports:
     TruncatedNormal,
     utils,
     Rcpp,
-    generics
+    generics,
+    partykit,
+    Formula
 RdMacros: Rdpack, lifecycle
 RoxygenNote: 7.3.1
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))

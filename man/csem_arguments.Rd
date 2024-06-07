@@ -242,6 +242,12 @@ Which prediction metrics should be displayed? One of: "\emph{MAE}", "\emph{RMSE}
 "\emph{MER}", "\emph{MAPE}, "\emph{MSE2}", "\emph{U1}", "\emph{U2}", "\emph{UM}", "\emph{UR}", or "\emph{UD}".
 Default to c("\emph{MAE}", "\emph{RMSE}", "\emph{Q2}").}
 
+\item{.maxdepth}{Maximum number of levels in the tree. See \code{\link[=doTrees]{doTrees()}}
+and \link[partykit:mob_control]{partykit::mob_control}.}
+
+\item{.minsize}{Minimum number of cases per node. See \code{\link[=doTrees]{doTrees()}} and
+\link[partykit:mob_control]{partykit::mob_control}.}
+
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
 or a \link{cSEMModel} list.}
 
@@ -409,6 +415,9 @@ be used to handle flipping signs when resampling? One of "\emph{none}","\emph{in
 
 \item{.sim_points}{Integer. How many samples from the truncated normal distribution should
 be simulated to estimate the exogenous construct scores? Defaults to "\emph{100}".}
+
+\item{.splitvars}{Character vector. List of variables for \code{\link[=doTrees]{doTrees()}}
+to consider splitting on. See \link[partykit:mob]{partykit::mob}}
 
 \item{.stage}{Character string. The stage the model is needed for.
 One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}

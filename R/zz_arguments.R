@@ -186,7 +186,11 @@
 #'   Which prediction metrics should be displayed? One of: "*MAE*", "*RMSE*", "*Q2*", 
 #'   "*MER*", "*MAPE*, "*MSE2*", "*U1*", "*U2*", "*UM*", "*UR*", or "*UD*". 
 #'   Default to c("*MAE*", "*RMSE*", "*Q2*").
-#' @param .model A model in [lavaan model syntax][lavaan::model.syntax] 
+#' @param .maxdepth Maximum number of levels in the tree. See [cSEM::doTrees()]
+#'   and [partykit::mob_control].
+#' @param .minsize Minimum number of cases per node. See [cSEM::doTrees()] and
+#'   [partykit::mob_control].
+#' @param .model A model in [lavaan model syntax][lavaan::model.syntax]
 #'   or a [cSEMModel] list.
 #' @param .moderator Character string. The name of the moderator variable.
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
@@ -307,6 +311,8 @@
 #' "*individual_reestimate*", "*construct_reestimate*". Defaults to "*none*".
 #' @param .sim_points Integer. How many samples from the truncated normal distribution should
 #'   be simulated to estimate the exogenous construct scores? Defaults to "*100*".
+#' @param .splitvars Character vector. List of variables for [cSEM::doTrees()]
+#'   to consider splitting on. See [partykit::mob]
 #' @param .stage Character string. The stage the model is needed for.
 #'   One of "*first*" or "*second*". Defaults to "*first*".
 #' @param .standardized Logical. Should standardized scores be returned? Defaults
