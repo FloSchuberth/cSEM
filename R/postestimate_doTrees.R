@@ -1,9 +1,8 @@
 #' Model-Based Recursive Partitioning Algorithm for *csem* Models
 #' 
 #' This implementation of Model-Based Recursive Partitioning for *csem* models
-#' closely follows the implementations described for the `lavaan` package \insertCite{zeileis2020AchimZeileis}{cSEM}, as
-#' described here https://www.zeileis.org/news/lavaantree/ and the `networktree`
-#' package \insertCite{jonesNetworkTreesMethod2020}{cSEM} using `partykit::mob()` as described in \insertCite{hothornzeileis2015J.Mach.Learn.Res; textual}{cSEM}, \insertCite{hothornetal2006J.Comput.Graph.Stat; textual}{cSEM} and \insertCite{zeileisetal2008J.Comput.Graph.Stat}{cSEM}.
+#' closely follows the implementations described for the `lavaan` package \insertCite{zeileis2020AchimZeileis}{cSEM} and the `networktree`
+#' package \insertCite{jonesNetworkTreesMethod2020}{cSEM} using `partykit::mob()` as described in hothornzeileis2015J.Mach.Learn.Res and hothornetal2006J.Comput.Graph.Stat and zeileisetal2008J.Comput.Graph.Stat.
 #' 
 #' @param .model A model in [lavaan model syntax][lavaan::model.syntax] 
 #' @inheritParams csem_arguments 
@@ -86,7 +85,7 @@ csem_fit <- function(.object,
                      .dominant_indicators,
                      .conv_criterion) {
   # TODO: Rethink the arguments and etc
-  # Why a function within a function?
+  # Why an unnamed function within a function?
   function(y, x = NULL, start = NULL, weights = NULL, offset = NULL, ..., estfun = FALSE, object = TRUE) {
     
     fitted_model <- csem(
@@ -103,7 +102,8 @@ csem_fit <- function(.object,
 ## Get output --------------------------------------------------------------
 
     # Coefficients
-    res_coef <- tidy(fitted_model)[["estimate"]]
+    res_coef <- tidy(fitted_model)[["estimate"]] # FIXME: TOO MANY PARAMETERS
+    stop("This is currently putting too many effects, I just want the estimated structural effects")
     names(res_coef) <- tidy(fitted_model)$term
     
     # Objective Function
@@ -166,7 +166,7 @@ calculateIgscaObjectiveFunction <- function(.object = NULL) {
 
 #' Prune a grown tree from doTrees
 #'
-#' @param .tree 
+#' @param .tree Fitted tree
 #'
 #' @return A pruned tree
 prune.cSEMResults <- function(.tree) {
