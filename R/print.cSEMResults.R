@@ -94,7 +94,15 @@ print.cSEMResults <- function(x, ...) {
       "- ", magenta("verify"), "(", cyan("<object-name>"), ")\n")
   cat(rule2(type = 2), "\n")
   
-  if (x$Information$Arguments$.approach_weights == "IGSCA") {
-    warnIgscaFeatures()
+  if(inherits(x, "cSEMResults_multi")) {
+    if (x[[1]]$Information$Arguments$.approach_weights == "IGSCA") {
+      warnIgscaFeatures()
+    }
+  } else {
+    if (x$Information$Arguments$.approach_weights == "IGSCA") {
+      warnIgscaFeatures()
+    }   
   }
+  
+  
 }
