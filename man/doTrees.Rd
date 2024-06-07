@@ -11,11 +11,12 @@ doTrees(
   .maxdepth = Inf,
   .minsize = nrow(tidy.cSEMResults(.object)),
   .data = .object$Information$Arguments$.data,
-  .approach_weights = args_default()$.approach_weights,
-  .iter_max = args_default()$.iter_max,
-  .tolerance = args_default()$.tolerance,
-  .disattenuate = args_default()$.disattenuate,
-  .dominant_indicators = args_default()$.dominant_indicators
+  .approach_weights = .object$Information$Arguments$.approach_weights,
+  .iter_max = .object$Information$Arguments$.iter_max,
+  .tolerance = .object$Information$Arguments$.tolerance,
+  .disattenuate = .object$Information$Arguments$.disattenuate,
+  .dominant_indicators = .object$Information$Arguments$.dominant_indicators,
+  .conv_criterion = .object$Information$Arguments$.conv_criterion
 )
 }
 \arguments{
@@ -60,15 +61,18 @@ where \code{"indicator_name"} is a character string giving the name of the domin
 and \code{"construct_name"} a character string of the corresponding construct name.
 Dominant indicators may be specified for a subset of the constructs.
 Default to \code{NULL}.}
+
+\item{.conv_criterion}{Character string. The criterion to use for the convergence check.
+One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
+to "\emph{diff_absolute}".}
 }
 \value{
 cSEM Tree model of class \code{modelparty} and \code{party}.
 }
 \description{
 This implementation of Model-Based Recursive Partitioning for \emph{csem} models
-closely follows the implementations described for the \code{lavaan} package \insertCite{zeileis2020AchimZeileis}{cSEM}, as
-described here https://www.zeileis.org/news/lavaantree/ and the \code{networktree}
-package \insertCite{jonesNetworkTreesMethod2020}{cSEM} using \code{partykit::mob()} as described in \insertCite{hothornzeileis2015J.Mach.Learn.Res; textual}{cSEM}, \insertCite{hothornetal2006J.Comput.Graph.Stat; textual}{cSEM} and \insertCite{zeileisetal2008J.Comput.Graph.Stat}{cSEM}.
+closely follows the implementations described for the \code{lavaan} package \insertCite{zeileis2020AchimZeileis}{cSEM} and the \code{networktree}
+package \insertCite{jonesNetworkTreesMethod2020}{cSEM} using \code{partykit::mob()} as described in hothornzeileis2015J.Mach.Learn.Res and hothornetal2006J.Comput.Graph.Stat and zeileisetal2008J.Comput.Graph.Stat.
 }
 \references{
 \insertAllCited{}

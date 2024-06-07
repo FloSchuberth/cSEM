@@ -7,7 +7,7 @@
 prune.cSEMResults(.tree)
 }
 \arguments{
-\item{.tree}{}
+\item{.tree}{Fitted tree}
 }
 \value{
 A pruned tree

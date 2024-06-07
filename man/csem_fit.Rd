@@ -5,15 +5,19 @@
 \title{csem Fitting Function for Interfacing with \code{partykit::mob()}}
 \usage{
 csem_fit(
+  .object,
   .model,
   .approach_weights,
   .iter_max,
   .tolerance,
   .disattenuate,
-  .dominant_indicators
+  .dominant_indicators,
+  .conv_criterion
 )
 }
 \arguments{
+\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}}
 
 \item{.approach_weights}{Character string. Approach used to
@@ -38,6 +42,10 @@ where \code{"indicator_name"} is a character string giving the name of the domin
 and \code{"construct_name"} a character string of the corresponding construct name.
 Dominant indicators may be specified for a subset of the constructs.
 Default to \code{NULL}.}
+
+\item{.conv_criterion}{Character string. The criterion to use for the convergence check.
+One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
+to "\emph{diff_absolute}".}
 }
 \description{
 csem Fitting Function for Interfacing with \code{partykit::mob()}
