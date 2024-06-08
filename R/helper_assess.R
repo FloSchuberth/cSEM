@@ -2018,9 +2018,13 @@ calculateFIT <- function(.object = NULL) {
     A <- cbind(.object$Estimates$Loading_estimates,
                t(.object$Estimates$Path_estimates))
   }
-  else if (is.null(.object$Estimates$Path_estimates)) {
+  else if (is.null(.object$Estimates$Path_estimates) | (!exists(".object$Estimates$Path_estimates"))) {
     # If no structural model
-    A <- .object$Estimates$Loading_estimates
+    A <- cbind(.object$Estimates$Loading_estimates,
+               matrix(data = 0,
+                      nrow = nrow(.object$Estimates$Loading_estimates),
+                      ncol = nrow(.object$Estimates$Loading_estimates))
+                      )
   }
   
   if (!is.null(.object$Estimates$UniqueComponent)) {

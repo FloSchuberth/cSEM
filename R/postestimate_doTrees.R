@@ -1,8 +1,11 @@
 #' Model-Based Recursive Partitioning Algorithm for *csem* Models
 #' 
 #' This implementation of Model-Based Recursive Partitioning for *csem* models
-#' closely follows the implementations described for the `lavaan` package \insertCite{zeileis2020AchimZeileis}{cSEM} and the `networktree`
-#' package \insertCite{jonesNetworkTreesMethod2020}{cSEM} using `partykit::mob()` as described in hothornzeileis2015J.Mach.Learn.Res and hothornetal2006J.Comput.Graph.Stat and zeileisetal2008J.Comput.Graph.Stat.
+#' closely follows the implementations described for the `lavaan` package
+#' \insertCite{zeileis2020AchimZeileis}{cSEM} and the `networktree` package
+#' \insertCite{jonesNetworkTreesMethod2020}{cSEM} using `partykit::mob()` as
+#' described in hothornzeileis2015J.Mach.Learn.Res and
+#' hothornetal2006J.Comput.Graph.Stat and zeileisetal2008J.Comput.Graph.Stat.
 #' 
 #' @param .model A model in [lavaan model syntax][lavaan::model.syntax] 
 #' @inheritParams csem_arguments 
@@ -102,9 +105,10 @@ csem_fit <- function(.object,
 ## Get output --------------------------------------------------------------
 
     # Coefficients
-    res_coef <- tidy(fitted_model)[["estimate"]] # FIXME: TOO MANY PARAMETERS
-    stop("This is currently putting too many effects, I just want the estimated structural effects")
-    names(res_coef) <- tidy(fitted_model)$term
+    
+    out_coef <-tidy(fitted_model)
+    res_coef <- out_coef[!(out_coef$op %in% c("Direct_effect", "Indirect_effect", "Total_effect")),"estimate"] 
+    names(res_coef) <- out_coef[!(out_coef$op %in% c("Direct_effect", "Indirect_effect", "Total_effect")),"term"]
     
     # Objective Function
     if(.object$Information$Arguments$.approach_weights == "IGSCA") {
@@ -118,8 +122,8 @@ csem_fit <- function(.object,
           
     return(list(coefficients = res_coef,
          objfun = res_obj, # The minimized objective function
-         estfun = NULL,
-         object = fitted_model))
+         estfun = if(estfun) {} else NULL,
+         object = if(object) fitted_model else NULL))
   }
 }
 
@@ -144,9 +148,13 @@ calculateIgscaObjectiveFunction <- function(.object = NULL) {
     A <- cbind(.object$Estimates$Loading_estimates,
                t(.object$Estimates$Path_estimates))
   }
-  else if (is.null(.object$Estimates$Path_estimates)) {
+  else if (is.null(.object$Estimates$Path_estimates) | (!exists(".object$Estimates$Path_estimates"))) {
     # If no structural model
-    A <- .object$Estimates$Loading_estimates
+    A <- cbind(.object$Estimates$Loading_estimates,
+               matrix(data = 0,
+                      nrow = nrow(.object$Estimates$Loading_estimates),
+                      ncol = nrow(.object$Estimates$Loading_estimates))
+    )
   }
   
   if (!is.null(.object$Estimates$UniqueComponent)) {
@@ -162,6 +170,7 @@ calculateIgscaObjectiveFunction <- function(.object = NULL) {
   
   return(SS_unexplained_variance)
 }
+
 
 
 #' Prune a grown tree from doTrees
@@ -186,3 +195,25 @@ prune.cSEMResults <- function(.tree) {
 }
 
 
+#' Prototype of doTrees
+#'
+#' Pending the computation of the gradient, here I use a manual greedy approach
+#' towards finding optimal splits.
+#' 
+#' @inheritParams doTrees
+#' @return
+#' @export
+#'
+#' @examples
+doTreesBeta <- function(.object, .splitvars, .model,
+         .maxdepth = Inf,
+         .minsize = nrow(tidy.cSEMResults(.object)),
+         .data = .object$Information$Arguments$.data,
+         .approach_weights = .object$Information$Arguments$.approach_weights,
+         .iter_max = .object$Information$Arguments$.iter_max,
+         .tolerance = .object$Information$Arguments$.tolerance,
+         .disattenuate = .object$Information$Arguments$.disattenuate,
+         .dominant_indicators = .object$Information$Arguments$.dominant_indicators,
+         .conv_criterion = .object$Information$Arguments$.conv_criterion) {
+  browser()
+}
