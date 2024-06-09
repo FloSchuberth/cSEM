@@ -236,16 +236,17 @@ doTreesBeta <- function(.object,
   .iter_max <- .object$Information$Arguments$.iter_max
   .tolerance <- .object$Information$Arguments$.tolerance
   
-  .minsize <- nrow(tidy.cSEMResults(.object)[!(tidy.cSEMResults(.object)$op %in% c("Indirect_effect", "Direct_effect", "Total_effect")),])
+  # FIXME: I don't think .minsize is working correctly
+  # .minsize <- nrow(tidy.cSEMResults(.object)[!(tidy.cSEMResults(.object)$op %in% c("Indirect_effect", "Direct_effect", "Total_effect")),])
   
-  if (.minsize > nrow(.data)) {
-    return(list("split" = NA,
-           "p.value" = NA,
-           "FIT" = NA,
-           "t.test" = NA,
-           "fitted.model" = NA,
-           "daughter.model" = NA))
-  }
+  # if (.minsize > nrow(.data)) {
+  #   return(list("split" = NA,
+  #          "p.value" = NA,
+  #          "FIT" = NA,
+  #          "t.test" = NA,
+  #          "fitted.model" = NA,
+  #          "daughter.model" = NA))
+  # }
   
 ## Figure out what splits to try and pre-process split variables------------
   
@@ -268,13 +269,18 @@ doTreesBeta <- function(.object,
                         .iter_max = .iter_max,
                         .tolerance = .tolerance)
   
+  # FIXME: Why are the replications failing so frequently
+  # browser()
+  # If there's fit failure, remove the row
+  bootFIT[["t"]] <- na.omit(bootFIT[["t"]])
 ### Hypothesis Testing ------------------------------------------------------
   if (length(.splitvars) == 1) {
     paired_bootstrap_t_test <- t.test(
       x = bootFIT[["t"]][, 2], # Multi-group FIT
       y = bootFIT[["t"]][, 1], # Single-Group FIT
       paired =  TRUE,
-      var.equal = FALSE
+      var.equal = FALSE,
+      alternative = "greater"
     )
     # browser()
     # Return result to user
@@ -296,7 +302,7 @@ doTreesBeta <- function(.object,
           "daughter.model" = NA
         )
       )
-    } else if (paired_bootstrap_t_test$p.value > 0.05 | (paired_bootstrap_t_test$statistic <= 0)) {
+    } else {
       return(
         list(
           "split" = .splitvars, # An attempted split in this case
@@ -367,7 +373,7 @@ doTreesBeta <- function(.object,
             "fitted.model" = fitted.model,
             "daughter.model" = daughter.model)
         )
-      } else if (length(Ts) > 0 && length(Ps) > 0) {
+      } else if (length(Ts) > 0 && length(Ps) > 0) { # FIXME: The conditions here are likely incorrect in some subtle way, creating strange results
         Ts <- Ts[!(names(Ts) %in% names(which.min(Ps)))]
         Ps <- Ps[!(names(Ps) %in% names(which.min(Ps)))]
         
@@ -417,40 +423,21 @@ calculateFITForSplit <- function(data,
                                  .iter_max,
                                  .tolerance) {
   
-  
-  
-  sg_mod <- csem(
-    .data = data[idx, ],
-    .model = .model,
-    .approach_weights = .approach_weights,
-    .tolerance = .tolerance,
-    .conv_criterion = .conv_criterion
-  )
-  sg_fit <- calculateFIT(sg_mod) 
-  
-  if (length(.id) == 1) {
-  
-  mg_mod <- csem(
-    .data = data[idx, ],
-    .id = .id,
-    .model = .model,
-    .approach_weights = .approach_weights,
-    .tolerance = .tolerance,
-    .conv_criterion = .conv_criterion
-  )
-  
-  mg_fit <- bdiagonalizeMultiGroupIgscaEstimates(mg_mod) |>
-    calculateFIT()
+  # Robust Boot by-pass by Thomas on June 11,2013 https://stackoverflow.com/a/17040580
+  ret <- tryCatch({
+    sg_mod <- csem(
+      .data = data[idx, ],
+      .model = .model,
+      .approach_weights = .approach_weights,
+      .tolerance = .tolerance,
+      .conv_criterion = .conv_criterion
+    )
+    sg_fit <- calculateFIT(sg_mod)
     
-  names(mg_fit) <- .id
-  
-  return(c("sg_fit" = sg_fit, mg_fit))
-  
-  } else if (length(.id) > 1) {
-    mg_fits <- lapply(.id, function(.id_iter) {
+    if (length(.id) == 1) {
       mg_mod <- csem(
         .data = data[idx, ],
-        .id = .id_iter,
+        .id = .id,
         .model = .model,
         .approach_weights = .approach_weights,
         .tolerance = .tolerance,
@@ -459,16 +446,39 @@ calculateFITForSplit <- function(data,
       
       mg_fit <- bdiagonalizeMultiGroupIgscaEstimates(mg_mod) |>
         calculateFIT()
-      names(mg_fit) <- .id_iter
       
-      return(mg_fit)
-    })
-    
-    return(c("sg_fit" = sg_fit, unlist(mg_fits)))
-    
-  } else {
-    stop("Inappropriate length or type of .splitvars passed")
+      names(mg_fit) <- .id
+      
+      return(c("sg_fit" = sg_fit, mg_fit))
+      
+    } else if (length(.id) > 1) {
+      mg_fits <- lapply(.id, function(.id_iter) {
+        mg_mod <- csem(
+          .data = data[idx, ],
+          .id = .id_iter,
+          .model = .model,
+          .approach_weights = .approach_weights,
+          .tolerance = .tolerance,
+          .conv_criterion = .conv_criterion
+        )
+        
+        mg_fit <- bdiagonalizeMultiGroupIgscaEstimates(mg_mod) |>
+          calculateFIT()
+        names(mg_fit) <- .id_iter
+        
+        return(mg_fit)
+      })
+      
+      return(c("sg_fit" = sg_fit, unlist(mg_fits)))
+      
+    } else {
+      stop("Inappropriate length or type of .splitvars passed")
+      
+    }
+  }, error = function(error) {
+    return(c("sg_fit" = NA, "mg_fit" = NA))
+  })
   
-  }
+  return(ret)
   
 }

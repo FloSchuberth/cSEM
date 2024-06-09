@@ -462,17 +462,26 @@ initializeAlsEstimates <- function(Z0, W0, B0, n_indicators, n_case, n_construct
     # svd between R and Matlab by Ahmed Fasih on February 1/2017
     # https://stackoverflow.com/a/41972818
     
-    svd_out <- (D %*% t(Z) %*% F_o) |>
-      {
-        \(mx) svd(mx, nu = nrow(mx),  nv = ncol(mx))
-      }()
-    u <- svd_out$u
-    v <- svd_out$v
-    # Utilde deviates from Matlab because of the SVD
-    Utilde <- v[, 1:n_indicators] %*% t(u)
-    U <- F_o %*% Utilde  
+    U <- tryCatch({
+      svd_out <- (D %*% t(Z) %*% F_o) |>
+        {
+          \(mx) svd(mx, nu = nrow(mx), nv = ncol(mx))
+        }()
+      u <- svd_out$u
+      v <- svd_out$v
+      # Utilde deviates from Matlab because of the SVD
+      Utilde <- v[, 1:n_indicators] %*% t(u)
+      U <- F_o %*% Utilde
+    }, error = function(e) {
+      s          <- svd(D %*% t(Z) %*% F_o)
+      Utilde    <- s$v %*% t(s$u)
+      U          <- F_o %*% Utilde # Gamma_orth = F_o
+      return(U)
+    })
+    
+    
   }
-  
+  # browser()
   D <- diag(diag(t(U) %*% Z))
   D[indicator_type == "Composite", indicator_type == "Composite"] <- 0
   
@@ -681,15 +690,22 @@ updateCBDU <-
       # svd between R and Matlab by Ahmed Fasih on February 1/2017
       # https://stackoverflow.com/a/41972818
       
-      svd_out <- (D %*% t(Z) %*% F_o) |>
-        {
-          \(mx) svd(mx, nu = nrow(mx),  nv = ncol(mx))
-        }()
-      u <- svd_out$u
-      v <- svd_out$v
-      # Utilde deviates from Matlab because of the SVD
-      Utilde <- v[, 1:n_indicators] %*% t(u)
-      U <- F_o %*% Utilde  
+      U <- tryCatch({
+        svd_out <- (D %*% t(Z) %*% F_o) |>
+          {
+            \(mx) svd(mx, nu = nrow(mx), nv = ncol(mx))
+          }()
+        u <- svd_out$u
+        v <- svd_out$v
+        # Utilde deviates from Matlab because of the SVD
+        Utilde <- v[, 1:n_indicators] %*% t(u)
+        U <- F_o %*% Utilde
+      }, error = function(e) {
+        s          <- svd(D %*% t(Z) %*% F_o)
+        Utilde    <- s$v %*% t(s$u)
+        U          <- F_o %*% Utilde # Gamma_orth = F_o
+        return(U)
+      })
     }
     
     D <- diag(diag(t(U) %*% Z))
