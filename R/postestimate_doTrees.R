@@ -323,7 +323,8 @@ doTreesBeta <- function(.object,
           x = .x,
           y = bootFIT[["t"]][, 1],
           paired = TRUE,
-          var.equal = FALSE
+          var.equal = FALSE,
+          alternative = "greater"
         ))
       }
     )
