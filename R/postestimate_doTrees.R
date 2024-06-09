@@ -197,23 +197,275 @@ prune.cSEMResults <- function(.tree) {
 
 #' Prototype of doTrees
 #'
-#' Pending the computation of the gradient, here I use a manual greedy approach
-#' towards finding optimal splits.
+#' Pending the computation of the gradient, here I use a manual multi-group
+#' versus single group hypothesis test of the difference in FIT statistic,
+#' similar to semtrees.
+#' 
+#' The current implementation assumes that once you use a split-variable, you
+#' cannot re-use it. The final implementation will re-use variables.
+#' 
+#' `.splitvars` currently only supports binary variables
+#' `.maxdepth` doesn't do anything
+#' `.minsize` does not currently work
+#' 
+#' @param .splitvars List of the column names to try splitting on.
 #' 
 #' @inheritParams doTrees
-#' @return
+#' @inheritParams csem_arguments
+#' @return List of whether split occured and with what variable, the associated
+#'   paired t-test and the resulting model
 #' @export
-#'
-#' @examples
-doTreesBeta <- function(.object, .splitvars, .model,
-         .maxdepth = Inf,
-         .minsize = nrow(tidy.cSEMResults(.object)),
-         .data = .object$Information$Arguments$.data,
-         .approach_weights = .object$Information$Arguments$.approach_weights,
-         .iter_max = .object$Information$Arguments$.iter_max,
-         .tolerance = .object$Information$Arguments$.tolerance,
-         .disattenuate = .object$Information$Arguments$.disattenuate,
-         .dominant_indicators = .object$Information$Arguments$.dominant_indicators,
-         .conv_criterion = .object$Information$Arguments$.conv_criterion) {
+#' @importFrom boot boot
+doTreesBeta <- function(.object,
+                        .splitvars,
+                        .model,
+                        # .maxdepth = Inf,
+                        .R = 100 #,
+                        # .minsize = nrow(tidy.cSEMResults(.object)[!(tidy.cSEMResults(.object)$op %in% c("Indirect_effect", "Direct_effect", "Total_effect")),])
+                        ) {
+                        
   browser()
+## Load Arguments ----------------------------------------------------------
+
+  
+  .data <- .object$Information$Arguments$.data
+  .approach_weights <- .object$Information$Arguments$.approach_weights
+  .conv_criterion <- .object$Information$Arguments$.conv_criterion
+  .disattenuate <- .object$Information$Arguments$.disattenuate
+  .dominant_indicators <- .object$Information$Arguments$.dominant_indicators
+  .iter_max <- .object$Information$Arguments$.iter_max
+  .tolerance <- .object$Information$Arguments$.tolerance
+  
+  .minsize <- nrow(tidy.cSEMResults(.object)[!(tidy.cSEMResults(.object)$op %in% c("Indirect_effect", "Direct_effect", "Total_effect")),])
+  
+  if (.minsize > nrow(.data)) {
+    return(list("split" = NA,
+           "p.value" = NA,
+           "FIT" = NA,
+           "t.test" = NA,
+           "fitted.model" = NA,
+           "daughter.model" = NA))
+  }
+  
+## Figure out what splits to try -----------------------------------------
+  
+  # TODO: Test for whether .id is binary or not
+  # Checks through .splitvars
+  #.splitvars 
+  # TODO: Give a list and pass it to the boot eval, internal
+  # calculateFITForSplit should be adjusted to run a list of models using the
+  # same idx. Then return a vector whose length 
+  
+## Evaluate Split ----------------------------------------------------------
+  
+  bootFIT <- boot::boot(data = .data,
+                        statistic = calculateFITForSplit,
+                        R = .R,
+                        sim = "ordinary",
+                        .model = .model,
+                        .id = .splitvars,
+                        .approach_weights = .approach_weights,
+                        .conv_criterion = .conv_criterion,
+                        .disattenuate = .disattenuate,
+                        .dominant_indicators = .dominant_indicators,
+                        .iter_max = .iter_max,
+                        .tolerance = .tolerance)
+  
+### Hypothesis Testing ------------------------------------------------------
+  if (length(.splitvars) == 1) {
+    paired_bootstrap_t_test <- t.test(
+      x = bootFIT[["t"]][, 2], # Multi-group FIT
+      y = bootFIT[["t"]][, 1], # Single-Group FIT
+      paired =  TRUE,
+      var.equal = FALSE
+    )
+    # browser()
+    # Return result to user
+    if (paired_bootstrap_t_test$p.value <= 0.05 & paired_bootstrap_t_test$statistic > 0) {
+      return(
+        list(
+          "split" = .splitvars,
+          "p.value" = paired_bootstrap_t_test$p.value,
+          "FIT" = bootFIT$t0[2],
+          "t.test" = paired_bootstrap_t_test,
+          "fitted.model" = csem(
+            .data = .data,
+            .id = .splitvars,
+            .model = .model,
+            .approach_weights = .approach_weights,
+            .tolerance = .tolerance,
+            .conv_criterion = .conv_criterion
+          ),
+          "daughter.model" = NA
+        )
+      )
+    } else if (paired_bootstrap_t_test$p.value > 0.05 | (paired_bootstrap_t_test$statistic <= 0)) {
+      return(
+        list(
+          "split" = NA,
+          "p.value" = paired_bootstrap_t_test$p.value,
+          "FIT" = bootFIT$t0[1],
+          "t.test" = paired_bootstrap_t_test,
+          "fitted.model" = NA,
+          "daughter.model" = NA
+        )
+      )
+    }
+  } else if (length(.splitvars) > 1) {
+    paired_bootstrap_t_tests <- apply(
+      X =bootFIT[["t"]][, 2:ncol(bootFIT[["t"]])],
+      MARGIN = 2,
+      FUN = function(.x) {
+        return(t.test(
+          x = .x,
+          y = bootFIT[["t"]][, 1],
+          paired = TRUE,
+          var.equal = FALSE
+        ))
+      }
+    )
+    
+    names(paired_bootstrap_t_tests) <- names(bootFIT[["t0"]])[2:length(bootFIT[["t0"]])]
+    
+    Ps <- unlist(lapply(
+      paired_bootstrap_t_tests,
+      FUN = function(.x)
+        .x$p.value
+    ))
+    Ts <- unlist(lapply(
+      paired_bootstrap_t_tests,
+      FUN = function(.x)
+        return(unname(.x$statistic))
+    ))
+    PsTemp <- Ps
+    
+    
+    for (i in length(Ps)) {
+      if (Ts[which.min(Ps)] >= 0 && Ps[which.min(Ps)] <= 0.05) {
+        browser()
+        fitted.model <-csem(
+          .data = .data,
+          .id = names(which.min(Ps)),
+          .model = .model,
+          .approach_weights = .approach_weights,
+          .tolerance = .tolerance,
+          .conv_criterion = .conv_criterion
+        )
+        return(
+          list(
+            "split" = names(which.min(Ps)),
+            "p.value" = Ps[which.min(Ps)],
+            "FIT" = bootFIT$t0[names(which.min(Ps))],
+            "t.test" = paired_bootstrap_t_tests[[names(which.min(Ps))]],
+            "fitted.model" = fitted.model,
+            "daughter.model" = doTreesBeta(.object = fitted.model,
+                                           .splitvars = .splitvars[!(.splitvars %in% names(which.min(Ps)))],
+                                           .model = .model,
+                                           .R = .R)
+          )
+        )
+      } else if (length(Ts) > 0 && length(Ps) > 0) {
+        Ts <- Ts[!(names(Ts) %in% names(which.min(Ps)))]
+        Ps <- Ps[!(names(Ps) %in% names(which.min(Ps)))]
+        
+      } else {
+        return(list(
+          "split" = NA,
+          "p.value" = PsTemp,
+          "FIT" = bootFIT$t0[1],
+          "t.test" = paired_bootstrap_t_tests),
+          "fitted.model" = NA,
+          "daughter.model" = NA
+        )
+      }
+    }
+    warning("Split failure")
+    return(NA) 
+  } else {
+    stop(".splitvars argument is incorrect")
+  }
+
+    # TODO: If .maxdepth has not been reached and some split was significant, then fit the multigroup model and apply doTreesBeta to each sub-group
+    # TODO: If .maxdepth has been reached, then stop and return the stopping point.
+  
+}
+
+
+#' Calculate the difference in FIT
+#'
+#'
+#' @param data Data passed by boot
+#' @param idx Row-indices passed by boot
+#' @inheritParams csem
+#' @return Named vector of the delta between the FIT of the multi-group model
+#'   versus the FIT of the single-group model--positive values favor
+#'   multi-group, negative, single-group; the FIT of the single-group model; and
+#'   the FIT of the multi-group model.
+#' @keywords internal
+#'
+calculateFITForSplit <- function(data,
+                                 idx,
+                                 .model,
+                                 .id,
+                                 .approach_weights,
+                                 .conv_criterion,
+                                 .disattenuate,
+                                 .dominant_indicators,
+                                 .iter_max,
+                                 .tolerance) {
+  
+  
+  
+  sg_mod <- csem(
+    .data = data[idx, ],
+    .model = .model,
+    .approach_weights = .approach_weights,
+    .tolerance = .tolerance,
+    .conv_criterion = .conv_criterion
+  )
+  sg_fit <- calculateFIT(sg_mod) 
+  
+  if (length(.id) == 1) {
+  
+  mg_mod <- csem(
+    .data = data[idx, ],
+    .id = .id,
+    .model = .model,
+    .approach_weights = .approach_weights,
+    .tolerance = .tolerance,
+    .conv_criterion = .conv_criterion
+  )
+  
+  mg_fit <- bdiagonalizeMultiGroupIgscaEstimates(mg_mod) |>
+    calculateFIT()
+    
+  names(mg_fit) <- .id
+  
+  return(c("sg_fit" = sg_fit, mg_fit))
+  
+  } else if (length(.id) > 1) {
+    mg_fits <- lapply(.id, function(.id_iter) {
+      mg_mod <- csem(
+        .data = data[idx, ],
+        .id = .id_iter,
+        .model = .model,
+        .approach_weights = .approach_weights,
+        .tolerance = .tolerance,
+        .conv_criterion = .conv_criterion
+      )
+      
+      mg_fit <- bdiagonalizeMultiGroupIgscaEstimates(mg_mod) |>
+        calculateFIT()
+      names(mg_fit) <- .id_iter
+      
+      return(mg_fit)
+    })
+    
+    return(c("sg_fit" = sg_fit, unlist(mg_fits)))
+    
+  } else {
+    stop("Inappropriate length or type of .splitvars passed")
+  
+  }
+  
 }

@@ -4,69 +4,31 @@
 \alias{doTreesBeta}
 \title{Prototype of doTrees}
 \usage{
-doTreesBeta(
-  .object,
-  .splitvars,
-  .model,
-  .maxdepth = Inf,
-  .minsize = nrow(tidy.cSEMResults(.object)),
-  .data = .object$Information$Arguments$.data,
-  .approach_weights = .object$Information$Arguments$.approach_weights,
-  .iter_max = .object$Information$Arguments$.iter_max,
-  .tolerance = .object$Information$Arguments$.tolerance,
-  .disattenuate = .object$Information$Arguments$.disattenuate,
-  .dominant_indicators = .object$Information$Arguments$.dominant_indicators,
-  .conv_criterion = .object$Information$Arguments$.conv_criterion
-)
+doTreesBeta(.object, .splitvars, .model, .R = 100)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.splitvars}{Character vector. List of variables for \code{\link[=doTrees]{doTrees()}}
-to consider splitting on. See \link[partykit:mob]{partykit::mob}}
+\item{.splitvars}{List of the column names to try splitting on.}
 
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}}
 
-\item{.maxdepth}{Maximum number of levels in the tree. See \code{\link[=doTrees]{doTrees()}}
-and \link[partykit:mob_control]{partykit::mob_control}.}
-
-\item{.minsize}{Minimum number of cases per node. See \code{\link[=doTrees]{doTrees()}} and
-\link[partykit:mob_control]{partykit::mob_control}.}
-
-\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandardized
-data (indicators/items/manifest variables). Possible column types or classes
-of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or "\code{integer}"),
-"\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (converted to factor),
-or a mix of several types.}
-
-\item{.approach_weights}{Character string. Approach used to
-obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
-"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{IGSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
-or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
-
-\item{.iter_max}{Integer. The maximum number of iterations allowed.
-If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
-If the algorithm exceeds the specified number, weights of iteration step
-\code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
-
-\item{.tolerance}{Double. The tolerance criterion for convergence.
-Defaults to \code{1e-05}.}
-
-\item{.disattenuate}{Logical. Should composite/proxy correlations
-be disattenuated to yield consistent loadings and path estimates if at least
-one of the construct is modeled as a common factor? Defaults to \code{TRUE}.}
-
-\item{.dominant_indicators}{A character vector of \code{"construct_name" = "indicator_name"} pairs,
-where \code{"indicator_name"} is a character string giving the name of the dominant indicator
-and \code{"construct_name"} a character string of the corresponding construct name.
-Dominant indicators may be specified for a subset of the constructs.
-Default to \code{NULL}.}
-
-\item{.conv_criterion}{Character string. The criterion to use for the convergence check.
-One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
-to "\emph{diff_absolute}".}
+\item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
+}
+\value{
+List of whether split occured and with what variable, the associated
+paired t-test and the resulting model
 }
 \description{
-Pending the computation of the gradient, here I use a manual greedy approach
-towards finding optimal splits.
+Pending the computation of the gradient, here I use a manual multi-group
+versus single group hypothesis test of the difference in FIT statistic,
+similar to semtrees.
+}
+\details{
+The current implementation assumes that once you use a split-variable, you
+cannot re-use it. The final implementation will re-use variables.
+
+\code{.splitvars} currently only supports binary variables
+\code{.maxdepth} doesn't do anything
+\code{.minsize} does not currently work
 }

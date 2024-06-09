@@ -840,7 +840,7 @@ warnIgscaFeatures <- function() {
 #' @return cSEMResults in single-group data structure with block diagonalized parameter estimates
 #' @export
 #' @importFrom Matrix bdiag
-diagonalizeMultiGroupIgscaEstimates <- function(x) {
+bdiagonalizeMultiGroupIgscaEstimates <- function(x) {
   
   if (!identical(names(x), c("Estimates", "Information"))) {
     # Multi-Group Code
