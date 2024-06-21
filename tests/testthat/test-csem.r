@@ -133,7 +133,7 @@ dat <- MASS::mvrnorm(300, rep(0, nrow(Sigma$Sigma)),
 
 ## Estimate
 for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR")) {
-  ## - "SSQCOR" is excluded as it is rather unstable, regularly producing differences
+  ## - "SSQCOR" is excluded as it is rather unstable, regularily producing differences
   ##   between estimate and population value larger than 0.01.
   ## - "PCA" is excluded as weights obtained by PCA are not population weights but 
   ##   simply the first principal component of S_jj.
