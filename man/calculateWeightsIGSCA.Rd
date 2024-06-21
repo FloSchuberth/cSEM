@@ -5,7 +5,7 @@
 \title{Calculate weights using Integrated Generalised Structured Component Analysis (I-GSCA)}
 \usage{
 calculateWeightsIGSCA(
-  .data,
+  data,
   .csem_model = args_default()$.csem_model,
   .tolerance = args_default()$.tolerance,
   .iter_max = args_default()$.iter_max,
@@ -13,13 +13,7 @@ calculateWeightsIGSCA(
 )
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandardized
-data (indicators/items/manifest variables).
-Additionally, a \code{list} of data sets (data frames or matrices) is accepted in which
-case estimation is repeated for each data set. Possible column types or classes
-of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or "\code{integer}"),
-"\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (will be converted to factor),
-or a mix of several types.}
+\item{data}{Input dataframe}
 
 \item{.tolerance}{Minimum amount of absolute change in the estimates of the
 path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero,

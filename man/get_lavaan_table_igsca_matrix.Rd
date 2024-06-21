@@ -7,8 +7,7 @@
 get_lavaan_table_igsca_matrix(model, weights, loadings, uniqueD, paths)
 }
 \arguments{
-\item{model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
-or a \link{cSEMModel} list.}
+\item{model}{Specified Model in lavaan style}
 
 \item{weights}{Weights matrix}
 
