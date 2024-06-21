@@ -12,8 +12,8 @@ igsca(
   con_type,
   indicator_type,
   .dominant_indicators = .dominant_indicators,
-  .iter_max = 100,
-  .tolerance = 1e-04
+  itmax = 100,
+  ceps = 1e-04
 )
 }
 \arguments{
@@ -50,10 +50,10 @@ vector should be equal to the number of construct variables and each value
 should represent the row number of the dominant indicator for that
 construct variable.}
 
-\item{.iter_max}{Maximum number of iterations of the Alternating Least Squares
+\item{itmax}{Maximum number of iterations of the Alternating Least Squares
 (ALS) algorithm.}
 
-\item{.tolerance}{Minimum amount of absolute change in the estimates of the
+\item{ceps}{Minimum amount of absolute change in the estimates of the
 path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero,
 meaning ther are no path-coefficients) between ALS iterations before ending
 the optimization.}

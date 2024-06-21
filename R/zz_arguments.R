@@ -448,7 +448,7 @@ args_default <- function(.choices = FALSE) {
     .approach_score_benchmark= c("mean", "median", "mode", "round"),
     .approach_score_target   = c("mean", "median", "mode"),
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
-                                 "GSCA", "IGSCA", "PCA", "unit", "bartlett", "regression"), 
+                                 "GSCA", "PCA", "unit", "bartlett", "regression"), 
     .arguments               = NULL,
     .attributes              = NULL,
     .benchmark               = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR","NA"),

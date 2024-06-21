@@ -209,7 +209,7 @@
 #' .approach_nl           = c("sequential", "replace"),
 #' .approach_paths        = c("OLS", "2SLS"),
 #' .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
-#'                            "MINVAR", "GENVAR","GSCA", "IGSCA", "PCA",
+#'                            "MINVAR", "GENVAR","GSCA", "PCA",
 #'                            "unit", "bartlett", "regression"),
 #' .conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative"),
 #' .disattenuate          = TRUE,
@@ -454,12 +454,6 @@ csem <- function(
   } else {
     out <- do.call(foreman, args_needed)
     
-  }
-  
-  if (.approach_weights == "IGSCA") {
-    # FIXME: Repair this
-    warning("This unsafe exit needs to be fixed before merge")
-    return(out)
   }
 
   ## Set class for output

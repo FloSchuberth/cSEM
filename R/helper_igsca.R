@@ -30,14 +30,15 @@
 #'   vector should be equal to the number of construct variables and each value
 #'   should represent the row number of the dominant indicator for that
 #'   construct variable.
-#' @param .iter_max Maximum number of iterations of the Alternating Least Squares
+#' @param itmax Maximum number of iterations of the Alternating Least Squares
 #'   (ALS) algorithm.
-#' @param .tolerance Minimum amount of absolute change in the estimates of the
+#' @param ceps Minimum amount of absolute change in the estimates of the
 #'   path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero,
 #'   meaning ther are no path-coefficients) between ALS iterations before ending
 #'   the optimization.
 #' 
 #' @author Michael S. Truong
+#' @export
 #' @return List of 4 matrices that make up a fitted I-GSCA Model: 
 #' * (1) Weights 
 #' * (2) Loadings 
@@ -88,7 +89,7 @@
 #'                             .dominant_indicators = NULL)
 #'                             ))
 igsca <-
-  function(Z0, W0, C0, B0, con_type, indicator_type, .dominant_indicators = .dominant_indicators, .iter_max = 100, .tolerance = 0.0001) {
+  function(Z0, W0, C0, B0, con_type, indicator_type, .dominant_indicators = .dominant_indicators, itmax = 100, ceps = 0.0001) {
   
 ## Initialize Computational Variables -----------------------------------------------------
   n_case <- nrow(Z0)
@@ -130,7 +131,7 @@ igsca <-
     it <- 0
     
 ### Optimization Loop: Alternating Between Weights and Loadings ---------------
-    while ((sum(abs(est0 - est)) > .tolerance) && (it <= .iter_max)) {
+    while ((sum(abs(est0 - est)) > ceps) && (it <= itmax)) {
 
       # Update Counter Variables
       it <- it + 1
@@ -255,8 +256,7 @@ igsca <-
         "Weights" = Weights,
         "Loadings" =  Loadings,
         "Path Coefficients" =  PathCoefficients,
-        "Uniqueness Terms" = uniqueD,
-        "Iterations" = it
+        "Uniqueness Terms" = uniqueD
       )
     )
 
@@ -609,8 +609,8 @@ flip_signs_ind_domi <- function(n_constructs, Z, .dominant_indicators, Gamma, C,
 #' indicator corresponds to a latent or composite variable (indicator_type); and
 #' (4) the dominant indicator of each construct (.dominant_indicators).
 #' 
-#' @inheritParams csem
-#' 
+#' @param model Specified Model in lavaan style
+#' @param data Input dataframe
 #'
 #' @return Returns a list of matrices/vectors required for igsca_sim() to run:
 #' * Z0
@@ -619,6 +619,7 @@ flip_signs_ind_domi <- function(n_constructs, Z, .dominant_indicators, Gamma, C,
 #' * C0
 #' * con_type
 #' * indicator_type
+#' @export
 #' @examples
 #'
 #' 
@@ -646,13 +647,11 @@ flip_signs_ind_domi <- function(n_constructs, Z, .dominant_indicators, Gamma, C,
 #' 
 #' extract_parseModel(model = tutorial_igsca_model, data = LeDang2022)
 extract_parseModel <-
-  function(.data, .model) {
+  function(model, data) {
     # Note: parseModel is from cSEM internal
-    # FIXME: I think this part is why the integration is not working well.
-    browser()
-    csemify <- parseModel(.model = .model)
+    csemify <- parseModel(.model = model)
     
-    Z0 <- .data[, csemify$indicators]
+    Z0 <- data[, csemify$indicators]
     
     # B0 <- csemify$structural
     B0 <- t(csemify$structural)
@@ -696,10 +695,7 @@ extract_parseModel <-
     stopifnot(
       "Data matrix (Z0) does not correctly correspond with Weights matrix (W0)" = identical(colnames(Z0), rownames(W0)),
       "Weights matrix (W0) does not correctly correspond with Structural matrix (B0)" = identical(colnames(W0), colnames(B0)),
-      "Construct indicator does not correctly correspond with Weights Matrix (W0)" = identical(names(csemify$construct_type), colnames(W0)),
-      "All indicators for composite and common factor should have loadings in I-GSCA" = identical(W0, C0),
-      "Every indicator should only have loadings from one construct" = identical(unique(rowSums(C0)), 1),
-      "Every indicator should only have weights to one construct" = identical(unique(rowSums(W0)), 1)
+      "Construct indicator does not correctly correspond with Weights Matrix (W0)" = identical(names(csemify$construct_type), colnames(W0))
     )
     
     return(

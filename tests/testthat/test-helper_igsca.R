@@ -24,20 +24,39 @@ Numberofjoboffers ~ NetworkingBehavior
 data("LeDang2022")
 
 
+igsca_in <- extract_parseModel(model = tutorial_igsca_model,
+                               data = LeDang2022)
+
+## Testing Input Matrices From extract_parseModel -------------------------------
+
+testthat::expect_identical(igsca_in$W0, igsca_in$C0,
+                           label = "All indicators for composite and common factor should have loadings in I-GSCA")
+
+testthat::expect_identical(unique(rowSums(igsca_in$C0)), 1,
+                           label = "Every indicator should only have loadings from one construct")
+
+testthat::expect_identical(unique(rowSums(igsca_in$W0)), 1,
+                           label = "Every indicator should only have weights to one construct")
+
+
 ## Compute and tabulate igsca ----------------------------------------------------
-igsca_out <- csem(.data = LeDang2022,
-                  tutorial_igsca_model,
-                  .approach_weights = "IGSCA",
-                  .dominant_indicators = NULL)
+
+igsca_out <- with(igsca_in, igsca(Z0 = Z0,
+                           W0 = W0,
+                           C0 = C0,
+                           B0 = B0,
+                           con_type = con_type,
+                           indicator_type = indicator_type,
+                           .dominant_indicators =  NULL))
 
 igsca_r_table <- with(
   igsca_out,
   get_lavaan_table_igsca_matrix(
     model = tutorial_igsca_model,
-    weights = W,
-    loadings = C,
-    uniqueD = E,
-    paths = B
+    weights = Weights,
+    loadings = Loadings,
+    uniqueD = `Uniqueness Terms`,
+    paths = `Path Coefficients`
   )
 )
 

@@ -144,16 +144,12 @@ foreman <- function(
     # TODO: fill in function here
     
     W <- calculateWeightsIGSCA(
-      .data = X_cleaned,
       .csem_model = csem_model,
       .tolerance = .tolerance,
-      .iter_max = .iter_max,
-      .dominant_indicators = .dominant_indicators
+      .iter_max = .iter_max
     )
-    # TODO: This needs to be better formatted
     # TODO: Make sure output is formatted correctly for this to work
-    # FIXME: This is bypassing everything else -- it needs to be checked whether everything else is ok
-    return(W)
+    return(out)
   }
   else if (.approach_weights == "unit") {
     
