@@ -2,12 +2,12 @@
 % Please edit documentation in R/igsca.R
 \name{gsca_inione}
 \alias{gsca_inione}
-\title{R Implementation of gsca_inione.m from Heungsun Hwang}
+\title{One-to-One R Translation of gsca_inione.m from Heungsun Hwang}
 \usage{
-gsca_inione(Z0, W0, B0)
+gsca_inione(z0, W0, B0)
 }
 \arguments{
-\item{Z0}{Data Matrix}
+\item{z0}{Data Matrix}
 
 \item{W0}{Indicator matrix of weights}
 
@@ -53,7 +53,7 @@ gsca_in <- extract_parseModel(model = tutorial_gsca_model,
                                    ind_domi_as_first = TRUE)
                          
 (gsca_inione_test <- with(gsca_in,
-                          gsca_inione(Z0 = Z0,
+                          gsca_inione(z0 = z0,
                                       W0 = W0,
                                       B0 = B0)
                                       )

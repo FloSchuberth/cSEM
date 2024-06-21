@@ -9,12 +9,6 @@ summarize_FIT_idx(igsca_results)
 \arguments{
 \item{igsca_results}{}
 }
-\value{
-FIT index statistic
-}
 \description{
 Title
-}
-\examples{
-summarize_FIT_idx(igsca_results)
 }

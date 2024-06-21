@@ -4,7 +4,7 @@
 \alias{update_X_weights}
 \title{Update Weights and X (?)}
 \usage{
-update_X_weights(Z, U, D, C, n_constructs, B)
+update_X_weights(Z, U, D, C, nlv, B)
 }
 \arguments{
 \item{Z}{}
@@ -15,7 +15,7 @@ update_X_weights(Z, U, D, C, n_constructs, B)
 
 \item{C}{}
 
-\item{n_constructs}{}
+\item{nlv}{}
 
 \item{B}{}
 }

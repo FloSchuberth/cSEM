@@ -11,12 +11,6 @@ model_multigroup_igsca(model, group)
 
 \item{group}{}
 }
-\value{
-Multi-group igsca model
-}
 \description{
 Title
-}
-\examples{
-model_multigroup_igsca(model, group)
 }

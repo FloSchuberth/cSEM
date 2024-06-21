@@ -2,12 +2,23 @@
 % Please edit documentation in R/igsca.R
 \name{igsca}
 \alias{igsca}
-\title{R Implementation of igsca_sim.m}
+\title{Streamlined R Implementation of igsca_sim.m}
 \usage{
-igsca(Z0, W0, C0, B0, con_type, ov_type, ind_domi, itmax = 100, ceps = 0.001)
+igsca(
+  z0,
+  W0,
+  C0,
+  B0,
+  lv_type,
+  ov_type,
+  ind_domi,
+  nbt,
+  itmax = 100,
+  ceps = 0.001
+)
 }
 \arguments{
-\item{Z0}{Input matrix. Should contain named columns in this form.}
+\item{z0}{Input matrix. Should contain named columns in this form.}
 
 \item{W0}{Indicator matrix of weights: indicators (rows) and their corresponding construct variable (columns).}
 
@@ -15,11 +26,14 @@ igsca(Z0, W0, C0, B0, con_type, ov_type, ind_domi, itmax = 100, ceps = 0.001)
 
 \item{B0}{Square indicator matrix of path coefficients: from-construct-variable (rows) and to-construct-variable (columns). The order of construct variables should match the order in C0 and W0.}
 
-\item{con_type}{A vector that denotes whether each construct variable (columns in W0 and C0) is a common factor or composite. Its length should be equal to the number of columns of W0 and C0.}
+\item{lv_type}{A logical vector that indices whether a construct variable (columns in W0 and C0) is a factor (TRUE) or composite (FALSE). Its length should be equal to the number of columns of W0 and C0.
+TODO: Rename lv_type into cv_type}
 
-\item{ov_type}{An indicator vector that indices whether an indicator (rows of W0 and C0) corresponds to a common factor variable (1) or a composite variable (0). This vector is important for computing the uniqueness terms (D) because it zeros the entries for composite indicators.}
+\item{ov_type}{An indicator vector that indices whether an indicator (rows of W0 and C0) corresponds to a factor latent variable (1) or a composite emergent variable (0). This vector is important for computing the uniqueness terms (D) because it zeros the entries for composite indicators.}
 
 \item{ind_domi}{A numeric vector that indices the dominant indicator for each construct variable. \emph{It is to be clarified whether this should only apply to factor latent variables or also composite latent variables.} This is important for ensuring that the signs of the path-coefficients and loadings are consistent. It is sometimes the case in composite-based structural equation modelling methods that loadings/path-coefficients may have the opposite sign. The length of this vector should be equal to the number of construct variables and each value should represent the row number of the dominant indicator for that construct variable.}
+
+\item{nbt}{Non-functional argument for the number of bootstrap-iterations, intended for computation of standard-errors, 95\% confidence intervals and p-values.}
 
 \item{itmax}{Maximum number of iterations of the Alternating Least Squares (ALS) algorithm.}
 
@@ -66,13 +80,14 @@ igsca_in <- extract_parseModel(model = tutorial_igsca_model,
                                    ind_domi_as_first = TRUE)
 
 # Fit the I-GSCA model
-(igsca_out <- with(igsca_in, igsca(Z0 = Z0,
+(igsca_out <- with(igsca_in, igsca(z0 = z0,
                             W0 = W0,
                             C0 = C0,
                             B0 = B0,
-                            con_type = con_type,
+                            lv_type = lv_type,
                             ov_type = ov_type,
-                            ind_domi = ind_domi)
+                            ind_domi = ind_domi,
+                            nbt = 0)
                             ))
 }
 \author{
