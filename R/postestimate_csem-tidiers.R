@@ -29,6 +29,7 @@ tidy.cSEMResults <- function(x,
                                "Weight_estimates",
                                "D2",
                                "Effect_estimates",
+                               "Indicator_correlation",
                                "Exo_construct_correlation"
                              ),
                              ...) {
@@ -42,6 +43,7 @@ tidy.cSEMResults <- function(x,
       "Weight_estimates",
       "D2",
       "Effect_estimates",
+      "Indicator_correlation",
       "Exo_construct_correlation"
     )
   )
@@ -52,10 +54,10 @@ tidy.cSEMResults <- function(x,
   if (parameters == "all") {
 
 
-    if (is.null(summarized_cSEMResults$Estimates$D2)) {
-      general_estimates <- summarized_cSEMResults[["Estimates"]][c("Path_estimates", "Loading_estimates", "Weight_estimates", "Exo_construct_correlation")]
+    if (is.null(summarized_cSEMResults$D2)) {
+      general_estimates <- summarized_cSEMResults[["Estimates"]][c("Path_estimates", "Loading_estimates", "Weight_estimates", "Indicator_correlation", "Exo_construct_correlation")]
     } else {
-      general_estimates <- summarized_cSEMResults[["Estimates"]][c("Path_estimates", "Loading_estimates", "Weight_estimates", "D2", "Exo_construct_correlation")]
+      general_estimates <- summarized_cSEMResults[["Estimates"]][c("Path_estimates", "Loading_estimates", "Weight_estimates", "D2", "Indicator_correlation", "Exo_construct_correlation")]
     }
 
 
@@ -105,8 +107,8 @@ tidy.cSEMResults <- function(x,
       
       # Test for what operand is consistent for the iterated dataframe
       ## This needs spaces so that we don't conflate ~~ with ~
-      operands <- c(" =~ ", " <~ ", " ~~ ", " ~ ") 
-      names(operands) <- c("=~", "<~", "~~", "~")
+      operands <- c(" =~ ", " <~ ", " ~~ ", " ~ ", " ~Du~ ") 
+      names(operands) <- c("=~", "<~", "~~", "~", "~Du~")
       df_type <- sapply(operands, function(x) grepl(x, df$Name[1]))
       
       if (length(names(df_type)[df_type]) == 1) {
