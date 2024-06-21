@@ -84,7 +84,6 @@ Suggests:
     testthat (>= 3.0.0),
     ggplot2,
     openxlsx,
-    graphics,
-    waldo
+    graphics
 Config/testthat/edition: 3
 VignetteBuilder: knitr

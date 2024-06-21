@@ -27,7 +27,6 @@ igsca(Z0, W0, C0, B0, con_type, ov_type, ind_domi, itmax = 100, ceps = 0.001)
 }
 \value{
 List of 4 matrices that make up a fitted I-GSCA Model: (1) Weights, (2) Loadings, (3) Uniqueness Terms D^2, and (4) Path Coefficients.
-TODO: Cite the GSCA Pro SEM reference instead of GSCA Pro's Example
 }
 \description{
 This is a streamlined R implementation of I-GSCA, based on the matlab implementation in igsca_sim.m by Heungsun Hwang.
@@ -36,7 +35,7 @@ This is a streamlined R implementation of I-GSCA, based on the matlab implementa
 The code here generally assumes that every indicator corresponds to a single construct. (A construct is a superset consisting of latent and emergent variables. Latent variables are sometimes referred to as common-factor/factor variables; and emergent variables are sometimes referred to as component/composite variables.)
 }
 \examples{
-
+TODO: Cite the GSCA Pro SEM reference instead of GSCA Pro's Example
 # Specify the model according to GSCA Pro's example
 tutorial_igsca_model <- "
 # Composite Model
