@@ -761,6 +761,7 @@ gsca_inione <- function(z0, W0, B0) {
 #'
 #' @return List of matrices: Gamma, Loadings (C) and Path-Coefficients (B)
 #'
+#' @examples
 flip_signs_ind_domi <- function(nlv, Z, ind_domi, j, Gamma, C, B) {
   for (j in seq_len(nlv)) {
     if ((t(Z[, ind_domi[j]]) %*% Gamma[, j]) < 0) {
@@ -796,6 +797,7 @@ flip_signs_ind_domi <- function(nlv, Z, ind_domi, j, Gamma, C, B) {
 #' 2) Standardized data matrix (Z)
 #' 3) SVD Decomposition of ...*something* to get U and V matrices.
 #' TODO: Figure out what the SVD decomposition if for
+#' @examples
 prepare_for_ALS <- function(z0, W0, B0, nvar, ncase, nlv, ov_type) {
   bz0 <- z0
   
@@ -877,7 +879,8 @@ prepare_for_ALS <- function(z0, W0, B0, nvar, ncase, nlv, ov_type) {
 #' 3) Path-Coefficients (B) and Loadings (C)
 #' 4) U, Utilde, v, F_o, Q, U *something*
 #' TODO: Name these accessory matrices
-#'
+#' 
+#' @examples
 update_C_B_D <-
   function(X,
            nvar,
@@ -958,6 +961,7 @@ update_C_B_D <-
 #' TODO: Double check that I've got this right.
 #' @export
 #'
+#' @examples
 update_X_weights <- function(Z, U, D, C, nlv, B) {
   # X deviates from Matlab because it is an offspring of svd_out
   X <- Z - U %*% D
@@ -984,6 +988,7 @@ update_X_weights <- function(Z, U, D, C, nlv, B) {
 #' TODO: Double check that this is for weights only?
 #' @export
 #'
+#' @examples
 update_composite_LV <-
   function(ntv, tot, nlv, j, W, A, V, X, windex_j) {
     # This updates the composite
@@ -1017,6 +1022,7 @@ update_composite_LV <-
 #' TODO: Double check that this is correct.
 #' @export
 #'
+#' @examples
 update_factor_LV <- function(WW, windex_j, j) {
   theta <- WW[windex_j, j]
   return(theta)
@@ -1032,6 +1038,7 @@ update_factor_LV <- function(WW, windex_j, j) {
 #' @return Convert particular Matlab objects to be compatible with idiomatic R programming. 
 #' @export
 #'
+#' @examples
 convert_matlab2R <- function(mat_env, vectorness) {
   # Want both objects that were vectors and that exist in the matlab environment
   # Some objects are R-specific
@@ -1061,7 +1068,6 @@ convert_matlab2R <- function(mat_env, vectorness) {
 #' @importFrom here here
 #' 
 #' @examples
-#' parse_GSCAPro_FullResults()
 parse_GSCAPro_FullResults <-
   function(file_path = list(
     "tests",
@@ -1150,6 +1156,7 @@ parse_GSCAPro_FullResults <-
 #' @return Table of Weights, Loadings, Path-Coefficients and Uniqueness terms from i-gsca algorithms in Matlab or R.
 #' @export
 #'
+#' @examples
 get_lavaan_table_igsca_matrix <- function(model, weights, loadings, uniqueD, paths) {
   table <- lavaan::lavaanify(model = model)[, c("lhs", "op", "rhs")]
   # Remove unnecessary rows
@@ -1222,6 +1229,7 @@ get_lavaan_table_igsca_matrix <- function(model, weights, loadings, uniqueD, pat
 #' @return Table of GSCA Pro results of Weights, Loadings, Path Coefficients and Uniqueness Terms in lavaan style. 
 #' @export
 #'
+#' @examples
 get_lavaan_table_igsca_gscapro <- function(gscapro_in, model) {
   
   table <- lavaan::lavaanify(model = model)[, c("lhs", "op", "rhs")]
