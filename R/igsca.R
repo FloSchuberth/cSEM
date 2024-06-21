@@ -166,7 +166,7 @@ igsca <-
           stop("con_type should only either be `Composite` or `Common factor`")
         }
         
-        # This is where Gamma, Weights and V are updated based on which gamma_idx
+        # This is where Gamma, Weights and V are updated
         
         theta <- theta / norm(X_gamma_idx %*% theta, "2")
         
