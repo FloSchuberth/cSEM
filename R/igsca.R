@@ -163,20 +163,20 @@ igsca <-
                )
           
         } else {
-          
           stop("con_type should only either be `Composite` or `Common factor`")
-          
         }
         
         # This is where Gamma, Weights and V are updated based on which gamma_idx
+        
         theta <- theta / norm(X_gamma_idx %*% theta, "2")
+        
         Gamma[, gamma_idx] <- X_gamma_idx %*% theta
         W[windex_gamma_idx, gamma_idx] <- theta
         V[windex_gamma_idx, tot] <- theta
     }
       
 #### Update Loadings, Path Coefficients and Uniqueness Terms ----------
-      updated_C_B_D_U <- update_C_B_D_U(
+      updated_C_B_D_U_est <- update_C_B_D_U_est(
         X = X,
         n_indicators = n_indicators,
         Gamma = Gamma,
@@ -191,14 +191,7 @@ igsca <-
         ov_type = ov_type
       )
       
-      list2env(updated_C_B_D_U[c("D", "U", "C", "B")], envir = environment())
-
-#### Update estimates for while-loop condition testing -----------------------
-      if (length(b_index) > 0) {
-        est <- B[b_index]
-      } else {
-        est <- C[c_index]
-      }
+      list2env(updated_C_B_D_U_est[c("D", "U", "C", "B", "est")], envir = environment())
     }
     
     
@@ -417,7 +410,7 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, ov_t
 #' @param B Path Coefficients
 #'
 #' @return Two matrices:
-#' - *X*: Remaining part of data (Z) after accounting for uniqueness terms (U) and (D), used for estimating composite loadings. Also used for standardizing theta when updating Gamma, W and V
+#' - *X*: Remaining part of data (Z) after accounting for uniqueness terms (U) and (D), used for estimating composite loadings
 #' - *WW*: Weights after accounting for current Loading and Path-Coefficients values, used for estimating common-factor loadings
 #' 
 #' @export
@@ -471,7 +464,7 @@ update_common_factor <- function(WW, windex_gamma_idx, gamma_idx) {
 #'
 update_composite <-
   function(n_total_var, tot, n_constructs, gamma_idx, W, A, V, X, windex_gamma_idx) {
-    
+    # This updates the composite
     e <- matrix(0, nrow = 1, ncol = n_total_var)
     e[tot] <- 1
     H1 <- diag(n_total_var)
@@ -509,8 +502,9 @@ update_composite <-
 #'
 #' 1) Uniqueness terms (D) and (U)
 #' 2) Path-Coefficients (B) and Loadings (C)
+#' 3) Vector of estimates: non-zero Path-Coefficients (if Paths are specified in B0) or non-zero Loadings 
 #'
-update_C_B_D_U <-
+update_C_B_D_U_est <-
   function(X,
            n_indicators,
            Gamma,
@@ -549,12 +543,22 @@ update_C_B_D_U <-
     D <- diag(diag(t(U) %*% Z))
     D[ov_type != 1, ov_type != 1] <- 0
     
+    
+    if (length(b_index) > 0) {
+      est <- B[b_index]
+    } else {
+      est <- C[c_index]
+    }
+    
+    
+    
     return(
       list(
         "D" = D,
         "U" = U,
         "B" = B,
-        "C" = C
+        "C" = C,
+        "est" = est
       )
     )
   }
