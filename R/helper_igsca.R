@@ -112,7 +112,7 @@ igsca <-
   WW <- matrix()
 
 ### Initial Estimates and Preparation -------------------------------------
-  prepared_for_ALS <- initializeAlsEstimates(
+  prepared_for_ALS <- prepare_for_ALS(
     Z0 = Z0,
     W0 = W0,
     B0 = B0,
@@ -148,7 +148,7 @@ igsca <-
       est0 <- est
   
 #### Compute Pseudo-Weights --------------------------------------------------
-      updated_X_WW_pseudo_weights <- updateXAndWW(
+      updated_X_WW_pseudo_weights <- update_X_WW_pseudo_weights(
         Z = Z,
         U = U,
         D = D,
@@ -172,8 +172,8 @@ igsca <-
         
         if (con_type[gamma_idx] == "Composite") {
           
-          Theta <-
-            updateCompositeTheta(
+          theta <-
+            update_composite(
               W = W, # Changes per gamma_idx iteration
               A = A,
               X = X,
@@ -187,8 +187,8 @@ igsca <-
           
         } else if (con_type[gamma_idx] == "Common factor") {
           
-          Theta <-
-             updateCommonFactorTheta(
+          theta <-
+             update_common_factor(
                WW = WW, 
                windex_gamma_idx = windex_gamma_idx, # Changes per gamma_idx iteration
                gamma_idx = gamma_idx # Changes per gamma_idx iteration
@@ -201,14 +201,14 @@ igsca <-
         }
         
         # This is where Gamma, Weights and V are updated based on which gamma_idx
-        Theta <- Theta / norm(X_gamma_idx %*% Theta, "2")
-        Gamma[, gamma_idx] <- X_gamma_idx %*% Theta
-        W[windex_gamma_idx, gamma_idx] <- Theta
-        V[windex_gamma_idx, tot] <- Theta
+        theta <- theta / norm(X_gamma_idx %*% theta, "2")
+        Gamma[, gamma_idx] <- X_gamma_idx %*% theta
+        W[windex_gamma_idx, gamma_idx] <- theta
+        V[windex_gamma_idx, tot] <- theta
     }
       
 #### Update Loadings, Path Coefficients and Uniqueness Terms ----------
-      updated_C_B_D_U <- updateCBDU(
+      updated_C_B_D_U <- update_C_B_D_U(
         X = X,
         Gamma = Gamma,
         C = C,
@@ -236,7 +236,7 @@ igsca <-
 ## Flip Signs for Factors and Composites Based on Dominant Indicators --------
     if (!is.null(.dominant_indicators)) {
       flipped_signs <-
-        flipGammaCBSigns(
+        flip_signs_ind_domi(
           Z = Z,
           C = C,
           B = B,
@@ -276,8 +276,9 @@ igsca <-
 
 #' R Implementation of gsca_inione.m from Heungsun Hwang
 #' 
-#' Initializes the values for I-GSCA by using modified Generalized Structured Component Analysis (GSCA) to estimate the model.
+#' Internal I-GSCA function that is a slightly modified implementation of ordinary Generalised Structured Component Analysis (GSCA).
 #' 
+#' Initializes the values for I-GSCA
 #' @inheritParams igsca
 #' 
 #' @author Michael S. Truong
@@ -286,7 +287,7 @@ igsca <-
 #' * Loadings (C)
 #' * Path Coefficients (B)  
 #'
-initializeIgscaEstimates <- function(Z0, W0, B0) {
+gsca_inione <- function(Z0, W0, B0) {
   
   N <- nrow(Z0)
   J <- nrow(W0)
@@ -341,13 +342,13 @@ initializeIgscaEstimates <- function(Z0, W0, B0) {
       
       XI <- kronecker(t(beta), Z)
       XI <- XI[, windex_p]
-      Theta <- MASS::ginv(t(XI) %*% XI) %*% t(XI) %*% vecZDelta
-      zw <- Z[, windex_p] %*% Theta
+      theta <- MASS::ginv(t(XI) %*% XI) %*% t(XI) %*% vecZDelta
+      zw <- Z[, windex_p] %*% theta
       
       
-      Theta <- sqrt(N) * Theta / norm(zw, "2")
-      W[windex_p, p] <- Theta
-      V[windex_p, t_lil] <- Theta
+      theta <- sqrt(N) * theta / norm(zw, "2")
+      W[windex_p, p] <- theta
+      V[windex_p, t_lil] <- theta
     }
     Gamma <- Z %*% W
     Psi <- Z %*% V
@@ -385,7 +386,7 @@ initializeIgscaEstimates <- function(Z0, W0, B0) {
 #' * Estimated Uniqueness Errors vector (D)
 #' * Estimated Related to Uniqueness Errors vector (U)
 #' * Estimated Construct Scores matrix (Gamma)
-initializeAlsEstimates <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, indicator_type) {
+prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, indicator_type) {
   
   # Initialize Bindpoints for list2env
   W <- matrix()
@@ -393,7 +394,7 @@ initializeAlsEstimates <- function(Z0, W0, B0, n_indicators, n_case, n_construct
   
   # Initial estimates using GSCA
   initial_est <-
-    initializeIgscaEstimates(
+    gsca_inione(
       Z0 = Z0,
       W0 = apply(W0 != 0, 2, as.numeric),
       B0 = apply(B0 != 0, 2, as.numeric)
@@ -442,7 +443,7 @@ initializeAlsEstimates <- function(Z0, W0, B0, n_indicators, n_case, n_construct
   ))
 }
 
-#' Update X and WW (Pseudo Weights) for Composites and Common-Factors
+#' Update Pseudo Weights for Composites and Common-Factors
 #' 
 #' Computation of WW matrix was converted between Matlab to R based on page 44 of \insertCite{Hiebeler2015;textual}{cSEM}.  
 #' @param Z Standardized data matrix
@@ -453,14 +454,14 @@ initializeAlsEstimates <- function(Z0, W0, B0, n_indicators, n_case, n_construct
 #' @param n_constructs  Number of constructs
 #'
 #' @returns Two matrices:
-#' * X: Remaining part of data (Z) after accounting for uniqueness terms (U) and (D), used for estimating composite loadings. Also used for standardizing Theta when updating Gamma, W and V
+#' * X: Remaining part of data (Z) after accounting for uniqueness terms (U) and (D), used for estimating composite loadings. Also used for standardizing theta when updating Gamma, W and V
 #' * WW: Weights after accounting for current Loading and Path-Coefficients values, used for estimating common-factor loadings
 #' 
 #' @references
 #'   \insertAllCited{}
 #' 
 #'
-updateXAndWW <- function(Z, U, D, C, B, n_constructs) {
+update_X_WW_pseudo_weights <- function(Z, U, D, C, B, n_constructs) {
   # X deviates from Matlab because it is an offspring of svd_out
   X <- Z - U %*% D
 
@@ -470,22 +471,22 @@ updateXAndWW <- function(Z, U, D, C, B, n_constructs) {
 }
 
 
-#' Update Theta for Common Factor Variable
+#' Update Common Factor Variable
 #'
 #' @param WW Pseudo-weights for Common Factors
 #' @param windex_gamma_idx Index of weights related to the indicators for the construct of interest
 #' @param gamma_idx Index of which construct we are examining
 #'
-#' @return Theta: Used to update factor latent variables -- after accounting for loadings and path-coefficients.
+#' @return theta: Used to update factor latent variables -- after accounting for loadings and path-coefficients.
 #' 
 #' 
 #'
-updateCommonFactorTheta <- function(WW, windex_gamma_idx, gamma_idx) {
-  Theta <- WW[windex_gamma_idx, gamma_idx]
-  return(Theta)
+update_common_factor <- function(WW, windex_gamma_idx, gamma_idx) {
+  theta <- WW[windex_gamma_idx, gamma_idx]
+  return(theta)
 }
 
-#' Update Theta for Composite Variables
+#' Update Composite Variables
 #'
 #' @param W Weights matrix
 #' @param A Stacked matrix of loadings and path coefficients
@@ -497,10 +498,10 @@ updateCommonFactorTheta <- function(WW, windex_gamma_idx, gamma_idx) {
 #' @param n_constructs Number of constructs
 #' @param gamma_idx Index of which construct we are examining
 #'
-#' @return Theta: A matrix that will later be used to update the weights for the composite variable.
+#' @return theta: A matrix that will later be used to update the weights for the composite variable.
 #' 
 #'
-updateCompositeTheta <-
+update_composite <-
   function(W, A, V, X, windex_gamma_idx, n_total_var, tot, n_constructs, gamma_idx) {
     
     e <- matrix(0, nrow = 1, ncol = n_total_var)
@@ -517,14 +518,14 @@ updateCompositeTheta <-
     XI <- kronecker(t(beta), X)
     XI <- XI[, windex_gamma_idx]
     
-    Theta <- solve((t(XI) %*% XI), t(XI)) %*% vecZDelta
-    return(Theta)
+    theta <- solve((t(XI) %*% XI), t(XI)) %*% vecZDelta
+    return(theta)
   }
 
 #' Update Loadings, Path-Coefficients and Uniqueness Terms After Updating Latent Variables
 #' 
-#' @inheritParams initializeAlsEstimates
-#' @inheritParams updateXAndWW
+#' @inheritParams prepare_for_ALS
+#' @inheritParams update_X_WW_pseudo_weights
 #' @param X Pseudo-weights for composites
 #' @param Gamma Construct Scores
 #' @param c_index Index of loadings
@@ -538,7 +539,7 @@ updateCompositeTheta <-
 #' * (2) Estimated Path Coefficients matrix (B)
 #' * (3) Estimated Loadings matrix (C)
 #'
-updateCBDU <-
+update_C_B_D_U <-
   function(Z,
            X,
            Gamma,
@@ -579,10 +580,10 @@ updateCBDU <-
     
     return(
       list(
-        "C" = C,
-        "B" = B,
         "D" = D,
-        "U" = U
+        "U" = U,
+        "B" = B,
+        "C" = C
       )
     )
   }
@@ -590,15 +591,15 @@ updateCBDU <-
 #' Flip signs of Gamma, Loadings and Path-Coefficients Cells Based on Dominant Indicator
 #' 
 #' @inheritParams igsca
-#' @inheritParams updateXAndWW
-#' @inheritParams updateCBDU
+#' @inheritParams update_X_WW_pseudo_weights
+#' @inheritParams update_C_B_D_U
 #'
 #' @return List of matrices:
 #' * Estimated Construct Scores (Gamma)
 #' * Estimated Loadings matrix (C)
 #' * Estimated Path-Coefficients matrix (B)
 #'
-flipGammaCBSigns <- function(Z, Gamma, C, B, n_constructs, .dominant_indicators) {
+flip_signs_ind_domi <- function(Z, Gamma, C, B, n_constructs, .dominant_indicators) {
   for (gamma_idx in seq_len(n_constructs)) {
     if (exists(.dominant_indicators[gamma_idx])) {
       if ((t(Z[, .dominant_indicators[gamma_idx]]) %*% Gamma[, gamma_idx]) < 0) {
@@ -616,7 +617,7 @@ flipGammaCBSigns <- function(Z, Gamma, C, B, n_constructs, .dominant_indicators)
   ))
 }
 
-#' Gets the Relevant Inputs for IGSCA
+#' A parseModel extractor function for the purposes of running I-GSCA code example
 #' 
 #' In the context of igsca, this function prepares: (1) the initial indicators
 #' (Z0), weights (W0), structural (B0), loadings(C0) matrices; (2) whether a
@@ -634,7 +635,7 @@ flipGammaCBSigns <- function(Z, Gamma, C, B, n_constructs, .dominant_indicators)
 #' * C0
 #' * con_type
 #' * indicator_type
-getIgscaInputs <-
+extract_parseModel <-
   function(.data, .model) {
     # Note: parseModel is from cSEM internal
     
@@ -704,12 +705,10 @@ getIgscaInputs <-
 
 #' Warning Function for I-GSCA
 #' 
-#' Warning message to URL for what is currently supported and unsupported when using IGSCA
-#' 
 #' @author Michael S. Truong
-warnIgscaFeatures <- function() {
+igsca_warning <- function() {
   
   # TODO: Might want to do something about this during the simulations...
   # TODO: Maybe only call with the print Method?
-  warning("The list of current suspected and confirmed limitations of the R IGSCA limitations if found here: https://github.com/FloSchuberth/cSEM/wiki/Notes-on-I%E2%80%90GSCA-Implementation#current-limitations")
+  warning("IGSCA in cSEM currently only supports...")
 }
