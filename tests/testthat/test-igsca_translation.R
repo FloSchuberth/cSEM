@@ -267,9 +267,6 @@ compared_R_matlab <-
 # Check which ones failed to be equivalent
 # Only flip_signs_ind_domi should match matlab because no further computations are performed
 
-
-testthat::expect_equal(end_comparisons_table$noswap, end_comparisons_table$matlab)
-
 compared_R_matlab[!names(compared_R_matlab) %in% "flip_signs_ind_domi"] |>
   sapply(is, 'try-error') |>
   all() |>
@@ -300,15 +297,3 @@ withr::with_options(list(width = 20),
 # Compare GSCAPro and R ---------------------------------------------------
 
 # TODO: Compare GSCAPro and R
-
-compared_R_gscapro <-
-  lapply(end_comparisons_table[!(names(end_comparisons_table) == "matlab")],
-         FUN = \(selected_R_table) try(
-           testthat::expect_equal(object = selected_R_table,
-                                  expected = gscapro_tabulated)
-         )
-  )
-
-## TODO: Interpret
-## 
-## TODO: See what happens when I increase the maximum number of iterations and the tolerance

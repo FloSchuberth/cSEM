@@ -406,7 +406,7 @@ for(nb in seq_len(nbt+1)) {
   rownames(PathCoefficients) <- special_names$path$row
   colnames(PathCoefficients) <- special_names$path$col
   
-  # browser()
+  browser()
   
   names(uniqueD) <- rownames(Loadings)
   
@@ -904,7 +904,7 @@ update_C_B_D <-
     } else {
       est <- C[cindex]
     }
-    # browser()
+    browser()
     uniqueD <- diag(D) ^ 2
     
     return(
