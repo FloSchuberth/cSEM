@@ -68,6 +68,9 @@ igsca <-
            ind_domi,
            itmax = 100,
            ceps = 0.001) {
+    
+  
+
   
 # Initialize Auxiliary Computational Variables -----------------------------------------------------
   n_case <- nrow(Z0)
@@ -79,6 +82,18 @@ igsca <-
   cindex <- which(c(C0) == 1)
   bindex <- which(c(B0) == 1)
   
+  # column and row names are kept aside because swapping with matlab's environment removes the column and row names. Arrays in matlabs don't have row or column names.
+  special_names <- list()
+  special_names$weights$row <- rownames(W0)
+  special_names$weights$col <- colnames(W0)
+  special_names$loadings$row <- rownames(C0)
+  special_names$loadings$col <- colnames(C0)
+  special_names$path$row <- rownames(B0)
+  special_names$path$col <- colnames(B0)
+  
+
+
+
 
 # Initial Estimates and Preparation -------------------------------------
   prepared_for_ALS <- prepare_for_ALS(
@@ -222,16 +237,22 @@ igsca <-
     mD <- uniqueD
   
   
-  # Label Output for Formatting
+  # Format Output
   Weights <- W
-  rownames(Weights) <- rownames(W0) 
+  rownames(Weights) <- special_names$weights$row
+  colnames(Weights) <- special_names$weights$col
   
   Loadings <- t(C)
-  rownames(Loadings) <- rownames(C0) 
-  names(uniqueD) <- rownames(Loadings) 
+  rownames(Loadings) <- special_names$loadings$row
+  colnames(Loadings) <- special_names$loadings$col
   
   PathCoefficients <- B
+  rownames(PathCoefficients) <- special_names$path$row
+  colnames(PathCoefficients) <- special_names$path$col
   
+  # browser()
+  
+  names(uniqueD) <- rownames(Loadings)
   
     return(
       list(
