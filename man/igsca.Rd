@@ -7,7 +7,7 @@
 igsca(Z0, W0, C0, B0, con_type, ov_type, ind_domi, itmax = 100, ceps = 0.001)
 }
 \arguments{
-\item{Z0}{Data matrix of N cases (measurements) x J indicators with named columns, unstandardized.}
+\item{Z0}{Data matrix of N cases (measurements) x J indicators with named columns}
 
 \item{W0}{Indicator matrix of weights: J indicators (rows) and their corresponding Gamma construct variables (columns).}
 

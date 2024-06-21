@@ -8,10 +8,10 @@ update_C_B_D(
   X,
   n_indicators,
   Gamma,
-  c_index,
+  cindex,
   C,
   n_constructs,
-  b_index,
+  bindex,
   B,
   n_case,
   D,
@@ -26,13 +26,13 @@ update_C_B_D(
 
 \item{Gamma}{}
 
-\item{c_index}{}
+\item{cindex}{}
 
 \item{C}{}
 
 \item{n_constructs}{}
 
-\item{b_index}{}
+\item{bindex}{}
 
 \item{B}{}
 

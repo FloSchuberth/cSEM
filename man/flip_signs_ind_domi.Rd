@@ -4,7 +4,7 @@
 \alias{flip_signs_ind_domi}
 \title{Flip signs of Gamma, Loadings and Path-Coefficients Cells Based on Dominant Indicator}
 \usage{
-flip_signs_ind_domi(n_constructs, Z, ind_domi, Gamma, C, B)
+flip_signs_ind_domi(n_constructs, Z, ind_domi, gamma_idx, Gamma, C, B)
 }
 \arguments{
 \item{n_constructs}{}
@@ -13,13 +13,13 @@ flip_signs_ind_domi(n_constructs, Z, ind_domi, Gamma, C, B)
 
 \item{ind_domi}{}
 
+\item{gamma_idx}{}
+
 \item{Gamma}{}
 
 \item{C}{}
 
 \item{B}{}
-
-\item{gamma_idx}{}
 }
 \value{
 List of matrices: Gamma, Loadings (C) and Path-Coefficients (B)
