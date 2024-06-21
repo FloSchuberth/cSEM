@@ -1027,8 +1027,6 @@ get_lavaan_table_igsca_matrix <- function(model, weights, loadings, uniqueD, pat
 
 #' Takes GSCAPro input and Creates a Lavaan-style Table
 #'
-#' TODO: Rename the functions here
-#' 
 #' Assumes that every indicator loads onto only one latent variable (composite/factor)
 #' 
 #' Expects output from parse_GSCAPro_FullResults.
@@ -1168,31 +1166,4 @@ get_lavaan_table_igsca_gscapro <- function(gscapro_in, model) {
   table[!(table$op %in% c("~")), "paths"] <- NA
   
   return(table)
-}
-
-#' Title
-#'
-#' @param igsca_sim_results 
-#'
-#' @return
-#' @export
-#'
-#' @examples
-summarize_FIT_idx <- function(igsca_sim_results) {
-  # TODO: Compute FIT statistic
-  return(FIT)
-}
-
-#' Title
-#'
-#' @param model 
-#' @param group 
-#'
-#' @return
-#' @export
-#'
-#' @examples
-model_multigroup_igsca <- function(model, group) {
-  
-  return(mutligroup_igsca_result)
 }
