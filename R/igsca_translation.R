@@ -49,17 +49,16 @@
 #'                                    data = dat,
 #'                                    ind_domi_as_first = TRUE)
 #'
-#'
+#'r
 #' (igsca_sim_out <- igsca_sim(Z0 = igsca_sim_in$Z0, W0 = igsca_sim_in$W0, C0 = igsca_sim_in$C0,
 #'                             B0 = igsca_sim_in$B0, lv_type = igsca_sim_in$lv_type,
 #'                             ov_type = igsca_sim_in$ov_type, ind_domi = igsca_sim_in$ind_domi,
 #'                             nbt = 0,
-#'                             testEquivalence = TRUE,
-#'                             devmode = TRUE)
+#'                             testEquivalence = TRUE)
 #'                             )
 igsca_sim <- function(Z0, W0, C0, B0, lv_type, ov_type, ind_domi, nbt, testEquivalence = FALSE,
                       swap_step = c("data", "qr1", "gsca_initialization", "svd1", "qr2", "svd2"),
-                      itmax = 100, ceps = 0.001, devmode =  FALSE) {
+                      itmax = 100, ceps = 0.001) {
   
 
 # Safety Checks ------------------------------------------------------------
@@ -82,168 +81,168 @@ igsca_sim <- function(Z0, W0, C0, B0, lv_type, ov_type, ind_domi, nbt, testEquiv
 for(nb in seq_len(nbt+1)) { 
 
 ## Initial Estimates and Preparation ---------------------------------------
-  prepared_for_ALS <- prepare_for_ALS(
-    Z0 = Z0,
-    W0 = W0,
-    B0 = B0,
-    nvar = nvar,
-    ncase = ncase,
-    nlv = nlv,
-    ov_type = ov_type
-  )
-  
-  W <- prepared_for_ALS$W
-  C <- prepared_for_ALS$C
-  B <- prepared_for_ALS$B
-  V <- prepared_for_ALS$V # Used for updating Composites
-  Z <- prepared_for_ALS$Z
-  D <- prepared_for_ALS$D
-  U <- prepared_for_ALS$U # Used for updating Weights
-  Gamma <- prepared_for_ALS$Gamma
+    bZ0 <- Z0
     
     
+    initial_est <-
+      gsca_inione(Z0 = bZ0,
+                  W0 = apply(W0 != 0, 2, as.numeric), 
+                  B0 = apply(B0 != 0, 2, as.numeric)
+                  ) 
+    W <- initial_est$W
+    C <- initial_est$C
+    B <- initial_est$B
+    
+    
+    V <- cbind(diag(nvar), W) 
+    Z <- scale(bZ0, center = TRUE, scale = TRUE) / sqrt(ncase - 1) 
+    Gamma <- Z %*% W 
+    D <- diag(nvar)
+    
+    
+    # TODO: Does the LAPACK argument for qr() still matter? Why does `complete` matter? 
+    # Solution for Q is copied from estimators_weights.R
+    Q <- qr.Q(qr(Gamma), complete =  TRUE) 
+    F_o <- Q[, (nlv+1):ncase, drop = FALSE] 
+    # FIXME: Should compare the svd of matlab and R, unsure if it matters that they don't match
+    # FIXME: Come back to this stack overflow thing for proper citation
+    # Ahmed Fasih https://stackoverflow.com/a/41972818
+    svd_out <- (D %*% t(Z) %*% F_o) |>
+      {\(mx) svd(mx, nu = nrow(mx),  nv = ncol(mx))}()
+    u <- svd_out$u
+    v <- svd_out$v
+    
+    # TODO: Utilde deviates from Matlab because of the SVD
+    Utilde <- v[, 1:nvar] %*% t(u) 
+    U <- F_o %*% Utilde 
+    D <- diag(diag(t(U) %*% Z)) 
+    D[ov_type == 0, ov_type == 0] <- 0
+    
 
-# Alternating Least Squares Algorithm -------------------------------------
-
-### While Counters and Initial Estimates ----------------------------------
+## Alternating Least Squares Algorithm -------------------------------------
     # Set the initial estimates based on either the structural model or the loadings
     # if there's no structural model
     if (any(bindex)) {
       est <- B[bindex] 
     } else {
       est <- C[cindex]
-    }    
-    est0 <- est + 1 
+    }
+    est0 <- est + 1 # It's set early because of the upcoming condition
     it <- 0
-
-### Alternate Between Updating Weights and Loadings -----------------------
+    
+    
+    # TODO: Review better way to do this while condition
     while ((sum(abs(est0 - est)) > ceps) && (it <= itmax)) {
-      # TODO: Review better way to do this while condition
-
-      # Counter Things
       it <- it + 1
       est0 <- est
+      # TODO: X deviates from Matlab because it is an offspring of svd_out
+      X <- Z - U %*% D
       
-#### Update Weights ----------------------------------------------------------
-      warning("X and WW probably aren't weights, the naming for this section is a misnomer")
-      updated_X_weights <- update_X_weights(
-        Z = Z,
-        U = U,
-        D = D,
-        C = C,
-        nlv = nlv,
-        B = B
-      )
-      X <- updated_X_weights$X # Used for Updating Composites
-      WW <- updated_X_weights$WW # Used for Updating Factors
       
-#### Iterative Update of LVs -------------------------------------------------
+      warning("I don't quite understand why this is the equivalent of the Matlab expression, revisit page 44 of Hiebeler 2015 R and Matlab")
+      # TODO: Should find alternative to solve() to avoid matrix inversions
+      WW <-
+        t(C) %*% solve((C %*% t(C) + diag(nlv) - 2 * B + (B %*% t(B))))
       A <- cbind(C, B) 
-      
+
+### Update Each Latent Variable One-by-One------------------------------------
       for (j in seq_len(nlv)) {
-      # After each cycle, the Gamma, W and V matrices are updated
         tot <- nvar + j
         windex_j <- (W0[, j] == 1)
         Xj <- X[, windex_j]
-        
+
+#### Composite-Specific Update -----------------------------------------------
         if (lv_type[j] == 0) {
-          # Update Composite LV
-          theta <-
-            update_composite_LV(
-              ntv = ntv,
-              tot = tot, # Changes per lv_update iteration
-              nlv = nlv,
-              j = j, # Changes per lv_update iteration
-              W = W, # Changes per lv_update iteration
-              A = A,
-              V = V, # Changes per lv_update iteration
-              X = X,
-              windex_j = windex_j # Changes per lv_update iteration
-            )
+          warning("There may be a bug in using lv_type because if it's numeric then it might only ever call the first column/row perhaps boolean would be better?")
+          # This updates the composite
+          e <- matrix(0, nrow = 1, ncol = ntv)
+          e[tot] <- 1 
+          H1 <- diag(ntv)
+          H2 <- diag(nlv)
+          H1[tot, tot] <- 0
+          H2[j, j] <- 0
+          Delta <- (W %*% H2 %*% A) - (V %*% H1)
+          
+          
+          vecZDelta <- c(X %*% Delta)
+          beta <- e - A[j,]
+          XI <- kronecker(t(beta), X)
+          XI <- XI[, windex_j]
+          
+          theta <- solve((t(XI) %*% XI), t(XI)) %*% vecZDelta
+          
         } else if (lv_type[j] == 1) {
-          # Update Factor LV
-          theta <-
-             update_factor_LV(
-               WW = WW, 
-               windex_j = windex_j, # Changes per iteration
-               j = j # Changes per iteration
-               )
+#### Factor-Specific Updates -------------------------------------------------
+          theta <- WW[windex_j, j]
         } else {
-          stop("lv_type should either be 1 for factors or 0 for composites")
+          stop("lv_type should either be 1 for factor or 0 for composites")
         }
-        # This is where the 'actual' updating occurs, in terms of the Gamma matrix, Weights and V(?)
         warning("Is Matlab doing a 2-norm here?")
         theta <- theta / norm(Xj %*% theta, "2")
-        
         Gamma[, j] <- Xj %*% theta
         W[windex_j, j] <- theta
         V[windex_j, tot] <- theta
     }
 
-### Update Loadings, Path Coefficients and Disturbance Terms ----------
+### Update Loadings, Structural Coefficients and Disturbance Terms ----------
 
-      updated_C_B_D <- update_C_B_D(
-        X = X,
-        nvar = nvar,
-        Gamma = Gamma,
-        cindex = cindex,
-        C = C,
-        nlv = nlv,
-        bindex = bindex,
-        B = B,
-        ncase = ncase,
-        D = D,
-        Z = Z,
-        ov_type = ov_type
-      )
-      D <- updated_C_B_D$D
-      uniqueD <- updated_C_B_D$uniqueD
-      est <- updated_C_B_D$est
-      U <- updated_C_B_D$U
-      B <- updated_C_B_D$B
-      C <- updated_C_B_D$C
+      t1 <- c(X)
+      M1 <- kronecker(diag(nvar), Gamma) 
+      M1 <- M1[, cindex]
+      C[cindex] <- MASS::ginv(t(M1) %*% M1) %*% (t(M1) %*% t1)   
+      
+      t2 <- c(Gamma)
+      M2 <- kronecker(diag(nlv), Gamma)
+      M2 <- M2[, bindex]
+      B[bindex] <- MASS::ginv(t(M2) %*% M2) %*% (t(M2) %*% t2)
+      
+      # Solution for Q is copied from estimators_weights.R
+      Q <- qr.Q(qr(Gamma), complete =  TRUE) 
+      F_o <- Q[, (nlv+1):ncase]
+      warning("It's unclear to me whether this SVD is safe. The Matlab code seems to either do a 'normal' svd or a economy svd depending on the dimensionality of the input matrix. Should look into this more.")
+      # https://www.mathworks.com/help/matlab/ref/double.svd.html?searchHighlight=svd&s_tid=srchtitle_support_results_1_svd#d126e1597915
+      svd_out2 <- (D %*% t(Z) %*% F_o) |>
+        {\(mx) svd(mx, nu = nrow(mx),  nv = ncol(mx))}()
+      u <- svd_out2$u
+      v <- svd_out2$v
+      Utilde <- v[, 1:nvar] %*% t(u)
+      U <- F_o %*% Utilde
+      D <- diag(diag(t(U) %*% Z))
+      D[ov_type != 1, ov_type != 1] <- 0
+      
+      
+      if (any(bindex)) {
+        est <- B[bindex] 
+      } else {
+        est <- C[cindex]
+      }
+      
+      uniqueD <- diag(D) ^ 2
     }
     
 
 # Flip Signs for Factors and Composites Based on Dominant Indicators --------
 
-    flipped_signs <-
-      flip_signs_ind_domi(
-        nlv = nlv,
-        Z = Z,
-        ind_domi = ind_domi,
-        j = j,
-        Gamma = Gamma,
-        C = C,
-        B = B
-      )
-    Gamma <- flipped_signs$Gamma
-    C <- flipped_signs$C
-    B <- flipped_signs$B
+    for (j in seq_len(nlv)) {
+      if ((t(Z[, ind_domi[j]]) %*% Gamma[, j]) < 0) {
+        Gamma[, j] <- (-1 * Gamma[, j])
+        C[j,] <- (-1 * C[j,])
+        B[B,] <- (-1 * B[j,])
+        B[, j] <- (-1 * B[, j])
+      }
+    }
     
     mW <- W[windex] 
-    # TODO: Commented out in matlab version, why?
-    # mC <- c[cindex] 
-    mC <- t(C)[t(C0) == 1] 
+    # mC <- c[cindex] # Commented out in matlab
     mB <- B[bindex] 
     mD <- uniqueD
+    
+    crindex <- (t(C0) == 1)
+    C_t <- t(C)
+    mC <- C_t[crindex] 
   }
   
-  if (isTRUE(devmode)) {
-    browser()
-    # Heuristic check for when a function is returning more arguments than what is needed
-    # Although in-order to maintain testability against matlab, this may have to be kept...
-    devcheck <- print_important_arguments()
-    
-    extra_arguments <- lapply(list("prepared_for_ALS" = prepared_for_ALS,
-                                   "updated_weights" = updated_weights,
-                                   "updated_C_B_D" = updated_C_B_D),
-                              FUN = \(x)  names(x)[!(names(x) %in% devcheck)])
-    extra_arguments 
-    
-  }
-  
-  return(list("Weights" = mW, "Loadings" =  mC, "Path Coefficients" =  mB, "Uniqueness Terms" = mD))
+  return(list("mW" = mW, "mC" =  mC, "mB" =  mB, "mD" = mD))
 }
 
 
@@ -364,17 +363,13 @@ extract_parseModel <- function(model, data, ind_domi_as_first = TRUE) {
 #' 
 #' write_for_matlab(extract_parseModel(model = tutorial_igsca_model, data = dat, ind_domi_as_first = TRUE))
 write_for_matlab <- function(extracted_matrices) {
+  browser()
   
-  indir <- list("dev", "Notes", "data", "matlab_in")
-  
-  mapply(
-    write.csv,
-    x = extracted_matrices,
-    file = paste0(here::here(indir), "/", names(extracted_matrices), ".csv"),
-    row.names = FALSE
-  )
-  
-  invisible()  
+  indir <- list("dev", "Notes", "data", "matlab")
+  # TODO: Continue filling this out so that it iterates through all the objects using lapply and automatically substitutes names
+  lapply(extracted_matrices, write.csv, )
+  write.csv(extracted_matrices$Z0, file = here::here(indir, "Z0.csv"))
+  write.csv()
 }
 
 
@@ -391,38 +386,43 @@ write_for_matlab <- function(extracted_matrices) {
 #' @export
 #'
 #' @examples
-#' 
-#' require(here)
-#' require(readxl)
-#' 
-#' tutorial_gsca_model <- "
-#' # Composite Model
-#' NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + Behavior7 + Behavior8 + Behavior9
-#' NumberofJobInterviews <~ Interview1 + Interview2
-#' NumberofJobOffers <~ Offer1 + Offer2 
-#' 
-#' # Reflective Measurement Model Forced into Composite
-#' Honesty_Humility <~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 + Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10
-#' Emotionality <~ Emotion1 + Emotion2 + Emotion3 + Emotion4 + Emotion5 + Emotion6 + Emotion8 + Emotion10
-#' Extraversion <~ Extraver2 + Extraver3 + Extraver4 + Extraver5 + Extraver6 + Extraver7 + Extraver8 + Extraver9 + Extraver10
-#' Agreeableness <~ Agreeable1 + Agreeable3 + Agreeable4 + Agreeable5 + Agreeable7 + Agreeable8 + Agreeable9 + Agreeable10
-#' Conscientiousness <~ Conscientious1 + Conscientious3 + Conscientious4 + Conscientious6 + Conscientious7 + Conscientious8 + Conscientious9 + Conscientious10
-#' Openness_to_Experience <~ Openness1 + Openness2 + Openness3 + Openness5 + Openness7 + Openness8 + Openness9 + Openness10
-#' 
-#' # Structural Model
-#' NetworkingBehavior ~ Honesty_Humility + Emotionality + Extraversion + Agreeableness + Conscientiousness + Openness_to_Experience
-#' NumberofJobInterviews ~ NetworkingBehavior
-#' NumberofJobOffers ~ NetworkingBehavior
-#' "
-#' 
-#' dat <- readxl::read_excel(here::here("dev", "Notes", "data", "mmc1.xlsx")) 
-#' 
-#' 
-#' gsca_sim_in <- extract_parseModel(model = tutorial_gsca_model,
-#'                                    data = dat,
-#'                                    ind_domi_as_first = TRUE)
+#' z_ini <- read.csv("~/Documents/RStudio/cSEM/dev/Notes/data/rick_mg.csv") |>
+#'            subset(select=-gender)
+#'            
+#' w_ini <- matrix(data = c(1, 0, 0, 0,
+#'                          1, 0, 0, 0,
+#'                          1, 0, 0, 0,
+#'                          1, 0, 0, 0,
+#'                          1, 0, 0, 0,
+#'                          1, 0, 0, 0,
+#'                          1, 0, 0, 0,
+#'                          1, 0, 0, 0,
+#'                          0, 1, 0, 0,
+#'                          0, 1, 0, 0,
+#'                          0, 1, 0, 0,
+#'                          0, 1, 0, 0,
+#'                          0, 1, 0, 0,
+#'                          0, 1, 0, 0,
+#'                          0, 0, 1, 0,
+#'                          0, 0, 1, 0,
+#'                          0, 0, 1, 0,
+#'                          0, 0, 1, 0,
+#'                          0, 0, 0, 1,
+#'                          0, 0, 0, 1,
+#'                          0, 0, 0, 1),
+#'                 byrow = TRUE,
+#'                 nrow = ncol(z_ini)
+#'                 )
+#'                 
+#' b_ini <- matrix(data = c(0, 1, 0, 0,
+#'                          0, 0, 1, 1,
+#'                          0, 0, 0, 0,
+#'                          0, 0, 0, 0),
+#'                 byrow = TRUE,
+#'                 nrow = ncol(w_ini)
+#'                 )
 #'                          
-#' (gsca_inione_test <- gsca_inione(Z0 = gsca_sim_in$Z0, W0 = gsca_sim_in$W0, B0 = gsca_sim_in$B0))
+#' (gsca_inione_test <- gsca_inione(Z0 = z_ini, W0 = w_ini, B0 = b_ini))
 gsca_inione <- function(Z0, W0, B0) {
   N <- nrow(Z0)
   J <- nrow(W0)
@@ -492,303 +492,4 @@ gsca_inione <- function(Z0, W0, B0) {
   C <- A[, 1:J]
   B <- A[, (J+1) : ncol(A)]
   return(list("W" = W, "C" = C, "B" = B, "it" = it))
-}
-
-#' Flip signs of Gamma, Loadings and Path-Coefficients Cells Based on Dominant Indicator
-#'
-#' @param nlv 
-#' @param Z 
-#' @param ind_domi 
-#' @param j 
-#' @param Gamma 
-#' @param C 
-#' @param B 
-#'
-#' @return Gamma 
-#' @export
-#'
-#' @examples
-flip_signs_ind_domi <- function(nlv, Z, ind_domi, j, Gamma, C, B) {
-
-  for (j in seq_len(nlv)) {
-    if ((t(Z[, ind_domi[j]]) %*% Gamma[, j]) < 0) {
-      Gamma[, j] <- (-1 * Gamma[, j])
-      C[j,] <- (-1 * C[j,])
-      B[B,] <- (-1 * B[j,])
-      B[, j] <- (-1 * B[, j])
-    }
-  }
-  return(list("Gamma" = Gamma, "C" = C, "B" = B))
-}
-
-
-#' Prepare for ALS Algorithm
-#'
-#' Internal I-GSCA function
-#'
-#' @param Z0 
-#' @param W0 
-#' @param B0 
-#' @param nvar 
-#' @param ncase 
-#' @param nlv 
-#' @param ov_type 
-#'
-#' @return
-#' @export
-#'
-#' @examples
-prepare_for_ALS <- function(Z0, W0, B0, nvar, ncase, nlv, ov_type) {
-  
-  bZ0 <- Z0
-  
-  
-  initial_est <-
-    gsca_inione(Z0 = bZ0,
-                W0 = apply(W0 != 0, 2, as.numeric), 
-                B0 = apply(B0 != 0, 2, as.numeric)
-    ) 
-  W <- initial_est$W
-  C <- initial_est$C
-  B <- initial_est$B
-  
-  
-  V <- cbind(diag(nvar), W) 
-  Z <- scale(bZ0, center = TRUE, scale = TRUE) / sqrt(ncase - 1) 
-  Gamma <- Z %*% W 
-  D <- diag(nvar)
-  
-  
-  # TODO: Does the LAPACK argument for qr() still matter? Why does `complete` matter? 
-  # Solution for Q is copied from estimators_weights.R
-  Q <- qr.Q(qr(Gamma), complete =  TRUE) 
-  F_o <- Q[, (nlv+1):ncase, drop = FALSE] 
-  # FIXME: Should compare the svd of matlab and R, unsure if it matters that they don't match
-  # FIXME: Come back to this stack overflow thing for proper citation
-  # Ahmed Fasih https://stackoverflow.com/a/41972818
-  svd_out <- (D %*% t(Z) %*% F_o) |>
-    {\(mx) svd(mx, nu = nrow(mx),  nv = ncol(mx))}()
-  u <- svd_out$u
-  v <- svd_out$v
-  
-  # TODO: Utilde deviates from Matlab because of the SVD
-  Utilde <- v[, 1:nvar] %*% t(u) 
-  U <- F_o %*% Utilde 
-  D <- diag(diag(t(U) %*% Z)) 
-  D[ov_type == 0, ov_type == 0] <- 0
-  
-  
-  return(
-    list(
-      "W" = W,
-      "C" = C,
-      "B" = B,
-      "V" = V,
-      "Z" = Z,
-      "D" = D,
-      # "Utilde" = Utilde,
-      "U" = U,
-      # "v" = v,
-      # "u" = u,
-      # "F_o" = F_o,
-      # "Q" = Q,
-      "Gamma" = Gamma
-    )
-  )
-}
-
-#' Update Loadings, Path-Coefficients and Uniqueness Terms After Updating Latent Variables
-#'
-#' @param X 
-#' @param nvar 
-#' @param Gamma 
-#' @param cindex 
-#' @param C 
-#' @param nlv 
-#' @param bindex 
-#' @param B 
-#' @param ncase 
-#' @param D 
-#' @param Z 
-#' @param ov_type 
-#'
-#' @return
-#' @export
-#'
-#' @examples
-update_C_B_D <- function(X, nvar, Gamma, cindex, C, nlv, bindex, B, ncase, D, Z, ov_type) {
-  
-  t1 <- c(X)
-  M1 <- kronecker(diag(nvar), Gamma) 
-  M1 <- M1[, cindex]
-  C[cindex] <- MASS::ginv(t(M1) %*% M1) %*% (t(M1) %*% t1)   
-  
-  t2 <- c(Gamma)
-  M2 <- kronecker(diag(nlv), Gamma)
-  M2 <- M2[, bindex]
-  B[bindex] <- MASS::ginv(t(M2) %*% M2) %*% (t(M2) %*% t2)
-  
-  # Solution for Q is copied from estimators_weights.R
-  Q <- qr.Q(qr(Gamma), complete =  TRUE) 
-  F_o <- Q[, (nlv+1):ncase]
-  warning("It's unclear to me whether this SVD is safe. The Matlab code seems to either do a 'normal' svd or a economy svd depending on the dimensionality of the input matrix. Should look into this more.")
-  # https://www.mathworks.com/help/matlab/ref/double.svd.html?searchHighlight=svd&s_tid=srchtitle_support_results_1_svd#d126e1597915
-  svd_out2 <- (D %*% t(Z) %*% F_o) |>
-    {\(mx) svd(mx, nu = nrow(mx),  nv = ncol(mx))}()
-  u <- svd_out2$u
-  v <- svd_out2$v
-  Utilde <- v[, 1:nvar] %*% t(u)
-  U <- F_o %*% Utilde
-  D <- diag(diag(t(U) %*% Z))
-  D[ov_type != 1, ov_type != 1] <- 0
-  
-  
-  if (any(bindex)) {
-    est <- B[bindex] 
-  } else {
-    est <- C[cindex]
-  }
-  
-  uniqueD <- diag(D) ^ 2
-  
-  return(
-    list(
-      "D" = D,
-      "uniqueD" = uniqueD,
-      "est" = est,
-      "U" = U,
-      "Utilde" = Utilde,
-      "v" = v,
-      "u" = u,
-      "F_o" = F_o,
-      "Q" = Q,
-      "B" = B,
-      "C" = C
-    )
-  )
-}
-
-#' Update Weights and X (?)
-#'
-#' @param Z 
-#' @param U 
-#' @param D 
-#' @param C 
-#' @param nlv 
-#' @param B 
-#'
-#' @return
-#' @export
-#'
-#' @examples
-update_X_weights <- function(Z, U, D, C, nlv, B) {
-  # TODO: X deviates from Matlab because it is an offspring of svd_out
-  X <- Z - U %*% D
-  warning("I don't quite understand why this is the equivalent of the Matlab expression, revisit page 44 of Hiebeler 2015 R and Matlab")
-  # TODO: Should find alternative to solve() to avoid matrix inversions
-  WW <-
-    t(C) %*% solve((C %*% t(C) + diag(nlv) - 2 * B + (B %*% t(B))))
-  return(list("X" = X, "WW" = WW))
-}
-
-#' Update Composite Latent Variables
-#'
-#' @param ntv 
-#' @param tot 
-#' @param nlv 
-#' @param j 
-#' @param W 
-#' @param A 
-#' @param V 
-#' @param X 
-#' @param windex_j 
-#'
-#' @return
-#' @export
-#'
-#' @examples
-update_composite_LV <- function(ntv, tot, nlv, j, W, A, V, X, windex_j) {
-  
-  warning("There may be a bug in using lv_type because if it's numeric then it might only ever call the first column/row perhaps boolean would be better?")
-  # This updates the composite
-  e <- matrix(0, nrow = 1, ncol = ntv)
-  e[tot] <- 1 
-  H1 <- diag(ntv)
-  H2 <- diag(nlv)
-  H1[tot, tot] <- 0
-  H2[j, j] <- 0
-  Delta <- (W %*% H2 %*% A) - (V %*% H1)
-  
-  
-  vecZDelta <- c(X %*% Delta)
-  beta <- e - A[j,]
-  XI <- kronecker(t(beta), X)
-  XI <- XI[, windex_j]
-  
-  theta <- solve((t(XI) %*% XI), t(XI)) %*% vecZDelta
-  return(theta)
-}
-
-
-#' Update Factor Latent Variable
-#'
-#' @param WW 
-#' @param windex_j 
-#' @param j 
-#'
-#' @return
-#' @export
-#'
-#' @examples
-update_factor_LV <- function(WW, windex_j, j) {
-  
-  theta <- WW[windex_j, j]
-  return(theta)
-}
-
-
-#' List arguments and objects that are important for fitting
-#' 
-#' Internal development function 
-#' 
-#' Anything returned in this list should always be returned by other functions so that they are up-to-date
-#' 
-#' 
-#' @return
-#' @export
-#'
-#' @examples
-#' 
-#' devcheck <- print_important_objects()
-print_important_objects <- function() {
-  
-  objects_used_by_functions <- lapply(list(extract_parseModel,
-              flip_signs_ind_domi,
-              gsca_inione,
-              igsca_sim,
-              prepare_for_ALS,
-              update_C_B_D,
-              update_composite_LV,
-              update_factor_LV,
-              update_X_weights,
-              write_for_matlab), formals) |>
-    unlist() |>
-    names() |>
-    unique()
-  return(
-    c(
-      objects_used_by_functions,
-      "uniqueD",
-      "D",
-      "est",
-      "U",
-      "B",
-      "W",
-      "Gamma",
-      "C",
-      "V",
-      "X",
-      "theta"
-    ) |> unique()
-  )
 }
