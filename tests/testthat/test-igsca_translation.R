@@ -1,3 +1,10 @@
+# Libraries ---------------------------------------------------------------
+require(testthat) # TODO: This certainly doesn't show up in the cSEM test files...
+require(R.matlab) # TODO: Should check whether one should load libraries in testthat
+require(here)
+require(readxl)
+require(waldo)
+
 # General Pre-Test -------------------------------------------------------------
 
 ## Model Specification and Load Data ---------------------------------------
