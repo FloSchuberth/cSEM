@@ -110,6 +110,46 @@
     <p>Michael S. Truong</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">tutorial_gsca_model</span> <span class="op">&lt;-</span> <span class="st">"</span></span></span>
+<span class="r-in"><span><span class="st"># Composite Model</span></span></span>
+<span class="r-in"><span><span class="st">NetworkingBehavior &lt;~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + Behavior7 + Behavior8 + Behavior9</span></span></span>
+<span class="r-in"><span><span class="st">Numberofjobinterviews &lt;~ Interview1 + Interview2</span></span></span>
+<span class="r-in"><span><span class="st">Numberofjoboffers &lt;~ Offer1 + Offer2 </span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># Reflective Measurement Model Forced into Composite</span></span></span>
+<span class="r-in"><span><span class="st">HonestyHumility &lt;~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 + Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10</span></span></span>
+<span class="r-in"><span><span class="st">Emotionality &lt;~ Emotion1 + Emotion2 + Emotion3 + Emotion4 + Emotion5 + Emotion6 + Emotion8 + Emotion10</span></span></span>
+<span class="r-in"><span><span class="st">Extraversion &lt;~ Extraver2 + Extraver3 + Extraver4 + Extraver5 + Extraver6 + Extraver7 + Extraver8 + Extraver9 + Extraver10</span></span></span>
+<span class="r-in"><span><span class="st">Agreeableness &lt;~ Agreeable1 + Agreeable3 + Agreeable4 + Agreeable5 + Agreeable7 + Agreeable8 + Agreeable9 + Agreeable10</span></span></span>
+<span class="r-in"><span><span class="st">Conscientiousness &lt;~ Conscientious1 + Conscientious3 + Conscientious4 + Conscientious6 + Conscientious7 + Conscientious8 + Conscientious9 + Conscientious10</span></span></span>
+<span class="r-in"><span><span class="st">OpennesstoExperience &lt;~ Openness1 + Openness2 + Openness3 + Openness5 + Openness7 + Openness8 + Openness9 + Openness10</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># Structural Model</span></span></span>
+<span class="r-in"><span><span class="st">NetworkingBehavior ~ HonestyHumility + Emotionality + Extraversion + Agreeableness + Conscientiousness + OpennesstoExperience</span></span></span>
+<span class="r-in"><span><span class="st">Numberofjobinterviews ~ NetworkingBehavior</span></span></span>
+<span class="r-in"><span><span class="st">Numberofjoboffers ~ NetworkingBehavior</span></span></span>
+<span class="r-in"><span><span class="st">"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"LeDang2022"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">gsca_in</span> <span class="op">&lt;-</span> <span class="fu"><a href="extract_parseModel.html">extract_parseModel</a></span><span class="op">(</span>model <span class="op">=</span> <span class="va">tutorial_gsca_model</span>,</span></span>
+<span class="r-in"><span>                                   data <span class="op">=</span> <span class="va">LeDang2022</span>,</span></span>
+<span class="r-in"><span>                                   ind_domi_as_first <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                         </span></span>
+<span class="r-in"><span><span class="op">(</span><span class="va">gsca_inione_test</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">gsca_in</span>,</span></span>
+<span class="r-in"><span>                          <span class="fu">gsca_inione</span><span class="op">(</span>Z0 <span class="op">=</span> <span class="va">Z0</span>,</span></span>
+<span class="r-in"><span>                                      W0 <span class="op">=</span> <span class="va">W0</span>,</span></span>
+<span class="r-in"><span>                                      B0 <span class="op">=</span> <span class="va">B0</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                                      <span class="op">)</span></span></span>
+<span class="r-in"><span>                                      <span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in gsca_inione(Z0 = Z0, W0 = W0, B0 = B0):</span> could not find function "gsca_inione"</span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
