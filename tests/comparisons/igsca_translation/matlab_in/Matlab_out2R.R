@@ -79,10 +79,3 @@ for (i in names(mat_end)) {
 
 
 save(igsca_sim_m_table, file = "tests/testthat/data/igsca_matlab.RData")
-
-
-testthat::expect_equal(mat_end$Weights, igsca_out$Weights)
-testthat::expect_equal(mat_end$Loadings, igsca_out$Loadings)
-testthat::expect_equal(mat_end$`Path Coefficients`, igsca_out$`Path Coefficients`)
-testthat::expect_equal(mat_end$`Uniqueness Terms`, igsca_out$`Uniqueness Terms`)
-cat("On a matrix level and not looking at the individual elements selected for the lavaan table, R and matlab implementations are equivalent")

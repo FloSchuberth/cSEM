@@ -77,12 +77,11 @@ testthat::expect_equal(object = igsca_sim_m_table,
 # all.equal(igsca_sim_m_table, igsca_r_table)
 
 ## GSCAPro and R ---------------------------------------------------
-testthat::expect_failure(testthat::expect_equal(igsca_r_table,
-                                                igsca_gscapro))
+testthat::expect_equal(igsca_r_table,
+                      igsca_gscapro ,
+                      tolerance = 10 ^ -2
+                      )
 
-testthat::expect_success(testthat::expect_equal(igsca_r_table,
-                                                igsca_gscapro,
-                                                tolerance = .1))
 
 # waldo::compare(igsca_r_table, igsca_gscapro, max_diffs = Inf)
 
@@ -90,12 +89,10 @@ testthat::expect_success(testthat::expect_equal(igsca_r_table,
 
 
 ## Compare GSCAPro and Matlab ----------------------------------------------
-testthat::expect_failure(testthat::expect_equal(igsca_sim_m_table,
-                                                igsca_gscapro))
-
-testthat::expect_success(testthat::expect_equal(igsca_sim_m_table,
-                                                igsca_gscapro,
-                                                tolerance = .1))
+testthat::expect_equal(object = igsca_sim_m_table,
+                       expected = igsca_gscapro ,
+                       tolerance = 10 ^ -2
+                       )
 
 # waldo::compare(igsca_sim_m_table, igsca_gscapro, max_diffs = Inf)
 
