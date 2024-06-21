@@ -431,7 +431,7 @@ calculateReliabilities <- function(
         }
       } 
     } else if (.approach_weights == "GSCA" || .approach_weights == "IGSCA") {
-      
+      # FIXME: Need to verify whether the following code applies validly to IGSCA
         if ((.disattenuate &
             all(.csem_model$construct_type == "Common factor")) || .approach_weights == "IGSCA") {
           
