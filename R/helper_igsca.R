@@ -612,7 +612,8 @@ flip_signs_ind_domi <- function(n_constructs, Z, .dominant_indicators, Gamma, C,
 extract_parseModel <-
   function(.data, .model) {
     # Note: parseModel is from cSEM internal
-    
+    # FIXME: I think this part is why the integration is not working well.
+    # browser()
     csemify <- parseModel(.model = .model)
     
     Z0 <- .data[, csemify$indicators]

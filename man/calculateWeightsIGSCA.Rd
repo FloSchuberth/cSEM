@@ -26,7 +26,7 @@ or a mix of several types.}
 
 \item{.tolerance}{Minimum amount of absolute change in the estimates of the
 path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero,
-meaning there are no path-coefficients) between ALS iterations before ending
+meaning ther are no path-coefficients) between ALS iterations before ending
 the optimization.}
 
 \item{.iter_max}{Maximum number of iterations of the Alternating Least Squares

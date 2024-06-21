@@ -38,7 +38,7 @@ smaller than a given tolerance.}
 \item{\code{diff_relative}}{Checks if the largest elementwise absolute rate of change
 (new - old / new) for two matrices \code{.W_new}
 and \code{W.old} is smaller than a given tolerance.}
-\item{\code{sum_diff_absolute}}{Checks if the sum of the element-wise absolute
+\item{\code{sum_diff_absolute}}{Checks if the sum of elementwise absolute
 difference between two matrices \code{.W_new} and \code{W.old} is smaller than a
 given tolerance}
 }
