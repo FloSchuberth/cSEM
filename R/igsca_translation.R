@@ -56,7 +56,7 @@
 #'                             B0 = igsca_sim_in$B0, lv_type = igsca_sim_in$lv_type,
 #'                             ov_type = igsca_sim_in$ov_type, ind_domi = igsca_sim_in$ind_domi,
 #'                             nbt = 0,
-#'                             devmode = FALSE,
+#'                             devmode = TRUE,
 #'                             swap_step = "noswap")
 #'                             )
 igsca_sim <- function(Z0, W0, C0, B0, lv_type, ov_type, ind_domi, nbt,
