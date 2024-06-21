@@ -1,9 +1,8 @@
-#include <RcppArmadillo.h>
+#include <Rcpp.h>
 using namespace Rcpp;
 
-// [[Rcpp::depends(RcppArmadillo)]]
-
+// From the documentation of a default rstudio cpp file
 // [[Rcpp::export]]
-arma::mat ckronecker(arma::mat X, arma::mat Y) {
-  return kron(X, Y);
+NumericVector timesTwo(NumericVector x) {
+  return x * 2;
 }

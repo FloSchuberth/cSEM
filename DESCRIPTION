@@ -91,4 +91,4 @@ Suggests:
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 LinkingTo: 
-    Rcpp, RcppArmadillo
+    Rcpp
