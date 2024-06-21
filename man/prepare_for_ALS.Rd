@@ -7,19 +7,19 @@
 prepare_for_ALS(Z0, W0, B0, n_indicators, n_case, n_constructs, indicator_type)
 }
 \arguments{
-\item{Z0}{Raw data matrix}
+\item{Z0}{}
 
-\item{W0}{Indicator matrix of weights}
+\item{W0}{}
 
-\item{B0}{Indicator matrix of path coefficients}
+\item{B0}{}
 
-\item{n_indicators}{Number of indicators}
+\item{n_indicators}{}
 
-\item{n_case}{Number of measurements}
+\item{n_case}{}
 
-\item{n_constructs}{Number of constructs}
+\item{n_constructs}{}
 
-\item{indicator_type}{Whether the indicator corresponds to a common factor or composite}
+\item{indicator_type}{}
 }
 \value{
 List of matrices to put through the Alternating Least Squared (ALS) algorithm:

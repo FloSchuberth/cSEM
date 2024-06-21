@@ -9,7 +9,7 @@ update_X_WW_pseudo_weights(Z, U, D, C, n_constructs, B)
 \arguments{
 \item{Z}{Standardized Data}
 
-\item{U}{Related to Unique error}
+\item{U}{}
 
 \item{D}{Unique Error}
 

@@ -7,7 +7,7 @@
 summarize_FIT_idx(igsca_results)
 }
 \arguments{
-\item{igsca_results}{Results from igsca()}
+\item{igsca_results}{}
 }
 \value{
 FIT index statistic

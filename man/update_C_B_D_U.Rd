@@ -20,29 +20,29 @@ update_C_B_D_U(
 )
 }
 \arguments{
-\item{X}{Pseudo-weights for composites}
+\item{X}{}
 
-\item{n_indicators}{Number of indicators}
+\item{n_indicators}{}
 
-\item{Gamma}{Construct Scores}
+\item{Gamma}{}
 
-\item{c_index}{Index of loadings}
+\item{c_index}{}
 
-\item{C}{Loadings matrix}
+\item{C}{}
 
-\item{n_constructs}{Number of constructs}
+\item{n_constructs}{}
 
-\item{b_index}{Index of Path Coefficients}
+\item{b_index}{}
 
-\item{B}{Path Coefficients Matrix}
+\item{B}{}
 
-\item{n_case}{Number of Cases}
+\item{n_case}{}
 
-\item{D}{Related to Unique Error}
+\item{D}{}
 
-\item{Z}{Standardized Data}
+\item{Z}{}
 
-\item{indicator_type}{Vector of whether each indicator corresponds to a common factor or composite}
+\item{indicator_type}{}
 }
 \value{
 List of matrices:

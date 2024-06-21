@@ -328,13 +328,13 @@ gsca_inione <- function(Z0, W0, B0) {
 #'
 #' Internal I-GSCA function
 #'
-#' @param Z0 Raw data matrix
-#' @param W0 Indicator matrix of weights
-#' @param B0 Indicator matrix of path coefficients
-#' @param n_indicators Number of indicators
-#' @param n_case Number of measurements
-#' @param n_constructs Number of constructs
-#' @param indicator_type Whether the indicator corresponds to a common factor or composite
+#' @param Z0 
+#' @param W0 
+#' @param B0 
+#' @param n_indicators 
+#' @param n_case 
+#' @param n_constructs 
+#' @param indicator_type 
 #'
 #' @return List of matrices to put through the Alternating Least Squared (ALS) algorithm: 
 #'
@@ -394,7 +394,7 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, indi
 #' Update Pseudo Weights for Composites and Common-Factors
 #'
 #' @param Z Standardized Data
-#' @param U Related to Unique error
+#' @param U 
 #' @param D Unique Error
 #' @param C Loadings
 #' @param n_constructs  Number of constructs
@@ -419,9 +419,9 @@ update_X_WW_pseudo_weights <- function(Z, U, D, C, n_constructs, B) {
 
 #' Update Common Factor Variable
 #'
-#' @param WW Pseudo-weights for Common Factors
-#' @param windex_gamma_idx Index of weights related to the indicators for the construct of interest
-#' @param gamma_idx Index of which construct we are examining
+#' @param WW 
+#' @param windex_gamma_idx 
+#' @param gamma_idx 
 #'
 #' @return theta: Used to update factor latent variables -- after accounting for loadings and path-coefficients.
 #' 
@@ -434,15 +434,15 @@ update_common_factor <- function(WW, windex_gamma_idx, gamma_idx) {
 
 #' Update Composite Variables
 #'
-#' @param n_total_var Number of indicators and constructs
-#' @param tot Index dependent on which construct variable we are examining
-#' @param n_constructs Number of constructs
-#' @param gamma_idx Index of which construct we are examining
-#' @param W Weights matrix
-#' @param A Stacked matrix of loadings and path coefficients
-#' @param V Unclear meaning
-#' @param X Pseudo-weights for composite variables
-#' @param windex_gamma_idx Index of weights related to the indicators for the construct of interest
+#' @param n_total_var 
+#' @param tot 
+#' @param n_constructs 
+#' @param gamma_idx 
+#' @param W 
+#' @param A 
+#' @param V 
+#' @param X 
+#' @param windex_gamma_idx 
 #'
 #' @return theta: A matrix that will later be used to update the weights for the composite variable.
 #' 
@@ -470,18 +470,18 @@ update_composite <-
 
 #' Update Loadings, Path-Coefficients and Uniqueness Terms After Updating Latent Variables
 #'
-#' @param X Pseudo-weights for composites
-#' @param n_indicators Number of indicators
-#' @param Gamma Construct Scores
-#' @param c_index Index of loadings
-#' @param C Loadings matrix
-#' @param n_constructs Number of constructs
-#' @param b_index Index of Path Coefficients
-#' @param B Path Coefficients Matrix
-#' @param n_case Number of Cases
-#' @param D Related to Unique Error
-#' @param Z Standardized Data
-#' @param indicator_type Vector of whether each indicator corresponds to a common factor or composite
+#' @param X 
+#' @param n_indicators 
+#' @param Gamma 
+#' @param c_index 
+#' @param C 
+#' @param n_constructs 
+#' @param b_index 
+#' @param B 
+#' @param n_case 
+#' @param D 
+#' @param Z 
+#' @param indicator_type 
 #'
 #' @return List of matrices:
 #'
@@ -539,12 +539,13 @@ update_C_B_D_U <-
 
 #' Flip signs of Gamma, Loadings and Path-Coefficients Cells Based on Dominant Indicator
 #'
-#' @param n_constructs Number of construct variables
-#' @param Z Standardized data matrix
-#' @param .dominant_indicators Named vector of the dominant indicator for each construct variable
-#' @param Gamma Matrix of construct scores
-#' @param C Loadings matrix
-#' @param B Path Coefficients matrix
+#' @param n_constructs 
+#' @param Z 
+#' @param .dominant_indicators 
+#' @param gamma_idx 
+#' @param Gamma 
+#' @param C 
+#' @param B 
 #'
 #' @return List of matrices: Gamma, Loadings (C) and Path-Coefficients (B)
 #'
@@ -669,11 +670,11 @@ extract_parseModel <-
 #' 
 #' Assumes that indicators only load onto one factor and that there are no cross-factor loadings
 #'
-#' @param model Lavaan-style specification of model
-#' @param weights Weights matrix
-#' @param loadings Loadings matrix
-#' @param uniqueD Vector of Uniqueness for each indicator of a common factor
-#' @param paths Path coefficients matrix
+#' @param model 
+#' @param weights 
+#' @param loadings 
+#' @param uniqueD 
+#' @param paths 
 #' @importFrom lavaan lavaanify
 #' @return Table of Weights, Loadings, Path-Coefficients and Uniqueness terms from i-gsca algorithms in Matlab or R.
 #' @export
@@ -739,7 +740,7 @@ get_lavaan_table_igsca_matrix <- function(model, weights, loadings, uniqueD, pat
 
 #' Title
 #'
-#' @param igsca_results Results from igsca()
+#' @param igsca_results 
 #'
 #' @return FIT index statistic
 #' @export
@@ -751,14 +752,13 @@ summarize_FIT_idx <- function(igsca_results) {
 
 #' Title
 #'
-#' @param model Specified Lavaan Style Model
-#' @param group Column name of group of input data
-#' @param data Input dataframe
-#' 
+#' @param model 
+#' @param group 
+#'
 #' @return Multi-group igsca model
 #' @export 
 #'
-model_multigroup_igsca <- function(model, group, data) {
+model_multigroup_igsca <- function(model, group) {
   # TODO: Illustrate how this would be done
   return(mutligroup_igsca_result)
 }
