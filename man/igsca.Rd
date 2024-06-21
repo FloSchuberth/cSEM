@@ -17,46 +17,23 @@ igsca(
 )
 }
 \arguments{
-\item{Z0}{Data matrix of N cases (measurements) x J indicators with named
-columns, unstandardized.}
+\item{Z0}{Data matrix of N cases (measurements) x J indicators with named columns, unstandardized.}
 
-\item{W0}{Indicator matrix of weights: J indicators (rows) and their
-corresponding Gamma construct variables (columns).}
+\item{W0}{Indicator matrix of weights: J indicators (rows) and their corresponding Gamma construct variables (columns).}
 
-\item{C0}{Indicator matrix of loadings: J indicators (rows) and their
-corresponding Gamma construct variable (columns).}
+\item{C0}{Indicator matrix of loadings: J indicators (rows) and their corresponding Gamma construct variable (columns).}
 
-\item{B0}{Square indicator matrix of path coefficients:
-from-construct-variable (rows) and to-construct-variable (columns). The
-order of Gamma construct variables should match the order in C0 and W0.}
+\item{B0}{Square indicator matrix of path coefficients: from-construct-variable (rows) and to-construct-variable (columns). The order of Gamma construct variables should match the order in C0 and W0.}
 
-\item{con_type}{A vector that denotes whether each construct variable
-(columns in W0 and C0) is a common factor or composite. Its length should
-be equal to the number of columns of W0 and C0.}
+\item{con_type}{A vector that denotes whether each construct variable (columns in W0 and C0) is a common factor or composite. Its length should be equal to the number of columns of W0 and C0.}
 
-\item{indicator_type}{An indicator vector that indices whether a j indicator
-(rows of W0 and C0) corresponds to a common factor variable (1) or a
-composite variable (0). This vector is important for computing the
-uniqueness terms (D) because it zeros the entries for composite indicators.}
+\item{indicator_type}{An indicator vector that indices whether a j indicator (rows of W0 and C0) corresponds to a common factor variable (1) or a composite variable (0). This vector is important for computing the uniqueness terms (D) because it zeros the entries for composite indicators.}
 
-\item{.dominant_indicators}{A named vector that indices the dominant
-indicator for each construct variable. \emph{It is to be clarified whether this
-should only apply to factor latent variables or also composite latent
-variables.} This is important for ensuring that the signs of the
-path-coefficients and loadings are consistent. It is sometimes the case in
-composite-based structural equation modelling methods that
-loadings/path-coefficients may have the opposite sign. The length of this
-vector should be equal to the number of construct variables and each value
-should represent the row number of the dominant indicator for that
-construct variable.}
+\item{.dominant_indicators}{A named vector that indices the dominant indicator for each construct variable. \emph{It is to be clarified whether this should only apply to factor latent variables or also composite latent variables.} This is important for ensuring that the signs of the path-coefficients and loadings are consistent. It is sometimes the case in composite-based structural equation modelling methods that loadings/path-coefficients may have the opposite sign. The length of this vector should be equal to the number of construct variables and each value should represent the row number of the dominant indicator for that construct variable.}
 
-\item{itmax}{Maximum number of iterations of the Alternating Least Squares
-(ALS) algorithm.}
+\item{itmax}{Maximum number of iterations of the Alternating Least Squares (ALS) algorithm.}
 
-\item{ceps}{Minimum amount of absolute change in the estimates of the
-path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero,
-meaning ther are no path-coefficients) between ALS iterations before ending
-the optimization.}
+\item{ceps}{Minimum amount of absolute change in the estimates of the path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero, meaning ther are no path-coefficients) between ALS iterations before ending the optimization.}
 }
 \value{
 List of 4 matrices that make up a fitted I-GSCA Model:

@@ -23,11 +23,7 @@ Returns a list of matrices/vectors required for igsca_sim() to run:
 }
 }
 \description{
-In the context of igsca, this function prepares: (1) the initial indicators
-(Z0), weights (W0), structural (B0), loadings(C0) matrices; (2) whether a
-construct is a latent or composite variable (con_type); (3) whether an
-indicator corresponds to a latent or composite variable (indicator_type); and
-(4) the dominant indicator of each construct (.dominant_indicators).
+In the context of igsca, this function prepares: (1) the initial indicators (Z0), weights (W0), structural (B0), loadings(C0) matrices; (2) whether a construct is a latent or composite variable (con_type); (3) whether an indicator corresponds to a latent or composite variable (indicator_type); and (4) the dominant indicator of each construct (.dominant_indicators).
 }
 \examples{
 
