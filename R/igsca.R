@@ -1,23 +1,22 @@
-#' Streamlined R Implementation of igsca_sim.m
+#' One-to-One R Translation of igsca_sim.m by Heungsun Hwang
 #' 
-#' This is a streamlined R implementation of I-GSCA, based on the matlab implementation in igsca_sim.m by Heungsun Hwang. 
+#' This is a one-to-one R translation of the matlab implementation of I-GSCA by Heungsun Hwang. This implementation was also re-factored for ease of interpretation. 
 #' 
-#' The code here generally assumes that every indicator corresponds to a single construct. (A construct is a superset consisting of latent and emergent variables. Latent variables are sometimes referred to as common-factor/factor variables; and emergent variables are sometimes referred to as component/composite variables.)
+#' The code here generally assumes that every indicator corresponds to a single latent variable.
 #' 
 #' @param z0 Input data-frame/matrix. Should contain named columns.
-#' TODO: Clarify whether it should be data frame or matrix
-#' @param W0 Indicator matrix of weights: indicators (rows) and their corresponding construct variable (columns).
-#' @param C0 Indicator matrix of loadings: indicators (rows) and their corresponding construct variable (columns).
-#' @param B0 Square indicator matrix of path coefficients: from-construct-variable (rows) and to-construct-variable (columns). The order of construct variables should match the order in C0 and W0.
-#' @param lv_type A logical vector that indices whether a construct variable (columns in W0 and C0) is a factor (TRUE) or composite (FALSE). Its length should be equal to the number of columns of W0 and C0. 
-#' TODO: Rename lv_type into cv_type
-#' @param ov_type An indicator vector that indices whether an indicator (rows of W0 and C0) corresponds to a factor latent variable (1) or a composite emergent variable (0). This vector is important for computing the uniqueness terms (D) because it zeros the entries for composite indicators. 
+#' @param W0 Indicator matrix of weights: indicators (rows) and their corresponding latent variable (columns).
+#' @param C0 Indicator matrix of loadings: indicators (rows) and their corresponding latent variable (columns).
+#' @param B0 Square indicator matrix of path coefficients: from-latent-variable (rows) and to-latent-variable (columns). The order of latent variables should match the order in C0 and W0.
+#' @param lv_type A logical vector that indices whether a latent variable (columns in W0 and C0) is a factor (TRUE) or composite (FALSE). Its length should be equal to the number of columns of W0 and C0. 
 #' 
-#' @param ind_domi A numeric vector that indices the dominant indicator for each construct variable. *It is to be clarified whether this should only apply to factor latent variables or also composite latent variables.* This is important for ensuring that the signs of the path-coefficients and loadings are consistent. It is sometimes the case in composite-based structural equation modelling methods that loadings/path-coefficients may have the opposite sign. The length of this vector should be equal to the number of construct variables and each value should represent the row number of the dominant indicator for that construct variable. 
+#' @param ov_type An indicator vector that indices whether an indicator (rows of W0 and C0) corresponds to a factor latent variable (1) or a composite latent variable (0). This vector is important for computing the uniqueness terms (D) because it zeros the entries for composite indicators. 
+#' 
+#' @param ind_domi A numeric vector that indices the dominant indicator for each latent variable. *It is to be clarified whether this should only apply to factor latent variables or also composite latent variables.* This is important for ensuring that the signs of the path-coefficients and loadings are consistent. It is sometimes the case in composite-based structural equation modelling methods that loadings/path-coefficients may have the opposite sign. The length of this vector should be equal to the number of latent variables and each value should represent the row number of the dominant indicator for that latent variable. 
 #' 
 #' @param nbt Non-functional argument for the number of bootstrap-iterations, intended for computation of standard-errors, 95% confidence intervals and p-values.
 #' 
-#' @param itmax Maximum number of iterations of the Alternating Least Squares (ALS) algorithm.
+#' @param itmax Maximum number of iterations in the Alternating Least Squares (ALS) algorithm.
 #' 
 #' @param ceps Minimum amount of absolute change in the estimates of the path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero, meaning ther are no path-coefficients) between ALS iterations before ending the optimization.
 #' 
@@ -26,6 +25,8 @@
 #' @returns List of 4 matrices that make up a fitted I-GSCA Model: (1) Weights, (2) Loadings, (3) Uniqueness Terms D^2, and (4) Path Coefficients.
 #' @export
 #' @importFrom MASS ginv 
+#' @importFrom R.matlab readMat
+#' @importFrom here here
 #' @examples
 #' require(here)
 #' require(readxl)
