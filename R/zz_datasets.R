@@ -698,11 +698,8 @@
 #' 
 #' @docType data
 #'
-#' @description A data frame of 107 variables and 773 participants. Labelled
-#'   factors were converted from numerical to character representation through
-#'   haven::as_Factor(). The provided data frame is a fusion of the converted
-#'   labelled factors for the demographic data and the unconverted Likert scale
-#'   data for the psychometric data.
+#' @description A data frame of 107 variables and 773 participants. 
+#' 
 #' 
 #' @references
 #'   \insertAllCited{}
