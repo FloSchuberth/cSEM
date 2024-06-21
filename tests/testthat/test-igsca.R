@@ -25,7 +25,8 @@ data("LeDang2022")
 
 
 igsca_in <- extract_parseModel(model = tutorial_igsca_model,
-                               data = LeDang2022)
+                               data = LeDang2022,
+                               ind_domi_as_first = TRUE)
 
 ## Testing Input Matrices From extract_parseModel -------------------------------
 
@@ -40,7 +41,7 @@ igsca_out <- with(igsca_in, igsca(Z0 = Z0,
                            B0 = B0,
                            con_type = con_type,
                            indicator_type = indicator_type,
-                           .dominant_indicators =  NULL))
+                           ind_domi = ind_domi))
 
 igsca_r_table <- with(
   igsca_out,

@@ -8,7 +8,7 @@
 #' @param B0 Square indicator matrix of path coefficients: from-construct-variable (rows) and to-construct-variable (columns). The order of Gamma construct variables should match the order in C0 and W0.
 #' @param con_type A vector that denotes whether each construct variable (columns in W0 and C0) is a common factor or composite. Its length should be equal to the number of columns of W0 and C0. 
 #' @param indicator_type An indicator vector that indices whether a j indicator (rows of W0 and C0) corresponds to a common factor variable (1) or a composite variable (0). This vector is important for computing the uniqueness terms (D) because it zeros the entries for composite indicators. 
-#' @param .dominant_indicators A named vector that indices the dominant indicator for each construct variable. *It is to be clarified whether this should only apply to factor latent variables or also composite latent variables.* This is important for ensuring that the signs of the path-coefficients and loadings are consistent. It is sometimes the case in composite-based structural equation modelling methods that loadings/path-coefficients may have the opposite sign. The length of this vector should be equal to the number of construct variables and each value should represent the row number of the dominant indicator for that construct variable. 
+#' @param ind_domi A numeric vector that indices the dominant indicator for each construct variable. *It is to be clarified whether this should only apply to factor latent variables or also composite latent variables.* This is important for ensuring that the signs of the path-coefficients and loadings are consistent. It is sometimes the case in composite-based structural equation modelling methods that loadings/path-coefficients may have the opposite sign. The length of this vector should be equal to the number of construct variables and each value should represent the row number of the dominant indicator for that construct variable. 
 #' @param itmax Maximum number of iterations of the Alternating Least Squares (ALS) algorithm.
 #' @param ceps Minimum amount of absolute change in the estimates of the path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero, meaning ther are no path-coefficients) between ALS iterations before ending the optimization.
 #' 
@@ -45,7 +45,8 @@
 #' 
 #' # Pre-generate the required matrices for the algorithm and assume that the first indicator for each latent variable is the dominant indicator.
 #' igsca_in <- extract_parseModel(model = tutorial_igsca_model,
-#'                                    data = LeDang2022)
+#'                                    data = LeDang2022,
+#'                                    ind_domi_as_first = TRUE)
 #'
 #' # Fit the I-GSCA model
 #' (igsca_out <- with(igsca_in, igsca(Z0 = Z0,
@@ -54,10 +55,10 @@
 #'                             B0 = B0,
 #'                             con_type = con_type,
 #'                             indicator_type = indicator_type,
-#'                             .dominant_indicators = NULL)
+#'                             ind_domi = ind_domi)
 #'                             ))
 igsca <-
-  function(Z0, W0, C0, B0, con_type, indicator_type, .dominant_indicators = .dominant_indicators, itmax = 100, ceps = 0.001) {
+  function(Z0, W0, C0, B0, con_type, indicator_type, ind_domi, itmax = 100, ceps = 0.001) {
   
 ## Initialize Computational Variables -----------------------------------------------------
   n_case <- nrow(Z0)
@@ -190,21 +191,22 @@ igsca <-
         est <- C[c_index]
       }
     }
+    
+    
 
 ## Flip Signs for Factors and Composites Based on Dominant Indicators --------
-    if (!is.null(.dominant_indicators)) {
-      flipped_signs <-
-        flip_signs_ind_domi(
-          n_constructs = n_constructs,
-          Z = Z,
-          .dominant_indicators = .dominant_indicators,
-          Gamma = Gamma,
-          C = C,
-          B = B
-        )
-      
-      list2env(flipped_signs[c("Gamma", "C", "B")], envir = environment())
-    }
+    flipped_signs <-
+      flip_signs_ind_domi(
+        n_constructs = n_constructs,
+        Z = Z,
+        ind_domi = ind_domi,
+        Gamma = Gamma,
+        C = C,
+        B = B
+      )
+    
+    list2env(flipped_signs[c("Gamma", "C", "B")], envir = environment())
+    
 
 ## Output Formatting -------------------------------------------------------
   Weights <- W
@@ -541,7 +543,7 @@ update_C_B_D_U <-
 #'
 #' @param n_constructs 
 #' @param Z 
-#' @param .dominant_indicators 
+#' @param ind_domi 
 #' @param gamma_idx 
 #' @param Gamma 
 #' @param C 
@@ -549,15 +551,13 @@ update_C_B_D_U <-
 #'
 #' @return List of matrices: Gamma, Loadings (C) and Path-Coefficients (B)
 #'
-flip_signs_ind_domi <- function(n_constructs, Z, .dominant_indicators, Gamma, C, B) {
+flip_signs_ind_domi <- function(n_constructs, Z, ind_domi, Gamma, C, B) {
   for (gamma_idx in seq_len(n_constructs)) {
-    if (exists(.dominant_indicators[gamma_idx])) {
-      if ((t(Z[, .dominant_indicators[gamma_idx]]) %*% Gamma[, gamma_idx]) < 0) {
-        Gamma[, gamma_idx] <- (-1 * Gamma[, gamma_idx])
-        C[gamma_idx,] <- (-1 * C[gamma_idx,])
-        B[gamma_idx,] <- (-1 * B[gamma_idx,])
-        B[, gamma_idx] <- (-1 * B[, gamma_idx])
-      }
+    if ((t(Z[, ind_domi[gamma_idx]]) %*% Gamma[, gamma_idx]) < 0) {
+      Gamma[, gamma_idx] <- (-1 * Gamma[, gamma_idx])
+      C[gamma_idx, ] <- (-1 * C[gamma_idx, ])
+      B[gamma_idx, ] <- (-1 * B[gamma_idx, ])
+      B[, gamma_idx] <- (-1 * B[, gamma_idx])
     }
   }
   return(list(
@@ -569,12 +569,13 @@ flip_signs_ind_domi <- function(n_constructs, Z, .dominant_indicators, Gamma, C,
 
 #' A parseModel extractor function for the purposes of running I-GSCA code example
 #' 
-#' In the context of igsca, this function prepares: (1) the initial indicators (Z0), weights (W0), structural (B0), loadings(C0) matrices; (2) whether a construct is a latent or composite variable (con_type); (3) whether an indicator corresponds to a latent or composite variable (indicator_type); and (4) the dominant indicator of each construct (.dominant_indicators). 
+#' In the context of igsca, this function prepares: (1) the initial indicators (Z0), weights (W0), structural (B0), loadings(C0) matrices; (2) whether a construct is a latent or composite variable (con_type); (3) whether an indicator corresponds to a latent or composite variable (indicator_type); and (4) the dominant indicator of each construct (ind_domi). 
 #' 
 #' @param model Specified Model in lavaan style
 #' @param data Dataframe 
+#' @param ind_domi_as_first Boolean for whether the first indicator for each latent factor should be chosen as the dominant indicator
 #'
-#' @return Returns a list of matrices required for igsca_sim() to run: Z0, W0, B0, C0, con_type, indicator_type, .dominant_indicators. 
+#' @return Returns a list of matrices required for igsca_sim() to run: Z0, W0, B0, C0, con_type, indicator_type, ind_domi. 
 #' @export
 #' @examples
 #'
@@ -601,9 +602,9 @@ flip_signs_ind_domi <- function(n_constructs, Z, .dominant_indicators, Gamma, C,
 #' 
 #' data("LeDang2022")
 #' 
-#' extract_parseModel(model = tutorial_igsca_model, data = LeDang2022)
+#' extract_parseModel(model = tutorial_igsca_model, data = LeDang2022, ind_domi_as_first = TRUE)
 extract_parseModel <-
-  function(model, data) {
+  function(model, data, ind_domi_as_first = TRUE) {
     # Note: parseModel is from cSEM internal
     csemify <- parseModel(.model = model)
     
@@ -654,6 +655,17 @@ extract_parseModel <-
       "Construct indicator does not correctly correspond with Weights Matrix (W0)" = identical(names(csemify$construct_type), colnames(W0))
     )
     
+    if (isTRUE(ind_domi_as_first)) {
+      # Row Indices of W0 that correspond to the dominant indicator for each factor/composite
+      # TODO: Change to W0 to W0[, con_type] if it turns out that the correction should only apply to latent factors
+      ind_domi <- apply(W0, 2, as.logical) |>
+        apply(2, which, TRUE) |>
+        lapply(FUN = \(x) x[[1]]) |>
+        unlist()
+    } else {
+      ind_domi <- NA # FIXME: The length/data-structure might need to be adjusted to match ind_domi when isTRUE(ind_domi_as_first)
+    }
+    
     return(
       list(
         "Z0" = Z0,
@@ -661,7 +673,8 @@ extract_parseModel <-
         "W0" = W0,
         "con_type" = con_type,
         "indicator_type" = indicator_type,
-        "C0" = C0
+        "C0" = C0,
+        "ind_domi" = ind_domi
       )
     )
   }
