@@ -72,7 +72,8 @@ load(testthat::test_path("data", "igsca_gscapro.RData"))
 testthat::expect_equal(object = igsca_sim_m_table,
                            expected = igsca_r_table)
 
-# waldo::compare(igsca_sim_m_table, igsca_r_table, max_diffs = Inf)
+# waldo::compare(igsca_sim_m_table, igsca_r_table,
+#                max_diffs = Inf)
 
 # all.equal(igsca_sim_m_table, igsca_r_table)
 
