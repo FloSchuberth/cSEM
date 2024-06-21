@@ -676,7 +676,7 @@ flip_signs_ind_domi <- function(nlv, Z, ind_domi, j, Gamma, C, B) {
     if ((t(Z[, ind_domi[j]]) %*% Gamma[, j]) < 0) {
       Gamma[, j] <- (-1 * Gamma[, j])
       C[j, ] <- (-1 * C[j, ])
-      B[j, ] <- (-1 * B[j, ])
+      B[B, ] <- (-1 * B[j, ])
       B[, j] <- (-1 * B[, j])
     }
   }
