@@ -4,7 +4,8 @@
 #' 
 #' The code here generally assumes that every indicator corresponds to a single construct. (A construct is a superset consisting of latent and emergent variables. Latent variables are sometimes referred to as common-factor/factor variables; and emergent variables are sometimes referred to as component/composite variables.)
 #' 
-#' @param z0 Input matrix. Should contain named columns in this form.
+#' @param z0 Input data-frame/matrix. Should contain named columns.
+#' TODO: Clarify whether it should be data frame or matrix
 #' @param W0 Indicator matrix of weights: indicators (rows) and their corresponding construct variable (columns).
 #' @param C0 Indicator matrix of loadings: indicators (rows) and their corresponding construct variable (columns).
 #' @param B0 Square indicator matrix of path coefficients: from-construct-variable (rows) and to-construct-variable (columns). The order of construct variables should match the order in C0 and W0.
@@ -785,6 +786,38 @@ extract_parseModel <-
       )
     )
   }
+
+
+
+#' Convert Matlab to R
+#' 
+#' Matlab vectors are matrices when read into R, so here we perform the conversions to make them more R-friendly. This is also a placeholder for any future needed adjustments to make the Matlab environment swappable with R
+#'
+#' @param mat_env The (piped-in) matlab lab environment from readMat()
+#' @param vectorness Vector object that lists the different objects in the pre-swap environment that were vectors
+#'
+#' @return Convert particular Matlab objects to be compatible with idiomatic R programming. 
+#' @export
+#'
+convert_matlab2R <- function(mat_env, vectorness) {
+  # Want both objects that were vectors and that exist in the matlab environment
+  # Some objects are R-specific
+  matrix2vectorize <-
+    names(vectorness[vectorness == TRUE &
+                       (names(vectorness) %in% names(mat_env))])
+  
+  for (name in matrix2vectorize) {
+    # TODO: I wonder if there's a way to parallelize this somehow...
+    # I couldn't get lapply to work, presumably because of some environment issue
+    mat_env[[name]] <- as.vector(mat_env[[name]])
+  }
+  # mat_env[[as.list(matrix2vectorize)]] |>
+  #   as.list() |>
+  #   lapply(\(matrix2vectorize) mat_env[[matrix2vectorize]] <- as.vector(mat_env[[matrix2vectorize]]))
+  return(mat_env)
+}
+
+
 
 #' Converts Output of igsca functions into a table to facilitate comparisons
 #' 
