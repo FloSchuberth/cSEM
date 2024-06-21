@@ -330,7 +330,7 @@ initializeIgscaEstimates <- function(Z0, W0, B0) {
   imp <- 100000000
   while ((it <= 300) && (imp > 0.0001)) {
     it <- it + 1
-    Phi = ckronecker(diag(TRep), Gamma)
+    Phi = kronecker(diag(TRep), Gamma)
     Phi <- Phi[, aindex]
     A[aindex] <- solve(t(Phi) %*% Phi, t(Phi)) %*% vecPsi
     
@@ -348,7 +348,7 @@ initializeIgscaEstimates <- function(Z0, W0, B0) {
       Delta <- (W %*% H1 %*% A) - (V %*% H2)
       vecZDelta <- c(Z %*% Delta)
       
-      XI <- ckronecker(t(beta), Z)
+      XI <- kronecker(t(beta), Z)
       XI <- XI[, windex_p]
       Theta <- MASS::ginv(t(XI) %*% XI) %*% t(XI) %*% vecZDelta
       zw <- Z[, windex_p] %*% Theta
@@ -523,7 +523,7 @@ updateCompositeTheta <-
     
     vecZDelta <- c(X %*% Delta)
     beta <- e - A[gamma_idx, ]
-    XI <- ckronecker(t(beta), X)
+    XI <- kronecker(t(beta), X)
     XI <- XI[, windex_gamma_idx]
     
     Theta <- solve((t(XI) %*% XI), t(XI)) %*% vecZDelta
@@ -561,12 +561,12 @@ updateCBDU <-
            b_index,
            n_case) {
     t1 <- c(X)
-    M1 <- ckronecker(diag(n_indicators), Gamma)
+    M1 <- kronecker(diag(n_indicators), Gamma)
     M1 <- M1[, c_index]
     C[c_index] <- MASS::ginv(t(M1) %*% M1) %*% (t(M1) %*% t1)
     
     t2 <- c(Gamma)
-    M2 <- ckronecker(diag(n_constructs), Gamma)
+    M2 <- kronecker(diag(n_constructs), Gamma)
     M2 <- M2[, b_index]
     B[b_index] <- MASS::ginv(t(M2) %*% M2) %*% (t(M2) %*% t2)
     
