@@ -457,11 +457,11 @@ csem <- function(
   }
   
   # TODO: Delete this before merging
-  if (.approach_weights == "IGSCA") {
-    # FIXME: Repair this
-    warning("This unsafe exit needs to be fixed before merge")
-    return(out)
-  }
+  # if (.approach_weights == "IGSCA") {
+  #   # FIXME: Repair this
+  #   warning("This unsafe exit needs to be fixed before merge")
+  #   return(out)
+  # }
 
   ## Set class for output
   # See the details section of ?UseMethod() to learn how method dispatch works
