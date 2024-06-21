@@ -17,7 +17,7 @@ LeDang2022
 A data frame of 107 variables and 773 participants.
 }
 \details{
-This data is based on self-report surveys collected from graduates of universities in Northern Vietnam \insertCite{ledang2022DataBrief}{cSEM}. The data has been used to analyze the relationship between measures of HEXACO personality traits and two job-search outcomes: (1) number of job interviews; and (2) job offers through job search networking behavior \insertCite{ledang2022DataBrief}{cSEM}.
+This data is based on self-report surveys collected from graduates of universities in Northern Vietnam \insertCite{ledang2022DataBrief;textual}{cSEM}. The data has been used to analyze the relationship between measures of HEXACO personality traits and two job-search outcomes: (1) number of job interviews; and (2) job offers through job search networking behavior \insertCite{ledang2022DataBrief;textual}{cSEM}.
 
 The data were also analyzed using an Integrated-Generalised Structued Component Analysis (I-GSCA) approach in GSCAPro \insertCite{hwangetal2023StructuralEquationModelingAMultidisciplinaryJournal}{cSEM}.
 }

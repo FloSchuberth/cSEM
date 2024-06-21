@@ -7,11 +7,11 @@
 prepare_for_ALS(Z0, W0, B0, n_indicators, n_case, n_constructs, indicator_type)
 }
 \arguments{
-\item{Z0}{Data matrix of N cases (measurements) x J indicators with named columns, unstandardized.}
+\item{Z0}{Raw data matrix}
 
-\item{W0}{Indicator matrix of weights: J indicators (rows) and their corresponding Gamma construct variables (columns).}
+\item{W0}{Indicator matrix of weights}
 
-\item{B0}{Square indicator matrix of path coefficients: from-construct-variable (rows) and to-construct-variable (columns). The order of Gamma construct variables should match the order in C0 and W0.}
+\item{B0}{Indicator matrix of path coefficients}
 
 \item{n_indicators}{Number of indicators}
 
@@ -19,19 +19,10 @@ prepare_for_ALS(Z0, W0, B0, n_indicators, n_case, n_constructs, indicator_type)
 
 \item{n_constructs}{Number of constructs}
 
-\item{indicator_type}{An indicator vector that indices whether a j indicator (rows of W0 and C0) corresponds to a common factor variable (1) or a composite variable (0). This vector is important for computing the uniqueness terms (D) because it zeros the entries for composite indicators.}
+\item{indicator_type}{Whether the indicator corresponds to a common factor or composite}
 }
 \value{
 List of matrices to put through the Alternating Least Squared (ALS) algorithm:
-\itemize{
-\item Estimated Weights matrix (W)
-\item Estimated Loadings matrix (C)
-\item Estimated Path Coefficients matrix (B)
-\item Computational Helper Matrix (V)
-\item Estimated Uniqueness Errors vector (D)
-\item Estimated Related to Uniqueness Errors vector (U)
-\item Estimated Construct Scores matrix (Gamma)
-}
 }
 \description{
 Internal I-GSCA function

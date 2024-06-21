@@ -2,8 +2,6 @@
 #' 
 #' This R implementation of I-GSCA is based on the Matlab implementation in igsca_sim.m by Dr. Heungsun Hwang.
 #' 
-#' In the example section, the specified model is based on the tutorial I-GSCA model associated with GSCA Pro \insertCite{hwangetal2023StructuralEquationModelingAMultidisciplinaryJournal}{cSEM}.
-#' 
 #' @param Z0 Data matrix of N cases (measurements) x J indicators with named columns, unstandardized.
 #' @param W0 Indicator matrix of weights: J indicators (rows) and their corresponding Gamma construct variables (columns).
 #' @param C0 Indicator matrix of loadings: J indicators (rows) and their corresponding Gamma construct variable (columns).
@@ -16,16 +14,9 @@
 #' 
 #' @author Michael S. Truong
 #' @export
-#' @return List of 4 matrices that make up a fitted I-GSCA Model: 
-#' * (1) Weights 
-#' * (2) Loadings 
-#' * (3) Uniqueness Terms D^2 
-#' * (4) Path Coefficients.
-#'  
+#' @return List of 4 matrices that make up a fitted I-GSCA Model: (1) Weights, (2) Loadings, (3) Uniqueness Terms D^2, and (4) Path Coefficients.
+#' TODO: Cite the GSCA Pro SEM reference instead of GSCA Pro's Example
 #' @importFrom MASS ginv 
-#' 
-#' @references
-#'   \insertAllCited{}
 #' @examples
 #' 
 #' # Specify the model according to GSCA Pro's example
@@ -241,16 +232,15 @@ igsca <-
 
 #' R Implementation of gsca_inione.m from Heungsun Hwang
 #' 
-#' Internal I-GSCA function that is a slightly modified implementation of ordinary Generalised Structured Component Analysis (GSCA).
+#' Internal I-GSCA Function
 #' 
 #' Initializes the values for I-GSCA
-#' @inheritParams igsca
+#' @param Z0 Data Matrix
+#' @param W0 Indicator matrix of weights
+#' @param B0 Indicator matrix of Path Coefficients.
 #' 
 #' @author Michael S. Truong
-#' @returns Returns a list of starting values for:
-#' * Weights (W)
-#' * Loadings (C)
-#' * Path Coefficients (B)  
+#' @return When used in the context of igsca_sim(), it returns a list of the starting values for Weights, Loadings and Path Coefficients. In principle, otherwise, it is a slightly modified implementation of ordinary Generalised Structured Component Analysis (GSCA). 
 #'
 gsca_inione <- function(Z0, W0, B0) {
   
@@ -337,20 +327,17 @@ gsca_inione <- function(Z0, W0, B0) {
 #' Prepare for ALS Algorithm
 #'
 #' Internal I-GSCA function
-#' 
-#' @inheritParams igsca
+#'
+#' @param Z0 Raw data matrix
+#' @param W0 Indicator matrix of weights
+#' @param B0 Indicator matrix of path coefficients
 #' @param n_indicators Number of indicators
 #' @param n_case Number of measurements
 #' @param n_constructs Number of constructs
+#' @param indicator_type Whether the indicator corresponds to a common factor or composite
 #'
-#' @returns List of matrices to put through the Alternating Least Squared (ALS) algorithm: 
-#' * Estimated Weights matrix (W)
-#' * Estimated Loadings matrix (C)
-#' * Estimated Path Coefficients matrix (B)
-#' * Computational Helper Matrix (V)
-#' * Estimated Uniqueness Errors vector (D)
-#' * Estimated Related to Uniqueness Errors vector (U)
-#' * Estimated Construct Scores matrix (Gamma)
+#' @return List of matrices to put through the Alternating Least Squared (ALS) algorithm: 
+#'
 prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, indicator_type) {
   
   # Initial estimates using GSCA
@@ -406,16 +393,16 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, indi
 
 #' Update Pseudo Weights for Composites and Common-Factors
 #'
-#' @param Z Standardized data matrix
-#' @param D Matrix of estimated unique error
-#' @param U Matrix of estimates related to unique error
-#' @param C Matrix of estimated loadings
+#' @param Z Standardized Data
+#' @param U Related to Unique error
+#' @param D Unique Error
+#' @param C Loadings
 #' @param n_constructs  Number of constructs
-#' @param B Matrix of path coefficients
+#' @param B Path Coefficients
 #'
-#' @returns Two matrices:
-#' * X: Remaining part of data (Z) after accounting for uniqueness terms (U) and (D), used for estimating composite loadings. Also used for standardizing theta when updating Gamma, W and V
-#' * WW: Weights after accounting for current Loading and Path-Coefficients values, used for estimating common-factor loadings
+#' @return Two matrices:
+#' - *X*: Remaining part of data (Z) after accounting for uniqueness terms (U) and (D), used for estimating composite loadings. Also used for standardizing theta when updating Gamma, W and V
+#' - *WW*: Weights after accounting for current Loading and Path-Coefficients values, used for estimating common-factor loadings
 #' 
 #' @export
 #'
@@ -482,21 +469,24 @@ update_composite <-
   }
 
 #' Update Loadings, Path-Coefficients and Uniqueness Terms After Updating Latent Variables
-#' 
-#' @inheritParams prepare_for_ALS
-#' @inheritParams update_X_WW_pseudo_weights
+#'
 #' @param X Pseudo-weights for composites
+#' @param n_indicators Number of indicators
 #' @param Gamma Construct Scores
 #' @param c_index Index of loadings
+#' @param C Loadings matrix
+#' @param n_constructs Number of constructs
 #' @param b_index Index of Path Coefficients
+#' @param B Path Coefficients Matrix
 #' @param n_case Number of Cases
+#' @param D Related to Unique Error
+#' @param Z Standardized Data
 #' @param indicator_type Vector of whether each indicator corresponds to a common factor or composite
 #'
 #' @return List of matrices:
 #'
-#' * (1) Uniqueness terms (D) and (U)
-#' * (2) Estimated Path Coefficients matrix (B)
-#' * (3) Estimated Loadings matrix (C)
+#' 1) Uniqueness terms (D) and (U)
+#' 2) Path-Coefficients (B) and Loadings (C)
 #'
 update_C_B_D_U <-
   function(X,
@@ -548,15 +538,15 @@ update_C_B_D_U <-
   }
 
 #' Flip signs of Gamma, Loadings and Path-Coefficients Cells Based on Dominant Indicator
-#' 
-#' @inheritParams igsca
-#' @inheritParams update_X_WW_pseudo_weights
-#' @inheritParams update_C_B_D_U
 #'
-#' @return List of matrices:
-#' * Estimated Construct Scores (Gamma)
-#' * Estimated Loadings matrix (C)
-#' * Estimated Path-Coefficients matrix (B)
+#' @param n_constructs Number of construct variables
+#' @param Z Standardized data matrix
+#' @param .dominant_indicators Named vector of the dominant indicator for each construct variable
+#' @param Gamma Matrix of construct scores
+#' @param C Loadings matrix
+#' @param B Path Coefficients matrix
+#'
+#' @return List of matrices: Gamma, Loadings (C) and Path-Coefficients (B)
 #'
 flip_signs_ind_domi <- function(n_constructs, Z, .dominant_indicators, Gamma, C, B) {
   for (gamma_idx in seq_len(n_constructs)) {
@@ -581,15 +571,9 @@ flip_signs_ind_domi <- function(n_constructs, Z, .dominant_indicators, Gamma, C,
 #' In the context of igsca, this function prepares: (1) the initial indicators (Z0), weights (W0), structural (B0), loadings(C0) matrices; (2) whether a construct is a latent or composite variable (con_type); (3) whether an indicator corresponds to a latent or composite variable (indicator_type); and (4) the dominant indicator of each construct (.dominant_indicators). 
 #' 
 #' @param model Specified Model in lavaan style
-#' @param data Input dataframe
+#' @param data Dataframe 
 #'
-#' @return Returns a list of matrices/vectors required for igsca_sim() to run:
-#' * Z0
-#' * W0
-#' * B0
-#' * C0
-#' * con_type
-#' * indicator_type
+#' @return Returns a list of matrices required for igsca_sim() to run: Z0, W0, B0, C0, con_type, indicator_type, .dominant_indicators. 
 #' @export
 #' @examples
 #'
@@ -684,7 +668,8 @@ extract_parseModel <-
 #' Converts Output of igsca functions into a table to facilitate comparisons
 #' 
 #' Assumes that indicators only load onto one factor and that there are no cross-factor loadings
-#' @inheritParams extract_parseModel
+#'
+#' @param model Lavaan-style specification of model
 #' @param weights Weights matrix
 #' @param loadings Loadings matrix
 #' @param uniqueD Vector of Uniqueness for each indicator of a common factor
@@ -765,8 +750,10 @@ summarize_FIT_idx <- function(igsca_results) {
 }
 
 #' Title
-#' @inheritParams extract_parseModel
+#'
+#' @param model Specified Lavaan Style Model
 #' @param group Column name of group of input data
+#' @param data Input dataframe
 #' 
 #' @return Multi-group igsca model
 #' @export 
