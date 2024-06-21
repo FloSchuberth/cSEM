@@ -246,7 +246,6 @@ igsca <-
         "Loadings" =  Loadings,
         "Path Coefficients" =  PathCoefficients,
         "Uniqueness Terms" = uniqueD,
-        "Construct Scores" = Gamma,
         "Iterations" = it
       )
     )
