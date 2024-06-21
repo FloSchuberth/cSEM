@@ -2055,7 +2055,7 @@ calculateFIT_m <- function(.object = NULL) {
     
   } else if (is.null(.object$Estimates$UniqueComponent)) {
     # UniqueComponent should be NULL when GSCA and not GSCA_m/I-GSCA is run 
-    DU <- matrix(data = 0, nrow(Z), ncol = ncol(Z))  
+    DU <- matrix(data = 0, nrow(Psi), ncol = ncol(Psi))  
     
   }
   
