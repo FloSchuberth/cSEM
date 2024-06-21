@@ -52,7 +52,8 @@
 #' "
 #' 
 #' # Load the data
-#' load()
+#' dat <- readxl::read_excel(here::here("dev", "Notes", "data", "mmc1.xlsx")) 
+#' 
 #' # Pre-generate the required matrices for the algorithm and assume that the first indicator for each latent variable is the dominant indicator.
 #' igsca_sim_in <- extract_parseModel(model = tutorial_igsca_model,
 #'                                    data = dat,
@@ -68,7 +69,7 @@
 #'                             ind_domi = igsca_sim_in$ind_domi,
 #'                             nbt = 0)
 #'                             )
-igsca <-
+igsca_sim <-
   function(z0,
            W0,
            C0,

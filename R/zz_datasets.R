@@ -688,20 +688,3 @@
 #'     
 #' @source The dataset is provided by Jörg Henseler.  
 "SQ"
-
-
-#' Data: LeDang2022
-#'
-#' The data comes from a European manufacturer of durable consumer goods and was 
-#' studied by \insertCite{ledang2022DataBrief;textual}{cSEM}
-#' 
-#' @docType data
-#'
-#' @description 
-#' 
-#' 
-#' @references
-#'   \insertAllCited{}
-#'     
-#' @source The data were made available in \insertCite{ledang2022DataBrief;textual}{cSEM}
-"LeDang2022"
