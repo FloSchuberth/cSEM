@@ -14,12 +14,10 @@ The data were made available in \insertCite{ledang2022DataBrief;textual}{cSEM}
 LeDang2022
 }
 \description{
-A data frame of 107 variables and 773 participants.
+Data: LeDang2022
 }
 \details{
-This data is based on self-report surveys collected from graduates of universities in Northern Vietnam \insertCite{ledang2022DataBrief;textual}{cSEM}. The data has been used to analyze the relationship between measures of HEXACO personality traits and two job-search outcomes: (1) number of job interviews; and (2) job offers through job search networking behavior \insertCite{ledang2022DataBrief;textual}{cSEM}.
-
-The data were also analyzed using an Integrated-Generalised Structued Component Analysis (I-GSCA) approach in GSCAPro \insertCite{hwangetal2023StructuralEquationModelingAMultidisciplinaryJournal}{cSEM}.
+Insert details on where this comes from and what it means \insertCite{ledang2022DataBrief;textual}{cSEM}
 }
 \references{
 \insertAllCited{}
