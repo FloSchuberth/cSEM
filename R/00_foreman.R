@@ -137,9 +137,10 @@ foreman <- function(
         .tolerance                = .tolerance,
         .starting_values          = .starting_values
       )
-    }
-    
+    } 
+
   } else if (.approach_weights == "IGSCA") {
+    
     # TODO: fill in function here
     
     W <- calculateWeightsIGSCA(
@@ -153,12 +154,16 @@ foreman <- function(
     # TODO: Make sure output is formatted correctly for this to work
     # FIXME: This is bypassing everything else -- it needs to be checked whether everything else is ok
     return(W)
-  } else if (.approach_weights == "unit") {
-    W <- calculateWeightsUnit(.S                        = S,
-                              .csem_model               = csem_model,
-                              .starting_values          = .starting_values)
-  } else if (.approach_weights %in% c("bartlett", "regression")) {
+  }
+  else if (.approach_weights == "unit") {
     
+            
+    W <- calculateWeightsUnit(
+      .S                        = S,
+      .csem_model               = csem_model,
+      .starting_values          = .starting_values
+    )
+  } else if(.approach_weights %in% c("bartlett", "regression")) {
     
     # Note:  1. "bartlett" and "regression" weights are calculated later in the 
     #        calculateReliabilities() function. Here only placeholders for
