@@ -73,7 +73,7 @@ indicator corresponds to a latent or composite variable (indicator_type); and
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>A parseModel extractor function for the purposes of running I-GSCA code example</h1>
-    <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/master/R/helper_igsca.R" class="external-link"><code>R/helper_igsca.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/master/R/igsca.R" class="external-link"><code>R/igsca.R</code></a></small>
     <div class="hidden name"><code>extract_parseModel.Rd</code></div>
     </div>
 
@@ -138,7 +138,478 @@ indicator corresponds to a latent or composite variable (indicator_type); and
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"LeDang2022"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">extract_parseModel</span><span class="op">(</span>model <span class="op">=</span> <span class="va">tutorial_igsca_model</span>, data <span class="op">=</span> <span class="va">LeDang2022</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in extract_parseModel(model = tutorial_igsca_model, data = LeDang2022):</span> could not find function "extract_parseModel"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $Z0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 773 × 62</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      Honesty1   Honesty2   Honesty3 Honesty4 Honesty5 Honesty6 Honesty7 Honesty8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;hvn_lbll&gt;</span> <span style="color: #949494; font-style: italic;">&lt;hvn_lbll&gt;</span> <span style="color: #949494; font-style: italic;">&lt;hvn_lbll&gt;</span> <span style="color: #949494; font-style: italic;">&lt;hvn_lb&gt;</span> <span style="color: #949494; font-style: italic;">&lt;hvn_lb&gt;</span> <span style="color: #949494; font-style: italic;">&lt;hvn_lb&gt;</span> <span style="color: #949494; font-style: italic;">&lt;hvn_lb&gt;</span> <span style="color: #949494; font-style: italic;">&lt;hvn_lb&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>          4          4          4        4        4        4        4        4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>          3          3          5        3        5        5        5        5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>          2          2          3        2        3        3        3        3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>          1          1          2        1        2        2        2        2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>          5          5          5        5        5        4        5        5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>          4          4          3        4        3        3        3        3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>          2          2          3        2        3        3        3        3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>          2          2          3        2        3        3        3        3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>          2          2          3        2        3        3        3        3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>          4          4          4        4        4        4        4        4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 763 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 54 more variables: Honesty9 &lt;hvn_lbll&gt;, Honesty10 &lt;hvn_lbll&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   Emotion1 &lt;hvn_lbll&gt;, Emotion2 &lt;hvn_lbll&gt;, Emotion3 &lt;hvn_lbll&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   Emotion4 &lt;hvn_lbll&gt;, Emotion5 &lt;hvn_lbll&gt;, Emotion6 &lt;hvn_lbll&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   Emotion8 &lt;hvn_lbll&gt;, Emotion10 &lt;hvn_lbll&gt;, Extraver2 &lt;hvn_lbll&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   Extraver3 &lt;hvn_lbll&gt;, Extraver4 &lt;hvn_lbll&gt;, Extraver5 &lt;hvn_lbll&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   Extraver6 &lt;hvn_lbll&gt;, Extraver7 &lt;hvn_lbll&gt;, Extraver8 &lt;hvn_lbll&gt;, …</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $B0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       HonestyHumility Emotionality Extraversion Agreeableness</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> HonestyHumility                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotionality                        0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraversion                        0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeableness                       0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientiousness                   0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> OpennesstoExperience                0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NetworkingBehavior                  0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Numberofjobinterviews               0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Numberofjoboffers                   0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       Conscientiousness OpennesstoExperience NetworkingBehavior</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> HonestyHumility                       0                    0                  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotionality                          0                    0                  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraversion                          0                    0                  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeableness                         0                    0                  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientiousness                     0                    0                  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> OpennesstoExperience                  0                    0                  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NetworkingBehavior                    0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Numberofjobinterviews                 0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Numberofjoboffers                     0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       Numberofjobinterviews Numberofjoboffers</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> HonestyHumility                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotionality                              0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraversion                              0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeableness                             0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientiousness                         0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> OpennesstoExperience                      0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NetworkingBehavior                        1                 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Numberofjobinterviews                     0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Numberofjoboffers                         0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $W0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 HonestyHumility Emotionality Extraversion Agreeableness</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty1                      1            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty2                      1            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty3                      1            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty4                      1            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty5                      1            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty6                      1            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty7                      1            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty8                      1            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty9                      1            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty10                     1            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion1                      0            1            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion2                      0            1            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion3                      0            1            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion4                      0            1            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion5                      0            1            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion6                      0            1            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion8                      0            1            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion10                     0            1            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver2                     0            0            1             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver3                     0            0            1             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver4                     0            0            1             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver5                     0            0            1             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver6                     0            0            1             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver7                     0            0            1             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver8                     0            0            1             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver9                     0            0            1             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver10                    0            0            1             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable1                    0            0            0             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable3                    0            0            0             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable4                    0            0            0             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable5                    0            0            0             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable7                    0            0            0             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable8                    0            0            0             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable9                    0            0            0             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable10                   0            0            0             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious1                0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious3                0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious4                0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious6                0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious7                0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious8                0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious9                0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious10               0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness1                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness2                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness3                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness5                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness7                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness8                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness9                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness10                    0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior1                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior2                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior3                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior5                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior7                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior8                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior9                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Interview1                    0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Interview2                    0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Offer1                        0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Offer2                        0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 Conscientiousness OpennesstoExperience NetworkingBehavior</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty1                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty2                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty3                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty4                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty5                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty6                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty7                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty8                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty9                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty10                       0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion1                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion2                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion3                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion4                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion5                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion6                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion8                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion10                       0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver2                       0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver3                       0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver4                       0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver5                       0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver6                       0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver7                       0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver8                       0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver9                       0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver10                      0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable1                      0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable3                      0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable4                      0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable5                      0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable7                      0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable8                      0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable9                      0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable10                     0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious1                  1                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious3                  1                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious4                  1                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious6                  1                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious7                  1                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious8                  1                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious9                  1                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious10                 1                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness1                       0                    1                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness2                       0                    1                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness3                       0                    1                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness5                       0                    1                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness7                       0                    1                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness8                       0                    1                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness9                       0                    1                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness10                      0                    1                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior1                       0                    0                  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior2                       0                    0                  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior3                       0                    0                  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior5                       0                    0                  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior7                       0                    0                  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior8                       0                    0                  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior9                       0                    0                  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Interview1                      0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Interview2                      0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Offer1                          0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Offer2                          0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 Numberofjobinterviews Numberofjoboffers</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty1                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty2                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty3                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty4                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty5                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty6                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty7                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty8                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty9                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty10                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion1                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion2                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion3                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion4                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion5                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion6                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion8                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion10                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver2                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver3                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver4                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver5                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver6                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver7                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver8                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver9                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver10                          0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable1                          0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable3                          0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable4                          0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable5                          0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable7                          0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable8                          0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable9                          0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable10                         0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious1                      0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious3                      0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious4                      0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious6                      0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious7                      0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious8                      0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious9                      0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious10                     0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness1                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness2                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness3                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness5                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness7                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness8                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness9                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness10                          0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior1                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior2                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior3                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior5                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior7                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior8                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior9                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Interview1                          1                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Interview2                          1                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Offer1                              0                 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Offer2                              0                 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $con_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       HonestyHumility          Emotionality          Extraversion </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "Common factor"       "Common factor"       "Common factor" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Agreeableness     Conscientiousness  OpennesstoExperience </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "Common factor"       "Common factor"       "Common factor" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    NetworkingBehavior Numberofjobinterviews     Numberofjoboffers </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           "Composite"           "Composite"           "Composite" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $indicator_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        Honesty1        Honesty2        Honesty3        Honesty4        Honesty5 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Common factor" "Common factor" "Common factor" "Common factor" "Common factor" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        Honesty6        Honesty7        Honesty8        Honesty9       Honesty10 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Common factor" "Common factor" "Common factor" "Common factor" "Common factor" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        Emotion1        Emotion2        Emotion3        Emotion4        Emotion5 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Common factor" "Common factor" "Common factor" "Common factor" "Common factor" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        Emotion6        Emotion8       Emotion10       Extraver2       Extraver3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Common factor" "Common factor" "Common factor" "Common factor" "Common factor" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       Extraver4       Extraver5       Extraver6       Extraver7       Extraver8 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Common factor" "Common factor" "Common factor" "Common factor" "Common factor" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       Extraver9      Extraver10      Agreeable1      Agreeable3      Agreeable4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Common factor" "Common factor" "Common factor" "Common factor" "Common factor" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      Agreeable5      Agreeable7      Agreeable8      Agreeable9     Agreeable10 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Common factor" "Common factor" "Common factor" "Common factor" "Common factor" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Conscientious1  Conscientious3  Conscientious4  Conscientious6  Conscientious7 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Common factor" "Common factor" "Common factor" "Common factor" "Common factor" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Conscientious8  Conscientious9 Conscientious10       Openness1       Openness2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Common factor" "Common factor" "Common factor" "Common factor" "Common factor" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       Openness3       Openness5       Openness7       Openness8       Openness9 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Common factor" "Common factor" "Common factor" "Common factor" "Common factor" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      Openness10       Behavior1       Behavior2       Behavior3       Behavior5 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "Common factor"     "Composite"     "Composite"     "Composite"     "Composite" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       Behavior7       Behavior8       Behavior9      Interview1      Interview2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "Composite"     "Composite"     "Composite"     "Composite"     "Composite" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          Offer1          Offer2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "Composite"     "Composite" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $C0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 HonestyHumility Emotionality Extraversion Agreeableness</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty1                      1            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty2                      1            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty3                      1            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty4                      1            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty5                      1            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty6                      1            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty7                      1            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty8                      1            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty9                      1            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty10                     1            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion1                      0            1            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion2                      0            1            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion3                      0            1            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion4                      0            1            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion5                      0            1            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion6                      0            1            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion8                      0            1            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion10                     0            1            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver2                     0            0            1             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver3                     0            0            1             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver4                     0            0            1             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver5                     0            0            1             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver6                     0            0            1             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver7                     0            0            1             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver8                     0            0            1             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver9                     0            0            1             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver10                    0            0            1             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable1                    0            0            0             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable3                    0            0            0             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable4                    0            0            0             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable5                    0            0            0             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable7                    0            0            0             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable8                    0            0            0             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable9                    0            0            0             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable10                   0            0            0             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious1                0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious3                0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious4                0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious6                0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious7                0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious8                0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious9                0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious10               0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness1                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness2                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness3                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness5                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness7                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness8                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness9                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness10                    0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior1                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior2                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior3                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior5                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior7                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior8                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior9                     0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Interview1                    0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Interview2                    0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Offer1                        0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Offer2                        0            0            0             0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 Conscientiousness OpennesstoExperience NetworkingBehavior</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty1                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty2                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty3                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty4                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty5                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty6                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty7                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty8                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty9                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty10                       0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion1                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion2                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion3                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion4                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion5                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion6                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion8                        0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion10                       0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver2                       0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver3                       0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver4                       0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver5                       0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver6                       0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver7                       0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver8                       0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver9                       0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver10                      0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable1                      0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable3                      0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable4                      0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable5                      0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable7                      0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable8                      0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable9                      0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable10                     0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious1                  1                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious3                  1                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious4                  1                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious6                  1                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious7                  1                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious8                  1                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious9                  1                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious10                 1                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness1                       0                    1                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness2                       0                    1                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness3                       0                    1                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness5                       0                    1                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness7                       0                    1                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness8                       0                    1                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness9                       0                    1                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness10                      0                    1                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior1                       0                    0                  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior2                       0                    0                  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior3                       0                    0                  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior5                       0                    0                  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior7                       0                    0                  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior8                       0                    0                  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior9                       0                    0                  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Interview1                      0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Interview2                      0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Offer1                          0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Offer2                          0                    0                  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 Numberofjobinterviews Numberofjoboffers</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty1                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty2                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty3                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty4                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty5                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty6                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty7                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty8                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty9                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honesty10                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion1                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion2                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion3                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion4                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion5                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion6                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion8                            0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Emotion10                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver2                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver3                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver4                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver5                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver6                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver7                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver8                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver9                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Extraver10                          0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable1                          0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable3                          0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable4                          0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable5                          0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable7                          0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable8                          0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable9                          0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agreeable10                         0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious1                      0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious3                      0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious4                      0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious6                      0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious7                      0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious8                      0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious9                      0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Conscientious10                     0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness1                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness2                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness3                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness5                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness7                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness8                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness9                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Openness10                          0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior1                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior2                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior3                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior5                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior7                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior8                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Behavior9                           0                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Interview1                          1                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Interview2                          1                 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Offer1                              0                 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Offer2                              0                 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
   </div>
