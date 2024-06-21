@@ -4,14 +4,14 @@
 \alias{flip_signs_ind_domi}
 \title{Flip signs of Gamma, Loadings and Path-Coefficients Cells Based on Dominant Indicator}
 \usage{
-flip_signs_ind_domi(n_constructs, Z, .dominant_indicators, Gamma, C, B)
+flip_signs_ind_domi(n_constructs, Z, ind_domi, Gamma, C, B)
 }
 \arguments{
 \item{n_constructs}{}
 
 \item{Z}{}
 
-\item{.dominant_indicators}{}
+\item{ind_domi}{}
 
 \item{Gamma}{}
 

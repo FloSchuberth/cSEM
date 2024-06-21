@@ -11,7 +11,7 @@ igsca(
   B0,
   con_type,
   indicator_type,
-  .dominant_indicators = .dominant_indicators,
+  ind_domi,
   itmax = 100,
   ceps = 0.001
 )
@@ -29,7 +29,7 @@ igsca(
 
 \item{indicator_type}{An indicator vector that indices whether a j indicator (rows of W0 and C0) corresponds to a common factor variable (1) or a composite variable (0). This vector is important for computing the uniqueness terms (D) because it zeros the entries for composite indicators.}
 
-\item{.dominant_indicators}{A named vector that indices the dominant indicator for each construct variable. \emph{It is to be clarified whether this should only apply to factor latent variables or also composite latent variables.} This is important for ensuring that the signs of the path-coefficients and loadings are consistent. It is sometimes the case in composite-based structural equation modelling methods that loadings/path-coefficients may have the opposite sign. The length of this vector should be equal to the number of construct variables and each value should represent the row number of the dominant indicator for that construct variable.}
+\item{ind_domi}{A numeric vector that indices the dominant indicator for each construct variable. \emph{It is to be clarified whether this should only apply to factor latent variables or also composite latent variables.} This is important for ensuring that the signs of the path-coefficients and loadings are consistent. It is sometimes the case in composite-based structural equation modelling methods that loadings/path-coefficients may have the opposite sign. The length of this vector should be equal to the number of construct variables and each value should represent the row number of the dominant indicator for that construct variable.}
 
 \item{itmax}{Maximum number of iterations of the Alternating Least Squares (ALS) algorithm.}
 
@@ -70,7 +70,8 @@ data(LeDang2022)
 
 # Pre-generate the required matrices for the algorithm and assume that the first indicator for each latent variable is the dominant indicator.
 igsca_in <- extract_parseModel(model = tutorial_igsca_model,
-                                   data = LeDang2022)
+                                   data = LeDang2022,
+                                   ind_domi_as_first = TRUE)
 
 # Fit the I-GSCA model
 (igsca_out <- with(igsca_in, igsca(Z0 = Z0,
@@ -79,7 +80,7 @@ igsca_in <- extract_parseModel(model = tutorial_igsca_model,
                             B0 = B0,
                             con_type = con_type,
                             indicator_type = indicator_type,
-                            .dominant_indicators = NULL)
+                            ind_domi = ind_domi)
                             ))
 }
 \author{
