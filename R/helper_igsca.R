@@ -34,9 +34,8 @@
 #'   (ALS) algorithm.
 #' @param .tolerance Minimum amount of absolute change in the estimates of the
 #'   path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero,
-#'   meaning there are no path-coefficients) between ALS iterations before ending
+#'   meaning ther are no path-coefficients) between ALS iterations before ending
 #'   the optimization.
-#' @inheritParams csem
 #' 
 #' @author Michael S. Truong
 #' @return List of 4 matrices that make up a fitted I-GSCA Model: 
@@ -75,9 +74,9 @@
 #' data(LeDang2022)
 #' 
 #' csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "IGSCA",
-#' .dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion = "diff_absolute")
+#' .dominant_indicators = NULL, .tolerance = 0.0001)
 igsca <-
-  function(Z0, W0, C0, B0, con_type, indicator_type, .dominant_indicators, .iter_max = 100, .tolerance = 0.0001, .conv_criterion) {
+  function(Z0, W0, C0, B0, con_type, indicator_type, .dominant_indicators = .dominant_indicators, .iter_max = 100, .tolerance = 0.0001) {
   
 ## Initialize Computational Variables -----------------------------------------------------
   n_case <- nrow(Z0)
@@ -119,8 +118,7 @@ igsca <-
     it <- 0
     
 ### Optimization Loop: Alternating Between Weights and Loadings ---------------
-
-    while ((!checkConvergence(.W_new = est, .W_old = est0, .tolerance = .tolerance, .conv_criterion = .conv_criterion)) && (it <= .iter_max)) {
+    while ((sum(abs(est0 - est)) > .tolerance) && (it <= .iter_max)) {
 
       # Update Counter Variables
       it <- it + 1

@@ -14,7 +14,7 @@ csem(
 .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
                            "MINVAR", "GENVAR","GSCA", "IGSCA", "PCA",
                            "unit", "bartlett", "regression"),
-.conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative", "sum_diff_absolute"),
+.conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative"),
 .disattenuate          = TRUE,
 .dominant_indicators   = NULL,
 .estimate_structural   = TRUE,
@@ -83,7 +83,7 @@ obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXV
 or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
-One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
+One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
 to "\emph{diff_absolute}".}
 
 \item{.disattenuate}{Logical. Should composite/proxy correlations

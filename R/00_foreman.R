@@ -147,16 +147,12 @@ foreman <- function(
       .csem_model = csem_model,
       .tolerance = .tolerance,
       .iter_max = .iter_max,
-      .dominant_indicators = .dominant_indicators,
-      .conv_criterion = .conv_criterion
+      .dominant_indicators = .dominant_indicators
     )
     # TODO: This needs to be better formatted
     # TODO: Make sure output is formatted correctly for this to work
     # FIXME: This is bypassing everything else -- it needs to be checked whether everything else is ok
     return(W)
-    # TODO: The following was done for GSCAM, should I do it for IGSCA?
-    # W$W <- scaleWeights(S, W$W) 
-    
   } else if (.approach_weights == "unit") {
     W <- calculateWeightsUnit(.S                        = S,
                               .csem_model               = csem_model,

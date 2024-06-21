@@ -232,9 +232,6 @@ calculateOuterWeightsPLS <- function(
 #'   \item{`diff_relative`}{Checks if the largest elementwise absolute rate of change
 #'                          (new - old / new) for two matrices `.W_new` 
 #'                          and `W.old` is smaller than a given tolerance.}
-#'   \item{`sum_diff_absolute`}{Checks if the sum of the element-wise absolute
-#'                              difference between two matrices `.W_new` and `W.old` is smaller than a
-#'                              given tolerance}
 #' }
 #'
 #' @usage checkConvergence(
@@ -268,9 +265,6 @@ checkConvergence <- function(
     "diff_relative" = {
       max(abs((.W_old[.W_new != 0] - .W_new[.W_new != 0]) /
                 .W_new[.W_new != 0])) < .tolerance
-    }, 
-    "sum_diff_absolute" = {
-      (sum(abs(.W_old - .W_new))) < .tolerance
     }
   )
 }

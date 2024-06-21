@@ -97,7 +97,7 @@
 #' @param .closed_form_ci Logical. Should a closed-form confidence interval be computed?
 #'   Defaults to `FALSE`.
 #' @param .conv_criterion Character string. The criterion to use for the convergence check.
-#'   One of: "*diff_absolute*", "*diff_squared*", "*diff_relative*", or "*sum_diff_absolute*". Defaults
+#'   One of: "*diff_absolute*", "*diff_squared*", or "*diff_relative*". Defaults
 #'   to "*diff_absolute*".
 #' @param .csem_model A (possibly incomplete) [cSEMModel]-list.
 #' @param .csem_resample A list resulting from a call to [resamplecSEMResults()].
@@ -461,7 +461,7 @@ args_default <- function(.choices = FALSE) {
                                  "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
     .ci_colnames             = NULL,
     .closed_form_ci          = FALSE, 
-    .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative", "sum_diff_absolute"),
+    .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative"),
     .csem_model              = NULL,
     .csem_resample           = NULL,
     .cv_folds                = 10,

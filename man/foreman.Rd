@@ -62,7 +62,7 @@ obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXV
 or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
-One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
+One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
 to "\emph{diff_absolute}".}
 
 \item{.disattenuate}{Logical. Should composite/proxy correlations
