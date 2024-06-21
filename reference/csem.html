@@ -204,9 +204,7 @@ be estimated? Defaults to <code>TRUE</code>.</p></dd>
 <dt id="arg--id">.id<a class="anchor" aria-label="anchor" href="#arg--id"></a></dt>
 <dd><p>Character string or integer. A character string giving the name or
 an integer of the position of the column of <code>.data</code> whose levels are used
-to split <code>.data</code> into groups. Values of the column referred to by <code>.id</code>
-cannot be solely comprised of <code>Estimates</code> or <code>Information</code> as these are
-internal identifiers for <code>csem()</code> functionality. Defaults to <code>NULL</code>.</p></dd>
+to split <code>.data</code> into groups. Defaults to <code>NULL</code>.</p></dd>
 
 
 <dt id="arg--instruments">.instruments<a class="anchor" aria-label="anchor" href="#arg--instruments"></a></dt>
@@ -554,9 +552,8 @@ identifiers. <code>csem()</code> will split the data by levels of that column an
 the estimation for each level separately. Note, the more levels
 the group-identifier-column has, the more estimation runs are required.
 This can considerably slow down estimation, especially if resampling is
-requested. For the latter it will generally be faster to use <code>.eval_plan = "multisession"</code> or <code>.eval_plan = "multicore"</code>. <em>Warning</em>: <code>csem()</code> does
-not support having only 2 group levels called "Estimates" and "Information",
-as this conflicts with internal functionality.</p>
+requested. For the latter it will generally be faster to use
+<code>.eval_plan = "multisession"</code> or <code>.eval_plan = "multicore"</code>.</p>
 </div>
 <div class="section">
 <h3 id="inference-">Inference:<a class="anchor" aria-label="anchor" href="#inference-"></a></h3>
