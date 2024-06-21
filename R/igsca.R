@@ -27,7 +27,7 @@
 #' @export
 #' @importFrom MASS ginv 
 #' @examples
-#' TODO: Cite the GSCA Pro SEM reference instead of GSCA Pro's Example
+#' 
 #' # Specify the model according to GSCA Pro's example
 #' tutorial_igsca_model <- "
 #' # Composite Model
@@ -227,7 +227,7 @@ for(nb in seq_len(nbt+1)) {
     
     }
 
-## Flip Signs for Factors and Composites Based on Dominant Indicators --------
+## Flip Signs for Factors and cOmposites Based on Dominant Indicators --------
 
     flipped_signs <-
       flip_signs_ind_domi(
@@ -439,7 +439,6 @@ prepare_for_ALS <- function(z0, W0, B0, nvar, ncase, nlv, ov_type) {
       W0 = apply(W0 != 0, 2, as.numeric),
       B0 = apply(B0 != 0, 2, as.numeric)
     )
-  # TODO: Update using list2env()
   W <- initial_est$W
   C <- initial_est$C
   B <- initial_est$B
@@ -689,9 +688,7 @@ flip_signs_ind_domi <- function(nlv, Z, ind_domi, j, Gamma, C, B) {
 }
 
 #' A parseModel extractor function for the purposes of running I-GSCA code example
-#' 
-#' In the context of igsca, this function prepares: (1) the initial indicators (z0), weights (W0), structural (B0), loadings(C0) matrices; (2) whether a construct is a latent or composite variable (lv_type); (3) whether an indicator corresponds to a latent or composite variable (ov_type); and (4) the dominant indicator of each construct (ind_domi). 
-#' 
+#'
 #' @param model Specified Model in lavaan style
 #' @param data Dataframe 
 #' @param ind_domi_as_first Boolean for whether the first indicator for each latent factor should be chosen as the dominant indicator
@@ -771,7 +768,7 @@ extract_parseModel <-
         lapply(FUN = \(x) x[[1]]) |>
         unlist()
     } else {
-      ind_domi <- NA # FIXME: The length/data-structure might need to be adjusted to match ind_domi when isTRUE(ind_domi_as_first)
+      ind_domi <- NA
     }
     
     return(
