@@ -78,14 +78,14 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">prepare_for_ALS</span><span class="op">(</span><span class="va">Z0</span>, <span class="va">W0</span>, <span class="va">B0</span>, <span class="va">n_indicators</span>, <span class="va">ncase</span>, <span class="va">n_constructs</span>, <span class="va">ov_type</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">prepare_for_ALS</span><span class="op">(</span><span class="va">z0</span>, <span class="va">W0</span>, <span class="va">B0</span>, <span class="va">nvar</span>, <span class="va">ncase</span>, <span class="va">nlv</span>, <span class="va">ov_type</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
 
 
-<dl><dt id="arg-z-">Z0<a class="anchor" aria-label="anchor" href="#arg-z-"></a></dt>
+<dl><dt id="arg-z-">z0<a class="anchor" aria-label="anchor" href="#arg-z-"></a></dt>
 <dd></dd>
 
 
@@ -97,7 +97,7 @@
 <dd></dd>
 
 
-<dt id="arg-n-indicators">n_indicators<a class="anchor" aria-label="anchor" href="#arg-n-indicators"></a></dt>
+<dt id="arg-nvar">nvar<a class="anchor" aria-label="anchor" href="#arg-nvar"></a></dt>
 <dd></dd>
 
 
@@ -105,7 +105,7 @@
 <dd></dd>
 
 
-<dt id="arg-n-constructs">n_constructs<a class="anchor" aria-label="anchor" href="#arg-n-constructs"></a></dt>
+<dt id="arg-nlv">nlv<a class="anchor" aria-label="anchor" href="#arg-nlv"></a></dt>
 <dd></dd>
 
 
@@ -115,8 +115,11 @@
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>List of matrices to put through the Alternating Least Squared (ALS) algorithm:</p>
-    </div>
+    <p>List of matrices to put through the Alternating Least Squared (ALS) algorithm:</p><ol><li><p>Starting values for Weights (W), Loadings (C), Path-Coefficients (B) and Uniqueness Terms (D)</p></li>
+<li><p>Standardized data matrix (Z)</p></li>
+<li><p>SVD Decomposition of ...<em>something</em> to get U and V matrices.
+TODO: Figure out what the SVD decomposition is for</p></li>
+</ol></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
