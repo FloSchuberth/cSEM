@@ -211,14 +211,23 @@ igsca <-
     # Updates Gamma, C and B
     list2env(flipped_signs, envir = environment())
     
-
-# Output Formatting -------------------------------------------------------
+    
+    
+    mW <- W[windex] 
+    # This was commented out in the Matlab version because the loadings dimensions
+    # are transposed relative to the weights matrix
+    # mC <- c[cindex] 
+    mC <- t(C)[t(C0) == 1] 
+    mB <- B[bindex] 
+    mD <- uniqueD
+  
+  
+  # Label Output for Formatting
   Weights <- W
   rownames(Weights) <- rownames(W0) 
   
   Loadings <- t(C)
-  rownames(Loadings) <- rownames(C0)
-  
+  rownames(Loadings) <- rownames(C0) 
   names(uniqueD) <- rownames(Loadings) 
   
   PathCoefficients <- B
