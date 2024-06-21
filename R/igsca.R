@@ -190,7 +190,7 @@ igsca <-
         Z = Z,
         ov_type = ov_type
       )
-      
+      # Updates C, B, D, est, and U
       list2env(updated_C_B_D_U_est[c("D", "U", "C", "B", "est")], envir = environment())
     }
     
@@ -206,8 +206,8 @@ igsca <-
         C = C,
         B = B
       )
-    
-    list2env(flipped_signs[c("Gamma", "C", "B")], envir = environment())
+    # Updates Gamma, C and B
+    list2env(flipped_signs, envir = environment())
     
 
 ## Output Formatting -------------------------------------------------------
