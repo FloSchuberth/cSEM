@@ -4,7 +4,7 @@
 \alias{prepare_for_ALS}
 \title{Prepare for ALS Algorithm}
 \usage{
-prepare_for_ALS(Z0, W0, B0, n_indicators, n_case, n_constructs, indicator_type)
+prepare_for_ALS(Z0, W0, B0, n_indicators, n_case, n_constructs, ov_type)
 }
 \arguments{
 \item{Z0}{}
@@ -19,7 +19,7 @@ prepare_for_ALS(Z0, W0, B0, n_indicators, n_case, n_constructs, indicator_type)
 
 \item{n_constructs}{}
 
-\item{indicator_type}{}
+\item{ov_type}{}
 }
 \value{
 List of matrices to put through the Alternating Least Squared (ALS) algorithm:

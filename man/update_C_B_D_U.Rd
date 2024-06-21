@@ -16,7 +16,7 @@ update_C_B_D_U(
   n_case,
   D,
   Z,
-  indicator_type
+  ov_type
 )
 }
 \arguments{
@@ -42,7 +42,7 @@ update_C_B_D_U(
 
 \item{Z}{}
 
-\item{indicator_type}{}
+\item{ov_type}{}
 }
 \value{
 List of matrices:
