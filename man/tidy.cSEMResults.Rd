@@ -2,45 +2,43 @@
 % Please edit documentation in R/postestimate_csem-tidiers.R
 \name{tidy.cSEMResults}
 \alias{tidy.cSEMResults}
-\title{tidy Method for cSEMResults Objects}
+\title{Title}
 \usage{
-\method{tidy}{cSEMResults}(
-  x,
-  parameters = c("all", "Path_estimates", "Loadings_estimates", "Weight_estimates", "D2",
-    "Effect_estimates", "Indicator_correlation", "Exo_construct_correlation"),
-  ...
-)
+\method{tidy}{cSEMResults}(x, format = c("list", "data.frame"), ...)
 }
 \arguments{
-\item{x}{Fitted \code{csem} model with class \code{cSEMResults} as returned from \code{\link[=csem]{csem()}}}
+\item{x}{}
 
-\item{parameters}{Character string. Selects the desired parameter estimates as outputted from \code{\link[=summarize]{summarize()}}. Defaults to \code{all}.}
-
-\item{...}{
-  Arguments passed on to \code{\link[=summarize]{summarize}}
-  \describe{
-    \item{\code{.alpha}}{An integer or a numeric vector of significance levels.
-Defaults to \code{0.05}.}
-    \item{\code{.ci}}{A vector of character strings naming the confidence interval to compute.
-For possible choices see \code{\link[=infer]{infer()}}.}
-    \item{\code{.object}}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
-  }}
-}
-\value{
-A \code{data.frame} with one row for each estimated parameter. The
-description of the column names are as follows:
-
-\item{term}{The result of \code{paste(lhs, op, rhs)}}
-\item{op}{The operator in the model syntax (e.g., \verb{~~} for correlation, \verb{<~} for weights, \verb{=~} for loadings, and \code{~} for path estimates)}
-\item{estimate}{The parameter estimate}
-\item{construct.type}{Whether the modelled construct is a common factor or composite variable}
-\item{std.error}{}
-\item{statistic}{The t-statistic as returned from \code{\link[=summarize]{summarize()}} and \code{cSEM:::addInfer()}}
-\item{p_value}{}
+\item{...}{}
 }
 \description{
-This method and documentation is based on the \code{tidy} method for \code{lavaan}, as found in \code{broom:::tidy.lavaan()}.
+Title
 }
-\details{
-\strong{Cautionary Note}: As with all \code{tidy()} methods, mis-specified arguments may be silently ignored.
+\examples{
+# Specify the model according to GSCA Pro's example
+tutorial_igsca_model <- "
+# Composite Model
+NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + Behavior7 + Behavior8 + Behavior9
+Numberofjobinterviews <~ Interview1 + Interview2
+Numberofjoboffers <~ Offer1 + Offer2 
+
+# Reflective Measurement Model
+HonestyHumility =~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 + Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10
+Emotionality =~ Emotion1 + Emotion2 + Emotion3 + Emotion4 + Emotion5 + Emotion6 + Emotion8 + Emotion10
+Extraversion =~ Extraver2 + Extraver3 + Extraver4 + Extraver5 + Extraver6 + Extraver7 + Extraver8 + Extraver9 + Extraver10
+Agreeableness =~ Agreeable1 + Agreeable3 + Agreeable4 + Agreeable5 + Agreeable7 + Agreeable8 + Agreeable9 + Agreeable10
+Conscientiousness =~ Conscientious1 + Conscientious3 + Conscientious4 + Conscientious6 + Conscientious7 + Conscientious8 + Conscientious9 + Conscientious10
+OpennesstoExperience =~ Openness1 + Openness2 + Openness3 + Openness5 + Openness7 + Openness8 + Openness9 + Openness10
+
+# Structural Model
+NetworkingBehavior ~ HonestyHumility + Emotionality + Extraversion + Agreeableness + Conscientiousness + OpennesstoExperience
+Numberofjobinterviews ~ NetworkingBehavior
+Numberofjoboffers ~ NetworkingBehavior
+"
+
+data(LeDang2022)
+
+mod <- csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "IGSCA",
+.dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion = "sum_diff_absolute")
+tidy(mod)
 }

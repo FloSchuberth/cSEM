@@ -678,6 +678,77 @@ extract_parseModel <-
     )
   }
 
+#' Converts Output of igsca functions into a table to facilitate comparisons
+#' 
+#' Assumes that indicators only load onto one factor and that there are no cross-factor loadings
+#' @inheritParams extract_parseModel
+#' @param weights Weights matrix
+#' @param loadings Loadings matrix
+#' @param uniqueD Vector of Uniqueness for each indicator of a common factor
+#' @param paths Path coefficients matrix
+#' @importFrom lavaan lavaanify
+#' @return Table of Weights, Loadings, Path-Coefficients and Uniqueness terms from i-gsca algorithms in Matlab or R.
+#' @export
+#'
+get_lavaan_table_igsca_matrix <- function(model, weights, loadings, uniqueD, paths) {
+  table <- lavaan::lavaanify(model = model)[, c("lhs", "op", "rhs")]
+  # Remove unnecessary rows
+  table <- table[table$op %in% c("=~", "<~", "~"),]
+  # Pre-allocate Columns
+  table <-
+    cbind(table, list(
+      "weights" = 0,
+      "loadings" = 0,
+      "uniqueD" = 0,
+      "paths" = 0
+    ))
+  
+  # Slide in weights
+  for (indicator in rownames(weights)) {
+    for (lv in colnames(weights)) {
+      table[((table$lhs == lv &
+              table$rhs == indicator) &
+              table$op %in% c("<~", "=~")), "weights"] <- weights[indicator, lv]
+    }
+  }
+  
+  # Slide in loadings
+  for (indicator in rownames(loadings)) {
+    for (lv in colnames(loadings)) {
+      table[((table$lhs == lv &
+                table$rhs == indicator) &
+               table$op %in% c("<~", "=~")), "loadings"] <- loadings[indicator, lv]
+    }
+  }
+  
+  # Slide in uniqueD
+  for (indicator in names(uniqueD)) {
+    # This assumes that every indicator only loads onto one factor
+    # Cross-factor loadings will not work with this
+      table[((table$rhs == indicator) &
+               (table$op == "=~")), "uniqueD"] <- uniqueD[indicator]
+  }
+  
+  # Slide in Paths
+  for (lv_from in rownames(paths)) {
+    for (lv_to in colnames(paths)) {
+      table[((table$rhs == lv_from &
+                table$lhs == lv_to) &
+               table$op == "~"), "paths"] <- paths[lv_from, lv_to]
+    }
+  }
+  
+  # Remove zeros for cells that shouldn't have values
+  table[!(table$op %in% c("<~", "=~")), "weights"] <- NA
+  table[!(table$op %in% c("<~", "=~")), "loadings"] <- NA
+  table[!(table$op %in% c("=~")), "uniqueD"] <- NA
+  table[!(table$op %in% c("~")), "paths"] <- NA
+  
+  
+  return(table)
+  
+}
+
 igsca_warning <- function() {
   # TODO: Might want to do something about this during the simulations...
   # TODO: Maybe only call with the print Method?

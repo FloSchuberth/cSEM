@@ -2,19 +2,15 @@
 % Please edit documentation in R/postestimate_csem-tidiers.R
 \name{augment.cSEMResults}
 \alias{augment.cSEMResults}
-\title{augment Method for cSEMResults Objects}
+\title{Title}
 \usage{
 \method{augment}{cSEMResults}(x, ...)
 }
 \arguments{
-\item{x}{Fitted \code{csem} model with class \code{cSEMResults} as returned from \code{\link[=csem]{csem()}}}
-}
-\value{
-A \code{data.frame} of the original dataset alongside its construct scores and...
+\item{x}{}
+
+\item{...}{}
 }
 \description{
-Placeholder function for future development
-}
-\details{
-TODO: This method should be used to obtain the construct scores and other information provided by \code{\link[=predict]{predict()}}
+Title
 }

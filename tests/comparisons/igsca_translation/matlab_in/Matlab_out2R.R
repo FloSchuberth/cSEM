@@ -1,71 +1,3 @@
-#' Converts Output of igsca functions into a table to facilitate comparisons
-#' 
-#' Assumes that indicators only load onto one factor and that there are no cross-factor loadings
-#' @param weights Weights matrix
-#' @param loadings Loadings matrix
-#' @param uniqueD Vector of Uniqueness for each indicator of a common factor
-#' @param paths Path coefficients matrix
-#' @importFrom lavaan lavaanify
-#' @return Table of Weights, Loadings, Path-Coefficients and Uniqueness terms from i-gsca algorithms in Matlab or R.
-#'
-get_lavaan_table_igsca_matrix <- function(model, weights, loadings, uniqueD, paths) {
-  table <- lavaan::lavaanify(model = model)[, c("lhs", "op", "rhs")]
-  # Remove unnecessary rows
-  table <- table[table$op %in% c("=~", "<~", "~"),]
-  # Pre-allocate Columns
-  table <-
-    cbind(table, list(
-      "weights" = 0,
-      "loadings" = 0,
-      "uniqueD" = 0,
-      "paths" = 0
-    ))
-  
-  # Slide in weights
-  for (indicator in rownames(weights)) {
-    for (lv in colnames(weights)) {
-      table[((table$lhs == lv &
-                table$rhs == indicator) &
-               table$op %in% c("<~", "=~")), "weights"] <- weights[indicator, lv]
-    }
-  }
-  
-  # Slide in loadings
-  for (indicator in rownames(loadings)) {
-    for (lv in colnames(loadings)) {
-      table[((table$lhs == lv &
-                table$rhs == indicator) &
-               table$op %in% c("<~", "=~")), "loadings"] <- loadings[indicator, lv]
-    }
-  }
-  
-  # Slide in uniqueD
-  for (indicator in names(uniqueD)) {
-    # This assumes that every indicator only loads onto one factor
-    # Cross-factor loadings will not work with this
-    table[((table$rhs == indicator) &
-             (table$op == "=~")), "uniqueD"] <- uniqueD[indicator]
-  }
-  
-  # Slide in Paths
-  for (lv_from in rownames(paths)) {
-    for (lv_to in colnames(paths)) {
-      table[((table$rhs == lv_from &
-                table$lhs == lv_to) &
-               table$op == "~"), "paths"] <- paths[lv_from, lv_to]
-    }
-  }
-  
-  # Remove zeros for cells that shouldn't have values
-  table[!(table$op %in% c("<~", "=~")), "weights"] <- NA
-  table[!(table$op %in% c("<~", "=~")), "loadings"] <- NA
-  table[!(table$op %in% c("=~")), "uniqueD"] <- NA
-  table[!(table$op %in% c("~")), "paths"] <- NA
-  
-  return(table)
-  
-}
-
 mat_end_extract_order <- c("W", "C", "B", "uniqueD")
 
 mat_end <-
@@ -98,27 +30,22 @@ Numberofjobinterviews ~ NetworkingBehavior
 Numberofjoboffers ~ NetworkingBehavior
 "
 
-mod <- csem(.data = LeDang2022,
-            tutorial_igsca_model,
-            .approach_weights = "IGSCA",
-            .dominant_indicators = NULL,
-            .tolerance = 0.0001,
-            .conv_criterion = "sum_diff_absolute")
+igsca_in <- extract_parseModel(model = tutorial_igsca_model,
+                               data = LeDang2022)
 
-igsca_out <- mod[["Estimates"]][c("Weight_estimates", "Loading_estimates", "Path_estimates", "D2")]
-
-if (identical(names(igsca_out), c("Weight_estimates", "Loading_estimates", "Path_estimates", "D2"))) {
-  names(igsca_out) <- c("Weights", "Loadings", "Path Coefficients", "Uniqueness Terms")
-} else {
-  stop("Renaming won't work -- names of matrices have changed")
-}
+igsca_out <- with(igsca_in, igsca(Z0 = Z0,
+                                  W0 = W0,
+                                  C0 = C0,
+                                  B0 = B0,
+                                  con_type = con_type,
+                                  indicator_type = indicator_type,
+                                  .dominant_indicators =  NULL))
 
 if(identical(names(mat_end), c("W", "C", "B", "uniqueD"))) {
   if(identical(names(igsca_out), c("Weights", "Loadings", "Path Coefficients", "Uniqueness Terms"))) {
     names(mat_end) <- names(igsca_out)
-    # The Weights and Path Coefficients Matrices  need to be transposed from Matlab version
-    mat_end$Weights<-t(mat_end$Weights)
-    mat_end$`Path Coefficients`<-t(mat_end$`Path Coefficients`)
+    # The Loadings need to be transposed from Matlab version of C
+    mat_end$Loadings<-t(mat_end$Loadings)
   }
 } else {
   stop("Can't rename the Matlab end results matrices based on cSEM::igsca() because they don't matchup")
@@ -143,10 +70,10 @@ for (i in names(mat_end)) {
     mat_end,
     get_lavaan_table_igsca_matrix(
       model = tutorial_igsca_model,
-      weights = t(Weights),
-      loadings = t(Loadings),
+      weights = Weights,
+      loadings = Loadings,
       uniqueD = `Uniqueness Terms`,
-      paths = t(`Path Coefficients`)
+      paths = `Path Coefficients`
     )
   ))
 
