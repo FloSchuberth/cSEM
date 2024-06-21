@@ -86,15 +86,15 @@
 
 
 <dl><dt id="arg-z-">Z0<a class="anchor" aria-label="anchor" href="#arg-z-"></a></dt>
-<dd><p>Data matrix of N cases (measurements) x J indicators with named columns, unstandardized.</p></dd>
+<dd><p>Raw data matrix</p></dd>
 
 
 <dt id="arg-w-">W0<a class="anchor" aria-label="anchor" href="#arg-w-"></a></dt>
-<dd><p>Indicator matrix of weights: J indicators (rows) and their corresponding Gamma construct variables (columns).</p></dd>
+<dd><p>Indicator matrix of weights</p></dd>
 
 
 <dt id="arg-b-">B0<a class="anchor" aria-label="anchor" href="#arg-b-"></a></dt>
-<dd><p>Square indicator matrix of path coefficients: from-construct-variable (rows) and to-construct-variable (columns). The order of Gamma construct variables should match the order in C0 and W0.</p></dd>
+<dd><p>Indicator matrix of path coefficients</p></dd>
 
 
 <dt id="arg-n-indicators">n_indicators<a class="anchor" aria-label="anchor" href="#arg-n-indicators"></a></dt>
@@ -110,19 +110,13 @@
 
 
 <dt id="arg-indicator-type">indicator_type<a class="anchor" aria-label="anchor" href="#arg-indicator-type"></a></dt>
-<dd><p>An indicator vector that indices whether a j indicator (rows of W0 and C0) corresponds to a common factor variable (1) or a composite variable (0). This vector is important for computing the uniqueness terms (D) because it zeros the entries for composite indicators.</p></dd>
+<dd><p>Whether the indicator corresponds to a common factor or composite</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>List of matrices to put through the Alternating Least Squared (ALS) algorithm:</p><ul><li><p>Estimated Weights matrix (W)</p></li>
-<li><p>Estimated Loadings matrix (C)</p></li>
-<li><p>Estimated Path Coefficients matrix (B)</p></li>
-<li><p>Computational Helper Matrix (V)</p></li>
-<li><p>Estimated Uniqueness Errors vector (D)</p></li>
-<li><p>Estimated Related to Uniqueness Errors vector (U)</p></li>
-<li><p>Estimated Construct Scores matrix (Gamma)</p></li>
-</ul></div>
+    <p>List of matrices to put through the Alternating Least Squared (ALS) algorithm:</p>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
