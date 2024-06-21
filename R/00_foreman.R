@@ -127,7 +127,7 @@ foreman <- function(
       # to PLS ModeA weights.
       W$W <- scaleWeights(S, W$W)
       
-    } else if (all(csem_model$construct_type == "Composite")) {
+    } else {
       W <- calculateWeightsGSCA(
         .X                        = X,
         .S                        = S,
@@ -137,22 +137,9 @@ foreman <- function(
         .tolerance                = .tolerance,
         .starting_values          = .starting_values
       )
-    } 
+    }
 
-  } else if (.approach_weights == "IGSCA") {
-    
-    # TODO: fill in function here
-    
-    W <- calculateWeightsIGSCA(
-      .csem_model = csem_model,
-      .tolerance = .tolerance,
-      .iter_max = .iter_max
-    )
-    # TODO: Make sure output is formatted correctly for this to work
-    return(out)
-  }
-  else if (.approach_weights == "unit") {
-    
+  } else if(.approach_weights == "unit") {
             
     W <- calculateWeightsUnit(
       .S                        = S,
