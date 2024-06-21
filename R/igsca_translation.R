@@ -16,9 +16,7 @@
 #' 
 #' @return
 #' @export
-#' @importFrom MASS ginv 
-#' @importFrom R.matlab readMat
-#' @importFrom here here
+#' @importFrom MASS ginv
 #' @examples
 #' require(here)
 #' require(readxl)
@@ -56,18 +54,16 @@
 #'                             B0 = igsca_sim_in$B0, lv_type = igsca_sim_in$lv_type,
 #'                             ov_type = igsca_sim_in$ov_type, ind_domi = igsca_sim_in$ind_domi,
 #'                             nbt = 0,
-#'                             devmode = TRUE,
-#'                             swap_step = "prepare_for_ALS")
+#'                             devmode = TRUE)
 #'                             )
 igsca_sim <- function(Z0, W0, C0, B0, lv_type, ov_type, ind_domi, nbt,
-                      swap_step = c("noswap", "prepare_for_ALS", "first_iteration_update",
+                      swap_step = c("prepare_for_ALS", "first_iteration_update",
                                     "first_factor_update", "first_composite_update",
                                     "flip_signs_ind_domi"),
                       itmax = 100, ceps = 0.001, devmode =  FALSE,
                       devdir = list("dev", "Notes", "data")) {
-  browser()
-# Safety Checks ------------------------------------------------------------
   
+# Safety Checks ------------------------------------------------------------
   swap_step <- match.arg(swap_step)
   # TODO: This should be extended and completed to make igsca into a stand-alone function. However, cSEM already has its own safety checks that make this essentially unnecessary
   stopifnot("The number of bootstraps should be a non-negative integer" = nbt >= 0)
@@ -96,16 +92,15 @@ for(nb in seq_len(nbt+1)) {
     nlv = nlv,
     ov_type = ov_type
   )
-  # TODO: Write a comment on what this updates
-  list2env(prepared_for_ALS, envir = environment())
-  # W <- prepared_for_ALS$W
-  # C <- prepared_for_ALS$C
-  # B <- prepared_for_ALS$B
-  # V <- prepared_for_ALS$V # Used for updating Composites
-  # Z <- prepared_for_ALS$Z
-  # D <- prepared_for_ALS$D
-  # U <- prepared_for_ALS$U # Used for updating Weights
-  # Gamma <- prepared_for_ALS$Gamma
+  
+  W <- prepared_for_ALS$W
+  C <- prepared_for_ALS$C
+  B <- prepared_for_ALS$B
+  V <- prepared_for_ALS$V # Used for updating Composites
+  Z <- prepared_for_ALS$Z
+  D <- prepared_for_ALS$D
+  U <- prepared_for_ALS$U # Used for updating Weights
+  Gamma <- prepared_for_ALS$Gamma
   
   if(isTRUE(devmode)) {
     
@@ -117,9 +112,16 @@ for(nb in seq_len(nbt+1)) {
     )
     
     if (swap_step == "prepare_for_ALS") {
-      swapdir <- c(devdir, "matlab_out", "prepare_for_ALS.MAT")
-      R.matlab::readMat(here::here(swapdir), fixNames = FALSE) |>
-        list2env(envir = environment())
+      
+      swapdir <- c(devdir, "matlab_out", "prepare_for_ALS")
+      W <- read.csv.to.matrix(here::here(swapdir, "W.csv"))
+      C <- read.csv.to.matrix(here::here(swapdir, "C.csv"))
+      B <- read.csv.to.matrix(here::here(swapdir, "B.csv"))
+      V <- read.csv.to.matrix(here::here(swapdir, "V.csv"))
+      Z <- read.csv.to.matrix(here::here(swapdir, "Z.csv"))
+      D <- read.csv.to.matrix(here::here(swapdir, "D.csv"))
+      U <- read.csv.to.matrix(here::here(swapdir, "U.csv"))
+      Gamma <- read.csv.to.matrix(here::here(swapdir, "Gamma.csv"))
     } 
   }
   
@@ -160,10 +162,8 @@ for(nb in seq_len(nbt+1)) {
         nlv = nlv,
         B = B
       )
-      # TODO: Fix up what this updates
-      list2env(updated_X_weights, envir = environment())
-      # X <- updated_X_weights$X # Used for Updating Composites
-      # WW <- updated_X_weights$WW # Used for Updating Factors
+      X <- updated_X_weights$X # Used for Updating Composites
+      WW <- updated_X_weights$WW # Used for Updating Factors
       
 #### Iterative Update of LVs -------------------------------------------------
       A <- cbind(C, B) 
@@ -190,7 +190,6 @@ for(nb in seq_len(nbt+1)) {
               windex_j = windex_j # Changes per lv_update iteration
             )
           
-          
           if(exists("composite_counter") && isTRUE(devmode)) {
             
             if (composite_counter == 0) {
@@ -201,9 +200,9 @@ for(nb in seq_len(nbt+1)) {
               composite_counter = composite_counter + 1
               
               if (swap_step == "first_composite_update") {
-                swapdir <- c(devdir, "matlab_out", "first_composite_update.MAT")
-                R.matlab::readMat(here::here(swapdir), fixNames = FALSE) |>
-                  list2env(envir = environment())
+                
+                swapdir <- c(devdir, "matlab_out", "first_composite_update")
+                theta <- read.csv.to.matrix(here::here(swapdir, "theta.csv"))
               } 
             }
           }
@@ -227,10 +226,9 @@ for(nb in seq_len(nbt+1)) {
               factor_counter = factor_counter + 1
               
               if (swap_step == "first_factor_update") {
-                swapdir <- c(devdir, "matlab_out", "first_factor_update.MAT")
-                R.matlab::readMat(here::here(swapdir), fixNames = FALSE) |>
-                  list2env(envir = environment())
                 
+                swapdir <- c(devdir, "matlab_out", "first_factor_update")
+                theta <- read.csv.to.matrix(here::here(swapdir, "theta.csv"))
               } 
             }
           }
@@ -261,9 +259,11 @@ for(nb in seq_len(nbt+1)) {
             row.names = FALSE
           )
           if (swap_step == "first_iteration_update") {
-            swapdir <- c(devdir, "matlab_out", "first_iteration_update_theta_Gamma_W_V.MAT")
-            R.matlab::readMat(here::here(swapdir), fixNames = FALSE) |>
-              list2env(envir = environment())
+            swapdir <- c(devdir, "matlab_out", "first_iteration_update")
+            Gamma <- read.csv.to.matrix(here::here(swapdir, "Gamma.csv"))
+            theta <- read.csv.to.matrix(here::here(swapdir, "theta.csv"))
+            V <- read.csv.to.matrix(here::here(swapdir, "V.csv"))
+            W <- read.csv.to.matrix(here::here(swapdir, "W.csv"))
           }
         }
     }
@@ -284,14 +284,12 @@ for(nb in seq_len(nbt+1)) {
         Z = Z,
         ov_type = ov_type
       )
-      # TODO: List what this updates
-      list2env(updated_C_B_D, envir = environment())
-      # D <- updated_C_B_D$D
-      # uniqueD <- updated_C_B_D$uniqueD
-      # est <- updated_C_B_D$est
-      # U <- updated_C_B_D$U
-      # B <- updated_C_B_D$B
-      # C <- updated_C_B_D$C
+      D <- updated_C_B_D$D
+      uniqueD <- updated_C_B_D$uniqueD
+      est <- updated_C_B_D$est
+      U <- updated_C_B_D$U
+      B <- updated_C_B_D$B
+      C <- updated_C_B_D$C
     }
     
     if(it == 1 && isTRUE(devmode)) {
@@ -312,10 +310,12 @@ for(nb in seq_len(nbt+1)) {
         row.names = FALSE
       )
       if (swap_step == "first_iteration_update") {
-        swapdir <- c(devdir, "matlab_out", "first_iteration_update_C_B_D_uniqueD_est.MAT")
-        R.matlab::readMat(here::here(swapdir), fixNames = FALSE) |>
-          list2env(envir = environment())
-      }
+        swapdir <- c(devdir, "matlab_out", "first_iteration_update")
+        B <- read.csv.to.matrix(here::here(swapdir, "B.csv"))
+        C <- read.csv.to.matrix(here::here(swapdir, "C.csv"))
+        D <- read.csv.to.matrix(here::here(swapdir, "D.csv"))
+        est <- read.csv.to.matrix(here::here(swapdir, "est.csv"))
+        uniqueD <- read.csv.to.matrix(here::here(swapdir, "uniqueD.csv"))
       }
     }
 
@@ -331,11 +331,9 @@ for(nb in seq_len(nbt+1)) {
         C = C,
         B = B
       )
-    list2env(flipped_signs, envir = environment())
-    # TODO: List what this updates
-    # Gamma <- flipped_signs$Gamma
-    # C <- flipped_signs$C
-    # B <- flipped_signs$B
+    Gamma <- flipped_signs$Gamma
+    C <- flipped_signs$C
+    B <- flipped_signs$B
     
     if (isTRUE(devmode)) {
       
@@ -355,9 +353,10 @@ for(nb in seq_len(nbt+1)) {
       )
       
       if (swap_step == "flip_signs_ind_domi") {
-        swapdir <- c(devdir, "matlab_out", "flip_signs_ind_domi.MAT")
-        R.matlab::readMat(here::here(swapdir), fixNames = FALSE) |>
-          list2env(envir = environment())
+        swapdir <- c(devdir, "matlab_out", swap_step)
+        Gamma <- read.csv.to.matrix(here::here(swapdir, "Gamma.csv"))
+        C <- read.csv.to.matrix(here::here(swapdir, "C.csv"))
+        B <- read.csv.to.matrix(here::here(swapdir, "B.csv"))
       }
     }
     
