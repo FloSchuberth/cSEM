@@ -7,11 +7,10 @@
 calculateWeightsIGSCA(
   .data,
   .csem_model = args_default()$.csem_model,
-  .conv_criterion = args_default()$.conv_criterion,
-  .dominant_indicators = args_default()$.dominant_indicators,
-  .GSCA_modes = args_default()$.GSCA_modes,
+  .tolerance = args_default()$.tolerance,
   .iter_max = args_default()$.iter_max,
-  .tolerance = args_default()$.tolerance
+  .dominant_indicators = args_default()$.dominant_indicators,
+  .conv_criterion = args_default()$.conv_criterion
 )
 }
 \arguments{
@@ -25,9 +24,13 @@ or a mix of several types.}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
-\item{.conv_criterion}{Character string. The criterion to use for the convergence check.
-One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
-to "\emph{diff_absolute}".}
+\item{.tolerance}{Minimum amount of absolute change in the estimates of the
+path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero,
+meaning there are no path-coefficients) between ALS iterations before ending
+the optimization.}
+
+\item{.iter_max}{Maximum number of iterations of the Alternating Least Squares
+(ALS) algorithm.}
 
 \item{.dominant_indicators}{A named vector that indices the dominant
 indicator for each construct variable. \emph{It is to be clarified whether this
@@ -40,22 +43,9 @@ vector should be equal to the number of construct variables and each value
 should represent the row number of the dominant indicator for that
 construct variable.}
 
-\item{.GSCA_modes}{Either a named list specifying the mode that should be
-used for each composite in the form \code{"composite_name" = mode}, a single
-character string giving the mode that should be used for all composites.
-Possible single character string choices for \code{mode} are: "\emph{canon}" for
-canonical composites, or "\emph{nomo}" for nomological composites, or \code{NULL} for
-default behavior. Default behavior is to estimate nomological composites.
-Passed to (I-)GSCA estimating functions in \code{\link[=calculateWeightsGSCA]{calculateWeightsGSCA()}}
-or \code{\link[=calculateWeightsIGSCA]{calculateWeightsIGSCA()}}. Defaults to \code{NULL}.}
-
-\item{.iter_max}{Maximum number of iterations of the Alternating Least Squares
-(ALS) algorithm.}
-
-\item{.tolerance}{Minimum amount of absolute change in the estimates of the
-path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero,
-meaning there are no path-coefficients) between ALS iterations before ending
-the optimization.}
+\item{.conv_criterion}{Character string. The criterion to use for the convergence check.
+One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
+to "\emph{diff_absolute}".}
 }
 \value{
 List of matrices of the fitted I-GSCA Model

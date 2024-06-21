@@ -15,7 +15,6 @@ foreman(
   .disattenuate                = args_default()$.disattenuate,
   .dominant_indicators         = args_default()$.dominant_indicators,
   .estimate_structural         = args_default()$.estimate_structural,
-  .GSCA_modes                  = args_default()$.GSCA_modes,
   .id                          = args_default()$.id,
   .instruments                 = args_default()$.instruments,
   .iter_max                    = args_default()$.iter_max,
@@ -78,15 +77,6 @@ Default to \code{NULL}.}
 
 \item{.estimate_structural}{Logical. Should the structural coefficients
 be estimated? Defaults to \code{TRUE}.}
-
-\item{.GSCA_modes}{Either a named list specifying the mode that should be
-used for each composite in the form \code{"composite_name" = mode}, a single
-character string giving the mode that should be used for all composites.
-Possible single character string choices for \code{mode} are: "\emph{canon}" for
-canonical composites, or "\emph{nomo}" for nomological composites, or \code{NULL} for
-default behavior. Default behavior is to estimate nomological composites.
-Passed to (I-)GSCA estimating functions in \code{\link[=calculateWeightsGSCA]{calculateWeightsGSCA()}}
-or \code{\link[=calculateWeightsIGSCA]{calculateWeightsIGSCA()}}. Defaults to \code{NULL}.}
 
 \item{.id}{Character string or integer. A character string giving the name or
 an integer of the position of the column of \code{.data} whose levels are used
