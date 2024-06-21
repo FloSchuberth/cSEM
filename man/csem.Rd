@@ -103,9 +103,7 @@ be estimated? Defaults to \code{TRUE}.}
 
 \item{.id}{Character string or integer. A character string giving the name or
 an integer of the position of the column of \code{.data} whose levels are used
-to split \code{.data} into groups. Values of the column referred to by \code{.id}
-cannot be solely comprised of \code{Estimates} or \code{Information} as these are
-internal identifiers for \code{\link[=csem]{csem()}} functionality. Defaults to \code{NULL}.}
+to split \code{.data} into groups. Defaults to \code{NULL}.}
 
 \item{.instruments}{A named list of vectors of instruments. The names
 of the list elements are the names of the dependent (LHS) constructs of the structural
@@ -423,9 +421,9 @@ identifiers. \code{csem()} will split the data by levels of that column and run
 the estimation for each level separately. Note, the more levels
 the group-identifier-column has, the more estimation runs are required.
 This can considerably slow down estimation, especially if resampling is
-requested. For the latter it will generally be faster to use \code{.eval_plan = "multisession"} or \code{.eval_plan = "multicore"}. \emph{Warning}: \code{\link[=csem]{csem()}} does
-not support having only 2 group levels called "Estimates" and "Information",
-as this conflicts with internal functionality.}
+requested. For the latter it will generally be faster to use
+\code{.eval_plan = "multisession"} or \code{.eval_plan = "multicore"}.
+}
 \subsection{Inference:}{
 Inference is done via resampling. See \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} and \code{\link[=infer]{infer()}} for details.
 }

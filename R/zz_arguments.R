@@ -159,13 +159,10 @@
 #'   For "*replace*" resampling continues until there are exactly `.R` admissible solutions.
 #'   Depending on the frequency of inadmissible solutions this may significantly increase
 #'   computing time. Defaults to "*drop*".
-#' @param .id Character string or integer. A character string giving the name or
+#' @param .id Character string or integer. A character string giving the name or 
 #'   an integer of the position of the column of `.data` whose levels are used
-#'   to split `.data` into groups. Values of the column referred to by `.id`
-#'   cannot be solely comprised of `Estimates` or `Information` as these are
-#'   internal identifiers for [cSEM::csem()] functionality. Defaults to `NULL`.
-#' @param .inference Logical. Should critical values be computed? Defaults to
-#'   `FALSE`.
+#'   to split `.data` into groups. Defaults to `NULL`.
+#' @param .inference Logical. Should critical values be computed? Defaults to `FALSE`.
 #' @param .independent Character string. The name of the independent variable.
 #' @param .instruments A named list of vectors of instruments. The names
 #'   of the list elements are the names of the dependent (LHS) constructs of the structural

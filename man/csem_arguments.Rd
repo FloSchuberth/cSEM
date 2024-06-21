@@ -207,12 +207,9 @@ computing time. Defaults to "\emph{drop}".}
 
 \item{.id}{Character string or integer. A character string giving the name or
 an integer of the position of the column of \code{.data} whose levels are used
-to split \code{.data} into groups. Values of the column referred to by \code{.id}
-cannot be solely comprised of \code{Estimates} or \code{Information} as these are
-internal identifiers for \code{\link[=csem]{csem()}} functionality. Defaults to \code{NULL}.}
+to split \code{.data} into groups. Defaults to \code{NULL}.}
 
-\item{.inference}{Logical. Should critical values be computed? Defaults to
-\code{FALSE}.}
+\item{.inference}{Logical. Should critical values be computed? Defaults to \code{FALSE}.}
 
 \item{.independent}{Character string. The name of the independent variable.}
 

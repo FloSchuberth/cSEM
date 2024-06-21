@@ -19,7 +19,7 @@
 #'   \item{statistic}{The t-statistic as returned from [cSEM::summarize()] and `cSEM:::addInfer()`}
 #'   \item{p_value}{}
 #' 
-#' @author Michael S. Truong
+#' @author Michael s. truong
 #' 
 #' @importFrom generics tidy
 #' @export
@@ -51,6 +51,14 @@ tidy.cSEMResults <- function(x,
   
   if (identical(names(x), c("Estimates", "Information"))) {
     
+    if (identical(names(x), c("Estimates", "Information")) &
+        identical(names(x[[1]]), c("Estimates", "Information"))) {
+      stop(
+        'This tidy method does not support group levels called "Estimates" and "Information", as this conflicts with internal cSEM functionality.'
+      )
+      
+    }
+
     # Single Group Summary
     summarized_cSEMResults_list <- list(summarize(x, ...))
   } else {

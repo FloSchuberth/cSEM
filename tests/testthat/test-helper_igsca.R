@@ -171,8 +171,5 @@ testthat::expect_success(testthat::expect_equal(igsca_sim_m_table,
 
 
 # Comparing Different Ways of Fitting Group Models ------------------------
-# TODO: Is fitting multiple models separately for each sub-group the same as
-# fitting a 'global model'? Wasn't sure if the number of iterations + exit
-# condition might make it so that a global model might exit earlier than a model
-# for each sub-group?
+
 

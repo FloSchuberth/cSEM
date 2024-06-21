@@ -2051,7 +2051,7 @@ calculateFIT_m <- function(.object = NULL) {
   Gamma <- .object$Estimates$Construct_scores
   C <- .object$Estimates$Loading_estimates
   if (!is.null(.object$Estimates$UniqueComponent)) {
-    DU <- .object$Estimates$UniqueComponent
+    DU <- cbind(.object$Estimates$UniqueComponent, matrix(data = 0, nrow = nrow(Gamma), ncol = ncol(Gamma)))
     
   } else if (is.null(.object$Estimates$UniqueComponent)) {
     # UniqueComponent should be NULL when GSCA and not GSCA_m/I-GSCA is run 
