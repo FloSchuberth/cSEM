@@ -2008,55 +2008,7 @@ calculateSRMR <- function(
   sqrt(sum(C_diff[lower.tri(C_diff, diag = T)]^2) / sum(lower.tri(C_diff, diag = T)))
 } 
 
-#' @describeIn fit_measures The measure of overall FIT for GSCA/I-GSCA models (FIT)
-#' @export
-calculateFIT <- function(.object = NULL) {
-  browser()
-  # As shown in the GSCA_m publication in Hwang et al (2017)
-  Gamma <- .object$Estimates$Construct_scores
-  Psi <- list(.object$Information$Data, Gamma)
-  A <- list(.object$Estimates$Loading_estimates,
-            .object$Estimates$Path_estimates)
-  S <- list(.object$Estimates$D2) # TODO: Do I need to add U back? Is D^2 important?
-  
-  SS_unexplained_variance <- sum(diag(t(Psi - Gamma %*% A - S) %*% (Psi - Gamma %*% A - S)))
-  SS_total_variance <- sum(diag(t(Psi) %*% (Psi)))
-  FIT <- 1 - (SS_unexplained_variance / SS_total_variance)
-  
-  return(FIT)
-}
 
-#' @describeIn fit_measures The measure of measurement model fit for GSCA/I-GSCA models (FIT_m)
-#' @export
-calculateFIT_m <- function(.object = NULL) {
-  browser()
-  Gamma <- .object$Estimates$Construct_scores
-  Z <- list(.object$Information$Data)
-  C <- list(.object$Estimates$Loading_estimates)
-  DU <- list(.object$Estimates$D2) # TODO: Do I need to add U back? Is D^2 important?
-  
-  SS_unexplained_indicator_variance <- sum(diag(t(Z - Gamma %*% C - DU) %*% (Z - Gamma %*% C - DU)))
-  SS_total_indicator_variance <- sum(diag(t(Z) %*% Z)) 
-  
-  FIT <- 1 - (SS_unexplained_indicator_variance / SS_total_indicator_variance)
-  
-  return(FIT_m)
-}
-
-#' @describeIn fit_measures The measure of structural model FIT for GSCA/I-GSCA models (FIT_s)
-#' @export
-calculateFIT_s <- function(.object = NULL) {
-  browser()
-  Gamma <- .object$Estimates$Construct_scores
-  B <- list(.object$Estimates$Path_estimates)
-  
-  SS_unexplained_construct_variance <- sum(diag(t(Gamma - Gamma %*% B) %*% (Gamma - Gamma %*% B)))
-  SS_total_construct_variance <- sum(diag(t(Gamma) %*% (Gamma)))
-  
-  FIT <- 1 - (SS_unexplained_construct_variance / SS_total_construct_variance)
-  
-  return(FIT_s)
-}
 
 
 #' Calculate Cohens f^2

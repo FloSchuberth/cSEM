@@ -267,11 +267,6 @@ foreman <- function(
       } else {
         NULL
       },
-      "UniqueComponent"        = if(.approach_weights == "IGSCA"){
-        W$UniqueComponent
-      } else {
-        NULL
-      },
       "Reliabilities"          = Q^2,
       "R2"                     = if(.estimate_structural) {
         estim_results$R2
@@ -295,11 +290,7 @@ foreman <- function(
       }
     ),
     "Information" = list(
-      "Data"          = if(.approach_weights == "IGSCA"){
-        W$Data # TODO: identical(W$Data, X) is FALSE for IGSCA, should revisit this later
-      } else {
-        X
-      },
+      "Data"          = X,
       "Model"         = csem_model,
       "Arguments"     = args_used,
       "Type_of_indicator_correlation" = Cor$cor_type,

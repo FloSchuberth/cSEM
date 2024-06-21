@@ -42,9 +42,8 @@
 #' @return List of 4 matrices that make up a fitted I-GSCA Model: 
 #' * (1) Weights 
 #' * (2) Loadings 
-#' * (3) Squared Unique Loadings D^2 
+#' * (3) Uniqueness Terms D^2 
 #' * (4) Path Coefficients.
-#' * (5) Unique Component of Indicators (for common factors) DU
 #'  
 #' @importFrom MASS ginv 
 #' 
@@ -256,26 +255,18 @@ igsca <-
   Loadings <- t(C)
   rownames(Loadings) <- rownames(C0)
   
-  SquaredUniqueLoadingsD <- diag(D) ^ 2
-  names(SquaredUniqueLoadingsD) <- rownames(Loadings) 
-  
-  # testthat::expect_equal(t(U) %*% U, diag(ncol(U)))
-  # Agreeing with page 275 of Hwang et al (2021) IGSCA publication 
-  
-  UniquePart_UD <- U %*% D
-  colnames(UniquePart_UD) <- colnames(Z)
+  uniqueD <- diag(D) ^ 2
+  names(uniqueD) <- rownames(Loadings) 
   
   PathCoefficients <- B
   
   
     return(
       list(
-        "Data"    = Z,
         "Weights" = Weights,
         "Loadings" =  Loadings,
         "Path Coefficients" =  PathCoefficients,
-        "Squared Unique Loadings" = SquaredUniqueLoadingsD,
-        "UniqueComponent" = UniquePart_UD,
+        "Uniqueness Terms" = uniqueD,
         "Construct Scores" = Gamma,
         "Iterations" = it
       )

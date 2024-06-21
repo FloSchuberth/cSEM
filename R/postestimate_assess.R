@@ -75,17 +75,16 @@
 #'   alternative specification with the k'th variable dropped (R2_excluded).
 #'   Calculation is done by [calculatef2()].}
 #' \item{Fit indices; "chi_square", "chi_square_df", "cfi", "cn", "gfi", "ifi", "nfi", 
-#'       "nnfi",  "rmsea", "rms_theta", "srmr", "FIT", "FIT_m", "FIT_s"}{
+#'       "nnfi",  "rmsea", "rms_theta", "srmr"}{
 #'   Several absolute and incremental fit indices. Note that their suitability
 #'   for models containing constructs modeled as composites is still an
 #'   open research question. Also note that fit indices are not tests in a 
 #'   hypothesis testing sense and
 #'   decisions based on common one-size-fits-all cut-offs proposed in the literature 
 #'   suffer from serious statistical drawbacks. Calculation is done by [calculateChiSquare()],
-#'   [calculateChiSquareDf()], [calculateCFI()], [calculateGFI()],
-#'   [calculateIFI()], [calculateNFI()], [calculateNNFI()], [calculateRMSEA()],
-#'   [calculateRMSTheta()], [calculateSRMR()], [calculateFIT()],
-#'   [calculateFIT_m()] and [calculateFIT_s()].}
+#'   [calculateChiSquareDf()], [calculateCFI()], 
+#'   [calculateGFI()], [calculateIFI()], [calculateNFI()], [calculateNNFI()], 
+#'   [calculateRMSEA()], [calculateRMSTheta()] and [calculateSRMR()].}
 #' \item{Fornell-Larcker criterion; "fl_criterion"}{A rule suggested by \insertCite{Fornell1981;textual}{cSEM}
 #'   to assess discriminant validity. The Fornell-Larcker
 #'   criterion is a decision rule based on a comparison between the squared
@@ -207,7 +206,7 @@
 #'                            "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
 #'                            "cfi", "cn", "gfi", "ifi", "nfi", "nnfi", 
 #'                            "reliability",
-#'                            "rmsea", "rms_theta", "srmr", "FIT", "FIT_m", "FIT_s",
+#'                            "rmsea", "rms_theta", "srmr",
 #'                            "gof", "htmt", "htmt2", "r2", "r2_adj",
 #'                            "rho_T", "rho_T_weighted", "vif", 
 #'                            "vifmodeB"),
@@ -237,7 +236,7 @@ assess <- function(
                            "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
                            "cfi", "cn", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
-                           "rmsea", "rms_theta", "srmr", "FIT", "FIT_m", "FIT_s",
+                           "rmsea", "rms_theta", "srmr",
                            "gof", "htmt", "htmt2", "r2", "r2_adj",
                            "rho_T", "rho_T_weighted", "vif", 
                            "vifmodeB"),
@@ -481,19 +480,6 @@ assess <- function(
   if(any(.quality_criterion %in% c("all", "srmr"))) {
     out[["SRMR"]] <- calculateSRMR(.object, ...)
   }
-  
-  if(any(.quality_criterion %in% c("all", "FIT")) & (.object$Information$Arguments$.approach_weights %in% c("GSCA", "IGSCA"))) {
-    out[["FIT"]] <- calculateFIT(.object, ...)
-  }
-  
-  if(any(.quality_criterion %in% c("all", "FIT_m")) & (.object$Information$Arguments$.approach_weights %in% c("GSCA", "IGSCA"))) {
-    out[["FIT_m"]] <- calculateFIT_m(.object, ...)
-  }
-  
-  if(any(.quality_criterion %in% c("all", "FIT_s")) & (.object$Information$Arguments$.approach_weights %in% c("GSCA", "IGSCA"))) {
-    out[["FIT_s"]] <- calculateFIT_s(.object, ...)
-  }
-  
   if(any(.quality_criterion %in% c("all", "fl_criterion"))) {
     if(inherits(.object, "cSEMResults_default")) {
       out[["Fornell-Larcker"]] <- calculateFLCriterion(
