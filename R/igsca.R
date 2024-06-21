@@ -90,9 +90,8 @@ igsca <-
     n_constructs = n_constructs,
     ov_type = ov_type
   )
-  
-  list2env(prepared_for_ALS[c("W", "C", "B", "V", "Z", "D", "U", "Gamma")],
-           envir = environment())
+  ### Updates W, C, B, V, Z, D, U, Gamma
+  list2env(prepared_for_ALS, envir = environment())
   
   
 ## Alternating Least Squares Algorithm -------------------------------------
