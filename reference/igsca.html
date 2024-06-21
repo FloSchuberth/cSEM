@@ -190,29 +190,20 @@ to "<em>diff_absolute</em>".</p></dd>
 <span class="r-in"><span><span class="co"># Specify the model according to GSCA Pro's example</span></span></span>
 <span class="r-in"><span><span class="va">tutorial_igsca_model</span> <span class="op">&lt;-</span> <span class="st">"</span></span></span>
 <span class="r-in"><span><span class="st"># Composite Model</span></span></span>
-<span class="r-in"><span><span class="st">NetworkingBehavior &lt;~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + </span></span></span>
-<span class="r-in"><span><span class="st">                      Behavior7 + Behavior8 +  Behavior9</span></span></span>
+<span class="r-in"><span><span class="st">NetworkingBehavior &lt;~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + Behavior7 + Behavior8 + Behavior9</span></span></span>
 <span class="r-in"><span><span class="st">Numberofjobinterviews &lt;~ Interview1 + Interview2</span></span></span>
 <span class="r-in"><span><span class="st">Numberofjoboffers &lt;~ Offer1 + Offer2 </span></span></span>
 <span class="r-in"><span><span class="st"></span></span></span>
 <span class="r-in"><span><span class="st"># Reflective Measurement Model</span></span></span>
-<span class="r-in"><span><span class="st">HonestyHumility =~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 + </span></span></span>
-<span class="r-in"><span><span class="st">                    Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10</span></span></span>
-<span class="r-in"><span><span class="st">Emotionality =~ Emotion1 + Emotion2 + Emotion3 + Emotion4 + </span></span></span>
-<span class="r-in"><span><span class="st">                Emotion5 + Emotion6 + Emotion8 + Emotion10</span></span></span>
-<span class="r-in"><span><span class="st">Extraversion =~ Extraver2 + Extraver3 + Extraver4 + Extraver5 + </span></span></span>
-<span class="r-in"><span><span class="st">                Extraver6 + Extraver7 + Extraver8 + Extraver9 + Extraver10</span></span></span>
-<span class="r-in"><span><span class="st">Agreeableness =~ Agreeable1 + Agreeable3 + Agreeable4 + Agreeable5 +</span></span></span>
-<span class="r-in"><span><span class="st">                 Agreeable7 + Agreeable8 + Agreeable9 + Agreeable10</span></span></span>
-<span class="r-in"><span><span class="st">Conscientiousness =~ Conscientious1 + Conscientious3 + Conscientious4 + </span></span></span>
-<span class="r-in"><span><span class="st">                     Conscientious6 + Conscientious7 + Conscientious8 + </span></span></span>
-<span class="r-in"><span><span class="st">                     Conscientious9 + Conscientious10</span></span></span>
-<span class="r-in"><span><span class="st">OpennesstoExperience =~ Openness1 + Openness2 + Openness3 + Openness5 + </span></span></span>
-<span class="r-in"><span><span class="st">                        Openness7 + Openness8 + Openness9 + Openness10</span></span></span>
+<span class="r-in"><span><span class="st">HonestyHumility =~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 + Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10</span></span></span>
+<span class="r-in"><span><span class="st">Emotionality =~ Emotion1 + Emotion2 + Emotion3 + Emotion4 + Emotion5 + Emotion6 + Emotion8 + Emotion10</span></span></span>
+<span class="r-in"><span><span class="st">Extraversion =~ Extraver2 + Extraver3 + Extraver4 + Extraver5 + Extraver6 + Extraver7 + Extraver8 + Extraver9 + Extraver10</span></span></span>
+<span class="r-in"><span><span class="st">Agreeableness =~ Agreeable1 + Agreeable3 + Agreeable4 + Agreeable5 + Agreeable7 + Agreeable8 + Agreeable9 + Agreeable10</span></span></span>
+<span class="r-in"><span><span class="st">Conscientiousness =~ Conscientious1 + Conscientious3 + Conscientious4 + Conscientious6 + Conscientious7 + Conscientious8 + Conscientious9 + Conscientious10</span></span></span>
+<span class="r-in"><span><span class="st">OpennesstoExperience =~ Openness1 + Openness2 + Openness3 + Openness5 + Openness7 + Openness8 + Openness9 + Openness10</span></span></span>
 <span class="r-in"><span><span class="st"></span></span></span>
 <span class="r-in"><span><span class="st"># Structural Model</span></span></span>
-<span class="r-in"><span><span class="st">NetworkingBehavior ~ HonestyHumility + Emotionality + Extraversion + </span></span></span>
-<span class="r-in"><span><span class="st">                     Agreeableness + Conscientiousness + OpennesstoExperience</span></span></span>
+<span class="r-in"><span><span class="st">NetworkingBehavior ~ HonestyHumility + Emotionality + Extraversion + Agreeableness + Conscientiousness + OpennesstoExperience</span></span></span>
 <span class="r-in"><span><span class="st">Numberofjobinterviews ~ NetworkingBehavior</span></span></span>
 <span class="r-in"><span><span class="st">Numberofjoboffers ~ NetworkingBehavior</span></span></span>
 <span class="r-in"><span><span class="st">"</span></span></span>
@@ -220,8 +211,7 @@ to "<em>diff_absolute</em>".</p></dd>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">LeDang2022</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="va">LeDang2022</span>, <span class="va">tutorial_igsca_model</span>, .approach_weights <span class="op">=</span> <span class="st">"IGSCA"</span>,</span></span>
-<span class="r-in"><span>.dominant_indicators <span class="op">=</span> <span class="cn">NULL</span>, .tolerance <span class="op">=</span> <span class="fl">0.0001</span>, .conv_criterion <span class="op">=</span></span></span>
-<span class="r-in"><span><span class="st">"sum_diff_absolute"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>.dominant_indicators <span class="op">=</span> <span class="cn">NULL</span>, .tolerance <span class="op">=</span> <span class="fl">0.0001</span>, .conv_criterion <span class="op">=</span> <span class="st">"sum_diff_absolute"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ----------------------------------- Overview -----------------------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
