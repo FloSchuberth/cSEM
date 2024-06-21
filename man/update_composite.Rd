@@ -4,17 +4,7 @@
 \alias{update_composite}
 \title{Update Composite Variables}
 \usage{
-update_composite(
-  n_total_var,
-  tot,
-  n_constructs,
-  gamma_idx,
-  W,
-  A,
-  V,
-  X,
-  windex_gamma_idx
-)
+update_composite(n_total_var, tot, n_constructs, j, W, A, V, X, windex_j)
 }
 \arguments{
 \item{n_total_var}{}
@@ -23,7 +13,7 @@ update_composite(
 
 \item{n_constructs}{}
 
-\item{gamma_idx}{}
+\item{j}{}
 
 \item{W}{}
 
@@ -33,7 +23,7 @@ update_composite(
 
 \item{X}{}
 
-\item{windex_gamma_idx}{}
+\item{windex_j}{}
 }
 \value{
 theta: A matrix that will later be used to update the weights for the composite variable.

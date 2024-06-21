@@ -204,6 +204,7 @@ igsca <-
         n_constructs = n_constructs,
         Z = Z,
         ind_domi = ind_domi,
+        gamma_idx = gamma_idx,
         Gamma = Gamma,
         C = C,
         B = B
@@ -583,7 +584,7 @@ update_C_B_D <-
 #'
 #' @return List of matrices: Gamma, Loadings (C) and Path-Coefficients (B)
 #'
-flip_signs_ind_domi <- function(n_constructs, Z, ind_domi, Gamma, C, B) {
+flip_signs_ind_domi <- function(n_constructs, Z, ind_domi, gamma_idx, Gamma, C, B) {
   for (gamma_idx in seq_len(n_constructs)) {
     if ((t(Z[, ind_domi[gamma_idx]]) %*% Gamma[, gamma_idx]) < 0) {
       Gamma[, gamma_idx] <- (-1 * Gamma[, gamma_idx])
