@@ -1135,9 +1135,7 @@ parse_GSCAPro_FullResults <-
       file = here::here(file_path[1:(length(file_path) - 1)], paste0(names(tables), ".csv"))
     )
     
-    # FIXME: get_lavaan_table_igsca_gscapro was giving me some trouble for reasons I don't quite understand
-    # The strangeness is that this issue didn't seem to occur before I changed data.table to be an explicit dependency?
-    tables <- lapply(tables, as.data.frame)
+    
     
     return(tables)
     
