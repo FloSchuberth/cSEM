@@ -2,7 +2,7 @@
 % Please edit documentation in R/igsca.R
 \name{summarize_FIT_idx}
 \alias{summarize_FIT_idx}
-\title{Compute FIT statistic for I-GSCA models}
+\title{Title}
 \usage{
 summarize_FIT_idx(igsca_results)
 }
@@ -13,5 +13,5 @@ summarize_FIT_idx(igsca_results)
 FIT index statistic
 }
 \description{
-TBD
+Title
 }

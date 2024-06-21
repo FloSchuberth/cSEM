@@ -423,6 +423,7 @@ update_X_WW_pseudo_weights <- function(Z, U, D, C, n_constructs, B) {
   # X deviates from Matlab because it is an offspring of svd_out
   X <- Z - U %*% D
   # FIXME: warning("I don't quite understand why this is the equivalent of the Matlab expression, revisit page 44 of Hiebeler 2015 R and Matlab")
+  # TODO: Should find alternative to solve() to avoid matrix inversions
   WW <-
     t(C) %*% solve((C %*% t(C) + diag(n_constructs) - 2 * B + (B %*% t(B))))
   return(list("X" = X, "WW" = WW))
@@ -751,9 +752,7 @@ get_lavaan_table_igsca_matrix <- function(model, weights, loadings, uniqueD, pat
   
 }
 
-#' Compute FIT statistic for I-GSCA models
-#' 
-#' TBD
+#' Title
 #'
 #' @param igsca_results Results from igsca()
 #'
@@ -761,14 +760,11 @@ get_lavaan_table_igsca_matrix <- function(model, weights, loadings, uniqueD, pat
 #' @export
 #'
 summarize_FIT_idx <- function(igsca_results) {
-  # Incomplete
+  # TODO: Compute FIT statistic
   return(FIT)
 }
 
-#' Compute multi-group model for I-GSCA
-#' 
-#' TBD
-#' 
+#' Title
 #' @inheritParams extract_parseModel
 #' @param group Column name of group of input data
 #' 
@@ -776,6 +772,6 @@ summarize_FIT_idx <- function(igsca_results) {
 #' @export 
 #'
 model_multigroup_igsca <- function(model, group, data) {
-  # Incomplete
+  # TODO: Illustrate how this would be done
   return(mutligroup_igsca_result)
 }
