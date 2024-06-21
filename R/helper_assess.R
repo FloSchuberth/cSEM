@@ -2011,22 +2011,15 @@ calculateSRMR <- function(
 #' @describeIn fit_measures The measure of overall FIT for GSCA/I-GSCA models (FIT)
 #' @export
 calculateFIT <- function(.object = NULL) {
-  
+  return(NULL)
+  browser()
   # As shown in the GSCA_m publication in Hwang et al (2017)
   Gamma <- .object$Estimates$Construct_scores
-  Psi <- cbind(.object$Information$Data, Gamma)
-  # I am fairly confident the transpose of B is what's needed
-  # See Gamma[1,] %*% t(...$Path_estimates)
-  A <- cbind(.object$Estimates$Loading_estimates, t(.object$Estimates$Path_estimates))
-  
-  if (!is.null(.object$Estimates$UniqueComponent)) {
-    S <- cbind(.object$Estimates$UniqueComponent, matrix(data = 0, nrow = nrow(Gamma), ncol = ncol(Gamma)))
-    
-  } else if (is.null(.object$Estimates$UniqueComponent)) {
-    # UniqueComponent should be NULL when GSCA and not GSCA_m/I-GSCA is run 
-    S <- matrix(data = 0, nrow(Psi), ncol = ncol(Psi))  
-    
-  }
+  Psi <- list(.object$Information$Data, Gamma)
+  A <- list(.object$Estimates$Loading_estimates,
+            .object$Estimates$Path_estimates)
+  S <- list(.object$Estimates$UniqueComponent,
+            ...)  # TODO: need to add sufficient zero padding in order to make the matrices conformalbe
   
   SS_unexplained_variance <- sum(diag(t(Psi - Gamma %*% A - S) %*% (Psi - Gamma %*% A - S)))
   SS_total_variance <- sum(diag(t(Psi) %*% (Psi)))
@@ -2038,11 +2031,13 @@ calculateFIT <- function(.object = NULL) {
 #' @describeIn fit_measures The measure of measurement model fit for GSCA/I-GSCA models (FIT_m)
 #' @export
 calculateFIT_m <- function(.object = NULL) {
-  
-  Z <- .object$Information$Data
+  return(NULL)
+  browser()
   Gamma <- .object$Estimates$Construct_scores
-  C <- .object$Estimates$Loading_estimates
-  DU <- .object$Estimates$UniqueComponent  
+  Z <- list(.object$Information$Data)
+  C <- list(.object$Estimates$Loading_estimates)
+  DU <- list(.object$Estimates$UniqueComponent,
+             ...)  # TODO: need to add sufficient zero padding in order to make the matrices conformalbe
   
   SS_unexplained_indicator_variance <- sum(diag(t(Z - Gamma %*% C - DU) %*% (Z - Gamma %*% C - DU)))
   SS_total_indicator_variance <- sum(diag(t(Z) %*% Z)) 
@@ -2055,11 +2050,10 @@ calculateFIT_m <- function(.object = NULL) {
 #' @describeIn fit_measures The measure of structural model FIT for GSCA/I-GSCA models (FIT_s)
 #' @export
 calculateFIT_s <- function(.object = NULL) {
-  
+  return(NULL)
+  browser()
   Gamma <- .object$Estimates$Construct_scores
-  # I am fairly confident the transpose of B is what's needed
-  # See Gamma[1,] %*% t(B)
-  B <- t(.object$Estimates$Path_estimates)
+  B <- list(.object$Estimates$Path_estimates)
   
   SS_unexplained_construct_variance <- sum(diag(t(Gamma - Gamma %*% B) %*% (Gamma - Gamma %*% B)))
   SS_total_construct_variance <- sum(diag(t(Gamma) %*% (Gamma)))
