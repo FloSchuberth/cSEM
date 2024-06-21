@@ -8,8 +8,8 @@
 #' @param W0 Indicator matrix of weights: indicators (rows) and their corresponding construct variable (columns).
 #' @param C0 Indicator matrix of loadings: indicators (rows) and their corresponding construct variable (columns).
 #' @param B0 Square indicator matrix of path coefficients: from-construct-variable (rows) and to-construct-variable (columns). The order of construct variables should match the order in C0 and W0.
-#' @param con_type A logical vector that indices whether a construct variable (columns in W0 and C0) is a factor (TRUE) or composite (FALSE). Its length should be equal to the number of columns of W0 and C0. 
-#' TODO: Rename con_type into cv_type
+#' @param lv_type A logical vector that indices whether a construct variable (columns in W0 and C0) is a factor (TRUE) or composite (FALSE). Its length should be equal to the number of columns of W0 and C0. 
+#' TODO: Rename lv_type into cv_type
 #' @param ov_type An indicator vector that indices whether an indicator (rows of W0 and C0) corresponds to a factor latent variable (1) or a composite emergent variable (0). This vector is important for computing the uniqueness terms (D) because it zeros the entries for composite indicators. 
 #' 
 #' @param ind_domi A numeric vector that indices the dominant indicator for each construct variable. *It is to be clarified whether this should only apply to factor latent variables or also composite latent variables.* This is important for ensuring that the signs of the path-coefficients and loadings are consistent. It is sometimes the case in composite-based structural equation modelling methods that loadings/path-coefficients may have the opposite sign. The length of this vector should be equal to the number of construct variables and each value should represent the row number of the dominant indicator for that construct variable. 
@@ -61,7 +61,7 @@
 #'                             W0 = W0,
 #'                             C0 = C0,
 #'                             B0 = B0,
-#'                             con_type = con_type,
+#'                             lv_type = lv_type,
 #'                             ov_type = ov_type,
 #'                             ind_domi = ind_domi,
 #'                             nbt = 0)
@@ -71,7 +71,7 @@ igsca <-
            W0,
            C0,
            B0,
-           con_type,
+           lv_type,
            ov_type,
            ind_domi,
            nbt,
@@ -165,7 +165,7 @@ for(nb in seq_len(nbt+1)) {
         Xj <- X[, windex_j]
         
         
-        if (con_type[j] == 0) {
+        if (lv_type[j] == 0) {
           # Update Composite LV
           theta <-
             update_composite_LV(
@@ -182,7 +182,7 @@ for(nb in seq_len(nbt+1)) {
           
           
           
-        } else if (con_type[j] == 1) {
+        } else if (lv_type[j] == 1) {
           # Update Factor LV
           theta <-
              update_factor_LV(
@@ -192,7 +192,7 @@ for(nb in seq_len(nbt+1)) {
                )
           
         } else {
-          stop("con_type should either be 1 for factors or 0 for composites")
+          stop("lv_type should either be 1 for factors or 0 for composites")
         }
         # This is where the 'actual' updating occurs, in terms of the Gamma matrix, Weights and V(?)
         theta <- theta / norm(Xj %*% theta, "2")
@@ -689,13 +689,13 @@ flip_signs_ind_domi <- function(nlv, Z, ind_domi, j, Gamma, C, B) {
 
 #' A parseModel extractor function for the purposes of running I-GSCA code example
 #' 
-#' In the context of igsca, this function prepares: (1) the initial indicators (Z0), weights (W0), structural (B0), loadings(C0) matrices; (2) whether a construct is a latent or composite variable (con_type); (3) whether an indicator corresponds to a latent or composite variable (ov_type); and (4) the dominant indicator of each construct (ind_domi). 
+#' In the context of igsca, this function prepares: (1) the initial indicators (Z0), weights (W0), structural (B0), loadings(C0) matrices; (2) whether a construct is a latent or composite variable (lv_type); (3) whether an indicator corresponds to a latent or composite variable (ov_type); and (4) the dominant indicator of each construct (ind_domi). 
 #' 
 #' @param model Specified Model in lavaan style
 #' @param data Dataframe 
 #' @param ind_domi_as_first Boolean for whether the first indicator for each latent factor should be chosen as the dominant indicator
 #'
-#' @return Returns a list of matrices required for igsca_sim() to run: Z0, W0, B0, C0, con_type, ov_type, ind_domi. 
+#' @return Returns a list of matrices required for igsca_sim() to run: Z0, W0, B0, C0, lv_type, ov_type, ind_domi. 
 #' @export
 #' @examples
 #'
@@ -734,7 +734,7 @@ extract_parseModel <-
     B0 <- t(csemify$structural)
     W0 <- t(csemify$measurement)
     
-    con_type <- csemify$construct_type == "Common factor"
+    lv_type <- csemify$construct_type == "Common factor"
     
     # Constructing ov_type
     ov_type <- vector(length = ncol(csemify$measurement))
@@ -764,7 +764,7 @@ extract_parseModel <-
     
     if (isTRUE(ind_domi_as_first)) {
       # Row Indices of W0 that correspond to the dominant indicator for each factor/composite
-      # TODO: Change to W0 to W0[, con_type] if it turns out that the correction should only apply to latent factors
+      # TODO: Change to W0 to W0[, lv_type] if it turns out that the correction should only apply to latent factors
       ind_domi <- apply(W0, 2, as.logical) |>
         apply(2, which, TRUE) |>
         lapply(FUN = \(x) x[[1]]) |>
@@ -778,7 +778,7 @@ extract_parseModel <-
         "Z0" = Z0,
         "B0" = B0,
         "W0" = W0,
-        "con_type" = con_type,
+        "lv_type" = lv_type,
         "ov_type" = ov_type,
         "C0" = C0,
         "ind_domi" = ind_domi
