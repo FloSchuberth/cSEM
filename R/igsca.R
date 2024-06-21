@@ -405,9 +405,7 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, indi
 }
 
 #' Update Pseudo Weights for Composites and Common-Factors
-#' 
-#' Computation of WW matrix was converted between Matlab to R based on page 44 of \insertCite{Hiebeler2015}{cSEM}. 
-#'  TODO: I can't figure out why this hiebeler citation isn't working.
+#'
 #' @param Z Standardized data matrix
 #' @param D Matrix of estimated unique error
 #' @param U Matrix of estimates related to unique error
@@ -419,15 +417,12 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, indi
 #' * X: Remaining part of data (Z) after accounting for uniqueness terms (U) and (D), used for estimating composite loadings. Also used for standardizing theta when updating Gamma, W and V
 #' * WW: Weights after accounting for current Loading and Path-Coefficients values, used for estimating common-factor loadings
 #' 
-#' @references
-#'   \insertAllCited{}
-#' 
 #' @export
 #'
 update_X_WW_pseudo_weights <- function(Z, U, D, C, n_constructs, B) {
   # X deviates from Matlab because it is an offspring of svd_out
   X <- Z - U %*% D
-
+  # FIXME: warning("I don't quite understand why this is the equivalent of the Matlab expression, revisit page 44 of Hiebeler 2015 R and Matlab")
   WW <-
     t(C) %*% solve((C %*% t(C) + diag(n_constructs) - 2 * B + (B %*% t(B))))
   return(list("X" = X, "WW" = WW))
