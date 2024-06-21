@@ -2011,15 +2011,13 @@ calculateSRMR <- function(
 #' @describeIn fit_measures The measure of overall FIT for GSCA/I-GSCA models (FIT)
 #' @export
 calculateFIT <- function(.object = NULL) {
-  return(NULL)
   browser()
   # As shown in the GSCA_m publication in Hwang et al (2017)
   Gamma <- .object$Estimates$Construct_scores
   Psi <- list(.object$Information$Data, Gamma)
   A <- list(.object$Estimates$Loading_estimates,
             .object$Estimates$Path_estimates)
-  S <- list(.object$Estimates$UniqueComponent,
-            ...)  # TODO: need to add sufficient zero padding in order to make the matrices conformalbe
+  S <- list(.object$Estimates$D2) # TODO: Do I need to add U back? Is D^2 important?
   
   SS_unexplained_variance <- sum(diag(t(Psi - Gamma %*% A - S) %*% (Psi - Gamma %*% A - S)))
   SS_total_variance <- sum(diag(t(Psi) %*% (Psi)))
@@ -2031,13 +2029,11 @@ calculateFIT <- function(.object = NULL) {
 #' @describeIn fit_measures The measure of measurement model fit for GSCA/I-GSCA models (FIT_m)
 #' @export
 calculateFIT_m <- function(.object = NULL) {
-  return(NULL)
   browser()
   Gamma <- .object$Estimates$Construct_scores
   Z <- list(.object$Information$Data)
   C <- list(.object$Estimates$Loading_estimates)
-  DU <- list(.object$Estimates$UniqueComponent,
-             ...)  # TODO: need to add sufficient zero padding in order to make the matrices conformalbe
+  DU <- list(.object$Estimates$D2) # TODO: Do I need to add U back? Is D^2 important?
   
   SS_unexplained_indicator_variance <- sum(diag(t(Z - Gamma %*% C - DU) %*% (Z - Gamma %*% C - DU)))
   SS_total_indicator_variance <- sum(diag(t(Z) %*% Z)) 
@@ -2050,7 +2046,6 @@ calculateFIT_m <- function(.object = NULL) {
 #' @describeIn fit_measures The measure of structural model FIT for GSCA/I-GSCA models (FIT_s)
 #' @export
 calculateFIT_s <- function(.object = NULL) {
-  return(NULL)
   browser()
   Gamma <- .object$Estimates$Construct_scores
   B <- list(.object$Estimates$Path_estimates)
