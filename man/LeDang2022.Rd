@@ -5,7 +5,7 @@
 \alias{LeDang2022}
 \title{Data: LeDang2022}
 \format{
-An object of class \code{data.frame} with 773 rows and 107 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 773 rows and 107 columns.
 }
 \source{
 The data were made available in \insertCite{ledang2022DataBrief;textual}{cSEM}
@@ -14,11 +14,7 @@ The data were made available in \insertCite{ledang2022DataBrief;textual}{cSEM}
 LeDang2022
 }
 \description{
-A data frame of 107 variables and 773 participants. Labelled
-factors were converted from numerical to character representation through
-\code{haven::as_factor()}. The provided data frame is a fusion of the converted
-labelled factors for the demographic data and the unconverted Likert scale
-data for the psychometric data.
+A data frame of 107 variables and 773 participants.
 }
 \details{
 This data is based on self-report surveys collected from graduates of universities in Northern Vietnam \insertCite{ledang2022DataBrief}{cSEM}. The data has been used to analyze the relationship between measures of HEXACO personality traits and two job-search outcomes: (1) number of job interviews; and (2) job offers through job search networking behavior \insertCite{ledang2022DataBrief}{cSEM}.

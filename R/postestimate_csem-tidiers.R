@@ -12,7 +12,6 @@
 #'   
 #'   \item{term}{The result of `paste(lhs, op, rhs)`}
 #'   \item{op}{The operator in the model syntax (e.g., `~~` for correlation, `<~` for weights, `=~` for loadings, and `~` for path estimates)}
-#'   \item{group}{The group as specified by `.id` in the [cSEM::csem()].}
 #'   \item{estimate}{The parameter estimate}
 #'   \item{construct.type}{Whether the modelled construct is a common factor or composite variable}
 #'   \item{std.error}{}
@@ -48,143 +47,98 @@ tidy.cSEMResults <- function(x,
       "Exo_construct_correlation"
     )
   )
-  
-  if (identical(names(x), c("Estimates", "Information"))) {
-    
-    if (identical(names(x), c("Estimates", "Information")) &
-        identical(names(x[[1]]), c("Estimates", "Information"))) {
-      stop(
-        'This tidy method does not support group levels called "Estimates" and "Information", as this conflicts with internal cSEM functionality.'
-      )
-      
+
+  summarized_cSEMResults <- summarize(x, ...)
+
+## Selection ---------------------------------------------------------------
+  if (parameters == "all") {
+
+
+    if (is.null(summarized_cSEMResults$Estimates$D2)) {
+      general_estimates <- summarized_cSEMResults[["Estimates"]][c("Path_estimates", "Loading_estimates", "Weight_estimates", "Exo_construct_correlation")]
+    } else {
+      general_estimates <- summarized_cSEMResults[["Estimates"]][c("Path_estimates", "Loading_estimates", "Weight_estimates", "D2", "Exo_construct_correlation")]
     }
 
-    # Single Group Summary
-    summarized_cSEMResults_list <- list(summarize(x, ...))
-  } else {
-    # Multi Group Summary
-    summarized_cSEMResults_list <- lapply(x, summarize, ...)
+
+    effect_estimates <- summarized_cSEMResults[["Estimates"]][["Effect_estimates"]][c("Direct_effect", "Indirect_effect", "Total_effect")]
     
-  }
+  # Add type of effect as column
+  # See user1317221_G on April 26/2015 https://stackoverflow.com/a/29878732
+    effect_estimates <- mapply(function(df, df_name) {
+      df$op <- rep(df_name, nrow(df))
+      return(df)
+    },
+    effect_estimates,
+    names(effect_estimates),
+    SIMPLIFY = FALSE)
+
+
+    out <- c(general_estimates, effect_estimates)
+    
+  } else if (parameters != "Effect_estimates") {
+    out <- summarized_cSEMResults[["Estimates"]][parameters] 
+    
+  } else if (parameters == "Effect_estimates") {
+    effect_estimates <- summarized_cSEMResults[["Estimates"]][["Effect_estimates"]][c("Direct_effect", "Indirect_effect", "Total_effect")]
+    
+    # Add type of effect as column
+    # See user1317221_G on April 26/2015 https://stackoverflow.com/a/29878732
+    effect_estimates <- mapply(function(df, df_name) {
+      df$op <- rep(df_name, nrow(df))
+      return(df)
+    },
+    effect_estimates,
+    names(effect_estimates),
+    SIMPLIFY = FALSE)
+    
+    out <- effect_estimates
+    
+  } 
   
- out <- lapply(summarized_cSEMResults_list, function(summarized_cSEMResults, parameters) {
-   
-   ## Selection ---------------------------------------------------------------
-   if (parameters == "all") {
-     
-     
-     if (is.null(summarized_cSEMResults$Estimates$D2)) {
-       general_estimates <- summarized_cSEMResults[["Estimates"]][c("Path_estimates", "Loading_estimates", "Weight_estimates", "Exo_construct_correlation")]
-     } else {
-       general_estimates <- summarized_cSEMResults[["Estimates"]][c("Path_estimates", "Loading_estimates", "Weight_estimates", "D2", "Exo_construct_correlation")]
-     }
-     
-     
-     effect_estimates <- summarized_cSEMResults[["Estimates"]][["Effect_estimates"]][c("Direct_effect", "Indirect_effect", "Total_effect")]
-     
-     # Add type of effect as column
-     # See user1317221_G on April 26/2015 https://stackoverflow.com/a/29878732
-     effect_estimates <- mapply(function(df, df_name) {
-       df$op <- rep(df_name, nrow(df))
-       return(df)
-     },
-     effect_estimates,
-     names(effect_estimates),
-     SIMPLIFY = FALSE)
-     
-     
-     out <- c(general_estimates, effect_estimates)
-     
-   } else if (parameters != "Effect_estimates") {
-     out <- summarized_cSEMResults[["Estimates"]][parameters] 
-     
-   } else if (parameters == "Effect_estimates") {
-     effect_estimates <- summarized_cSEMResults[["Estimates"]][["Effect_estimates"]][c("Direct_effect", "Indirect_effect", "Total_effect")]
-     
-     # Add type of effect as column
-     # See user1317221_G on April 26/2015 https://stackoverflow.com/a/29878732
-     effect_estimates <- mapply(function(df, df_name) {
-       df$op <- rep(df_name, nrow(df))
-       return(df)
-     },
-     effect_estimates,
-     names(effect_estimates),
-     SIMPLIFY = FALSE)
-     
-     out <- effect_estimates
-     
-   } 
-   
-   # Take out the empty data.frames to facilitate the later concatenation
-   out <- out[sapply(out, function(x)
-     nrow(x) > 0)]
-   # Add operand as op column
-   out <- mapply(function(df, df_name) {
-     if ((df_name %in% c("Direct_effect", "Indirect_effect", "Total_effect"))) {
-       return(df)
-     } else {
-       
-       # Test for what operand is consistent for the iterated dataframe
-       ## This needs spaces so that we don't conflate ~~ with ~
-       operands <- c(" =~ ", " <~ ", " ~~ ", " ~ ") 
-       names(operands) <- c("=~", "<~", "~~", "~")
-       df_type <- sapply(operands, function(x) grepl(x, df$Name[1]))
-       
-       if (length(names(df_type)[df_type]) == 1) {
-         df$op <- rep(names(df_type)[df_type], nrow(df))
-         
-       } else {
-         stop("There is more than one type of allowed operand in the iterated data.frame. Cannot determine what to assign to op column.")
-         
-       }
-       
-       return(df)
-     }
-   },
-   out,
-   names(out),
-   SIMPLIFY = FALSE) 
-   
-   ## Conversion to broom Style -------------------------------------------------------------
-   # Merge list of data.frames into one
-   # See response by Charles on November 11/2011 https://stackoverflow.com/a/8097519
-   out <- Reduce(function(...) merge(..., all = TRUE, sort = FALSE), out)
-   
-   # Rename columns to be consistent with tidy glossary standard
-   # See Zon Shi Wu Jie from May 5/2014 https://stackoverflow.com/a/23475492
+  # Take out the empty data.frames to facilitate the later concatenation
+  out <- out[sapply(out, function(x)
+    nrow(x) > 0)]
+  # Add operand as op column
+  out <- mapply(function(df, df_name) {
+    if ((df_name %in% c("Direct_effect", "Indirect_effect", "Total_effect"))) {
+      return(df)
+    } else {
+      
+      # Test for what operand is consistent for the iterated dataframe
+      ## This needs spaces so that we don't conflate ~~ with ~
+      operands <- c(" =~ ", " <~ ", " ~~ ", " ~ ") 
+      names(operands) <- c("=~", "<~", "~~", "~")
+      df_type <- sapply(operands, function(x) grepl(x, df$Name[1]))
+      
+      if (length(names(df_type)[df_type]) == 1) {
+        df$op <- rep(names(df_type)[df_type], nrow(df))
+        
+      } else {
+        stop("There is more than one type of allowed operand in the iterated data.frame. Cannot determine what to assign to op column.")
+        
+      }
+      
+      return(df)
+    }
+  },
+  out,
+  names(out),
+  SIMPLIFY = FALSE) 
+
+## Conversion to broom Style -------------------------------------------------------------
+  # Merge list of data.frames into one
+  # See response by Charles on November 11/2011 https://stackoverflow.com/a/8097519
+    out <- Reduce(function(...) merge(..., all = TRUE, sort = FALSE), out)
+  
+  # Rename columns to be consistent with tidy glossary standard
+  # See Zon Shi Wu Jie from May 5/2014 https://stackoverflow.com/a/23475492
    colnames(out)[colnames(out) == "Name"] <- 'term'
    colnames(out)[colnames(out) == "Construct_type"] <- 'type'
    colnames(out)[colnames(out) == "Estimate"] <- 'estimate'
    colnames(out)[colnames(out) == "Std_err"] <- 'std.error'
-   colnames(out)[colnames(out) == "t_stat"] <- 'statistic'
+   colnames(out)[colnames(out) == "t_stat"] <- 't.stat'
    colnames(out)[colnames(out) == "p_value"] <- 'p.value'
-   
-   # Column reordering
-   
-   out <- out[, c("term", "op", "estimate", "std.error", "statistic", "p.value")]
-   
-   return(out)
- },
- parameters = parameters
- )
-  
- if(length(out) == 1) {
-   out <- out[[1]]
- } else if (length(out) > 1) {
-   out <- mapply(FUN = function(summary, name) {
-     summary$group <- name
-     summary<-summary[, c("term", "op", "group", "estimate", "std.error", "statistic", "p.value")]
-     return(summary)
-     
-   }, 
-   summary = out,
-   name = names(out), SIMPLIFY = FALSE
-   )
-   
-   out <- Reduce(function(...) merge(..., all = TRUE, sort = FALSE), out)
-   
- }
-  
    
   return(out)
   
