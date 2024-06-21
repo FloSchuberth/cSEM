@@ -67,8 +67,7 @@ Imports:
     stats,
     symmoments,
     TruncatedNormal,
-    utils,
-    Rcpp
+    utils
 RdMacros: Rdpack, lifecycle
 RoxygenNote: 7.3.1
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
@@ -89,5 +88,3 @@ Suggests:
     waldo
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-LinkingTo: 
-    Rcpp
