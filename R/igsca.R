@@ -59,9 +59,17 @@
 #'                             ind_domi = ind_domi)
 #'                             ))
 igsca <-
-  function(Z0, W0, C0, B0, con_type, ov_type, ind_domi, itmax = 100, ceps = 0.001) {
+  function(Z0,
+           W0,
+           C0,
+           B0,
+           con_type,
+           ov_type,
+           ind_domi,
+           itmax = 100,
+           ceps = 0.001) {
   
-## Initialize Computational Variables -----------------------------------------------------
+## Initialize Auxiliary Computational Variables -----------------------------------------------------
   n_case <- nrow(Z0)
   n_indicators <- ncol(Z0)
   n_constructs <- ncol(W0)
@@ -72,7 +80,7 @@ igsca <-
   b_index <- which(c(B0) == 1)
   
 
-### Initial Estimates and Preparation -------------------------------------
+## Initial Estimates and Preparation -------------------------------------
   prepared_for_ALS <- prepare_for_ALS(
     Z0 = Z0,
     W0 = W0,

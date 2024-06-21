@@ -22,7 +22,7 @@ update_X_WW_pseudo_weights(Z, U, D, C, n_constructs, B)
 \value{
 Two matrices:
 \itemize{
-\item \emph{X}: Remaining part of data (Z) after accounting for uniqueness terms (U) and (D), used for estimating composite loadings. Also used for standardizing theta when updating Gamma, W and V
+\item \emph{X}: Remaining part of data (Z) after accounting for uniqueness terms (U) and (D), used for estimating composite loadings
 \item \emph{WW}: Weights after accounting for current Loading and Path-Coefficients values, used for estimating common-factor loadings
 }
 }
