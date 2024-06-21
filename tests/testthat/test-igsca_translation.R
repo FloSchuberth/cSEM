@@ -1,4 +1,4 @@
-if (exists("run")) { # To disable for now
+if (exists(run)) { # To disable for now
 # General Pre-Test -------------------------------------------------------------
 
 ## Model Specification and Load Data ---------------------------------------
@@ -210,7 +210,7 @@ matlab_end_results <-
     "matlab_out",
     "end_results.MAT"
   )) |> 
-  # R.matlab::readMat(fixNames = FALSE) |>
+  R.matlab::readMat(fixNames = FALSE) |>
   {
     \(mat_env) mat_env[c("W", "C", "B", "uniqueD")]
   }() |>
