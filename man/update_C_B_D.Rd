@@ -13,7 +13,7 @@ update_C_B_D(
   n_constructs,
   bindex,
   B,
-  n_case,
+  ncase,
   D,
   Z,
   ov_type
@@ -36,7 +36,7 @@ update_C_B_D(
 
 \item{B}{}
 
-\item{n_case}{}
+\item{ncase}{}
 
 \item{D}{}
 

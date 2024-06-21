@@ -7,17 +7,17 @@
 igsca(Z0, W0, C0, B0, con_type, ov_type, ind_domi, itmax = 100, ceps = 0.001)
 }
 \arguments{
-\item{Z0}{Data matrix of N cases (measurements) x J indicators with named columns}
+\item{Z0}{Input matrix. Should contain named columns in this form.}
 
-\item{W0}{Indicator matrix of weights: J indicators (rows) and their corresponding Gamma construct variables (columns).}
+\item{W0}{Indicator matrix of weights: indicators (rows) and their corresponding construct variable (columns).}
 
-\item{C0}{Indicator matrix of loadings: J indicators (rows) and their corresponding Gamma construct variable (columns).}
+\item{C0}{Indicator matrix of loadings: indicators (rows) and their corresponding construct variable (columns).}
 
-\item{B0}{Square indicator matrix of path coefficients: from-construct-variable (rows) and to-construct-variable (columns). The order of Gamma construct variables should match the order in C0 and W0.}
+\item{B0}{Square indicator matrix of path coefficients: from-construct-variable (rows) and to-construct-variable (columns). The order of construct variables should match the order in C0 and W0.}
 
 \item{con_type}{A vector that denotes whether each construct variable (columns in W0 and C0) is a common factor or composite. Its length should be equal to the number of columns of W0 and C0.}
 
-\item{ov_type}{An indicator vector that indices whether a j indicator (rows of W0 and C0) corresponds to a common factor variable (1) or a composite variable (0). This vector is important for computing the uniqueness terms (D) because it zeros the entries for composite indicators.}
+\item{ov_type}{An indicator vector that indices whether an indicator (rows of W0 and C0) corresponds to a common factor variable (1) or a composite variable (0). This vector is important for computing the uniqueness terms (D) because it zeros the entries for composite indicators.}
 
 \item{ind_domi}{A numeric vector that indices the dominant indicator for each construct variable. \emph{It is to be clarified whether this should only apply to factor latent variables or also composite latent variables.} This is important for ensuring that the signs of the path-coefficients and loadings are consistent. It is sometimes the case in composite-based structural equation modelling methods that loadings/path-coefficients may have the opposite sign. The length of this vector should be equal to the number of construct variables and each value should represent the row number of the dominant indicator for that construct variable.}
 
@@ -30,7 +30,10 @@ List of 4 matrices that make up a fitted I-GSCA Model: (1) Weights, (2) Loadings
 TODO: Cite the GSCA Pro SEM reference instead of GSCA Pro's Example
 }
 \description{
-This R implementation of I-GSCA is based on the Matlab implementation in igsca_sim.m by Dr. Heungsun Hwang.
+This is a streamlined R implementation of I-GSCA, based on the matlab implementation in igsca_sim.m by Heungsun Hwang.
+}
+\details{
+The code here generally assumes that every indicator corresponds to a single construct. (A construct is a superset consisting of latent and emergent variables. Latent variables are sometimes referred to as common-factor/factor variables; and emergent variables are sometimes referred to as component/composite variables.)
 }
 \examples{
 
