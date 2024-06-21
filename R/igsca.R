@@ -176,7 +176,7 @@ igsca <-
     }
       
 #### Update Loadings, Path Coefficients and Uniqueness Terms ----------
-      updated_C_B_D_U_est <- update_C_B_D_U_est(
+      updated_C_B_D <- update_C_B_D(
         X = X,
         n_indicators = n_indicators,
         Gamma = Gamma,
@@ -190,10 +190,9 @@ igsca <-
         Z = Z,
         ov_type = ov_type
       )
-      # Updates C, B, D, est, and U
-      list2env(updated_C_B_D_U_est[c("D", "U", "C", "B", "est")], envir = environment())
+      # Updates C, B, D, uniqueD, est, and U
+      list2env(updated_C_B_D, envir = environment())
     }
-    
     
 
 ## Flip Signs for Factors and Composites Based on Dominant Indicators --------
@@ -217,7 +216,6 @@ igsca <-
   Loadings <- t(C)
   rownames(Loadings) <- rownames(C0)
   
-  uniqueD <- diag(D) ^ 2
   names(uniqueD) <- rownames(Loadings) 
   
   PathCoefficients <- B
@@ -500,11 +498,13 @@ update_composite <-
 #'
 #' @return List of matrices:
 #'
-#' 1) Uniqueness terms (D) and (U)
-#' 2) Path-Coefficients (B) and Loadings (C)
-#' 3) Vector of estimates: non-zero Path-Coefficients (if Paths are specified in B0) or non-zero Loadings 
+#' 1) Uniqueness terms (D) and (\eqn{D^2})
+#' 2) Non-zero Path-Coefficients (if Paths are specified in B0) or non-zero Loadings 
+#' 3) Path-Coefficients (B) and Loadings (C)
+#' 4) U, Utilde, v, F_o, Q, U *something*
+#' TODO: Name these accessory matrices
 #'
-update_C_B_D_U_est <-
+update_C_B_D <-
   function(X,
            n_indicators,
            Gamma,
@@ -549,16 +549,22 @@ update_C_B_D_U_est <-
     } else {
       est <- C[c_index]
     }
-    
-    
+    # browser()
+    uniqueD <- diag(D) ^ 2
     
     return(
       list(
         "D" = D,
+        "uniqueD" = uniqueD,
+        "est" = est,
         "U" = U,
+        "Utilde" = Utilde,# TODO: This is used somewhere?
+        "v" = v,
+        "u" = u,
+        "F_o" = F_o,
+        "Q" = Q, # TODO: This is used somewhere else?
         "B" = B,
-        "C" = C,
-        "est" = est
+        "C" = C
       )
     )
   }
