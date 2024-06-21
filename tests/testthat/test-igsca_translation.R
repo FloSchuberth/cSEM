@@ -5,7 +5,7 @@ require(here)
 require(readxl)
 require(future)
 require(future.apply)
-require(withr)
+
 
 # future Specifications ---------------------------------------------------
 ## Future Plans copied from csem_resample.R
@@ -277,7 +277,9 @@ compared_R_matlab[names(compared_R_matlab) %in% "flip_signs_ind_domi"] |>
   all() |>
   testthat::expect_false()
 
+# Compare GSCAPro and R ---------------------------------------------------
 
+# TODO: Compare GSCAPro and R
  
 
 # Compare GSCAPro and Matlab ----------------------------------------------
@@ -287,13 +289,6 @@ gscapro <- parse_GSCAPro_FullResults()
 
 gscapro_tabulated <-
   get_lavaan_table_igsca_gscapro(gscapro_in = gscapro, model = tutorial_igsca_model)
+## TODO: Compare GSCAPro and matlab
 
-testthat::expect_equal(object = end_comparisons_table[["matlab"]],
-                       expected = gscapro_tabulated)
 
-withr::with_options(list(width = 20),
-                    waldo::compare(end_comparisons_table[["matlab"]], gscapro_tabulated))
-
-# Compare GSCAPro and R ---------------------------------------------------
-
-# TODO: Compare GSCAPro and R

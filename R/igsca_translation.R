@@ -5,7 +5,7 @@
 #' @param C0 Loadings indicator. Indicators that load onto factors should have 1s in both W0 and C0.
 #' @param B0 Path Coefficients Indicators
 #' @param lv_type A boolean vector index for what latent variable is a factor. Length = ncol(W0)
-#' @param ov_type A numeric vector index for whether an indicator is for a composite variable or for factor. 1 means indicator for composite, 0 means indicator for latent variable. Important for D matrix. Length = nrow(W0)
+#' @param ov_type A numeric vector index for what latent variable is a composite. Important for D matrix. Length = ncol(W0)
 #' @param ind_domi A numeric vector index for the indicator that is dominant for each latent variable. Range of values should be the number of indicators, which is nrow(W0). Length should be ncol(W0)
 #' @param nbt Number of boostraps -- though this should really be removed
 #' @param testEquivalence TRUE/FALSE for whether comparison with Matlab should be made
@@ -406,8 +406,6 @@ for(nb in seq_len(nbt+1)) {
   rownames(PathCoefficients) <- special_names$path$row
   colnames(PathCoefficients) <- special_names$path$col
   
-  browser()
-  
   names(uniqueD) <- rownames(Loadings)
   
   
@@ -500,26 +498,8 @@ extract_parseModel <-
     z0 <- data[, csemify$indicators]
     B0 <- csemify$structural
     W0 <- t(csemify$measurement)
-    
     lv_type <- csemify$construct_type == "Common factor"
-    
-    # Constructing ov_type
-    ov_type <- vector(length = ncol(csemify$measurement))
-    names(ov_type) <- colnames(csemify$measurement)
-      
-    
-    for (lv in rownames(csemify$measurement)) {
-      for (indicator in colnames(csemify$measurement)) {
-        if (csemify$construct_type[lv] == "Composite") {
-        
-          if (csemify$measurement[lv, indicator] == 1) {
-            ov_type_tmp[indicator] <- TRUE
-          }
-          
-        }
-      }
-    }
-    
+    ov_type <- csemify$construct_type == "Composite"
     
     # TODO: More parsimonious expression to get to C0
     # This is also wrong, all indicators that have LVs also have loadings
@@ -907,7 +887,7 @@ update_C_B_D <-
     } else {
       est <- C[cindex]
     }
-    browser()
+    
     uniqueD <- diag(D) ^ 2
     
     return(
