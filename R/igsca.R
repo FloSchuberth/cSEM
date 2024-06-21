@@ -69,7 +69,7 @@ igsca <-
            itmax = 100,
            ceps = 0.001) {
   
-## Initialize Auxiliary Computational Variables -----------------------------------------------------
+# Initialize Auxiliary Computational Variables -----------------------------------------------------
   n_case <- nrow(Z0)
   n_indicators <- ncol(Z0)
   n_constructs <- ncol(W0)
@@ -80,7 +80,7 @@ igsca <-
   b_index <- which(c(B0) == 1)
   
 
-## Initial Estimates and Preparation -------------------------------------
+# Initial Estimates and Preparation -------------------------------------
   prepared_for_ALS <- prepare_for_ALS(
     Z0 = Z0,
     W0 = W0,
@@ -94,9 +94,9 @@ igsca <-
   list2env(prepared_for_ALS, envir = environment())
   
   
-## Alternating Least Squares Algorithm -------------------------------------
+# Alternating Least Squares Algorithm -------------------------------------
 
-### Optimization Preparation -----------------------------------------------
+## Optimization Preparation -----------------------------------------------
     # Set the initial estimates based on either the structural model or the loadings
     # if there's no structural model
     if (length(b_index) > 0) {
@@ -107,7 +107,7 @@ igsca <-
     est0 <- est + 1 
     it <- 0
     
-### Optimization Loop: Alternating Between Weights and Loadings -----------------------
+## Optimization Loop: Alternating Between Weights and Loadings -----------------------
     while ((sum(abs(est0 - est)) > ceps) && (it <= itmax)) {
 
       # Counter Things
@@ -115,7 +115,7 @@ igsca <-
       est0 <- est
   
 
-#### Compute Pseudo-Weights --------------------------------------------------
+### Compute Pseudo-Weights --------------------------------------------------
       updated_X_weights <- update_X_weights(
         Z = Z,
         U = U,
@@ -127,7 +127,7 @@ igsca <-
       # Creates X (for updating Composites) and WW (for updating Factors)
       list2env(updated_X_weights, envir = environment())
 
-#### Sequential Updating of Constructs ---------------------------------------
+### Sequential Updating of Constructs ---------------------------------------
 
       A <- cbind(C, B) 
       
@@ -178,7 +178,7 @@ igsca <-
         
     }
       
-#### Update Loadings, Path Coefficients and Uniqueness Terms ----------
+### Update Loadings, Path Coefficients and Uniqueness Terms ----------
       updated_C_B_D <- update_C_B_D(
         X = X,
         n_indicators = n_indicators,
@@ -198,7 +198,7 @@ igsca <-
     }
     
 
-## Flip Signs for Factors and Composites Based on Dominant Indicators --------
+# Flip Signs for Factors and Composites Based on Dominant Indicators --------
     flipped_signs <-
       flip_signs_ind_domi(
         n_constructs = n_constructs,
@@ -212,7 +212,7 @@ igsca <-
     list2env(flipped_signs, envir = environment())
     
 
-## Output Formatting -------------------------------------------------------
+# Output Formatting -------------------------------------------------------
   Weights <- W
   rownames(Weights) <- rownames(W0) 
   
@@ -345,7 +345,8 @@ gsca_inione <- function(Z0, W0, B0) {
 #'
 prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, ov_type) {
   
-  # Initial estimates using GSCA
+  
+  
   initial_est <-
     gsca_inione(
       Z0 = Z0,
@@ -355,16 +356,13 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, ov_t
   
   list2env(initial_est[c("W", "C", "B")], envir = environment())
   
-  # Initialize matrix to hold V
+  
+  
   V <- cbind(diag(n_indicators), W)
-  # Standardize Data Matrix
   Z <- scale(Z0, center = TRUE, scale = TRUE) / sqrt(n_case - 1)
-  # Create Initial Construct Scores Matrix
   Gamma <- Z %*% W
-  # Initialize Unique Error Matrix
   D <- diag(n_indicators)
   
-  # 
   # Solution for Q is copied from estimators_weights.R
   Q <- qr.Q(qr(Gamma), complete =  TRUE)
   F_o <- Q[, (n_constructs + 1):n_case, drop = FALSE]
