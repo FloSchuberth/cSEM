@@ -80,7 +80,7 @@ igsca_sim <-
            itmax = 100,
            ceps = 0.001,
            devmode =  FALSE,
-           devdir = list("tests", "comparisons", "igsca_translation"),
+           devdir = list("dev", "Notes", "data"),
            devmode_checkobj = FALSE) {
     
   
@@ -94,7 +94,7 @@ igsca_sim <-
   ncase <- nrow(z0)
   nvar <- ncol(z0)
   nlv <- ncol(W0)
-  ntv <- nvar + nlv
+  ntv <- nvar+ nlv
   
   windex <- which(c(W0) == 1) 
   cindex <- which(c(C0) == 1)
@@ -498,9 +498,7 @@ extract_parseModel <-
     csemify <- cSEM::parseModel(.model = model)
     
     z0 <- data[, csemify$indicators]
-    # browser()
-    # B0 <- csemify$structural
-    B0 <- t(csemify$structural)
+    B0 <- csemify$structural
     W0 <- t(csemify$measurement)
     
     lv_type <- csemify$construct_type == "Common factor"
@@ -521,6 +519,9 @@ extract_parseModel <-
         }
       }
     }
+    
+    
+    # TODO: More parsimonious expression to get to C0
     
     C0 <- W0
     
@@ -591,7 +592,7 @@ extract_parseModel <-
 #' 
 #' write_for_matlab(extract_parseModel(model = tutorial_igsca_model, data = dat, ind_domi_as_first = TRUE))
 write_for_matlab <- function(extracted_matrices) {
-  indir <- list("tests", "comparisons", "igsca_translation", "matlab_in")
+  indir <- list("dev", "Notes", "data", "matlab_in")
   extracted_matrices$lv_type <-
     as.numeric(extracted_matrices$lv_type)
   extracted_matrices$ov_type <-
@@ -999,6 +1000,23 @@ update_factor_LV <- function(WW, windex_j, j) {
   return(theta)
 }
 
+
+
+#' Read csv File and Convert to Matrix
+#' 
+#' Small helper function to read csv files and convert them to matrices immediately. This is to ease interoperability between matlab and R.
+#' 
+#' @param file 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+read.csv.to.matrix <- function(file) {
+  read.csv(file) |>
+    as.matrix()
+}
+
 #' Convert Matlab to R
 #' 
 #' Matlab vectors are matrices when read into R, so here we perform the conversions to make them more R-friendly. This is also a placeholder for any future needed adjustments to make the Matlab environment swappable with R
@@ -1041,9 +1059,9 @@ convert_matlab2R <- function(mat_env, vectorness) {
 #' @examples
 parse_GSCAPro_FullResults <-
   function(file_path = list(
-    "tests",
-    "comparisons",
-    "igsca_translation",
+    "dev",
+    "Notes",
+    "data",
     "GSCAPro_1_2_1Output",
     "Tutorial_IGSCA_model1_full_result_ver0.csv"
   ),
@@ -1166,11 +1184,11 @@ get_lavaan_table_igsca_matrix <- function(model, weights, loadings, uniqueD, pat
   }
   
   # Slide in Paths
-  for (lv_from in rownames(paths)) {
-    for (lv_to in colnames(paths)) {
+  for (lv_to in rownames(paths)) {
+    for (lv_from in colnames(paths)) {
       table[((table$rhs == lv_from &
                 table$lhs == lv_to) &
-               table$op == "~"), "paths"] <- paths[lv_from, lv_to]
+               table$op == "~"), "paths"] <- paths[lv_to, lv_from]
     }
   }
   
