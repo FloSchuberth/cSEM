@@ -7,8 +7,11 @@ population model with three concepts modeled as common factors."><!-- mathjax --
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
+
   gtag('config', 'UA-156347841-1');
 </script></head><body data-spy="scroll" data-target="#toc">
+
+
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -24,6 +27,7 @@ population model with three concepts modeled as common factors."><!-- mathjax --
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0.9000</span>
       </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav"><li>
   <a href="../articles/cSEM.html">Get started</a>
@@ -34,6 +38,7 @@ population model with three concepts modeled as common factors."><!-- mathjax --
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -52,41 +57,53 @@ population model with three concepts modeled as common factors."><!-- mathjax --
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/FloSchuberth/cSEM/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+
+
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Data: threecommonfactors</h1>
-    <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/HEAD/R/zz_datasets.R" class="external-link"><code>R/zz_datasets.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/master/R/zz_datasets.R" class="external-link"><code>R/zz_datasets.R</code></a></small>
     <div class="hidden name"><code>threecommonfactors.Rd</code></div>
     </div>
+
     <div class="ref-description">
     <p>A dataset containing 500 standardized observations on 9 indicator generated from a
 population model with three concepts modeled as common factors.</p>
     </div>
+
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="va">threecommonfactors</span></span></code></pre></div>
     </div>
+
     <div id="format">
     <h2>Format</h2>
     <p>A matrix with 500 rows and 9 variables:</p><dl><dt>y11-y13</dt>
 <dd><p>Indicators attached to the first common factor (<code>eta1</code>).
 Population loadings are: 0.7; 0.7; 0.7</p></dd>
+
 <dt>y21-y23</dt>
 <dd><p>Indicators attached to the second common factor (<code>eta2</code>).
 Population loadings are: 0.5; 0.7; 0.8</p></dd>
+
 <dt>y31-y33</dt>
 <dd><p>Indicators attached to the third common factor (<code>eta3</code>).
 Population loadings are: 0.8; 0.75; 0.7</p></dd>
+
+
 </dl><p>The model is:
 $$`eta2` = gamma1 * `eta1` + zeta1$$
 $$`eta3` = gamma2 * `eta1` + beta * `eta2` + zeta2$$</p>
 <p>with population values <code>gamma1</code> = 0.6, <code>gamma2</code> = 0.4 and <code>beta</code> = 0.35.</p>
     </div>
+
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">#============================================================================</span></span></span>
@@ -123,10 +140,10 @@ $$`eta3` = gamma2 * `eta1` + beta * `eta2` + zeta2$$</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	                                  	Critical value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Distance measure    Test statistic	  95% 	</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	dG                      0.0060    	0.0183	</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	SRMR                    0.0158    	0.0254	</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	dL                      0.0112    	0.0291	</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	dML                     0.0320    	0.0943	</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	dG                      0.0060    	0.0192	</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	SRMR                    0.0158    	0.0271	</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	dL                      0.0112    	0.0330	</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	dML                     0.0320    	0.1008	</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Decision: </span>
@@ -143,7 +160,7 @@ $$`eta3` = gamma2 * `eta1` + beta * `eta2` + zeta2$$</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Out of 30 bootstrap replications 30 are admissible.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	See <span style="color: #BBBB00;">?</span><span style="color: #BB00BB;">verify</span>() for what constitutes an inadmissible result.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	The seed used was: -430127656</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	The seed used was: 2096012833</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 </code></pre></div>
     </div>
@@ -152,12 +169,22 @@ $$`eta3` = gamma2 * `eta1` + beta * `eta2` + zeta2$$</p>
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
     </nav></div>
 </div>
+
+
       <footer><div class="copyright">
   <p></p><p>Developed by Manuel E. Rademaker, Florian Schuberth.</p>
 </div>
+
 <div class="pkgdown">
   <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
+
       </footer></div>
+
+
+
+
+
+
   </body></html>
 

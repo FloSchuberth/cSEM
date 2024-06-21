@@ -6,8 +6,11 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
+
   gtag('config', 'UA-156347841-1');
 </script></head><body data-spy="scroll" data-target="#toc">
+
+
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -23,6 +26,7 @@
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0.9000</span>
       </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav"><li>
   <a href="../articles/cSEM.html">Get started</a>
@@ -33,6 +37,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -51,21 +56,27 @@
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/FloSchuberth/cSEM/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+
+
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Regression-based Hausman test</h1>
-    <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/HEAD/R/postestimate_test_hausman.R" class="external-link"><code>R/postestimate_test_hausman.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/master/R/postestimate_test_hausman.R" class="external-link"><code>R/postestimate_test_hausman.R</code></a></small>
     <div class="hidden name"><code>testHausman.Rd</code></div>
     </div>
+
     <div class="ref-description">
     <p><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="figures/lifecycle-experimental.svg" alt="[Experimental]"></a></p>
     </div>
+
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">testHausman</span><span class="op">(</span></span>
 <span> .object               <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -76,14 +87,21 @@
 <span> .seed                 <span class="op">=</span> <span class="cn">NULL</span></span>
 <span> <span class="op">)</span></span></code></pre></div>
     </div>
+
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt id="arg--object">.object<a class="anchor" aria-label="anchor" href="#arg--object"></a></dt>
+
+
+<dl><dt id="arg--object">.object<a class="anchor" aria-label="anchor" href="#arg--object"></a></dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt id="arg--eval-plan">.eval_plan<a class="anchor" aria-label="anchor" href="#arg--eval-plan"></a></dt>
 <dd><p>Character string. The evaluation plan to use. One of
 "<em>sequential</em>", "<em>multicore</em>", or "<em>multisession</em>". In the two latter cases
 all available cores will be used. Defaults to "<em>sequential</em>".</p></dd>
+
+
 <dt id="arg--handle-inadmissibles">.handle_inadmissibles<a class="anchor" aria-label="anchor" href="#arg--handle-inadmissibles"></a></dt>
 <dd><p>Character string. How should inadmissible results
 be treated? One of "<em>drop</em>", "<em>ignore</em>", or "<em>replace</em>". If "<em>drop</em>", all
@@ -94,21 +112,29 @@ yielded inadmissible results (i.e. number of results returned is equal to <code>
 For "<em>replace</em>" resampling continues until there are exactly <code>.R</code> admissible solutions.
 Depending on the frequency of inadmissible solutions this may significantly increase
 computing time. Defaults to "<em>drop</em>".</p></dd>
+
+
 <dt id="arg--r">.R<a class="anchor" aria-label="anchor" href="#arg--r"></a></dt>
 <dd><p>Integer. The number of bootstrap replications. Defaults to <code>499</code>.</p></dd>
+
+
 <dt id="arg--resample-method">.resample_method<a class="anchor" aria-label="anchor" href="#arg--resample-method"></a></dt>
 <dd><p>Character string. The resampling method to use. One of:
 "<em>none</em>", "<em>bootstrap</em>" or "<em>jackknife</em>". Defaults to "<em>none</em>".</p></dd>
+
+
 <dt id="arg--seed">.seed<a class="anchor" aria-label="anchor" href="#arg--seed"></a></dt>
 <dd><p>Integer or <code>NULL</code>. The random seed to use. Defaults to <code>NULL</code> in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
     <p>Calculates the regression-based Hausman test to be used to compare
 OLS to 2SLS estimates or 2SLS to 3SLS estimates. See e.g., Wooldridge (2010)
+
 (pages 131 f.) for details.</p>
 <p>The function is somewhat experimental. Only use if you know what you are doing.</p>
     </div>
@@ -122,6 +148,7 @@ MIT Press.</p>
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="csem.html">csem()</a></code>, <a href="csem_results.html">cSEMResults</a></p></div>
     </div>
+
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">### Example from Dijkstra &amp; Hensler (2015)</span></span></span>
@@ -198,18 +225,18 @@ MIT Press.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Dependent construct: 'eta5'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Independent construct    Estimate  Std. error   t-stat.   p-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta1                      -0.3000      0.1387   -2.1632    0.0305</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta2                       0.4999      0.0945    5.2918    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta6                       0.2501      0.1595    1.5683    0.1168</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	Resid_eta6                 0.9784      0.3167    3.0897    0.0020</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta1                      -0.3000      0.1317   -2.2772    0.0228</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta2                       0.4999      0.0886    5.6393    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta6                       0.2501      0.1221    2.0475    0.0406</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Resid_eta6                 0.9784      0.2863    3.4178    0.0006</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Dependent construct: 'eta6'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Independent construct    Estimate  Std. error   t-stat.   p-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta3                       0.4999      0.0556    8.9876    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta4                       0.2501      0.0457    5.4680    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta5                       0.5001      0.0983    5.0881    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	Resid_eta5                -0.0056      0.1390   -0.0402    0.9680</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta3                       0.4999      0.0575    8.6937    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta4                       0.2501      0.0560    4.4640    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta5                       0.5001      0.0882    5.6705    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Resid_eta5                -0.0056      0.1214   -0.0460    0.9633</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 </code></pre></div>
     </div>
@@ -218,12 +245,22 @@ MIT Press.</p>
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
     </nav></div>
 </div>
+
+
       <footer><div class="copyright">
   <p></p><p>Developed by Manuel E. Rademaker, Florian Schuberth.</p>
 </div>
+
 <div class="pkgdown">
   <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
+
       </footer></div>
+
+
+
+
+
+
   </body></html>
 

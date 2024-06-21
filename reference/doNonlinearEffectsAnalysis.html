@@ -6,8 +6,11 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
+
   gtag('config', 'UA-156347841-1');
 </script></head><body data-spy="scroll" data-target="#toc">
+
+
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -23,6 +26,7 @@
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0.9000</span>
       </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav"><li>
   <a href="../articles/cSEM.html">Get started</a>
@@ -33,6 +37,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -51,21 +56,27 @@
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/FloSchuberth/cSEM/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+
+
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Do a nonlinear effects analysis</h1>
-    <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/HEAD/R/postestimate_doNonlinearEffectsAnalysis.R" class="external-link"><code>R/postestimate_doNonlinearEffectsAnalysis.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/master/R/postestimate_doNonlinearEffectsAnalysis.R" class="external-link"><code>R/postestimate_doNonlinearEffectsAnalysis.R</code></a></small>
     <div class="hidden name"><code>doNonlinearEffectsAnalysis.Rd</code></div>
     </div>
+
     <div class="ref-description">
     <p><a href="https://lifecycle.r-lib.org/articles/stages.html#maturing" class="external-link"><img src="figures/lifecycle-maturing.svg" alt="[Maturing]"></a></p>
     </div>
+
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">doNonlinearEffectsAnalysis</span><span class="op">(</span></span>
 <span> .object            <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -78,35 +89,53 @@
 <span> .alpha             <span class="op">=</span> <span class="fl">0.05</span></span>
 <span> <span class="op">)</span></span></code></pre></div>
     </div>
+
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt id="arg--object">.object<a class="anchor" aria-label="anchor" href="#arg--object"></a></dt>
+
+
+<dl><dt id="arg--object">.object<a class="anchor" aria-label="anchor" href="#arg--object"></a></dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt id="arg--dependent">.dependent<a class="anchor" aria-label="anchor" href="#arg--dependent"></a></dt>
 <dd><p>Character string. The name of the dependent variable.</p></dd>
+
+
 <dt id="arg--independent">.independent<a class="anchor" aria-label="anchor" href="#arg--independent"></a></dt>
 <dd><p>Character string. The name of the independent variable.</p></dd>
+
+
 <dt id="arg--moderator">.moderator<a class="anchor" aria-label="anchor" href="#arg--moderator"></a></dt>
 <dd><p>Character string. The name of the moderator variable.</p></dd>
+
+
 <dt id="arg--n-steps">.n_steps<a class="anchor" aria-label="anchor" href="#arg--n-steps"></a></dt>
 <dd><p>Integer. A value giving the number of steps (the spotlights, i.e.,
 values of .moderator in surface analysis or floodlight analysis)
 between the minimum and maximum value of the moderator. Defaults to <code>100</code>.</p></dd>
+
+
 <dt id="arg--values-moderator">.values_moderator<a class="anchor" aria-label="anchor" href="#arg--values-moderator"></a></dt>
 <dd><p>A numeric vector. The values of the moderator in a
 the simple effects analysis. Typically these are difference from the mean (=0)
 measured in standard deviations. Defaults to <code>c(-2, -1, 0, 1, 2)</code>.</p></dd>
+
+
 <dt id="arg--value-independent">.value_independent<a class="anchor" aria-label="anchor" href="#arg--value-independent"></a></dt>
 <dd><p>Integer. Only required for floodlight analysis;
 The value of the independent variable in case that it appears as a
 higher-order term.</p></dd>
+
+
 <dt id="arg--alpha">.alpha<a class="anchor" aria-label="anchor" href="#arg--alpha"></a></dt>
 <dd><p>An integer or a numeric vector of significance levels.
 Defaults to <code>0.05</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-<p>A list of class <code>cSEMNonlinearEffects</code> with a corresponding method
+    <p>A list of class <code>cSEMNonlinearEffects</code> with a corresponding method
 for <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>. See: <code><a href="plot.cSEMNonlinearEffects.html">plot.cSEMNonlinearEffects()</a></code>.</p>
     </div>
     <div id="details">
@@ -120,9 +149,10 @@ the input for the floodlight analysis.</p>
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="csem.html">csem()</a></code>, <a href="csem_results.html">cSEMResults</a>, <code><a href="plot.cSEMNonlinearEffects.html">plot.cSEMNonlinearEffects()</a></code></p></div>
     </div>
+
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="va">model_Int</span> <span class="op">&lt;-</span> <span class="st">"</span></span></span>
 <span class="r-in"><span><span class="st"># Measurement models</span></span></span>
 <span class="r-in"><span><span class="st">INV =~ INV1 + INV2 + INV3 +INV4</span></span></span>
@@ -161,7 +191,7 @@ the input for the floodlight analysis.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Floodlight analysis</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">neffects</span>, .plot_type <span class="op">=</span> <span class="st">'floodlight'</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -169,12 +199,22 @@ the input for the floodlight analysis.</p>
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
     </nav></div>
 </div>
+
+
       <footer><div class="copyright">
   <p></p><p>Developed by Manuel E. Rademaker, Florian Schuberth.</p>
 </div>
+
 <div class="pkgdown">
   <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
+
       </footer></div>
+
+
+
+
+
+
   </body></html>
 

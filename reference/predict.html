@@ -6,8 +6,11 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
+
   gtag('config', 'UA-156347841-1');
 </script></head><body data-spy="scroll" data-target="#toc">
+
+
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -23,6 +26,7 @@
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0.9000</span>
       </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav"><li>
   <a href="../articles/cSEM.html">Get started</a>
@@ -33,6 +37,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -51,21 +56,27 @@
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/FloSchuberth/cSEM/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+
+
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Predict indicator scores</h1>
-    <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/HEAD/R/postestimate_predict.R" class="external-link"><code>R/postestimate_predict.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/master/R/postestimate_predict.R" class="external-link"><code>R/postestimate_predict.R</code></a></small>
     <div class="hidden name"><code>predict.Rd</code></div>
     </div>
+
     <div class="ref-description">
     <p><a href="https://lifecycle.r-lib.org/articles/stages.html#maturing" class="external-link"><img src="figures/lifecycle-maturing.svg" alt="[Maturing]"></a></p>
     </div>
+
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">predict</span><span class="op">(</span></span>
 <span> .object                   <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -83,14 +94,21 @@
 <span> .seed                     <span class="op">=</span> <span class="cn">NULL</span></span>
 <span> <span class="op">)</span></span></code></pre></div>
     </div>
+
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt id="arg--object">.object<a class="anchor" aria-label="anchor" href="#arg--object"></a></dt>
+
+
+<dl><dt id="arg--object">.object<a class="anchor" aria-label="anchor" href="#arg--object"></a></dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt id="arg--benchmark">.benchmark<a class="anchor" aria-label="anchor" href="#arg--benchmark"></a></dt>
 <dd><p>Character string. The procedure to obtain benchmark predictions.
 One of "<em>lm</em>", "<em>unit</em>", "<em>PLS-PM</em>", "<em>GSCA</em>", "<em>PCA</em>", "<em>MAXVAR</em>", or "<em>NA</em>".
 Default to "<em>lm</em>".</p></dd>
+
+
 <dt id="arg--approach-predict">.approach_predict<a class="anchor" aria-label="anchor" href="#arg--approach-predict"></a></dt>
 <dd><p>Character string. Which approach should be used to perform
 predictions? One of "<em>earliest</em>" and "<em>direct</em>". If "<em>earliest</em>" predictions
@@ -98,10 +116,14 @@ for indicators associated to endogenous constructs are performed using only
 indicators associated to exogenous constructs. If "<em>direct</em>", predictions for
 indicators associated to endogenous constructs are based on indicators associated
 to their direct antecedents. Defaults to "<em>earliest</em>".</p></dd>
+
+
 <dt id="arg--cv-folds">.cv_folds<a class="anchor" aria-label="anchor" href="#arg--cv-folds"></a></dt>
 <dd><p>Integer. The number of cross-validation folds to use. Setting
 <code>.cv_folds</code> to <code>N</code> (the number of observations) produces
 leave-one-out cross-validation samples. Defaults to <code>10</code>.</p></dd>
+
+
 <dt id="arg--handle-inadmissibles">.handle_inadmissibles<a class="anchor" aria-label="anchor" href="#arg--handle-inadmissibles"></a></dt>
 <dd><p>Character string. How should inadmissible results
 be treated? One of "<em>stop</em>", "<em>ignore</em>", or "<em>set_NA</em>". If "<em>stop</em>", <code>predict()</code>
@@ -110,11 +132,17 @@ For "<em>ignore</em>" all results are returned even if all or some of the estima
 yielded inadmissible results.
 For "<em>set_NA</em>" predictions based on inadmissible parameter estimates are
 set to <code>NA</code>. Defaults to "<em>stop</em>"</p></dd>
+
+
 <dt id="arg--r">.r<a class="anchor" aria-label="anchor" href="#arg--r"></a></dt>
 <dd><p>Integer. The number of repetitions to use. Defaults to <code>1</code>.</p></dd>
+
+
 <dt id="arg--test-data">.test_data<a class="anchor" aria-label="anchor" href="#arg--test-data"></a></dt>
 <dd><p>A matrix of test data with the same column names as the
 training data.</p></dd>
+
+
 <dt id="arg--approach-score-target">.approach_score_target<a class="anchor" aria-label="anchor" href="#arg--approach-score-target"></a></dt>
 <dd><p>Character string. How should the aggregation of the estimates of
 the truncated normal distribution for the predictions using OrdPLS/OrdPLSc be done?
@@ -123,16 +151,24 @@ If "<em>mean</em>", the mean of the estimated endogenous indicators is calculate
 If "<em>median</em>", the mean of the estimated endogenous indicators is calculated.
 If "<em>mode</em>", the maximum empirical density on the intervals defined by the thresholds
 is used. Defaults to "<em>mean</em>".</p></dd>
+
+
 <dt id="arg--sim-points">.sim_points<a class="anchor" aria-label="anchor" href="#arg--sim-points"></a></dt>
 <dd><p>Integer. How many samples from the truncated normal distribution should
 be simulated to estimate the exogenous construct scores? Defaults to "<em>100</em>".</p></dd>
+
+
 <dt id="arg--disattenuate">.disattenuate<a class="anchor" aria-label="anchor" href="#arg--disattenuate"></a></dt>
 <dd><p>Logical. Should the benchmark predictions be based on
 disattenuated parameter estimates? Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt id="arg--treat-as-continuous">.treat_as_continuous<a class="anchor" aria-label="anchor" href="#arg--treat-as-continuous"></a></dt>
 <dd><p>Logical. Should the indicators for the benchmark predictions
 be treated as continuous? If <code>TRUE</code> all indicators are treated as continuous and PLS-PM/PLSc is applied.
 If <code>FALSE</code> OrdPLS/OrdPLSc is applied. Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt id="arg--approach-score-benchmark">.approach_score_benchmark<a class="anchor" aria-label="anchor" href="#arg--approach-score-benchmark"></a></dt>
 <dd><p>Character string. How should the aggregation
 of the estimates of the truncated normal distribution be done for the
@@ -146,30 +182,37 @@ If "<em>mode</em>", the maximum empirical density on the intervals defined by th
 is used.
 If <code>.treat_as_continuous = TRUE</code> or if all indicators are on a continuous scale,
 <code>.approach_score_benchmark</code> is ignored. Defaults to "<em>round</em>".</p></dd>
+
+
 <dt id="arg--seed">.seed<a class="anchor" aria-label="anchor" href="#arg--seed"></a></dt>
 <dd><p>Integer or <code>NULL</code>. The random seed to use. Defaults to <code>NULL</code> in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-<p>An object of class <code>cSEMPredict</code> with print and plot methods.
+    <p>An object of class <code>cSEMPredict</code> with print and plot methods.
 Technically, <code>cSEMPredict</code> is a
 named list containing the following list elements:</p>
 <dl><dt><code>$Actual</code></dt>
 <dd><p>A matrix of the actual values/indicator scores of the endogenous constructs.</p></dd>
+
 <dt><code>$Prediction_target</code></dt>
 <dd><p>A list containing matrices of the predicted indicator
 scores of the endogenous constructs based on the target model for each repetition
 .r. Target refers to procedure used to estimate the parameters in <code>.object</code>.</p></dd>
+
 <dt><code>$Residuals_target</code></dt>
 <dd><p>A list of matrices of the residual indicator scores
 of the endogenous constructs based on the target model in each repetition .r.</p></dd>
+
 <dt><code>$Residuals_benchmark</code></dt>
 <dd><p>A list of matrices of the residual indicator scores
 of the endogenous constructs based on a model estimated by the procedure
 given to <code>.benchmark</code> for each repetition .r.</p></dd>
+
 <dt><code>$Prediction_metrics</code></dt>
 <dd><p>A data frame containing the predictions metrics
 MAE, RMSE, Q2_predict, the misclassification error rate (MER), the MAPE, the MSE2,
@@ -177,11 +220,14 @@ Theil's forecast accuracy (U1), Theil's forecast quality (U2), Bias proportion
 of MSE (UM), Regression proportion of MSE (UR), and disturbance proportion
 of MSE (UD) (Hora and Campos 2015; Watson and Teelucksingh 2002)
 .</p></dd>
+
 <dt><code>$Information</code></dt>
 <dd><p>A list with elements
 <code>Target</code>, <code>Benchmark</code>,
 <code>Number_of_observations_training</code>, <code>Number_of_observations_test</code>, <code>Number_of_folds</code>,
 <code>Number_of_repetitions</code>, and <code>Handle_inadmissibles</code>.</p></dd>
+
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -243,6 +289,7 @@ University of West Indies Press, Mona, Jamaica.</p>
     <h2>See also</h2>
     <div class="dont-index"><p><a href="csem.html">csem</a>, <a href="csem_results.html">cSEMResults</a>, <code><a href="exportToExcel.html">exportToExcel()</a></code></p></div>
     </div>
+
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">### Anime example taken from https://github.com/ISS-Analytics/pls-predict/</span></span></span>
@@ -321,15 +368,15 @@ University of West Indies Press, Mona, Jamaica.</p>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Predict using 10-fold cross-validation</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="va">pp2</span> <span class="op">&lt;-</span> <span class="fu">predict</span><span class="op">(</span><span class="va">res</span>, .benchmark <span class="op">=</span> <span class="st">"lm"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pp2</span></span></span>
 <span class="r-in"><span><span class="co">## There is a plot method available</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pp2</span><span class="op">)</span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pp2</span><span class="op">)</span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">### Example using OrdPLScPredict -----------------------------------------------</span></span></span>
 <span class="r-in"><span><span class="co"># Transform the numerical indicators into factors</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"BergamiBagozzi2000"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">data_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>cei1    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.ordered</a></span><span class="op">(</span><span class="va">BergamiBagozzi2000</span><span class="op">$</span><span class="va">cei1</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                       cei2    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.ordered</a></span><span class="op">(</span><span class="va">BergamiBagozzi2000</span><span class="op">$</span><span class="va">cei2</span><span class="op">)</span>,</span></span>
@@ -379,7 +426,7 @@ University of West Indies Press, Mona, Jamaica.</p>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">pred</span> </span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">pred</span><span class="op">$</span><span class="va">Prediction_metrics</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">4</span><span class="op">)</span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">pred</span><span class="op">$</span><span class="va">Prediction_metrics</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">4</span><span class="op">)</span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -387,12 +434,22 @@ University of West Indies Press, Mona, Jamaica.</p>
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
     </nav></div>
 </div>
+
+
       <footer><div class="copyright">
   <p></p><p>Developed by Manuel E. Rademaker, Florian Schuberth.</p>
 </div>
+
 <div class="pkgdown">
   <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
+
       </footer></div>
+
+
+
+
+
+
   </body></html>
 

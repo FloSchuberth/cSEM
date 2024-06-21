@@ -6,8 +6,11 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
+
   gtag('config', 'UA-156347841-1');
 </script></head><body data-spy="scroll" data-target="#toc">
+
+
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -23,6 +26,7 @@
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0.9000</span>
       </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav"><li>
   <a href="../articles/cSEM.html">Get started</a>
@@ -33,6 +37,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -51,21 +56,27 @@
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/FloSchuberth/cSEM/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+
+
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Assess model</h1>
-    <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/HEAD/R/postestimate_assess.R" class="external-link"><code>R/postestimate_assess.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/master/R/postestimate_assess.R" class="external-link"><code>R/postestimate_assess.R</code></a></small>
     <div class="hidden name"><code>assess.Rd</code></div>
     </div>
+
     <div class="ref-description">
     <p><a href="https://lifecycle.r-lib.org/articles/stages.html#maturing" class="external-link"><img src="figures/lifecycle-maturing.svg" alt="[Maturing]"></a></p>
     </div>
+
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">assess</span><span class="op">(</span></span>
 <span>  .object              <span class="op">=</span> <span class="cn">NULL</span>, </span>
@@ -76,7 +87,7 @@
 <span>                           <span class="st">"effects"</span>, <span class="st">"f2"</span>, <span class="st">"fl_criterion"</span>, <span class="st">"chi_square"</span>, <span class="st">"chi_square_df"</span>,</span>
 <span>                           <span class="st">"cfi"</span>, <span class="st">"cn"</span>, <span class="st">"gfi"</span>, <span class="st">"ifi"</span>, <span class="st">"nfi"</span>, <span class="st">"nnfi"</span>, </span>
 <span>                           <span class="st">"reliability"</span>,</span>
-<span>                           <span class="st">"rmsea"</span>, <span class="st">"rms_theta"</span>, <span class="st">"srmr"</span>,</span>
+<span>                           <span class="st">"rmsea"</span>, <span class="st">"rms_theta"</span>, <span class="st">"srmr"</span>, <span class="st">"FIT"</span>, <span class="st">"FIT_m"</span>, <span class="st">"FIT_s"</span>,</span>
 <span>                           <span class="st">"gof"</span>, <span class="st">"htmt"</span>, <span class="st">"htmt2"</span>, <span class="st">"r2"</span>, <span class="st">"r2_adj"</span>,</span>
 <span>                           <span class="st">"rho_T"</span>, <span class="st">"rho_T_weighted"</span>, <span class="st">"vif"</span>, </span>
 <span>                           <span class="st">"vifmodeB"</span><span class="op">)</span>,</span>
@@ -84,27 +95,37 @@
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt id="arg--object">.object<a class="anchor" aria-label="anchor" href="#arg--object"></a></dt>
+
+
+<dl><dt id="arg--object">.object<a class="anchor" aria-label="anchor" href="#arg--object"></a></dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt id="arg--quality-criterion">.quality_criterion<a class="anchor" aria-label="anchor" href="#arg--quality-criterion"></a></dt>
 <dd><p>Character string. A single character string or a
 vector of character strings naming the quality criterion to compute. See
 the Details section for a list of possible candidates.
 Defaults to "<em>all</em>" in which case all possible quality criteria are computed.</p></dd>
+
+
 <dt id="arg--only-common-factors">.only_common_factors<a class="anchor" aria-label="anchor" href="#arg--only-common-factors"></a></dt>
 <dd><p>Logical. Should only concepts modeled as common
 factors be included when calculating one of the following quality criteria:
 AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
 Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Further arguments passed to functions called by <code>assess()</code>.
 See <a href="args_assess_dotdotdot.html">args_assess_dotdotdot</a> for a complete list of available arguments.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-<p>A named list of quality criteria. Note that if only a single quality
+    <p>A named list of quality criteria. Note that if only a single quality
 criteria is computed the return value is still a list!</p>
     </div>
     <div id="details">
@@ -134,6 +155,7 @@ It is possible to report the AVE for constructs modeled as composites by setting
 <code>.only_common_factors = FALSE</code>, however, result should be interpreted with caution
 as they may not have a conceptual meaning. Calculation is done
 by <code><a href="calculateAVE.html">calculateAVE()</a></code>.</p></dd>
+
 <dt>Congeneric reliability; "rho_C", "rho_C_mm", "rho_C_weighted", "rho_C_weighted_mm"</dt>
 <dd><p>An estimate of the reliability assuming a congeneric measurement model (i.e., loadings are
 allowed to differ) and a test score (proxy) based on unit weights.
@@ -156,6 +178,7 @@ It is possible to report the congeneric reliability for constructs modeled as
 composites by setting <code>.only_common_factors = FALSE</code>, however, result should be
 interpreted with caution as they may not have a conceptual meaning.
 Calculation is done by <code><a href="reliability.html">calculateRhoC()</a></code>.</p></dd>
+
 <dt>Distance measures; "dg", "dl", "dml"</dt>
 <dd><p>Measures of the distance
 between the model-implied and the empirical indicator correlation matrix.
@@ -163,13 +186,16 @@ Currently, the geodesic distance (<code>"dg"</code>), the squared Euclidean dist
 (<code>"dl"</code>) and the the maximum likelihood-based distance function are implemented
 (<code>"dml"</code>). Calculation is done by <code><a href="distance_measures.html">calculateDL()</a></code>, <code><a href="distance_measures.html">calculateDG()</a></code>,
 and <code><a href="distance_measures.html">calculateDML()</a></code>.</p></dd>
+
 <dt>Degrees of freedom, "df"</dt>
 <dd><p>Returns the degrees of freedom. Calculation is done by <code><a href="calculateDf.html">calculateDf()</a></code>.</p></dd>
+
 <dt>Effects; "effects"</dt>
 <dd><p>Total and indirect effect estimates. Additionally,
 the variance accounted for (VAF) is computed. The VAF is defined as the ratio of a variables
 indirect effect to its total effect. Calculation is done
 by <code><a href="calculateEffects.html">calculateEffects()</a></code>.</p></dd>
+
 <dt>Effect size; "f2"</dt>
 <dd><p>An index of the effect size of an independent
 variable in a structural regression equation. This measure is commonly
@@ -180,24 +206,29 @@ R2_included and R2_excluded are the R squares of the
 original structural model regression equation (R2_included) and the
 alternative specification with the k'th variable dropped (R2_excluded).
 Calculation is done by <code><a href="calculatef2.html">calculatef2()</a></code>.</p></dd>
+
 <dt>Fit indices; "chi_square", "chi_square_df", "cfi", "cn", "gfi", "ifi", "nfi",
-"nnfi",  "rmsea", "rms_theta", "srmr"</dt>
+"nnfi",  "rmsea", "rms_theta", "srmr", "FIT", "FIT_m", "FIT_s"</dt>
 <dd><p>Several absolute and incremental fit indices. Note that their suitability
 for models containing constructs modeled as composites is still an
 open research question. Also note that fit indices are not tests in a
 hypothesis testing sense and
 decisions based on common one-size-fits-all cut-offs proposed in the literature
 suffer from serious statistical drawbacks. Calculation is done by <code><a href="fit_measures.html">calculateChiSquare()</a></code>,
-<code><a href="fit_measures.html">calculateChiSquareDf()</a></code>, <code><a href="fit_measures.html">calculateCFI()</a></code>,
-<code><a href="fit_measures.html">calculateGFI()</a></code>, <code><a href="fit_measures.html">calculateIFI()</a></code>, <code><a href="fit_measures.html">calculateNFI()</a></code>, <code><a href="fit_measures.html">calculateNNFI()</a></code>,
-<code><a href="fit_measures.html">calculateRMSEA()</a></code>, <code><a href="fit_measures.html">calculateRMSTheta()</a></code> and <code><a href="fit_measures.html">calculateSRMR()</a></code>.</p></dd>
+<code><a href="fit_measures.html">calculateChiSquareDf()</a></code>, <code><a href="fit_measures.html">calculateCFI()</a></code>, <code><a href="fit_measures.html">calculateGFI()</a></code>,
+<code><a href="fit_measures.html">calculateIFI()</a></code>, <code><a href="fit_measures.html">calculateNFI()</a></code>, <code><a href="fit_measures.html">calculateNNFI()</a></code>, <code><a href="fit_measures.html">calculateRMSEA()</a></code>,
+<code><a href="fit_measures.html">calculateRMSTheta()</a></code>, <code><a href="fit_measures.html">calculateSRMR()</a></code>, <code><a href="fit_measures.html">calculateFIT()</a></code>,
+<code><a href="fit_measures.html">calculateFIT_m()</a></code> and <code><a href="fit_measures.html">calculateFIT_s()</a></code>.</p></dd>
+
 <dt>Fornell-Larcker criterion; "fl_criterion"</dt>
 <dd><p>A rule suggested by Fornell and Larcker (1981)
+
 to assess discriminant validity. The Fornell-Larcker
 criterion is a decision rule based on a comparison between the squared
 construct correlations and the average variance extracted. FL returns
 a matrix with the squared construct correlations on the off-diagonal and
 the AVE's on the main diagonal. Calculation is done by <code><a href="calculateFLCriterion.html">calculateFLCriterion()</a></code>.</p></dd>
+
 <dt>Goodness of Fit (GoF); "gof"</dt>
 <dd><p>The GoF is defined as the square root
 of the mean of the R squares of the structural model times the mean
@@ -209,6 +240,7 @@ indicators actually build the construct.
 Note that, contrary to what the name suggests, the GoF is <strong>not</strong> a
 measure of model fit in a Chi-square fit test sense. Calculation is done
 by <code><a href="calculateGoF.html">calculateGoF()</a></code>.</p></dd>
+
 <dt>Heterotrait-monotrait ratio of correlations (HTMT); "htmt"</dt>
 <dd><p>An estimate of the correlation between latent variables assuming tau equivalent
 measurement models. The HTMT is used
@@ -220,6 +252,7 @@ It is possible to report the HTMT for constructs modeled as
 composites by setting <code>.only_common_factors = FALSE</code>, however, result should be
 interpreted with caution as they may not have a conceptual meaning.
 Calculation is done by <code><a href="calculateHTMT.html">calculateHTMT()</a></code>.</p></dd>
+
 <dt>HTMT2; "htmt2"</dt>
 <dd><p>An estimate of the correlation between latent variables assuming congeneric
 measurement models. The HTMT2 is used
@@ -231,10 +264,13 @@ It is possible to report the HTMT for constructs modeled as
 composites by setting <code>.only_common_factors = FALSE</code>, however, result should be
 interpreted with caution as they may not have a conceptual meaning.
 Calculation is done by <code><a href="calculateHTMT.html">calculateHTMT()</a></code>.</p></dd>
+
 <dt>Model selection criteria: "aic", "aicc", "aicu", "bic", "fpe", "gm",
 "hq", "hqc", "mallows_cp"</dt>
 <dd><p>Several model selection criteria as suggested by Sharma et al. (2019)
+
 in the context of PLS. See: <code><a href="calculateModelSelectionCriteria.html">calculateModelSelectionCriteria()</a></code> for details.</p></dd>
+
 <dt>Reliability: "reliability"</dt>
 <dd><p>As described in the <a href="https://floschuberth.github.io/cSEM/articles/Using-assess.html#methods" class="external-link">Methods and Formulae</a>
 section of the <a href="https://floschuberth.github.io/cSEM/articles/Using-assess.html" class="external-link">Postestimation: Assessing a model</a>
@@ -249,10 +285,12 @@ interpret reliability estimates for constructs modeled as composites.
 It is possible to report the three common reliability estimates for constructs modeled as
 composites by setting <code>.only_common_factors = FALSE</code>, however, result should be
 interpreted with caution as they may not have a conceptual meaning.</p></dd>
+
 <dt>R square and R square adjusted; "r2", "r2_adj"</dt>
 <dd><p>The R square and the adjusted
 R square for each structural regression equation.
 Calculated when running <code><a href="csem.html">csem()</a></code>.</p></dd>
+
 <dt>Tau-equivalent reliability; "rho_T"</dt>
 <dd><p>An estimate of the
 reliability assuming a tau-equivalent measurement model (i.e. a measurement
@@ -269,6 +307,7 @@ reliability estimates for constructs modeled as
 composites by setting <code>.only_common_factors = FALSE</code>, however, result should be
 interpreted with caution as they may not have a conceptual meaning.
 Calculation is done by <code><a href="reliability.html">calculateRhoT()</a></code>.</p></dd>
+
 <dt>Variance inflation factors (VIF); "vif"</dt>
 <dd><p>An index for the amount of
 (multi-)collinearity between independent variables of a regression equation. Computed
@@ -276,6 +315,7 @@ for each structural equation. Practically, VIF_k is defined
 as the ratio of 1 over (1 - R2_k) where R2_k is the R squared from a regression
 of the k'th independent variable on all remaining independent variables.
 Calculated when running <code><a href="csem.html">csem()</a></code>.</p></dd>
+
 <dt>Variance inflation factors for PLS-PM mode B (VIF-ModeB); "vifmodeB"</dt>
 <dd><p>An index for
 the amount of (multi-)collinearity between independent variables (indicators) in
@@ -285,6 +325,8 @@ Practically, VIF-ModeB_k is defined as the ratio of 1 over (1 - R2_k) where
 R2_k is the R squared from a regression of the k'th indicator of block j on
 all remaining indicators of the same block.
 Calculation is done by <code><a href="calculateVIFModeB.html">calculateVIFModeB()</a></code>.</p></dd>
+
+
 </dl><p>For details on the most important quality criteria see the <a href="https://floschuberth.github.io/cSEM/articles/Using-assess.html#methods" class="external-link">Methods and Formulae</a> section
 of the <a href="https://floschuberth.github.io/cSEM/articles/Using-assess.html" class="external-link">Postestimation: Assessing a model</a>
 article on the on the
@@ -304,11 +346,13 @@ model in this case, as the interpretation often does not carry over to composite
 that calculates the desired quality criterion to <code><a href="csem.html">csem()</a></code>'s <code>.user_funs</code> argument.
 See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> for details.</p>
 </div>
+
     </div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="csem.html">csem()</a></code>, <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code>, <code><a href="exportToExcel.html">exportToExcel()</a></code></p></div>
     </div>
+
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># ===========================================================================</span></span></span>
@@ -504,7 +548,7 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Look at the resamples</span></span></span>
 <span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">User_fun</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.03059522 0.02523879 0.03379861 0.02840742</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.03161432 0.02568677 0.02663491 0.02446647</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Use infer() to compute e.g., the 95% percentile confidence interval</span></span></span>
 <span class="r-in"><span><span class="va">res_infer</span> <span class="op">&lt;-</span> <span class="fu"><a href="infer.html">infer</a></span><span class="op">(</span><span class="va">res</span>, .quantity <span class="op">=</span> <span class="st">"CI_percentile"</span><span class="op">)</span></span></span>
@@ -513,8 +557,8 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"><span><span class="va">res_infer</span><span class="op">$</span><span class="va">User_fun</span> </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CI_percentile</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L 0.01990821</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U 0.03585613</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L 0.01726323</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U 0.03643561</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Several quality criteria can be resampled simultaneously</span></span></span>
@@ -528,9 +572,9 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"><span>            .tolerance <span class="op">=</span> <span class="fl">1e-04</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">SRMR</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02805912 0.02844250 0.02445759 0.02919645</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02768709 0.02180532 0.02602735 0.03440153</span>
 <span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">RMS_theta</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1089574 0.1109684 0.1070476 0.1065067</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1055473 0.1009659 0.1025837 0.1093884</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -539,12 +583,22 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
     </nav></div>
 </div>
+
+
       <footer><div class="copyright">
   <p></p><p>Developed by Manuel E. Rademaker, Florian Schuberth.</p>
 </div>
+
 <div class="pkgdown">
   <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
+
       </footer></div>
+
+
+
+
+
+
   </body></html>
 

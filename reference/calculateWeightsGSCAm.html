@@ -8,8 +8,11 @@ with uniqueness terms (GSCAm) proposed by Hwang et al. (2017)
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
+
   gtag('config', 'UA-156347841-1');
 </script></head><body data-spy="scroll" data-target="#toc">
+
+
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -25,6 +28,7 @@ with uniqueness terms (GSCAm) proposed by Hwang et al. (2017)
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0.9000</span>
       </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav"><li>
   <a href="../articles/cSEM.html">Get started</a>
@@ -35,6 +39,7 @@ with uniqueness terms (GSCAm) proposed by Hwang et al. (2017)
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -53,23 +58,29 @@ with uniqueness terms (GSCAm) proposed by Hwang et al. (2017)
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/FloSchuberth/cSEM/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+
+
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate weights using GSCAm</h1>
-    <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/HEAD/R/estimators_weights.R" class="external-link"><code>R/estimators_weights.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/master/R/estimators_weights.R" class="external-link"><code>R/estimators_weights.R</code></a></small>
     <div class="hidden name"><code>calculateWeightsGSCAm.Rd</code></div>
     </div>
+
     <div class="ref-description">
     <p>Calculate composite weights using generalized structured component analysis
 with uniqueness terms (GSCAm) proposed by Hwang et al. (2017)
 .</p>
     </div>
+
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculateWeightsGSCAm</span><span class="op">(</span></span>
 <span>  .X                           <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.X</span>,</span>
@@ -80,48 +91,70 @@ with uniqueness terms (GSCAm) proposed by Hwang et al. (2017)
 <span>  .tolerance                   <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.tolerance</span></span>
 <span>   <span class="op">)</span></span></code></pre></div>
     </div>
+
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt id="arg--x">.X<a class="anchor" aria-label="anchor" href="#arg--x"></a></dt>
+
+
+<dl><dt id="arg--x">.X<a class="anchor" aria-label="anchor" href="#arg--x"></a></dt>
 <dd><p>A matrix of processed data (scaled, cleaned and ordered).</p></dd>
+
+
 <dt id="arg--csem-model">.csem_model<a class="anchor" aria-label="anchor" href="#arg--csem-model"></a></dt>
 <dd><p>A (possibly incomplete) <a href="csem_model.html">cSEMModel</a>-list.</p></dd>
+
+
 <dt id="arg--conv-criterion">.conv_criterion<a class="anchor" aria-label="anchor" href="#arg--conv-criterion"></a></dt>
 <dd><p>Character string. The criterion to use for the convergence check.
-One of: "<em>diff_absolute</em>", "<em>diff_squared</em>", or "<em>diff_relative</em>". Defaults
+One of: "<em>diff_absolute</em>", "<em>diff_squared</em>", "<em>diff_relative</em>", or "<em>sum_diff_absolute</em>". Defaults
 to "<em>diff_absolute</em>".</p></dd>
+
+
 <dt id="arg--iter-max">.iter_max<a class="anchor" aria-label="anchor" href="#arg--iter-max"></a></dt>
 <dd><p>Integer. The maximum number of iterations allowed.
 If <code>iter_max = 1</code> and <code>.approach_weights = "PLS-PM"</code> one-step weights are returned.
 If the algorithm exceeds the specified number, weights of iteration step
 <code>.iter_max - 1</code>  will be returned with a warning. Defaults to <code>100</code>.</p></dd>
+
+
 <dt id="arg--starting-values">.starting_values<a class="anchor" aria-label="anchor" href="#arg--starting-values"></a></dt>
 <dd><p>A named list of vectors where the
 list names are the construct names whose indicator weights the user
 wishes to set. The vectors must be named vectors of <code>"indicator_name" = value</code>
 pairs, where <code>value</code> is the (scaled or unscaled) starting weight. Defaults to <code>NULL</code>.</p></dd>
+
+
 <dt id="arg--tolerance">.tolerance<a class="anchor" aria-label="anchor" href="#arg--tolerance"></a></dt>
 <dd><p>Double. The tolerance criterion for convergence.
 Defaults to <code>1e-05</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-<p>A list with the elements</p><dl><dt><code>$W</code></dt>
+    <p>A list with the elements</p><dl><dt><code>$W</code></dt>
 <dd><p>A (J x K) matrix of estimated weights.</p></dd>
+
 <dt><code>$C</code></dt>
 <dd><p>The (J x K) matrix of estimated loadings.</p></dd>
+
 <dt><code>$B</code></dt>
 <dd><p>The (J x J) matrix of estimated path coefficients.</p></dd>
+
 <dt><code>$E</code></dt>
 <dd><p><code>NULL</code></p></dd>
+
 <dt><code>$Modes</code></dt>
 <dd><p>A named vector of Modes used for the outer estimation, for GSCA
 the mode is automatically set to 'gsca'.</p></dd>
+
 <dt><code>$Conv_status</code></dt>
 <dd><p>The convergence status. <code>TRUE</code> if the algorithm has converged
 and <code>FALSE</code> otherwise.</p></dd>
+
 <dt><code>$Iterations</code></dt>
 <dd><p>The number of iterations required.</p></dd>
+
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -145,17 +178,28 @@ and, therefore, leads to a non-invertible matrix when multiplying it with its tr
 “Generalized structured component analysis with uniqueness terms for accommodating measurement error.”
 <em>Frontiers in Psychology</em>, <b>8</b>(2137), 1–12.</p>
     </div>
+
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
     </nav></div>
 </div>
+
+
       <footer><div class="copyright">
   <p></p><p>Developed by Manuel E. Rademaker, Florian Schuberth.</p>
 </div>
+
 <div class="pkgdown">
   <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
+
       </footer></div>
+
+
+
+
+
+
   </body></html>
 

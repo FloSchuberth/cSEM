@@ -12,8 +12,11 @@ for congeneric measurement models. In general, they are used to assess discrimin
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
+
   gtag('config', 'UA-156347841-1');
 </script></head><body data-spy="scroll" data-target="#toc">
+
+
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -29,6 +32,7 @@ for congeneric measurement models. In general, they are used to assess discrimin
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0.9000</span>
       </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav"><li>
   <a href="../articles/cSEM.html">Get started</a>
@@ -39,6 +43,7 @@ for congeneric measurement models. In general, they are used to assess discrimin
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -57,18 +62,23 @@ for congeneric measurement models. In general, they are used to assess discrimin
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/FloSchuberth/cSEM/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+
+
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>HTMT</h1>
-    <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/HEAD/R/helper_assess.R" class="external-link"><code>R/helper_assess.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/master/R/helper_assess.R" class="external-link"><code>R/helper_assess.R</code></a></small>
     <div class="hidden name"><code>calculateHTMT.Rd</code></div>
     </div>
+
     <div class="ref-description">
     <p>Computes either the heterotrait-monotrait ratio of correlations (HTMT) based on
 Henseler et al. (2015)
@@ -78,6 +88,7 @@ While the HTMT is a consistent estimator for the construct correlation in
 case of tau-equivalent measurement models, the HTMT2 is a consistent estimator
 for congeneric measurement models. In general, they are used to assess discriminant validity.</p>
     </div>
+
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculateHTMT</span><span class="op">(</span></span>
 <span> .object               <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -93,45 +104,68 @@ for congeneric measurement models. In general, they are used to assess discrimin
 <span> <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt id="arg--object">.object<a class="anchor" aria-label="anchor" href="#arg--object"></a></dt>
+
+
+<dl><dt id="arg--object">.object<a class="anchor" aria-label="anchor" href="#arg--object"></a></dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt id="arg--type-htmt">.type_htmt<a class="anchor" aria-label="anchor" href="#arg--type-htmt"></a></dt>
 <dd><p>Character string indicating the type of HTMT that should be
 calculated, i.e., the original HTMT ("<em>htmt</em>") or the HTMT2 ("<em>htmt2</em>").
 Defaults to "<em>htmt</em>"</p></dd>
+
+
 <dt id="arg--absolute">.absolute<a class="anchor" aria-label="anchor" href="#arg--absolute"></a></dt>
 <dd><p>Logical. Should the absolute HTMT values be returned?
 Defaults to <code>TRUE</code> .</p></dd>
+
+
 <dt id="arg--alpha">.alpha<a class="anchor" aria-label="anchor" href="#arg--alpha"></a></dt>
 <dd><p>A numeric value giving the significance level.
 Defaults to <code>0.05</code>.</p></dd>
+
+
 <dt id="arg--ci">.ci<a class="anchor" aria-label="anchor" href="#arg--ci"></a></dt>
 <dd><p>A character strings naming the type of confidence interval to use
 to compute the 1-alpha% quantile of the bootstrap HTMT values. For possible
 choices see <code><a href="infer.html">infer()</a></code>. Ignored
 if <code>.inference = FALSE</code>. Defaults to "<em>CI_percentile</em>".</p></dd>
+
+
 <dt id="arg--inference">.inference<a class="anchor" aria-label="anchor" href="#arg--inference"></a></dt>
-<dd><p>Logical. Should critical values be computed? Defaults to <code>FALSE</code>.</p></dd>
+<dd><p>Logical. Should critical values be computed? Defaults to
+<code>FALSE</code>.</p></dd>
+
+
 <dt id="arg--only-common-factors">.only_common_factors<a class="anchor" aria-label="anchor" href="#arg--only-common-factors"></a></dt>
 <dd><p>Logical. Should only concepts modeled as common
 factors be included when calculating one of the following quality criteria:
 AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
 Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt id="arg--r">.R<a class="anchor" aria-label="anchor" href="#arg--r"></a></dt>
 <dd><p>Integer. The number of bootstrap replications. Defaults to <code>499</code>.</p></dd>
+
+
 <dt id="arg--seed">.seed<a class="anchor" aria-label="anchor" href="#arg--seed"></a></dt>
 <dd><p>Integer or <code>NULL</code>. The random seed to use. Defaults to <code>NULL</code> in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Ignored.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-<p>A named list containing:</p><ul><li><p>the values of the HTMT/HTMT2, i.e., a matrix with the HTMT/HTMT2 values
+    <p>A named list containing:</p><ul><li><p>the values of the HTMT/HTMT2, i.e., a matrix with the HTMT/HTMT2 values
 at its lower triangular and if <code>.inference = TRUE</code> the upper triangular contains
 the upper limit of the 1-2*.alpha% bootstrap confidence interval if the HTMT/HTMT2 is positive and
 the lower limit if the HTMT/HTMT2 is negative.</p></li>
@@ -171,17 +205,28 @@ interpret values in this case.</p>
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="assess.html">assess()</a></code>, <a href="csem.html">csem</a>, <a href="csem_results.html">cSEMResults</a></p></div>
     </div>
+
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
     </nav></div>
 </div>
+
+
       <footer><div class="copyright">
   <p></p><p>Developed by Manuel E. Rademaker, Florian Schuberth.</p>
 </div>
+
 <div class="pkgdown">
   <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
+
       </footer></div>
+
+
+
+
+
+
   </body></html>
 

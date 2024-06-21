@@ -15,6 +15,7 @@
 <url><loc>/reference/BergamiBagozzi2000.html</loc></url>
 <url><loc>/reference/ITFlex.html</loc></url>
 <url><loc>/reference/LancelotMiltgenetal2016.html</loc></url>
+<url><loc>/reference/LeDang2022.html</loc></url>
 <url><loc>/reference/PoliticalDemocracy.html</loc></url>
 <url><loc>/reference/Russett.html</loc></url>
 <url><loc>/reference/SQ.html</loc></url>
@@ -25,6 +26,7 @@
 <url><loc>/reference/args_assess_dotdotdot.html</loc></url>
 <url><loc>/reference/args_default.html</loc></url>
 <url><loc>/reference/assess.html</loc></url>
+<url><loc>/reference/augment.cSEMResults.html</loc></url>
 <url><loc>/reference/cSEM-package.html</loc></url>
 <url><loc>/reference/calculate2ndStage.html</loc></url>
 <url><loc>/reference/calculateAVE.html</loc></url>
@@ -50,6 +52,7 @@
 <url><loc>/reference/calculateVIFModeB.html</loc></url>
 <url><loc>/reference/calculateWeightsGSCA.html</loc></url>
 <url><loc>/reference/calculateWeightsGSCAm.html</loc></url>
+<url><loc>/reference/calculateWeightsIGSCA.html</loc></url>
 <url><loc>/reference/calculateWeightsKettenring.html</loc></url>
 <url><loc>/reference/calculateWeightsPCA.html</loc></url>
 <url><loc>/reference/calculateWeightsPLS.html</loc></url>
@@ -65,6 +68,7 @@
 <url><loc>/reference/csem_summary.html</loc></url>
 <url><loc>/reference/csem_test.html</loc></url>
 <url><loc>/reference/dgp_2ndorder_cf_of_c.html</loc></url>
+<url><loc>/reference/diagonalizeMultiGroupIgscaEstimates.html</loc></url>
 <url><loc>/reference/distance_measures.html</loc></url>
 <url><loc>/reference/doIPMA.html</loc></url>
 <url><loc>/reference/doNonlinearEffectsAnalysis.html</loc></url>
@@ -73,15 +77,21 @@
 <url><loc>/reference/exportToExcel.html</loc></url>
 <url><loc>/reference/fit.html</loc></url>
 <url><loc>/reference/fit_measures.html</loc></url>
+<url><loc>/reference/flipGammaCBSigns.html</loc></url>
 <url><loc>/reference/foreman.html</loc></url>
 <url><loc>/reference/getConstructScores.html</loc></url>
+<url><loc>/reference/getIgscaInputs.html</loc></url>
 <url><loc>/reference/getParameterNames.html</loc></url>
 <url><loc>/reference/getRelevantParameters.html</loc></url>
 <url><loc>/reference/getValuesFloodlight.html</loc></url>
+<url><loc>/reference/glance.cSEMResults.html</loc></url>
 <url><loc>/reference/handleArgs.html</loc></url>
+<url><loc>/reference/igsca.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
 <url><loc>/reference/infer.html</loc></url>
 <url><loc>/reference/inference_helper.html</loc></url>
+<url><loc>/reference/initializeAlsEstimates.html</loc></url>
+<url><loc>/reference/initializeIgscaEstimates.html</loc></url>
 <url><loc>/reference/moments.html</loc></url>
 <url><loc>/reference/nonlinear_estimation_utilities.html</loc></url>
 <url><loc>/reference/parseModel.html</loc></url>
@@ -118,6 +128,12 @@
 <url><loc>/reference/testMICOM.html</loc></url>
 <url><loc>/reference/testOMF.html</loc></url>
 <url><loc>/reference/threecommonfactors.html</loc></url>
+<url><loc>/reference/tidy.cSEMResults.html</loc></url>
+<url><loc>/reference/updateCBDU.html</loc></url>
+<url><loc>/reference/updateCommonFactorTheta.html</loc></url>
+<url><loc>/reference/updateCompositeTheta.html</loc></url>
+<url><loc>/reference/updateXAndWW.html</loc></url>
 <url><loc>/reference/verify.html</loc></url>
+<url><loc>/reference/warnIgscaFeatures.html</loc></url>
 </urlset>
 

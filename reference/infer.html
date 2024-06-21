@@ -6,8 +6,11 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
+
   gtag('config', 'UA-156347841-1');
 </script></head><body data-spy="scroll" data-target="#toc">
+
+
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -23,6 +26,7 @@
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0.9000</span>
       </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav"><li>
   <a href="../articles/cSEM.html">Get started</a>
@@ -33,6 +37,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -51,21 +56,27 @@
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/FloSchuberth/cSEM/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+
+
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Inference</h1>
-    <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/HEAD/R/postestimate_infer.R" class="external-link"><code>R/postestimate_infer.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/master/R/postestimate_infer.R" class="external-link"><code>R/postestimate_infer.R</code></a></small>
     <div class="hidden name"><code>infer.Rd</code></div>
     </div>
+
     <div class="ref-description">
     <p><a href="https://lifecycle.r-lib.org/articles/stages.html#stable" class="external-link"><img src="figures/lifecycle-stable.svg" alt="[Stable]"></a></p>
     </div>
+
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">infer</span><span class="op">(</span></span>
 <span> .object            <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -76,19 +87,28 @@
 <span> .bias_corrected    <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt id="arg--object">.object<a class="anchor" aria-label="anchor" href="#arg--object"></a></dt>
+
+
+<dl><dt id="arg--object">.object<a class="anchor" aria-label="anchor" href="#arg--object"></a></dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt id="arg--quantity">.quantity<a class="anchor" aria-label="anchor" href="#arg--quantity"></a></dt>
 <dd><p>Character string. Which statistic should be returned?
 One of "<em>all</em>", "<em>mean</em>", "<em>sd</em>", "<em>bias</em>", "<em>CI_standard_z</em>", "<em>CI_standard_t</em>",
 "<em>CI_percentile</em>", "<em>CI_basic</em>", "<em>CI_bc</em>", "<em>CI_bca</em>", "<em>CI_t_interval</em>"
 Defaults to "<em>all</em>" in which case all quantities that do not require
 additional resampling are returned, i.e., all quantities but "<em>CI_bca</em>", "<em>CI_t_interval</em>".</p></dd>
+
+
 <dt id="arg--alpha">.alpha<a class="anchor" aria-label="anchor" href="#arg--alpha"></a></dt>
 <dd><p>An integer or a numeric vector of significance levels.
 Defaults to <code>0.05</code>.</p></dd>
+
+
 <dt id="arg--bias-corrected">.bias_corrected<a class="anchor" aria-label="anchor" href="#arg--bias-corrected"></a></dt>
 <dd><p>Logical. Should the standard and the tStat
 confidence interval be bias-corrected using the bootstrapped bias estimate?
@@ -96,10 +116,11 @@ If <code>TRUE</code> the confidence interval for some estimated parameter <code>
 is centered at <code>2*theta - theta*_hat</code>,
 where <code>theta*_hat</code> is the average over all <code>.R</code> bootstrap estimates of <code>theta</code>.
 Defaults to <code>TRUE</code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-<p>A list of class <code>cSEMInfer</code>.</p>
+    <p>A list of class <code>cSEMInfer</code>.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -133,38 +154,48 @@ Davison and Hinkley (1997)
 .</p><dl><dt><code>"mean"</code>, <code>"sd"</code></dt>
 <dd><p>The mean or the standard deviation
 over all <code>M</code> resample estimates of a generic statistic or parameter.</p></dd>
+
 <dt><code>"bias"</code></dt>
 <dd><p>The difference between the resample mean and the original
 estimate of a generic statistic or parameter.</p></dd>
+
 <dt><code>"CI_standard_z"</code> and <code>"CI_standard_t"</code></dt>
 <dd><p>The standard confidence interval
 for a generic statistic or parameter with standard errors estimated by
 the resample standard deviation. While <code>"CI_standard_z"</code> assumes a
 standard normally distributed statistic,
 <code>"CI_standard_t"</code> assumes a t-statistic with N - 1 degrees of freedom.</p></dd>
+
 <dt><code>"CI_percentile"</code></dt>
 <dd><p>The percentile confidence interval. The lower and
 upper bounds of the confidence interval are estimated as the alpha and
 1-alpha quantiles of the distribution of the resample estimates.</p></dd>
+
 <dt><code>"CI_basic"</code></dt>
 <dd><p>The basic confidence interval also called the reverse
 bootstrap percentile confidence interval. See Hesterberg (2015)
+
 for details.</p></dd>
+
 <dt><code>"CI_bc"</code></dt>
 <dd><p>The bias corrected (Bc) confidence interval. See
 Davison and Hinkley (1997)
  for details.</p></dd>
+
 <dt><code>"CI_bca"</code></dt>
 <dd><p>The bias-corrected and accelerated (Bca) confidence interval.
 Requires additional jackknife resampling to compute the influence values.
 See Davison and Hinkley (1997)
  for details.</p></dd>
+
 <dt><code>"CI_t_interval"</code></dt>
 <dd><p>The "studentized" t-confidence interval. If based on bootstrap
 resamples the interval is also called the bootstrap t-interval
 confidence interval. See Hesterberg (2015)
  on page 381.
 Requires resamples of resamples. See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code>.</p></dd>
+
+
 </dl><p>By default, all but the studendized t-interval confidence interval and the
 bias-corrected and accelerated confidence interval are calculated. The
 reason for excluding these quantities by default are that both require
@@ -189,6 +220,7 @@ Cambridge University Press.
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="csem.html">csem()</a></code>, <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code>, <code><a href="summarize.html">summarize()</a></code> <a href="csem_results.html">cSEMResults</a></p></div>
     </div>
+
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"</span></span></span>
@@ -217,21 +249,21 @@ Cambridge University Press.
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">inf</span><span class="op">$</span><span class="va">Path_estimates</span><span class="op">$</span><span class="va">CI_basic</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL SAT ~ IMAG SAT ~ EXPE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L   0.5737576    1.014085  -5.269491   4.522662 -0.2655311   1.854202</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U   0.7400891    1.069112  -3.629569   6.125259  0.1760485   3.446656</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L   0.5851089    1.020939  -5.617302   4.621788 -0.2770286  0.0777851</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U   0.7609896    1.075919  -3.764436   6.462925  0.2301100  2.2541161</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      SAT ~ QUAL SAT ~ VAL LOY ~ IMAG LOY ~ SAT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L  -4.525048  1.431790  0.1424252 0.4069534</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U  -2.397128  2.404128  0.4205262 0.7272322</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L -3.3813689 0.9745507 0.05590144 0.3842163</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U -0.2165244 2.3811038 0.48161807 0.8108686</span>
 <span class="r-in"><span><span class="va">inf</span><span class="op">$</span><span class="va">Indirect_effect</span><span class="op">$</span><span class="va">sd</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> QUAL ~ IMAG  VAL ~ IMAG  VAL ~ EXPE  SAT ~ IMAG  SAT ~ EXPE  SAT ~ QUAL </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.05275428  0.06039000  0.45209873  0.06180868  0.36359145  0.66000630 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.05599730  0.06114553  0.54987438  0.08148322  0.61948795  1.17604426 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  LOY ~ IMAG  LOY ~ EXPE  LOY ~ QUAL   LOY ~ VAL </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.05685641  0.07635043  0.38776224  0.20017319 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.08032857  0.10452609  0.37427775  0.29044340 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">### Compute the bias-corrected and accelerated and/or the studentized t-inverval.</span></span></span>
 <span class="r-in"><span><span class="co">## For the studentied t-interval confidence interval a double bootstrap is required.</span></span></span>
 <span class="r-in"><span><span class="co">## This is pretty time consuming.</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span>  <span class="va">inf</span> <span class="op">&lt;-</span> <span class="fu">infer</span><span class="op">(</span><span class="va">a</span>, .quantity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span>, <span class="st">"CI_bca"</span><span class="op">)</span><span class="op">)</span> <span class="co"># requires jackknife estimates </span></span></span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span><span class="co">## Estimate the model with double bootstrap resampling:</span></span></span>
@@ -241,7 +273,7 @@ Cambridge University Press.
 <span class="r-in"><span><span class="co">#      `.eval_plan = "multisession`. </span></span></span>
 <span class="r-in"><span><span class="va">a1</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span><span class="va">satisfaction</span>, <span class="va">model</span>, .resample_method <span class="op">=</span> <span class="st">"bootstrap"</span>, .R <span class="op">=</span> <span class="fl">499</span>,</span></span>
 <span class="r-in"><span>          .resample_method2 <span class="op">=</span> <span class="st">"bootstrap"</span>, .R2 <span class="op">=</span> <span class="fl">199</span>, .handle_inadmissibles <span class="op">=</span> <span class="st">"replace"</span><span class="op">)</span> </span></span>
-<span class="r-in"><span><span class="fu">infer</span><span class="op">(</span><span class="va">a1</span>, .quantity <span class="op">=</span> <span class="st">"CI_t_interval"</span><span class="op">)</span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="fu">infer</span><span class="op">(</span><span class="va">a1</span>, .quantity <span class="op">=</span> <span class="st">"CI_t_interval"</span><span class="op">)</span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -250,12 +282,22 @@ Cambridge University Press.
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
     </nav></div>
 </div>
+
+
       <footer><div class="copyright">
   <p></p><p>Developed by Manuel E. Rademaker, Florian Schuberth.</p>
 </div>
+
 <div class="pkgdown">
   <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
+
       </footer></div>
+
+
+
+
+
+
   </body></html>
 

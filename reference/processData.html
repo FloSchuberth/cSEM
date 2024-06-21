@@ -6,8 +6,11 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
+
   gtag('config', 'UA-156347841-1');
 </script></head><body data-spy="scroll" data-target="#toc">
+
+
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -23,6 +26,7 @@
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0.9000</span>
       </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav"><li>
   <a href="../articles/cSEM.html">Get started</a>
@@ -33,6 +37,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -51,21 +56,27 @@
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/FloSchuberth/cSEM/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+
+
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Internal: Process data</h1>
-    <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/HEAD/R/csem_data.R" class="external-link"><code>R/csem_data.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/master/R/csem_data.R" class="external-link"><code>R/csem_data.R</code></a></small>
     <div class="hidden name"><code>processData.Rd</code></div>
     </div>
+
     <div class="ref-description">
     <p>Prepare, standardize, check, and clean data provided via the <code>.data</code> argument.</p>
     </div>
+
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">processData</span><span class="op">(</span></span>
 <span>  .data        <span class="op">=</span> <span class="cn">NULL</span>, </span>
@@ -73,17 +84,24 @@
 <span>  .instruments <span class="op">=</span> <span class="cn">NULL</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
     </div>
+
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt id="arg--data">.data<a class="anchor" aria-label="anchor" href="#arg--data"></a></dt>
+
+
+<dl><dt id="arg--data">.data<a class="anchor" aria-label="anchor" href="#arg--data"></a></dt>
 <dd><p>A <code>data.frame</code> or a <code>matrix</code> of standardized or unstandardized
 data (indicators/items/manifest variables). Possible column types or classes
 of the data provided are: "<code>logical</code>", "<code>numeric</code>" ("<code>double</code>" or "<code>integer</code>"),
 "<code>factor</code>" ("<code>ordered</code>" and/or "<code>unordered</code>"), "<code>character</code>" (converted to factor),
 or a mix of several types.</p></dd>
+
+
 <dt id="arg--model">.model<a class="anchor" aria-label="anchor" href="#arg--model"></a></dt>
 <dd><p>A model in <a href="https://rdrr.io/pkg/lavaan/man/model.syntax.html" class="external-link">lavaan model syntax</a>
 or a <a href="csem_model.html">cSEMModel</a> list.</p></dd>
+
+
 <dt id="arg--instruments">.instruments<a class="anchor" aria-label="anchor" href="#arg--instruments"></a></dt>
 <dd><p>A named list of vectors of instruments. The names
 of the list elements are the names of the dependent (LHS) constructs of the structural
@@ -91,24 +109,36 @@ equation whose explanatory variables are endogenous. The vectors
 contain the names of the instruments corresponding to each equation. Note
 that exogenous variables of a given equation <strong>must</strong> be supplied as
 instruments for themselves. Defaults to <code>NULL</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-<p>A (N x K) data.frame containing the standardized data with columns ordered
+    <p>A (N x K) data.frame containing the standardized data with columns ordered
 according to the order they appear in the measurement model equations provided
 via the <code>.model</code> argument.</p>
     </div>
+
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
     </nav></div>
 </div>
+
+
       <footer><div class="copyright">
   <p></p><p>Developed by Manuel E. Rademaker, Florian Schuberth.</p>
 </div>
+
 <div class="pkgdown">
   <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
+
       </footer></div>
+
+
+
+
+
+
   </body></html>
 
