@@ -86,26 +86,19 @@ indicator corresponds to a latent or composite variable (indicator_type); and
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">extract_parseModel</span><span class="op">(</span><span class="va">.data</span>, <span class="va">.model</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">extract_parseModel</span><span class="op">(</span><span class="va">model</span>, <span class="va">data</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
 
 
-<dl><dt id="arg--data">.data<a class="anchor" aria-label="anchor" href="#arg--data"></a></dt>
-<dd><p>A <code>data.frame</code> or a <code>matrix</code> of standardized or unstandardized
-data (indicators/items/manifest variables).
-Additionally, a <code>list</code> of data sets (data frames or matrices) is accepted in which
-case estimation is repeated for each data set. Possible column types or classes
-of the data provided are: "<code>logical</code>", "<code>numeric</code>" ("<code>double</code>" or "<code>integer</code>"),
-"<code>factor</code>" ("<code>ordered</code>" and/or "<code>unordered</code>"), "<code>character</code>" (will be converted to factor),
-or a mix of several types.</p></dd>
+<dl><dt id="arg-model">model<a class="anchor" aria-label="anchor" href="#arg-model"></a></dt>
+<dd><p>Specified Model in lavaan style</p></dd>
 
 
-<dt id="arg--model">.model<a class="anchor" aria-label="anchor" href="#arg--model"></a></dt>
-<dd><p>A model in <a href="https://rdrr.io/pkg/lavaan/man/model.syntax.html" class="external-link">lavaan model syntax</a>
-or a <a href="csem_model.html">cSEMModel</a> list.</p></dd>
+<dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
+<dd><p>Input dataframe</p></dd>
 
 </dl></div>
     <div id="value">

@@ -79,7 +79,7 @@
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculateWeightsIGSCA</span><span class="op">(</span></span>
-<span>  <span class="va">.data</span>,</span>
+<span>  <span class="va">data</span>,</span>
 <span>  .csem_model <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.csem_model</span>,</span>
 <span>  .tolerance <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.tolerance</span>,</span>
 <span>  .iter_max <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.iter_max</span>,</span>
@@ -91,14 +91,8 @@
     <h2>Arguments</h2>
 
 
-<dl><dt id="arg--data">.data<a class="anchor" aria-label="anchor" href="#arg--data"></a></dt>
-<dd><p>A <code>data.frame</code> or a <code>matrix</code> of standardized or unstandardized
-data (indicators/items/manifest variables).
-Additionally, a <code>list</code> of data sets (data frames or matrices) is accepted in which
-case estimation is repeated for each data set. Possible column types or classes
-of the data provided are: "<code>logical</code>", "<code>numeric</code>" ("<code>double</code>" or "<code>integer</code>"),
-"<code>factor</code>" ("<code>ordered</code>" and/or "<code>unordered</code>"), "<code>character</code>" (will be converted to factor),
-or a mix of several types.</p></dd>
+<dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
+<dd><p>Input dataframe</p></dd>
 
 
 <dt id="arg--tolerance">.tolerance<a class="anchor" aria-label="anchor" href="#arg--tolerance"></a></dt>
