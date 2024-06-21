@@ -80,8 +80,8 @@ igsca <-
 # Auxiliary Variables -----------------------------------------------------
   ncase <- nrow(Z0)
   nvar <- ncol(Z0)
-  n_constructs <- ncol(W0)
-  ntv <- nvar + n_constructs
+  nlv <- ncol(W0)
+  ntv <- nvar + nlv
   
   windex <- which(c(W0) == 1) 
   cindex <- which(c(C0) == 1)
@@ -107,7 +107,7 @@ igsca <-
     B0 = B0,
     nvar = nvar,
     ncase = ncase,
-    n_constructs = n_constructs,
+    nlv = nlv,
     ov_type = ov_type
   )
   ### Updates W, C, B, V, Z, D, U, Gamma
@@ -129,18 +129,19 @@ igsca <-
     
 ## Alternate Between Updating Weights and Loadings -----------------------
     while ((sum(abs(est0 - est)) > ceps) && (it <= itmax)) {
+      # TODO: Review better way to do this while condition
 
       # Counter Things
       it <- it + 1
       est0 <- est
       
-### Compute pseudo-weights ----------------------------------------------------------
+### Compute pseudo-Weights ----------------------------------------------------------
       updated_X_weights <- update_X_weights(
         Z = Z,
         U = U,
         D = D,
         C = C,
-        n_constructs = n_constructs,
+        nlv = nlv,
         B = B
       )
       # Creates X (for updating Composites) and WW (for updating Factors)
@@ -149,7 +150,7 @@ igsca <-
 ### Iterative Update of LVs -------------------------------------------------
       A <- cbind(C, B) 
       
-      for (j in seq_len(n_constructs)) {
+      for (j in seq_len(nlv)) {
       # After each cycle, the Gamma, W and V matrices are updated
         tot <- nvar + j
         windex_j <- (W0[, j] == 1)
@@ -162,7 +163,7 @@ igsca <-
             update_composite_LV(
               ntv = ntv,
               tot = tot, # Changes per lv_update iteration
-              n_constructs = n_constructs,
+              nlv = nlv,
               j = j, # Changes per lv_update iteration
               W = W, # Changes per lv_update iteration
               A = A,
@@ -203,7 +204,7 @@ igsca <-
         Gamma = Gamma,
         cindex = cindex,
         C = C,
-        n_constructs = n_constructs,
+        nlv = nlv,
         bindex = bindex,
         B = B,
         ncase = ncase,
@@ -220,7 +221,7 @@ igsca <-
 
     flipped_signs <-
       flip_signs_ind_domi(
-        n_constructs = n_constructs,
+        nlv = nlv,
         Z = Z,
         ind_domi = ind_domi,
         j = j,
@@ -409,7 +410,7 @@ gsca_inione <- function(Z0, W0, B0) {
 #' @param B0 
 #' @param nvar 
 #' @param ncase 
-#' @param n_constructs 
+#' @param nlv 
 #' @param ov_type 
 #'
 #' @return List of matrices to put through the Alternating Least Squared (ALS) algorithm: 
@@ -418,7 +419,7 @@ gsca_inione <- function(Z0, W0, B0) {
 #' 2) Standardized data matrix (Z)
 #' 3) SVD Decomposition of ...*something* to get U and V matrices.
 #' TODO: Figure out what the SVD decomposition is for
-prepare_for_ALS <- function(Z0, W0, B0, nvar, ncase, n_constructs, ov_type) {
+prepare_for_ALS <- function(Z0, W0, B0, nvar, ncase, nlv, ov_type) {
   bZ0 <- Z0
   
   
@@ -443,7 +444,7 @@ prepare_for_ALS <- function(Z0, W0, B0, nvar, ncase, n_constructs, ov_type) {
   # TODO: Does the LAPACK argument for qr() still matter? Why does `complete` matter?
   # Solution for Q is copied from estimators_weights.R
   Q <- qr.Q(qr(Gamma), complete =  TRUE)
-  F_o <- Q[, (n_constructs + 1):ncase, drop = FALSE]
+  F_o <- Q[, (nlv + 1):ncase, drop = FALSE]
   # FIXME: Should compare the svd of matlab and R, unsure if it matters that they don't match
   # FIXME: Come back to this stack overflow thing for proper citation
   # Ahmed Fasih https://stackoverflow.com/a/41972818
@@ -484,7 +485,7 @@ prepare_for_ALS <- function(Z0, W0, B0, nvar, ncase, n_constructs, ov_type) {
 #' @param U 
 #' @param D 
 #' @param C 
-#' @param n_constructs 
+#' @param nlv 
 #' @param B 
 #'
 #' @return Two matrices:
@@ -493,13 +494,13 @@ prepare_for_ALS <- function(Z0, W0, B0, nvar, ncase, n_constructs, ov_type) {
 #' TODO: Double check that I've got this right.
 #' @export
 #'
-update_X_weights <- function(Z, U, D, C, n_constructs, B) {
+update_X_weights <- function(Z, U, D, C, nlv, B) {
   # X deviates from Matlab because it is an offspring of svd_out
   X <- Z - U %*% D
   # FIXME: warning("I don't quite understand why this is the equivalent of the Matlab expression, revisit page 44 of Hiebeler 2015 R and Matlab")
   # TODO: Should find alternative to solve() to avoid matrix inversions
   WW <-
-    t(C) %*% solve((C %*% t(C) + diag(n_constructs) - 2 * B + (B %*% t(B))))
+    t(C) %*% solve((C %*% t(C) + diag(nlv) - 2 * B + (B %*% t(B))))
   return(list("X" = X, "WW" = WW))
 }
 
@@ -528,7 +529,7 @@ update_factor_LV <- function(WW, windex_j, j) {
 #'
 #' @param ntv 
 #' @param tot 
-#' @param n_constructs 
+#' @param nlv 
 #' @param j 
 #' @param W 
 #' @param A 
@@ -541,12 +542,12 @@ update_factor_LV <- function(WW, windex_j, j) {
 #' @export
 #'
 update_composite_LV <-
-  function(ntv, tot, n_constructs, j, W, A, V, X, windex_j) {
+  function(ntv, tot, nlv, j, W, A, V, X, windex_j) {
     # This updates the composite
     e <- matrix(0, nrow = 1, ncol = ntv)
     e[tot] <- 1
     H1 <- diag(ntv)
-    H2 <- diag(n_constructs)
+    H2 <- diag(nlv)
     H1[tot, tot] <- 0
     H2[j, j] <- 0
     Delta <- (W %*% H2 %*% A) - (V %*% H1)
@@ -568,7 +569,7 @@ update_composite_LV <-
 #' @param Gamma 
 #' @param cindex 
 #' @param C 
-#' @param n_constructs 
+#' @param nlv 
 #' @param bindex 
 #' @param B 
 #' @param ncase 
@@ -590,7 +591,7 @@ update_C_B_D <-
            Gamma,
            cindex,
            C,
-           n_constructs,
+           nlv,
            bindex,
            B,
            ncase,
@@ -603,13 +604,13 @@ update_C_B_D <-
     C[cindex] <- MASS::ginv(t(M1) %*% M1) %*% (t(M1) %*% t1)
     
     t2 <- c(Gamma)
-    M2 <- kronecker(diag(n_constructs), Gamma)
+    M2 <- kronecker(diag(nlv), Gamma)
     M2 <- M2[, bindex]
     B[bindex] <- MASS::ginv(t(M2) %*% M2) %*% (t(M2) %*% t2)
     
     # Solution for Q is copied from estimators_weights.R
     Q <- qr.Q(qr(Gamma), complete =  TRUE)
-    F_o <- Q[, (n_constructs + 1):ncase]
+    F_o <- Q[, (nlv + 1):ncase]
     # FIXME: warning("It's unclear to me whether this SVD is safe. The Matlab code seems to either do a 'normal' svd or a economy svd depending on the dimensionality of the input matrix. Should look into this more.")
     # https://www.mathworks.com/help/matlab/ref/double.svd.html?searchHighlight=svd&s_tid=srchtitle_support_results_1_svd#d126e1597915
     svd_out2 <- (D %*% t(Z) %*% F_o) |>
@@ -651,7 +652,7 @@ update_C_B_D <-
 
 #' Flip signs of Gamma, Loadings and Path-Coefficients Cells Based on Dominant Indicator
 #'
-#' @param n_constructs 
+#' @param nlv 
 #' @param Z 
 #' @param ind_domi 
 #' @param j 
@@ -661,8 +662,8 @@ update_C_B_D <-
 #'
 #' @return List of matrices: Gamma, Loadings (C) and Path-Coefficients (B)
 #'
-flip_signs_ind_domi <- function(n_constructs, Z, ind_domi, j, Gamma, C, B) {
-  for (j in seq_len(n_constructs)) {
+flip_signs_ind_domi <- function(nlv, Z, ind_domi, j, Gamma, C, B) {
+  for (j in seq_len(nlv)) {
     if ((t(Z[, ind_domi[j]]) %*% Gamma[, j]) < 0) {
       Gamma[, j] <- (-1 * Gamma[, j])
       C[j, ] <- (-1 * C[j, ])
