@@ -5,44 +5,44 @@
 \title{Update Loadings, Path-Coefficients and Uniqueness Terms After Updating Latent Variables}
 \usage{
 update_C_B_D_U(
-  Z,
   X,
-  Gamma,
-  C,
-  B,
-  D,
-  indicator_type,
   n_indicators,
+  Gamma,
   c_index,
+  C,
   n_constructs,
   b_index,
-  n_case
+  B,
+  n_case,
+  D,
+  Z,
+  indicator_type
 )
 }
 \arguments{
-\item{Z}{Standardized data matrix}
-
 \item{X}{Pseudo-weights for composites}
-
-\item{Gamma}{Construct Scores}
-
-\item{C}{Matrix of estimated loadings}
-
-\item{B}{Matrix of path coefficients}
-
-\item{D}{Matrix of estimated unique error}
-
-\item{indicator_type}{Vector of whether each indicator corresponds to a common factor or composite}
 
 \item{n_indicators}{Number of indicators}
 
+\item{Gamma}{Construct Scores}
+
 \item{c_index}{Index of loadings}
+
+\item{C}{Matrix of estimated loadings}
 
 \item{n_constructs}{Number of constructs}
 
 \item{b_index}{Index of Path Coefficients}
 
+\item{B}{Matrix of path coefficients}
+
 \item{n_case}{Number of Cases}
+
+\item{D}{Matrix of estimated unique error}
+
+\item{Z}{Standardized data matrix}
+
+\item{indicator_type}{Vector of whether each indicator corresponds to a common factor or composite}
 }
 \value{
 List of matrices:

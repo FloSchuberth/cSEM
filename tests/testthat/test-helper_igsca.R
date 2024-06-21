@@ -44,7 +44,6 @@ mod <- csem(.data = LeDang2022,
 #' @param uniqueD Vector of Uniqueness for each indicator of a common factor
 #' @param paths Path coefficients matrix
 #' @importFrom lavaan lavaanify
-#' @author Michael S. Truong
 #' @return Table of Weights, Loadings, Path-Coefficients and Uniqueness terms from i-gsca algorithms in Matlab or R.
 #'
 get_lavaan_table_igsca_matrix <- function(model, weights, loadings, uniqueD, paths) {
