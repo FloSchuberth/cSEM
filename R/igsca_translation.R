@@ -4,7 +4,7 @@
 #' @param W0 Weight indicator: Indicators in rows, LVs in columns
 #' @param C0 Loadings indicator. Indicators that load onto factors should have 1s in both W0 and C0.
 #' @param B0 Path Coefficients Indicators
-#' @param lv_type A boolean vector index for what latent variable is a factor. Length = ncol(W0)
+#' @param lv_type A numeric vector index for what latent variable is a factor. Length = ncol(W0)
 #' @param ov_type A numeric vector index for what latent variable is a composite. Important for D matrix. Length = ncol(W0)
 #' @param ind_domi A numeric vector index for the indicator that is dominant for each latent variable. Range of values should be the number of indicators, which is nrow(W0). Length should be ncol(W0)
 #' @param nbt Number of boostraps -- though this should really be removed
@@ -61,10 +61,9 @@ igsca_sim <- function(Z0, W0, C0, B0, lv_type, ov_type, ind_domi, nbt, testEquiv
                       itmax = 100, ceps = 0.001) {
   
 
-# Safety Checks ------------------------------------------------------------
+# Safety Check ------------------------------------------------------------
   swap_step <- match.arg(swap_step)
-  # TODO: This should be extended and completed to make igsca into a stand-alone function. However, cSEM already has its own safety checks that make this essentially unnecessary
-  stopifnot("The number of bootstraps should be a non-negative integer" = nbt >= 0)
+
 
 # Auxiliary Variables -----------------------------------------------------
   ncase <- nrow(Z0)
@@ -145,14 +144,13 @@ for(nb in seq_len(nbt+1)) {
         t(C) %*% solve((C %*% t(C) + diag(nlv) - 2 * B + (B %*% t(B))))
       A <- cbind(C, B) 
 
-### Update Each Latent Variable One-by-One------------------------------------
+### Update Latent Variables -------------------------------------------------
       for (j in seq_len(nlv)) {
         tot <- nvar + j
         windex_j <- (W0[, j] == 1)
         Xj <- X[, windex_j]
-
-#### Composite-Specific Update -----------------------------------------------
-        if (lv_type[j] == 0) {
+        
+        if (lv_type[j] != 1) {
           warning("There may be a bug in using lv_type because if it's numeric then it might only ever call the first column/row perhaps boolean would be better?")
           # This updates the composite
           e <- matrix(0, nrow = 1, ncol = ntv)
@@ -171,21 +169,16 @@ for(nb in seq_len(nbt+1)) {
           
           theta <- solve((t(XI) %*% XI), t(XI)) %*% vecZDelta
           
-        } else if (lv_type[j] == 1) {
-#### Factor-Specific Updates -------------------------------------------------
-          theta <- WW[windex_j, j]
         } else {
-          stop("lv_type should either be 1 for factor or 0 for composites")
+          theta <- WW[windex_j, j]
         }
         warning("Is Matlab doing a 2-norm here?")
         theta <- theta / norm(Xj %*% theta, "2")
         Gamma[, j] <- Xj %*% theta
         W[windex_j, j] <- theta
         V[windex_j, tot] <- theta
-    }
-
-### Update Loadings, Structural Coefficients and Disturbance Terms ----------
-
+      }
+      
       t1 <- c(X)
       M1 <- kronecker(diag(nvar), Gamma) 
       M1 <- M1[, cindex]
@@ -196,7 +189,7 @@ for(nb in seq_len(nbt+1)) {
       M2 <- M2[, bindex]
       B[bindex] <- MASS::ginv(t(M2) %*% M2) %*% (t(M2) %*% t2)
       
-      # Solution for Q is copied from estimators_weights.R
+      ### My One-to-One Version-----------------
       Q <- qr.Q(qr(Gamma), complete =  TRUE) 
       F_o <- Q[, (nlv+1):ncase]
       warning("It's unclear to me whether this SVD is safe. The Matlab code seems to either do a 'normal' svd or a economy svd depending on the dimensionality of the input matrix. Should look into this more.")
@@ -220,9 +213,8 @@ for(nb in seq_len(nbt+1)) {
       uniqueD <- diag(D) ^ 2
     }
     
-
-# Flip Signs for Factors and Composites Based on Dominant Indicators --------
-
+# Update Factor Latent Variables----
+    
     for (j in seq_len(nlv)) {
       if ((t(Z[, ind_domi[j]]) %*% Gamma[, j]) < 0) {
         Gamma[, j] <- (-1 * Gamma[, j])
