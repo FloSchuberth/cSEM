@@ -172,7 +172,6 @@ TODO: Cite the GSCA Pro SEM reference instead of GSCA Pro's Example</p>
 <span class="r-in"><span><span class="va">igsca_in</span> <span class="op">&lt;-</span> <span class="fu"><a href="extract_parseModel.html">extract_parseModel</a></span><span class="op">(</span>model <span class="op">=</span> <span class="va">tutorial_igsca_model</span>,</span></span>
 <span class="r-in"><span>                                   data <span class="op">=</span> <span class="va">LeDang2022</span>,</span></span>
 <span class="r-in"><span>                                   ind_domi_as_first <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in extract_parseModel(model = tutorial_igsca_model, data = LeDang2022,     ind_domi_as_first = TRUE):</span> unused argument (ind_domi_as_first = TRUE)</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Fit the I-GSCA model</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">igsca_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">igsca_in</span>, <span class="fu">igsca</span><span class="op">(</span>Z0 <span class="op">=</span> <span class="va">Z0</span>,</span></span>
@@ -183,7 +182,7 @@ TODO: Cite the GSCA Pro SEM reference instead of GSCA Pro's Example</p>
 <span class="r-in"><span>                            indicator_type <span class="op">=</span> <span class="va">indicator_type</span>,</span></span>
 <span class="r-in"><span>                            ind_domi <span class="op">=</span> <span class="va">ind_domi</span><span class="op">)</span></span></span>
 <span class="r-in"><span>                            <span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'igsca_in' not found</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in igsca(Z0 = Z0, W0 = W0, C0 = C0, B0 = B0, con_type = con_type,     indicator_type = indicator_type, ind_domi = ind_domi):</span> could not find function "igsca"</span>
 </code></pre></div>
     </div>
   </div>
