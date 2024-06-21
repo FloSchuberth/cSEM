@@ -609,7 +609,7 @@ extract_parseModel <-
     csemify <- parseModel(.model = model)
     
     Z0 <- data[, csemify$indicators]
-    
+    # browser()
     # B0 <- csemify$structural
     B0 <- t(csemify$structural)
     W0 <- t(csemify$measurement)
@@ -619,10 +619,10 @@ extract_parseModel <-
     
     # Constructing indicator_type
     indicator_type <- vector(mode = "character", length = ncol(csemify$measurement))
-    indicator_type <- rep("Composite", length(indicator_type)) # Default value must be "Composite" because of how the measurement matrix returned by parseModel uses 0 to denote both composite variables and the absence of any corresponding construct variable.
+    indicator_type <- rep("Composite", length(indicator_type)) # FIXME: This should be removed, only added for simple testing purposes
     names(indicator_type) <- colnames(csemify$measurement)
     
-    
+    # browser()
     for (gamma_idx in rownames(csemify$measurement)) {
       for (indicator in colnames(csemify$measurement)) {
         if (csemify$construct_type[gamma_idx] == "Common factor") {
@@ -631,17 +631,6 @@ extract_parseModel <-
             indicator_type[indicator] <- "Common factor"
           }
           
-        } else if (csemify$construct_type[gamma_idx] == "Composite") {
-          # The reason why the following code breaks behavior is because
-          # it makes indicator_type turn into all "Composite because in the parseModel's return
-          # the value 0 in the measurement matrix denotes both a composite and
-          #  no correspondence to any latent variable
-          # 
-          # if(csemify$measurement[gamma_idx, indicator] == 0) {
-          #   indicator_type[indicator] <- "Composite"
-          # }
-        } else {
-          warning("Indicator does not correspond to either a Composite or Common factor. Unsupported behavior may ensue.")
         }
       }
     }
