@@ -117,23 +117,7 @@ for (i in seq_len(length(GSCAPro))) {
   GSCAPro[[i]] <- x
 }
 
-# Rename parts for facility in interaction
-names(GSCAPro) <-
-  gsub(
-    pattern = "Tutorial_IGSCA_model1_",
-    replacement = "",
-    x = names(GSCAPro),
-    fixed = TRUE
-  )
-
-names(GSCAPro) <-
-  gsub(
-    pattern = "_ver0.csv",
-    replacement = "",
-    x = names(GSCAPro),
-    fixed = TRUE
-  )
-
+# TODO: Rename names(GSCAPro) to something more concise, using regex
 # TODO: Figure out how to compare the values of GSCAPro and Matlab
 
 
