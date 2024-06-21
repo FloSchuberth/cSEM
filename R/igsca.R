@@ -404,17 +404,17 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, ov_t
 
 #' Update Weights and X (?)
 #'
-#' @param Z Standardized Data
+#' @param Z 
 #' @param U 
-#' @param D Unique Error
-#' @param C Loadings
-#' @param n_constructs  Number of constructs
-#' @param B Path Coefficients
+#' @param D 
+#' @param C 
+#' @param n_constructs 
+#' @param B 
 #'
 #' @return Two matrices:
-#' - *X*: Remaining part of data (Z) after accounting for uniqueness terms (U) and (D), used for estimating composite loadings
-#' - *WW*: Weights after accounting for current Loading and Path-Coefficients values, used for estimating common-factor loadings
-#' 
+#' - *X*: Remaining part of data (Z) after accounting for uniqueness terms (U) and (D)(?)
+#' - *WW*: *presumably* Weights after accounting for current Loading and Path-Coefficients values.
+#' TODO: Double check that I've got this right.
 #' @export
 #'
 update_X_weights <- function(Z, U, D, C, n_constructs, B) {
