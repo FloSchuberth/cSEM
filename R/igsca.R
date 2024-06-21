@@ -406,8 +406,8 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, indi
 
 #' Update Pseudo Weights for Composites and Common-Factors
 #' 
-#' Computation of WW matrix was converted between Matlab to R based on page 44 of \insertCite{Hiebeler2015}{cSEM}.  
-#' FIXME: Why doesn't the citation work?
+#' Computation of WW matrix was converted between Matlab to R based on page 44 of \insertCite{Hiebeler2015}{cSEM}. 
+#'  TODO: I can't figure out why this hiebeler citation isn't working.
 #' @param Z Standardized data matrix
 #' @param D Matrix of estimated unique error
 #' @param U Matrix of estimates related to unique error

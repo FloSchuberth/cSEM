@@ -28,7 +28,7 @@ Two matrices:
 }
 \description{
 Computation of WW matrix was converted between Matlab to R based on page 44 of \insertCite{Hiebeler2015}{cSEM}.
-FIXME: Why doesn't the citation work?
+TODO: I can't figure out why this hiebeler citation isn't working.
 }
 \references{
 \insertAllCited{}
