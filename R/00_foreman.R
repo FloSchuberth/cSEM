@@ -127,7 +127,7 @@ foreman <- function(
       # to PLS ModeA weights.
       W$W <- scaleWeights(S, W$W)
       
-    } else {
+    } else if (all(csem_model$construct_type == "Composite")) {
       W <- calculateWeightsGSCA(
         .X                        = X,
         .S                        = S,

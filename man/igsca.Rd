@@ -96,10 +96,22 @@ Numberofjobinterviews ~ NetworkingBehavior
 Numberofjoboffers ~ NetworkingBehavior
 "
 
+# Load the data
 data(LeDang2022)
 
-csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "IGSCA",
-.dominant_indicators = NULL, .tolerance = 0.0001)
+# Pre-generate the required matrices for the algorithm and assume that the first indicator for each latent variable is the dominant indicator.
+igsca_in <- extract_parseModel(model = tutorial_igsca_model,
+                                   data = LeDang2022)
+
+# Fit the I-GSCA model
+(igsca_out <- with(igsca_in, igsca(Z0 = Z0,
+                            W0 = W0,
+                            C0 = C0,
+                            B0 = B0,
+                            con_type = con_type,
+                            indicator_type = indicator_type,
+                            .dominant_indicators = NULL)
+                            ))
 }
 \references{
 \insertAllCited{}
