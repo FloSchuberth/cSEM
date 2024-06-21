@@ -364,11 +364,14 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, ov_t
   Gamma <- Z %*% W
   D <- diag(n_indicators)
   
+  
+  # TODO: Does the LAPACK argument for qr() still matter? Why does `complete` matter?
   # Solution for Q is copied from estimators_weights.R
   Q <- qr.Q(qr(Gamma), complete =  TRUE)
   F_o <- Q[, (n_constructs + 1):n_case, drop = FALSE]
-  
-  # svd between R and Matlab by Ahmed Fasih on February 1/2017 https://stackoverflow.com/a/41972818
+  # FIXME: Should compare the svd of matlab and R, unsure if it matters that they don't match
+  # FIXME: Come back to this stack overflow thing for proper citation
+  # Ahmed Fasih https://stackoverflow.com/a/41972818
   svd_out <- (D %*% t(Z) %*% F_o) |>
     {
       \(mx) svd(mx, nu = nrow(mx),  nv = ncol(mx))
@@ -376,7 +379,7 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, ov_t
   u <- svd_out$u
   v <- svd_out$v
   
-  # Utilde deviates from Matlab because of the SVD
+  # TODO: Utilde deviates from Matlab because of the SVD
   Utilde <- v[, 1:n_indicators] %*% t(u)
   U <- F_o %*% Utilde
   D <- diag(diag(t(U) %*% Z))
