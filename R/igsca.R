@@ -79,9 +79,9 @@ igsca <-
   
 # Auxiliary Variables -----------------------------------------------------
   ncase <- nrow(Z0)
-  n_indicators <- ncol(Z0)
+  nvar <- ncol(Z0)
   n_constructs <- ncol(W0)
-  ntv <- n_indicators + n_constructs
+  ntv <- nvar + n_constructs
   
   windex <- which(c(W0) == 1) 
   cindex <- which(c(C0) == 1)
@@ -105,7 +105,7 @@ igsca <-
     Z0 = Z0,
     W0 = W0,
     B0 = B0,
-    n_indicators = n_indicators,
+    nvar = nvar,
     ncase = ncase,
     n_constructs = n_constructs,
     ov_type = ov_type
@@ -151,7 +151,7 @@ igsca <-
       
       for (j in seq_len(n_constructs)) {
       # After each cycle, the Gamma, W and V matrices are updated
-        tot <- n_indicators + j
+        tot <- nvar + j
         windex_j <- (W0[, j] == 1)
         Xj <- X[, windex_j]
         
@@ -199,7 +199,7 @@ igsca <-
 
       updated_C_B_D <- update_C_B_D(
         X = X,
-        n_indicators = n_indicators,
+        nvar = nvar,
         Gamma = Gamma,
         cindex = cindex,
         C = C,
@@ -407,7 +407,7 @@ gsca_inione <- function(Z0, W0, B0) {
 #' @param Z0 
 #' @param W0 
 #' @param B0 
-#' @param n_indicators 
+#' @param nvar 
 #' @param ncase 
 #' @param n_constructs 
 #' @param ov_type 
@@ -418,7 +418,7 @@ gsca_inione <- function(Z0, W0, B0) {
 #' 2) Standardized data matrix (Z)
 #' 3) SVD Decomposition of ...*something* to get U and V matrices.
 #' TODO: Figure out what the SVD decomposition is for
-prepare_for_ALS <- function(Z0, W0, B0, n_indicators, ncase, n_constructs, ov_type) {
+prepare_for_ALS <- function(Z0, W0, B0, nvar, ncase, n_constructs, ov_type) {
   bZ0 <- Z0
   
   
@@ -434,10 +434,10 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, ncase, n_constructs, ov_ty
   B <- initial_est$B
   
   
-  V <- cbind(diag(n_indicators), W)
+  V <- cbind(diag(nvar), W)
   Z <- scale(bZ0, center = TRUE, scale = TRUE) / sqrt(ncase - 1)
   Gamma <- Z %*% W
-  D <- diag(n_indicators)
+  D <- diag(nvar)
   
   
   # TODO: Does the LAPACK argument for qr() still matter? Why does `complete` matter?
@@ -455,7 +455,7 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, ncase, n_constructs, ov_ty
   v <- svd_out$v
   
   # TODO: Utilde deviates from Matlab because of the SVD
-  Utilde <- v[, 1:n_indicators] %*% t(u)
+  Utilde <- v[, 1:nvar] %*% t(u)
   U <- F_o %*% Utilde
   D <- diag(diag(t(U) %*% Z))
   D[ov_type == 0, ov_type == 0] <- 0
@@ -564,7 +564,7 @@ update_composite_LV <-
 #' Update Loadings, Path-Coefficients and Uniqueness Terms After Updating Latent Variables
 #'
 #' @param X 
-#' @param n_indicators 
+#' @param nvar 
 #' @param Gamma 
 #' @param cindex 
 #' @param C 
@@ -586,7 +586,7 @@ update_composite_LV <-
 #'
 update_C_B_D <-
   function(X,
-           n_indicators,
+           nvar,
            Gamma,
            cindex,
            C,
@@ -598,7 +598,7 @@ update_C_B_D <-
            Z,
            ov_type) {
     t1 <- c(X)
-    M1 <- kronecker(diag(n_indicators), Gamma)
+    M1 <- kronecker(diag(nvar), Gamma)
     M1 <- M1[, cindex]
     C[cindex] <- MASS::ginv(t(M1) %*% M1) %*% (t(M1) %*% t1)
     
@@ -618,7 +618,7 @@ update_C_B_D <-
       }()
     u <- svd_out2$u
     v <- svd_out2$v
-    Utilde <- v[, 1:n_indicators] %*% t(u)
+    Utilde <- v[, 1:nvar] %*% t(u)
     U <- F_o %*% Utilde
     D <- diag(diag(t(U) %*% Z))
     D[ov_type != 1, ov_type != 1] <- 0
