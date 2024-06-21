@@ -87,6 +87,7 @@
 <url><loc>/reference/gsca_inione.html</loc></url>
 <url><loc>/reference/handleArgs.html</loc></url>
 <url><loc>/reference/igsca.html</loc></url>
+<url><loc>/reference/igsca_sim.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
 <url><loc>/reference/infer.html</loc></url>
 <url><loc>/reference/inference_helper.html</loc></url>
@@ -94,6 +95,7 @@
 <url><loc>/reference/moments.html</loc></url>
 <url><loc>/reference/nonlinear_estimation_utilities.html</loc></url>
 <url><loc>/reference/parseModel.html</loc></url>
+<url><loc>/reference/parse_GSCAPro_FullResults.html</loc></url>
 <url><loc>/reference/plot.cSEMIPMA.html</loc></url>
 <url><loc>/reference/plot.cSEMNonlinearEffects.html</loc></url>
 <url><loc>/reference/plot.cSEMPredict.html</loc></url>
@@ -134,5 +136,6 @@
 <url><loc>/reference/update_composite_LV.html</loc></url>
 <url><loc>/reference/update_factor_LV.html</loc></url>
 <url><loc>/reference/verify.html</loc></url>
+<url><loc>/reference/write_for_matlab.html</loc></url>
 </urlset>
 
