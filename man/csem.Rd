@@ -14,7 +14,7 @@ csem(
 .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
                            "MINVAR", "GENVAR","GSCA", "IGSCA", "PCA",
                            "unit", "bartlett", "regression"),
-.conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative", "sum_diff_absolute", "mean_diff_absolute"),
+.conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative", "sum_diff_absolute"),
 .disattenuate          = TRUE,
 .dominant_indicators   = NULL,
 .estimate_structural   = TRUE,

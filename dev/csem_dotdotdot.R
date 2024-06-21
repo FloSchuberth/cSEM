@@ -28,7 +28,7 @@
 
 args_csem_dotdotdot <- function(
   .approach_cor_robust     = c("none", "mcd", "spearman"),
-  .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative", "sum_diff_absolute", "mean_diff_absolute"),
+  .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative"),
   .dominant_indicators     = NULL,
   .estimate_structural     = TRUE,
   .iter_max                = 100,

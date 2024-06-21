@@ -235,10 +235,6 @@ calculateOuterWeightsPLS <- function(
 #'   \item{`sum_diff_absolute`}{Checks if the sum of the element-wise absolute
 #'                              difference between two matrices `.W_new` and `W.old` is smaller than a
 #'                              given tolerance}
-#'   \item{`mean_diff_absolute`}{Checks if the mean of the element-wise absolute
-#'                              difference between two matrices `.W_new` and `W.old` is smaller than a
-#'                              given tolerance
-#'   }
 #' }
 #'
 #' @usage checkConvergence(
@@ -275,9 +271,6 @@ checkConvergence <- function(
     }, 
     "sum_diff_absolute" = {
       (sum(abs(.W_old - .W_new))) < .tolerance
-    },
-    "mean_diff_absolute" = {
-      (mean(abs(.W_old - .W_new))) < .tolerance
     }
   )
 }

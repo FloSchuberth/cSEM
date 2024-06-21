@@ -41,10 +41,6 @@ and \code{W.old} is smaller than a given tolerance.}
 \item{\code{sum_diff_absolute}}{Checks if the sum of the element-wise absolute
 difference between two matrices \code{.W_new} and \code{W.old} is smaller than a
 given tolerance}
-\item{\code{mean_diff_absolute}}{Checks if the mean of the element-wise absolute
-difference between two matrices \code{.W_new} and \code{W.old} is smaller than a
-given tolerance
-}
 }
 }
 \keyword{internal}
