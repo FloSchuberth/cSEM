@@ -19,14 +19,6 @@ update_X_weights(Z, U, D, C, nlv, B)
 
 \item{B}{}
 }
-\value{
-Two matrices:
-\itemize{
-\item \emph{X}: Remaining part of data (Z) after accounting for uniqueness terms (U) and (D)(?)
-\item \emph{WW}: \emph{presumably} Weights after accounting for current Loading and Path-Coefficients values.
-TODO: Double check that I've got this right.
-}
-}
 \description{
 Update Weights and X (?)
 }

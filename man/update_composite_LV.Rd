@@ -25,10 +25,6 @@ update_composite_LV(ntv, tot, nlv, j, W, A, V, X, windex_j)
 
 \item{windex_j}{}
 }
-\value{
-theta: A matrix that will later be used to update the weights for the composite variable.
-TODO: Double check that this is for weights only?
-}
 \description{
 Update Composite Latent Variables
 }

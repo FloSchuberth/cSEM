@@ -11,12 +11,6 @@ get_lavaan_table_igsca_gscapro(gscapro_in, model)
 
 \item{model}{}
 }
-\value{
-Table of GSCA Pro results of Weights, Loadings, Path Coefficients and Uniqueness Terms in lavaan style.
-}
 \description{
 Assumes that every indicator loads onto only one latent variable (composite/factor)
-}
-\details{
-Expects output from parse_GSCAPro_FullResults.
 }

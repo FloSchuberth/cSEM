@@ -66,7 +66,7 @@ The code here generally assumes that every indicator corresponds to a single lat
 require(here)
 require(readxl)
 
-# Specify the model according to GSCA Pro's example
+
 tutorial_igsca_model <- "
 # Composite Model
 NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + Behavior7 + Behavior8 + Behavior9
@@ -87,22 +87,17 @@ Numberofjobinterviews ~ NetworkingBehavior
 Numberofjoboffers ~ NetworkingBehavior
 "
 
-# Load the data
 dat <- readxl::read_excel(here::here("dev", "Notes", "data", "mmc1.xlsx")) 
 
-# Pre-generate the required matrices for the algorithm and assume that the first indicator for each latent variable is the dominant indicator.
+
 igsca_sim_in <- extract_parseModel(model = tutorial_igsca_model,
                                    data = dat,
                                    ind_domi_as_first = TRUE)
 
-# Fit the I-GSCA model
-(igsca_sim_out <- igsca_sim(z0 = igsca_sim_in$z0,
-                            W0 = igsca_sim_in$W0,
-                            C0 = igsca_sim_in$C0,
-                            B0 = igsca_sim_in$B0,
-                            lv_type = igsca_sim_in$lv_type,
-                            ov_type = igsca_sim_in$ov_type,
-                            ind_domi = igsca_sim_in$ind_domi,
+
+(igsca_sim_out <- igsca_sim(z0 = igsca_sim_in$z0, W0 = igsca_sim_in$W0, C0 = igsca_sim_in$C0,
+                            B0 = igsca_sim_in$B0, lv_type = igsca_sim_in$lv_type,
+                            ov_type = igsca_sim_in$ov_type, ind_domi = igsca_sim_in$ind_domi,
                             nbt = 0,
                             devmode = FALSE,
                             swap_step = "noswap")

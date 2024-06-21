@@ -17,9 +17,6 @@ get_lavaan_table_igsca_matrix(model, weights, loadings, uniqueD, paths)
 
 \item{paths}{}
 }
-\value{
-Table of Weights, Loadings, Path-Coefficients and Uniqueness terms from i-gsca algorithms in Matlab or R.
-}
 \description{
 Assumes that indicators only load onto one factor and that there are no cross-factor loadings
 }

@@ -13,11 +13,6 @@ update_factor_LV(WW, windex_j, j)
 
 \item{j}{}
 }
-\value{
-theta: Used to update factor latent variables -- after accounting for loadings and path-coefficients.
-
-TODO: Double check that this is correct.
-}
 \description{
 Update Factor Latent Variable
 }

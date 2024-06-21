@@ -22,7 +22,7 @@ flip_signs_ind_domi(nlv, Z, ind_domi, j, Gamma, C, B)
 \item{B}{}
 }
 \value{
-List of matrices: Gamma, Loadings (C) and Path-Coefficients (B)
+Gamma
 }
 \description{
 Flip signs of Gamma, Loadings and Path-Coefficients Cells Based on Dominant Indicator

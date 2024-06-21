@@ -9,9 +9,6 @@ write_for_matlab(extracted_matrices)
 \arguments{
 \item{extracted_matrices}{Object returned by extract_parseModel}
 }
-\value{
-Writes the matrices from extract_parseModel() to the appropriate test directory for the Matlab implementation of igsca_sim to run.
-}
 \description{
 Writes the extracted matrices to run with igsca_sim_test.m
 }

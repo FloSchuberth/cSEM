@@ -31,16 +31,6 @@ update_C_B_D(X, nvar, Gamma, cindex, C, nlv, bindex, B, ncase, D, Z, ov_type)
 
 \item{ov_type}{}
 }
-\value{
-List of matrices:
-\enumerate{
-\item Uniqueness terms (D) and (\eqn{D^2})
-\item Non-zero Path-Coefficients (if Paths are specified in B0) or non-zero Loadings
-\item Path-Coefficients (B) and Loadings (C)
-\item U, Utilde, v, F_o, Q, U \emph{something}
-TODO: Name these accessory matrices
-}
-}
 \description{
 Update Loadings, Path-Coefficients and Uniqueness Terms After Updating Latent Variables
 }

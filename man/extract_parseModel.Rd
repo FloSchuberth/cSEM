@@ -14,7 +14,7 @@ extract_parseModel(model, data, ind_domi_as_first = TRUE)
 \item{ind_domi_as_first}{Boolean for whether the first indicator for each latent factor should be chosen as the dominant indicator}
 }
 \value{
-Returns a list of matrices required for igsca_sim() to run: z0, W0, B0, C0, lv_type, ov_type, ind_domi.
+z0, W0, B0, C0, lv_type, ov_type, ind_domi
 }
 \description{
 A parseModel extractor function for the purposes of running I-GSCA code example
