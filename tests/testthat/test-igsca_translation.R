@@ -96,21 +96,9 @@ testthat::test_that("Matlab_R_Compared_Names", {
 })
  
 
-
-# Compare Matlab and R ----------------------------------------------------
-
-# TODO: Compare matlab and R
-
-
-# Compare GSCAPro and R ---------------------------------------------------
-
-# TODO: Compare GSCAPro and R
- 
-
 # Compare GSCAPro and Matlab ----------------------------------------------
 
-
-# TODO: Need to make a custom parser for the full results
+# TODO: Compare GSCAPro and matlab
 GSCAPro_in <- list("dev", "Notes", "data", "GSCAPro_1_2_1Output") |>
   {\(x) here::here(x, list.files(here::here(x)))}()
 GSCAPro <- vector(mode = "list", length = length(GSCAPro_in))
@@ -146,7 +134,22 @@ names(GSCAPro) <-
     fixed = TRUE
   )
 
-
-
-# TODO: Compare GSCAPro and matlab
 # TODO: Figure out how to compare the values of GSCAPro and Matlab
+
+
+# Compare Matlab and R ----------------------------------------------------
+
+# TODO: Compare matlab and R
+
+
+# Compare GSCAPro and R ---------------------------------------------------
+
+# TODO: Compare GSCAPro and R
+ 
+
+
+
+
+
+
+
