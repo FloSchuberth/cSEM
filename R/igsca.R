@@ -1,15 +1,22 @@
 #' R Implementation of igsca_sim.m
 #' 
-#' This R implementation of I-GSCA is based on the Matlab implementation in igsca_sim.m by Dr. Heungsun Hwang.
+#' This is a streamlined R implementation of I-GSCA, based on the matlab implementation in igsca_sim.m by Heungsun Hwang. 
 #' 
-#' @param Z0 Data matrix of N cases (measurements) x J indicators with named columns
-#' @param W0 Indicator matrix of weights: J indicators (rows) and their corresponding Gamma construct variables (columns).
-#' @param C0 Indicator matrix of loadings: J indicators (rows) and their corresponding Gamma construct variable (columns).
-#' @param B0 Square indicator matrix of path coefficients: from-construct-variable (rows) and to-construct-variable (columns). The order of Gamma construct variables should match the order in C0 and W0.
+#' The code here generally assumes that every indicator corresponds to a single construct. (A construct is a superset consisting of latent and emergent variables. Latent variables are sometimes referred to as common-factor/factor variables; and emergent variables are sometimes referred to as component/composite variables.)
+#' 
+#' 
+#' @param Z0 Input matrix. Should contain named columns in this form.
+#' @param W0 Indicator matrix of weights: indicators (rows) and their corresponding construct variable (columns).
+#' @param C0 Indicator matrix of loadings: indicators (rows) and their corresponding construct variable (columns).
+#' @param B0 Square indicator matrix of path coefficients: from-construct-variable (rows) and to-construct-variable (columns). The order of construct variables should match the order in C0 and W0.
 #' @param con_type A vector that denotes whether each construct variable (columns in W0 and C0) is a common factor or composite. Its length should be equal to the number of columns of W0 and C0. 
-#' @param ov_type An indicator vector that indices whether a j indicator (rows of W0 and C0) corresponds to a common factor variable (1) or a composite variable (0). This vector is important for computing the uniqueness terms (D) because it zeros the entries for composite indicators. 
+#' @param ov_type An indicator vector that indices whether an indicator (rows of W0 and C0) corresponds to a common factor variable (1) or a composite variable (0). This vector is important for computing the uniqueness terms (D) because it zeros the entries for composite indicators. 
+#' 
 #' @param ind_domi A numeric vector that indices the dominant indicator for each construct variable. *It is to be clarified whether this should only apply to factor latent variables or also composite latent variables.* This is important for ensuring that the signs of the path-coefficients and loadings are consistent. It is sometimes the case in composite-based structural equation modelling methods that loadings/path-coefficients may have the opposite sign. The length of this vector should be equal to the number of construct variables and each value should represent the row number of the dominant indicator for that construct variable. 
+#' 
+#' 
 #' @param itmax Maximum number of iterations of the Alternating Least Squares (ALS) algorithm.
+#' 
 #' @param ceps Minimum amount of absolute change in the estimates of the path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero, meaning ther are no path-coefficients) between ALS iterations before ending the optimization.
 #' 
 #' @author Michael S. Truong
@@ -72,8 +79,8 @@ igsca <-
   
 
   
-# Initialize Auxiliary Computational Variables -----------------------------------------------------
-  n_case <- nrow(Z0)
+# Auxiliary Variables -----------------------------------------------------
+  ncase <- nrow(Z0)
   n_indicators <- ncol(Z0)
   n_constructs <- ncol(W0)
   ntv <- n_indicators + n_constructs
@@ -101,7 +108,7 @@ igsca <-
     W0 = W0,
     B0 = B0,
     n_indicators = n_indicators,
-    n_case = n_case,
+    ncase = ncase,
     n_constructs = n_constructs,
     ov_type = ov_type
   )
@@ -201,7 +208,7 @@ igsca <-
         n_constructs = n_constructs,
         bindex = bindex,
         B = B,
-        n_case = n_case,
+        ncase = ncase,
         D = D,
         Z = Z,
         ov_type = ov_type
@@ -367,13 +374,13 @@ gsca_inione <- function(Z0, W0, B0) {
 #' @param W0 
 #' @param B0 
 #' @param n_indicators 
-#' @param n_case 
+#' @param ncase 
 #' @param n_constructs 
 #' @param ov_type 
 #'
 #' @return List of matrices to put through the Alternating Least Squared (ALS) algorithm: 
 #'
-prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, ov_type) {
+prepare_for_ALS <- function(Z0, W0, B0, n_indicators, ncase, n_constructs, ov_type) {
   
   
   
@@ -390,7 +397,7 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, ov_t
   
   
   V <- cbind(diag(n_indicators), W)
-  Z <- scale(Z0, center = TRUE, scale = TRUE) / sqrt(n_case - 1)
+  Z <- scale(Z0, center = TRUE, scale = TRUE) / sqrt(ncase - 1)
   Gamma <- Z %*% W
   D <- diag(n_indicators)
   
@@ -398,7 +405,7 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, ov_t
   # TODO: Does the LAPACK argument for qr() still matter? Why does `complete` matter?
   # Solution for Q is copied from estimators_weights.R
   Q <- qr.Q(qr(Gamma), complete =  TRUE)
-  F_o <- Q[, (n_constructs + 1):n_case, drop = FALSE]
+  F_o <- Q[, (n_constructs + 1):ncase, drop = FALSE]
   # FIXME: Should compare the svd of matlab and R, unsure if it matters that they don't match
   # FIXME: Come back to this stack overflow thing for proper citation
   # Ahmed Fasih https://stackoverflow.com/a/41972818
@@ -526,7 +533,7 @@ update_composite_LV <-
 #' @param n_constructs 
 #' @param bindex 
 #' @param B 
-#' @param n_case 
+#' @param ncase 
 #' @param D 
 #' @param Z 
 #' @param ov_type 
@@ -548,7 +555,7 @@ update_C_B_D <-
            n_constructs,
            bindex,
            B,
-           n_case,
+           ncase,
            D,
            Z,
            ov_type) {
@@ -564,7 +571,7 @@ update_C_B_D <-
     
     # Solution for Q is copied from estimators_weights.R
     Q <- qr.Q(qr(Gamma), complete =  TRUE)
-    F_o <- Q[, (n_constructs + 1):n_case]
+    F_o <- Q[, (n_constructs + 1):ncase]
     # FIXME: warning("It's unclear to me whether this SVD is safe. The Matlab code seems to either do a 'normal' svd or a economy svd depending on the dimensionality of the input matrix. Should look into this more.")
     # https://www.mathworks.com/help/matlab/ref/double.svd.html?searchHighlight=svd&s_tid=srchtitle_support_results_1_svd#d126e1597915
     svd_out2 <- (D %*% t(Z) %*% F_o) |>
