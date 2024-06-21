@@ -108,15 +108,16 @@ igsca <-
     est0 <- est + 1 
     it <- 0
     
-### Optimization Loop: Alternating Between Weights and Loadings ---------------
+### Optimization Loop: Alternating Between Weights and Loadings -----------------------
     while ((sum(abs(est0 - est)) > ceps) && (it <= itmax)) {
 
-      # Update Counter Variables
+      # Counter Things
       it <- it + 1
       est0 <- est
   
+
 #### Compute Pseudo-Weights --------------------------------------------------
-      updated_X_WW_pseudo_weights <- update_X_WW_pseudo_weights(
+      updated_X_weights <- update_X_weights(
         Z = Z,
         U = U,
         D = D,
@@ -125,7 +126,7 @@ igsca <-
         B = B
       )
       # Creates X (for updating Composites) and WW (for updating Factors)
-      list2env(updated_X_WW_pseudo_weights[c("X", "WW")], envir = environment())
+      list2env(updated_X_weights, envir = environment())
 
 #### Sequential Updating of Constructs ---------------------------------------
 
@@ -401,7 +402,7 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, ov_t
   ))
 }
 
-#' Update Pseudo Weights for Composites and Common-Factors
+#' Update Weights and X (?)
 #'
 #' @param Z Standardized Data
 #' @param U 
@@ -416,7 +417,7 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, ov_t
 #' 
 #' @export
 #'
-update_X_WW_pseudo_weights <- function(Z, U, D, C, n_constructs, B) {
+update_X_weights <- function(Z, U, D, C, n_constructs, B) {
   # X deviates from Matlab because it is an offspring of svd_out
   X <- Z - U %*% D
   # FIXME: warning("I don't quite understand why this is the equivalent of the Matlab expression, revisit page 44 of Hiebeler 2015 R and Matlab")
