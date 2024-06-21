@@ -25,8 +25,8 @@ data("LeDang2022")
 
 
 igsca_in <- extract_parseModel(model = tutorial_igsca_model,
-                               data = LeDang2022,
-                               ind_domi_as_first = TRUE)
+                                   data = LeDang2022,
+                                   ind_domi_as_first = TRUE)
 
 ## Testing Input Matrices From extract_parseModel -------------------------------
 
@@ -35,7 +35,7 @@ testthat::expect_identical(igsca_in$W0, igsca_in$C0,
 
 ## Compute and tabulate igsca ----------------------------------------------------
 
-igsca_out <- with(igsca_in, igsca(Z0 = Z0,
+igsca_out <- with(igsca_in, igsca(z0 = z0,
                            W0 = W0,
                            C0 = C0,
                            B0 = B0,

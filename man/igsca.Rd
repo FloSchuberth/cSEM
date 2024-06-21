@@ -18,7 +18,8 @@ igsca(
 )
 }
 \arguments{
-\item{z0}{Input matrix. Should contain named columns in this form.}
+\item{z0}{Input data-frame/matrix. Should contain named columns.
+TODO: Clarify whether it should be data frame or matrix}
 
 \item{W0}{Indicator matrix of weights: indicators (rows) and their corresponding construct variable (columns).}
 
@@ -49,7 +50,7 @@ This is a streamlined R implementation of I-GSCA, based on the matlab implementa
 The code here generally assumes that every indicator corresponds to a single construct. (A construct is a superset consisting of latent and emergent variables. Latent variables are sometimes referred to as common-factor/factor variables; and emergent variables are sometimes referred to as component/composite variables.)
 }
 \examples{
-TODO: Cite the GSCA Pro SEM reference instead of GSCA Pro's Example
+
 # Specify the model according to GSCA Pro's example
 tutorial_igsca_model <- "
 # Composite Model
