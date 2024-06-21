@@ -15,11 +15,6 @@ Checks if the largest elementwise absolute rate of change
 (new - old / new) for two matrices .W_new
 and W.old is smaller than a given tolerance.
 
-sum_diff_absolute
-Checks if the sum of elementwise absolute
-difference between two matrices .W_new and W.old is smaller than a
-given tolerance
-
 
 
 "><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -112,11 +107,6 @@ smaller than a given tolerance.</p></dd>
 (new - old / new) for two matrices <code>.W_new</code>
 and <code>W.old</code> is smaller than a given tolerance.</p></dd>
 
-<dt><code>sum_diff_absolute</code></dt>
-<dd><p>Checks if the sum of elementwise absolute
-difference between two matrices <code>.W_new</code> and <code>W.old</code> is smaller than a
-given tolerance</p></dd>
-
 
 </dl></div>
 
@@ -143,7 +133,7 @@ given tolerance</p></dd>
 
 <dt id="arg--conv-criterion">.conv_criterion<a class="anchor" aria-label="anchor" href="#arg--conv-criterion"></a></dt>
 <dd><p>Character string. The criterion to use for the convergence check.
-One of: "<em>diff_absolute</em>", "<em>diff_squared</em>", "<em>diff_relative</em>", or "<em>sum_diff_absolute</em>". Defaults
+One of: "<em>diff_absolute</em>", "<em>diff_squared</em>", or "<em>diff_relative</em>". Defaults
 to "<em>diff_absolute</em>".</p></dd>
 
 

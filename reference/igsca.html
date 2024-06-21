@@ -85,10 +85,9 @@
 <span>  <span class="va">B0</span>,</span>
 <span>  <span class="va">con_type</span>,</span>
 <span>  <span class="va">indicator_type</span>,</span>
-<span>  <span class="va">.dominant_indicators</span>,</span>
+<span>  .dominant_indicators <span class="op">=</span> <span class="va">.dominant_indicators</span>,</span>
 <span>  .iter_max <span class="op">=</span> <span class="fl">100</span>,</span>
-<span>  .tolerance <span class="op">=</span> <span class="fl">1e-04</span>,</span>
-<span>  <span class="va">.conv_criterion</span></span>
+<span>  .tolerance <span class="op">=</span> <span class="fl">1e-04</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -205,7 +204,7 @@ the optimization.</p></dd>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">LeDang2022</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="va">LeDang2022</span>, <span class="va">tutorial_igsca_model</span>, .approach_weights <span class="op">=</span> <span class="st">"IGSCA"</span>,</span></span>
-<span class="r-in"><span>.dominant_indicators <span class="op">=</span> <span class="cn">NULL</span>, .tolerance <span class="op">=</span> <span class="fl">0.0001</span>, .conv_criterion <span class="op">=</span> <span class="st">"diff_absolute"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>.dominant_indicators <span class="op">=</span> <span class="cn">NULL</span>, .tolerance <span class="op">=</span> <span class="fl">0.0001</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>This unsafe exit needs to be fixed before merge</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $W</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 HonestyHumility Emotionality Extraversion Agreeableness</span>
