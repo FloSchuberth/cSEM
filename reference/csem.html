@@ -88,15 +88,13 @@
 <span>.approach_weights      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PLS-PM"</span>, <span class="st">"SUMCORR"</span>, <span class="st">"MAXVAR"</span>, <span class="st">"SSQCORR"</span>, </span>
 <span>                           <span class="st">"MINVAR"</span>, <span class="st">"GENVAR"</span>,<span class="st">"GSCA"</span>, <span class="st">"IGSCA"</span>, <span class="st">"PCA"</span>,</span>
 <span>                           <span class="st">"unit"</span>, <span class="st">"bartlett"</span>, <span class="st">"regression"</span><span class="op">)</span>,</span>
-<span>.conv_criterion        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"diff_absolute"</span>, <span class="st">"diff_squared"</span>, <span class="st">"diff_relative"</span>,</span>
-<span>                           <span class="st">"sum_diff_absolute"</span>, <span class="st">"mean_diff_absolute"</span><span class="op">)</span>,</span>
+<span>.conv_criterion        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"diff_absolute"</span>, <span class="st">"diff_squared"</span>, <span class="st">"diff_relative"</span>, <span class="st">"sum_diff_absolute"</span>, <span class="st">"mean_diff_absolute"</span><span class="op">)</span>,</span>
 <span>.disattenuate          <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>.dominant_indicators   <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>.estimate_structural   <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>.id                    <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>.instruments           <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>.iter_max              <span class="op">=</span> <span class="fl">100</span>,</span>
-<span>.GSCA_modes            <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>.normality             <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>.PLS_approach_cf       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dist_squared_euclid"</span>, <span class="st">"dist_euclid_weighted"</span>, </span>
 <span>                           <span class="st">"fisher_transformed"</span>, <span class="st">"mean_arithmetic"</span>,</span>
@@ -221,17 +219,6 @@ instruments for themselves. Defaults to <code>NULL</code>.</p></dd>
 If <code>iter_max = 1</code> and <code>.approach_weights = "PLS-PM"</code> one-step weights are returned.
 If the algorithm exceeds the specified number, weights of iteration step
 <code>.iter_max - 1</code>  will be returned with a warning. Defaults to <code>100</code>.</p></dd>
-
-
-<dt id="arg--gsca-modes">.GSCA_modes<a class="anchor" aria-label="anchor" href="#arg--gsca-modes"></a></dt>
-<dd><p>Either a named list specifying the mode that should be
-used for each composite in the form <code>"composite_name" = mode</code>, a single
-character string giving the mode that should be used for all composites.
-Possible single character string choices for <code>mode</code> are: "<em>canon</em>" for
-canonical composites, or "<em>nomo</em>" for nomological composites, or <code>NULL</code> for
-default behavior. Default behavior is to estimate nomological composites.
-Passed to (I-)GSCA estimating functions in <code><a href="calculateWeightsGSCA.html">calculateWeightsGSCA()</a></code>
-or <code><a href="calculateWeightsIGSCA.html">calculateWeightsIGSCA()</a></code>. Defaults to <code>NULL</code>.</p></dd>
 
 
 <dt id="arg--normality">.normality<a class="anchor" aria-label="anchor" href="#arg--normality"></a></dt>

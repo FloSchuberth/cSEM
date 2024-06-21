@@ -95,7 +95,6 @@ of GSCA can been found in Hwang and Takane (2014)
 <span>  .S                           <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.S</span>,</span>
 <span>  .csem_model                  <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.csem_model</span>,</span>
 <span>  .conv_criterion              <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.conv_criterion</span>,</span>
-<span>  .GSCA_modes                  <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.GSCA_modes</span>,</span>
 <span>  .iter_max                    <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.iter_max</span>,</span>
 <span>  .starting_values             <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.starting_values</span>,</span>
 <span>  .tolerance                   <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.tolerance</span></span>
@@ -122,17 +121,6 @@ of GSCA can been found in Hwang and Takane (2014)
 <dd><p>Character string. The criterion to use for the convergence check.
 One of: "<em>diff_absolute</em>", "<em>diff_squared</em>", "<em>diff_relative</em>", or "<em>sum_diff_absolute</em>". Defaults
 to "<em>diff_absolute</em>".</p></dd>
-
-
-<dt id="arg--gsca-modes">.GSCA_modes<a class="anchor" aria-label="anchor" href="#arg--gsca-modes"></a></dt>
-<dd><p>Either a named list specifying the mode that should be
-used for each composite in the form <code>"composite_name" = mode</code>, a single
-character string giving the mode that should be used for all composites.
-Possible single character string choices for <code>mode</code> are: "<em>canon</em>" for
-canonical composites, or "<em>nomo</em>" for nomological composites, or <code>NULL</code> for
-default behavior. Default behavior is to estimate nomological composites.
-Passed to (I-)GSCA estimating functions in <code>calculateWeightsGSCA()</code>
-or <code><a href="calculateWeightsIGSCA.html">calculateWeightsIGSCA()</a></code>. Defaults to <code>NULL</code>.</p></dd>
 
 
 <dt id="arg--iter-max">.iter_max<a class="anchor" aria-label="anchor" href="#arg--iter-max"></a></dt>

@@ -99,7 +99,6 @@ be more convenient to use <code><a href="csem.html">csem()</a></code> instead.</
 <span>  .disattenuate                <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.disattenuate</span>,</span>
 <span>  .dominant_indicators         <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.dominant_indicators</span>,</span>
 <span>  .estimate_structural         <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.estimate_structural</span>,</span>
-<span>  .GSCA_modes                  <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.GSCA_modes</span>,</span>
 <span>  .id                          <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.id</span>,</span>
 <span>  .instruments                 <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.instruments</span>,</span>
 <span>  .iter_max                    <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.iter_max</span>,</span>
@@ -185,17 +184,6 @@ Default to <code>NULL</code>.</p></dd>
 <dt id="arg--estimate-structural">.estimate_structural<a class="anchor" aria-label="anchor" href="#arg--estimate-structural"></a></dt>
 <dd><p>Logical. Should the structural coefficients
 be estimated? Defaults to <code>TRUE</code>.</p></dd>
-
-
-<dt id="arg--gsca-modes">.GSCA_modes<a class="anchor" aria-label="anchor" href="#arg--gsca-modes"></a></dt>
-<dd><p>Either a named list specifying the mode that should be
-used for each composite in the form <code>"composite_name" = mode</code>, a single
-character string giving the mode that should be used for all composites.
-Possible single character string choices for <code>mode</code> are: "<em>canon</em>" for
-canonical composites, or "<em>nomo</em>" for nomological composites, or <code>NULL</code> for
-default behavior. Default behavior is to estimate nomological composites.
-Passed to (I-)GSCA estimating functions in <code><a href="calculateWeightsGSCA.html">calculateWeightsGSCA()</a></code>
-or <code><a href="calculateWeightsIGSCA.html">calculateWeightsIGSCA()</a></code>. Defaults to <code>NULL</code>.</p></dd>
 
 
 <dt id="arg--id">.id<a class="anchor" aria-label="anchor" href="#arg--id"></a></dt>

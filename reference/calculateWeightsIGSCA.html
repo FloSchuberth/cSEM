@@ -81,11 +81,10 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculateWeightsIGSCA</span><span class="op">(</span></span>
 <span>  <span class="va">.data</span>,</span>
 <span>  .csem_model <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.csem_model</span>,</span>
-<span>  .conv_criterion <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.conv_criterion</span>,</span>
-<span>  .dominant_indicators <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.dominant_indicators</span>,</span>
-<span>  .GSCA_modes <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.GSCA_modes</span>,</span>
+<span>  .tolerance <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.tolerance</span>,</span>
 <span>  .iter_max <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.iter_max</span>,</span>
-<span>  .tolerance <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.tolerance</span></span>
+<span>  .dominant_indicators <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.dominant_indicators</span>,</span>
+<span>  .conv_criterion <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.conv_criterion</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -107,10 +106,16 @@ or a mix of several types.</p></dd>
 <dd><p>A (possibly incomplete) <a href="csem_model.html">cSEMModel</a>-list.</p></dd>
 
 
-<dt id="arg--conv-criterion">.conv_criterion<a class="anchor" aria-label="anchor" href="#arg--conv-criterion"></a></dt>
-<dd><p>Character string. The criterion to use for the convergence check.
-One of: "<em>diff_absolute</em>", "<em>diff_squared</em>", "<em>diff_relative</em>", or "<em>sum_diff_absolute</em>". Defaults
-to "<em>diff_absolute</em>".</p></dd>
+<dt id="arg--tolerance">.tolerance<a class="anchor" aria-label="anchor" href="#arg--tolerance"></a></dt>
+<dd><p>Minimum amount of absolute change in the estimates of the
+path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero,
+meaning there are no path-coefficients) between ALS iterations before ending
+the optimization.</p></dd>
+
+
+<dt id="arg--iter-max">.iter_max<a class="anchor" aria-label="anchor" href="#arg--iter-max"></a></dt>
+<dd><p>Maximum number of iterations of the Alternating Least Squares
+(ALS) algorithm.</p></dd>
 
 
 <dt id="arg--dominant-indicators">.dominant_indicators<a class="anchor" aria-label="anchor" href="#arg--dominant-indicators"></a></dt>
@@ -126,27 +131,10 @@ should represent the row number of the dominant indicator for that
 construct variable.</p></dd>
 
 
-<dt id="arg--gsca-modes">.GSCA_modes<a class="anchor" aria-label="anchor" href="#arg--gsca-modes"></a></dt>
-<dd><p>Either a named list specifying the mode that should be
-used for each composite in the form <code>"composite_name" = mode</code>, a single
-character string giving the mode that should be used for all composites.
-Possible single character string choices for <code>mode</code> are: "<em>canon</em>" for
-canonical composites, or "<em>nomo</em>" for nomological composites, or <code>NULL</code> for
-default behavior. Default behavior is to estimate nomological composites.
-Passed to (I-)GSCA estimating functions in <code><a href="calculateWeightsGSCA.html">calculateWeightsGSCA()</a></code>
-or <code>calculateWeightsIGSCA()</code>. Defaults to <code>NULL</code>.</p></dd>
-
-
-<dt id="arg--iter-max">.iter_max<a class="anchor" aria-label="anchor" href="#arg--iter-max"></a></dt>
-<dd><p>Maximum number of iterations of the Alternating Least Squares
-(ALS) algorithm.</p></dd>
-
-
-<dt id="arg--tolerance">.tolerance<a class="anchor" aria-label="anchor" href="#arg--tolerance"></a></dt>
-<dd><p>Minimum amount of absolute change in the estimates of the
-path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero,
-meaning there are no path-coefficients) between ALS iterations before ending
-the optimization.</p></dd>
+<dt id="arg--conv-criterion">.conv_criterion<a class="anchor" aria-label="anchor" href="#arg--conv-criterion"></a></dt>
+<dd><p>Character string. The criterion to use for the convergence check.
+One of: "<em>diff_absolute</em>", "<em>diff_squared</em>", "<em>diff_relative</em>", or "<em>sum_diff_absolute</em>". Defaults
+to "<em>diff_absolute</em>".</p></dd>
 
 </dl></div>
     <div id="value">
