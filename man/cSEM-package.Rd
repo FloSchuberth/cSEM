@@ -34,6 +34,7 @@ Authors:
 
 Other contributors:
 \itemize{
+  \item Michael S. Truong \email{emstruonger@gmail.com} (\href{https://orcid.org/0009-0006-4521-6528}{ORCID}) [contributor]
   \item Tamara Schamberger \email{tamara.schamberger@uni-wuerzburg.de} (\href{https://orcid.org/0000-0002-7845-784X}{ORCID}) [contributor]
   \item Michael Klesel (\href{https://orcid.org/0000-0002-2884-1819}{ORCID}) [contributor]
   \item Theo K. Dijkstra [contributor]

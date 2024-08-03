@@ -314,6 +314,7 @@ initializeIgscaEstimates <- function(Z0, W0, B0, .S = args_default()$.S) {
   w_index <- which(W0 != 0)
   aindex <- which(A0 != 0)
   
+  # The original algorithm may be doing this to use a consistent estimator of the standard deviation instead of unbiased
   Z <- scale(Z0, center = TRUE, scale = TRUE) * sqrt(N) / sqrt(N - 1)
   # Random Values to W and A
   W <- W0
