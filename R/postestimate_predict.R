@@ -452,7 +452,7 @@ predict <- function(
             
             thresholds <- lapply(thresholds, function(x) c(Tmin, x, Tmax))
             
-            if(any(apply(X_test[, cat_indicators], 2, max) >= lapply(thresholds, function(x) length(x)))){
+            if(any(apply(X_test[, cat_indicators,drop=FALSE], 2, max) >= lapply(thresholds, function(x) length(x)))){
               stop2("The test dataset contains more categories than the train dataset.")
             }
             
