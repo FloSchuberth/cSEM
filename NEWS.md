@@ -1,5 +1,7 @@
 # <Development version: cSEM 0.5.0.9000
 
+- Bug fix in the predict function when the model contains only a single categorical indicator. 
+
 - Bug fix in case of a second-order composite that is formed by one common factor. 
 
 - Implement  `calculateRelativeGoF`. Now the relative GoF can be obtained.
