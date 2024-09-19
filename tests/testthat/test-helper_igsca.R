@@ -24,7 +24,7 @@ Numberofjoboffers ~ NetworkingBehavior
 ## Compute and tabulate igsca ----------------------------------------------------
 mod <- csem(.data = LeDang2022,
                   tutorial_igsca_model,
-                  .approach_weights = "IGSCA",
+                  .approach_weights = "GSCA",
                   .dominant_indicators = NULL,
                   .tolerance = 0.0001,
                   .conv_criterion = "sum_diff_absolute")

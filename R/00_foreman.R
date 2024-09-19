@@ -114,7 +114,7 @@ foreman <- function(
     if(csem_model$model_type == "Nonlinear") {
       stop2("cSEM currently does not support GSCA and GSCAm for models containing nonlinear terms.")
     }
-    if(.disattenuate & all(csem_model$construct_type == "Common factor")) {
+    if(isTRUE(.disattenuate) & all(csem_model$construct_type == "Common factor")) {
       W <- calculateWeightsGSCAm(
         .X                        = X,
         .csem_model               = csem_model,
@@ -129,7 +129,7 @@ foreman <- function(
       # to PLS ModeA weights.
       W$W <- scaleWeights(S, W$W)
       
-    } else {
+    } else if (all(csem_model$construct_type == "Composite")) {
       W <- calculateWeightsGSCA(
         .X                        = X,
         .S                        = S,
@@ -139,26 +139,24 @@ foreman <- function(
         .tolerance                = .tolerance,
         .starting_values          = .starting_values
       )
+    } else {
+      # IGSCA Algorithm for a mixture of Common factor and Composite constructs
+      W <- calculateWeightsIGSCA(
+        .data = X_cleaned,
+        .csem_model = csem_model,
+        .tolerance = .tolerance,
+        .iter_max = .iter_max,
+        .dominant_indicators = .dominant_indicators,
+        .conv_criterion = .conv_criterion,
+        .S              = S
+      )
+      
+      # Transpose weights and loadings matrix for compatibility with calculateReliabilities()
+      W$W <- t(W$W)
+      W$C <- t(W$C)
+      # Transpose path coefficients matrix for comparability with IGSCA
+      W$B <- t(W$B)
     }
-    
-  } else if (.approach_weights == "IGSCA") {
-    
-    
-    W <- calculateWeightsIGSCA(
-      .data = X_cleaned,
-      .csem_model = csem_model,
-      .tolerance = .tolerance,
-      .iter_max = .iter_max,
-      .dominant_indicators = .dominant_indicators,
-      .conv_criterion = .conv_criterion,
-      .S              = S
-    )
-    
-    # Transpose weights and loadings matrix for compatibility with calculateReliabilities()
-    W$W <- t(W$W)
-    W$C <- t(W$C)
-    # Transpose path coefficients matrix for comparability with IGSCA
-    W$B <- t(W$B)
     
   } else if (.approach_weights == "unit") {
     W <- calculateWeightsUnit(.S                        = S,
@@ -182,6 +180,7 @@ foreman <- function(
 
   ## Dominant indicators:
   if(!is.null(.dominant_indicators) && (.approach_weights != "IGSCA")) {
+    # TODO: This might break the GSCA functionality -- originally IGSCA should bypass this
     W$W <- setDominantIndicator(
       .W = W$W, 
       .dominant_indicators = .dominant_indicators,
@@ -214,9 +213,9 @@ foreman <- function(
   Theta <- S - t(Lambda) %*% Lambda
   
   ## Calculate proxies/scores
-  if (.approach_weights == "IGSCA") {
+  if (.approach_weights == "GSCA") {
     H <- W$Construct_scores
-  } else if (.approach_weights != "IGSCA") {
+  } else if (.approach_weights != "GSCA") {
     H <- X %*% t(Weights)
   }
   
