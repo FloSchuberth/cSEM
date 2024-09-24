@@ -123,12 +123,6 @@ foreman <- function(
         .tolerance                = .tolerance,
         .starting_values          = .starting_values
       )
-      
-      # Weights need to be scaled s.t. the composite build using .X has
-      # variance of one. Note that scaled GSCAm weights are identical
-      # to PLS ModeA weights.
-      W$W <- scaleWeights(S, W$W)
-      
     } else if (all(csem_model$construct_type == "Composite")) {
       W <- calculateWeightsGSCA(
         .X                        = X,
