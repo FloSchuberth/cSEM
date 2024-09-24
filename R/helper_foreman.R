@@ -382,20 +382,23 @@ calculateReliabilities <- function(
   .PLS_approach_cf  = args_default()$.PLS_approach_cf,
   .reliabilities    = args_default()$.reliabilities
 ){
-  
-  
-  if (isTRUE(.disattenuate) &.approach_weights == "GSCA"){
-    # Weights need to be scaled s.t. the composite build using .X has
-    # variance of one. Note that scaled GSCAm weights are identical
-    # to PLS ModeA weights.
-    # 
-    # This applies to both GSCA_m and IGSCA
-    .W$W <- scaleWeights(.S, .W$W)
-  }
-  
-  
+
   modes   <- .W$Modes
-  W        <- .W$W
+  if (.approach_weights != "GSCA") {
+    W <- .W$W
+  } else if (.approach_weights == "GSCA") {
+    
+    W <- .W$W
+    
+    if (isTRUE(.disattenuate)) {
+      # Weights need to be scaled s.t. the composite build using .X has
+      # variance of one. Note that scaled GSCAm weights are identical
+      # to PLS ModeA weights.
+      #
+      # This applies to both GSCA_m and IGSCA
+      W <- scaleWeights(.S, .W$W)
+    }
+  }
   names_cf <- names(.csem_model$construct_type[.csem_model$construct_type == "Common factor"])
   names_c  <- setdiff(names(.csem_model$construct_type), names_cf)
   Q        <- rep(1, times = nrow(W))
