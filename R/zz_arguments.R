@@ -138,9 +138,11 @@
 #' @param .fit_measures Logical. (EXPERIMENTAL) Should additional fit measures 
 #'   be included? Defaults to `FALSE`. 
 #' @param .force Logical. Should .object be resampled even if it contains resamples
-#'   already?. Defaults to `FALSE`.
+#' already?. Defaults to `FALSE`.
 #' @param .full_output Logical. Should the full output of summarize be printed.
 #'   Defaults to `TRUE`.
+#' @param .GSCA_control Named list specifying various computational options for
+#'   GSCA-type models.
 #' @param .GSCA_modes Either a named list specifying the mode that should be
 #'   used for each composite in the form `"composite_name" = mode`, a single
 #'   character string giving the mode that should be used for all composites.
@@ -498,6 +500,7 @@ args_default <- function(.choices = FALSE) {
     .first_resample          = NULL,
     .force                   = FALSE,
     .full_output             = TRUE,
+    .GSCA_control            = list(.force_IGSCA = FALSE),
     .GSCA_modes              = NULL,
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
