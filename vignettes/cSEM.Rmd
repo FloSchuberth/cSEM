@@ -21,50 +21,45 @@ bibliography: ../inst/REFERENCES.bib
 # Preface
 
 Structural equation modeling (SEM) has been used and developed for decades
-across various research fields such as (among others) psychology, 
-sociology, and business research. 
+across a variety of research fields, including psychology, sociology, and business research. 
 
 As an almost inevitable consequence, a different terminology system and, to some extent,
 mathematical notation has evolved within each field over the years. This 
-"terminology mess" is one of the major obstacles in interdisciplinary
-research and (scientific) debates, since it hampers a broader understanding of 
-methodological issues, and, even worse, promotes systematic misuse (e.g., the use
-of Cronbach's alpha as an estimator for congeneric reliability). This is particularly
-true for users new to SEM or practitioners who are overwhelmed
-by terminology of their own field only to find that the term they
-just thought to have finally completely grasped is defined differently in another field, 
-making the confusion complete. A prime example is the term "formative" (measurement)
-which has been used to describe a causal-formative as well as [a composite model](#cmodel).
-See e.g., @Henseler2017 for a clarification.
+"terminological mess" is one of the major obstacles in interdisciplinary
+research and (scientific) debate, as it hinders a broader understanding of 
+methodological issues and, even worse, promotes systematic misuse (e.g., the use
+of Cronbach's alpha as an estimator for congeneric reliability). This is especially
+true for users who are new to SEM, or for practitioners who are overwhelmed
+by the terminology of their own field, only to find that the term they thought to have finally understood is defined differently in another field, 
+adding to the confusion. A prime example is the term "formative" (measurement)
+which has been used to describe both a causal-formative and [a composite model](#cmodel), see e.g., @Henseler2017 for a clarification.
 
-Ultimately, this is a matter of (mis)communication which, in our opinion, can 
-only be satisfactorily solved by establishing a clear, unambiguous definition 
-for each term and symbol that is used within the package. We emphasize that
-we do not seek to impose "our" conventions, nor do we claim they are the
-"correct" conventions, but merely seek to make communication
-between us (the authors of the package) and you (the package user) as
+Ultimately, this is a matter of (mis)communication, which we believe can 
+only be satisfactorily resolved by providing a clear, unambiguous definition 
+for each term and symbol used in the package. We emphasize that
+we are not trying to impose "our" conventions, nor are we claiming they are the
+"correct" conventions, but merely trying to make communication
+between us (the authors of the package) and you (users of the package) as
 unambiguous and error-free as possible. 
 
-Hence, we provide a [Terminology][Terminology] and a [Notation][Notation] 
-file that contains key terms and mathematical notation/symbols that we
-consider crucial, alongside our definition. Users are encouraged to read these
+Therefore, we provide a [Terminology][Terminology] file and a [Notation][Notation] 
+file, which contain key terms and mathematical notation/symbols that we
+consider important, along with our definition. Users are encouraged to read these
 files carefully to avoid potential misunderstandings.
 
-1. The [Terminology][Terminology] file contains each term that we
-   think should be defined and explained in order to make sure
-   package users understand complementary help files and vignettes the way
-   the package authors intended them to be understood.
-1. The [Notation][Notation] files contains some fundamental mathematical notation/
-   symbols used in the package documentation alongside a definition. Bearing some
-   exceptions, we mostly follow standard notation as laid out in e.g., @Bollen1989.
+1. The [Terminology][Terminology] file contains any term that we
+   feel should be defined and explained to ensure that
+   package users understand the supplementary help files and vignettes in the way
+   the package authors intended.
+1. The [Notation][Notation] file contains some fundamental mathematical notation/symbols used in the package documentation, along with a definition. With a few exceptions, we mostly follow standard notation as laid out in e.g., @Bollen1989.
 
-The package is designed based on a set of principles and a terminology that 
-is partly in contrast to commonly used open-source or commercial software packages
-offering similar content (e.g., smartPLS).
-Together with the [Terminology][Terminology] and [Notation][Notation] file this introduction seeks to explain
+The package has been designed according to a set of principles and terminology that 
+are in part different from those of other commonly used open source or commercial software packages
+with similar content (e.g., SmartPLS).
+Together with the [Terminology][Terminology] and [Notation][Notation] files this introduction explains
 these principles.
-Lastly, to use **cSEM** effectively, it is helpful to understand its design. 
-Hence, the package architecture and design as well as what we consider the "cSEM workflow" are discussed.
+Finally, to use **cSEM** effectively, it is helpful to understand its design. 
+Therefore, the architecture and design of the package and what we call the "cSEM workflow" will be discussed.
 
 # Composite-based structural equation modeling
 ## What is structural equation modeling (SEM)
@@ -397,8 +392,8 @@ EXPE <~ expe1 + expe2
 QUAL =~ IMAG + EXPE
 "
 ```
-In this case `QUAL` is modeled as a second-order common factor measuring  `IMAG` and `EXPE`,
-where `IMAG` is modeled as a composite and and `EXPE` is itself a common factor.
+In this case `QUAL` is modeled as a second-order common factor measured by  `IMAG` and `EXPE`,
+where both `IMAG` and `EXPE` are modeled as composites.
 
 ### Estimate using `csem()`{#estimate}
 
