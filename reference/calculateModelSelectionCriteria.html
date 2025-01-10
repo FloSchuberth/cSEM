@@ -125,13 +125,18 @@ structural model? Ignored if <code>.by_equation == TRUE</code>. Defaults to <cod
 a subset of the criteria a vector of criteria may be given.</p>
 <p>If <code>.by_equation == TRUE</code> (the default), the criteria are computed for each
 structural equation of the model separately, as suggested by
-Sharma2019;textualcSEM in the context of PLS. The relevant formula can be found in
-Table B1 of the appendix of Sharma2019;textualcSEM.</p>
+Sharma et al. (2019)
+ in the context of PLS. The relevant formula can be found in
+Table B1 of the appendix of Sharma et al. (2019)
+.</p>
 <p>If <code>.by_equation == FALSE</code> the AIC, the BIC and the HQ for whole model
 are calculated. All other criteria are currently ignored in this case!
-The relevant formula are (see, e.g., Akaike1974cSEM,
-Schwarz1978;textualcSEM,
-Hannan1979;textualcSEM):</p>
+The relevant formula are (see, e.g., (Akaike 1974)
+,
+Schwarz (1978)
+,
+Hannan and Quinn (1979)
+):</p>
 <p>$$AIC = - 2*log(L) + 2*k$$
 $$BIC = - 2*log(L) + k*ln(n)$$
 $$HQ  = - 2*log(L) + 2*k*ln(ln(n))$$</p>
@@ -143,7 +148,17 @@ The argument is ignored if <code>.by_equation == TRUE</code>.</p>
     </div>
     <div id="references">
     <h2>References</h2>
-    <p></p>
+    <p>Akaike H (1974).
+“A New Look at the Statistical Model Identification.”
+<em>IEEE Transactions on Automatic Control</em>, <b>19</b>(6), 716–723.<br><br> Hannan EJ, Quinn BG (1979).
+“The Determination of the order of an autoregression.”
+<em>Journal of the Royal Statistical Society: Series B (Methodological)</em>, <b>41</b>(2), 190–195.<br><br> Schwarz G (1978).
+“Estimating the Dimension of a Model.”
+<em>The Annals of Statistics</em>, <b>6</b>(2), 461–464.
+<a href="https://doi.org/10.1214/aos/1176344136" class="external-link">doi:10.1214/aos/1176344136</a>
+.<br><br> Sharma P, Sarstedt M, Shmueli G, Kim KH, Thiele KO (2019).
+“PLS-Based Model Selection: The Role of Alternative Explanations in Information Systems Research.”
+<em>Journal of the Association for Information Systems</em>, <b>20</b>(4).</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -162,7 +177,7 @@ The argument is ignored if <code>.by_equation == TRUE</code>.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
 </div>
 
       </footer></div>

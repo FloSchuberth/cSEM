@@ -129,24 +129,34 @@ Bravais-Pearson product-moment correlation is computed (via <code><a href="https
 
 <dt><code>Numeric-factor</code></dt>
 <dd><p>If any of the columns is a factor variable, the
-polyserial correlation Drasgow1988cSEM is computed (via
+polyserial correlation (Drasgow 1988)
+ is computed (via
 <code><a href="https://rdrr.io/pkg/polycor/man/polyserial.html" class="external-link">polycor::polyserial()</a></code>).</p></dd>
 
 <dt><code>Factor-factor</code></dt>
 <dd><p>If both columns are factor variables, the
-polychoric correlation Drasgow1988cSEM is computed (via
+polychoric correlation (Drasgow 1988)
+ is computed (via
 <code><a href="https://rdrr.io/pkg/polycor/man/polychor.html" class="external-link">polycor::polychor()</a></code>).</p></dd>
 
 
 </dl><p>Note: logical input is treated as a 0-1 factor variable.</p>
 <p>If  <code>"mcd"</code> (= minimum covariance determinant), the MCD estimator
-Rousseeuw1999cSEM, a robust covariance estimator, is applied
+(Rousseeuw and Driessen 1999)
+, a robust covariance estimator, is applied
 (via <code><a href="https://rdrr.io/pkg/MASS/man/cov.rob.html" class="external-link">MASS::cov.rob()</a></code>).</p>
 <p>If <code>"spearman"</code>, the Spearman rank correlation is used (via <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">stats::cor()</a></code>).</p>
     </div>
     <div id="references">
     <h2>References</h2>
-    <p></p>
+    <p>Drasgow F (1988).
+“Polychoric and polyserial correlations.”
+In <em>Encyclopedia of Statistical Sciences</em>, volume 7, 68-74.
+John Wiley &amp; Sons Inc, Hoboken.<br><br> Rousseeuw PJ, Driessen KV (1999).
+“A Fast Algorithm for the Minimum Covariance Determinant Estimator.”
+<em>Technometrics</em>, <b>41</b>(3), 212–223.
+<a href="https://doi.org/10.1080/00401706.1999.10485670" class="external-link">doi:10.1080/00401706.1999.10485670</a>
+.</p>
     </div>
 
   </div>
@@ -161,7 +171,7 @@ Rousseeuw1999cSEM, a robust covariance estimator, is applied
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
 </div>
 
       </footer></div>

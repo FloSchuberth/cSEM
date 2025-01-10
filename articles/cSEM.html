@@ -96,7 +96,7 @@
                         <h4 data-toc-skip class="author">Manuel
 Rademaker</h4>
             
-            <h4 data-toc-skip class="date">Last edited: 2024-08-20</h4>
+            <h4 data-toc-skip class="date">Last edited: 2025-01-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/master/vignettes/cSEM.Rmd" class="external-link"><code>vignettes/cSEM.Rmd</code></a></small>
       <div class="hidden name"><code>cSEM.Rmd</code></div>
@@ -110,54 +110,51 @@ Rademaker</h4>
 <h2 id="preface">Preface<a class="anchor" aria-label="anchor" href="#preface"></a>
 </h2>
 <p>Structural equation modeling (SEM) has been used and developed for
-decades across various research fields such as (among others)
-psychology, sociology, and business research.</p>
+decades across a variety of research fields, including psychology,
+sociology, and business research.</p>
 <p>As an almost inevitable consequence, a different terminology system
 and, to some extent, mathematical notation has evolved within each field
-over the years. This “terminology mess” is one of the major obstacles in
-interdisciplinary research and (scientific) debates, since it hampers a
-broader understanding of methodological issues, and, even worse,
-promotes systematic misuse (e.g., the use of Cronbach’s alpha as an
-estimator for congeneric reliability). This is particularly true for
-users new to SEM or practitioners who are overwhelmed by terminology of
-their own field only to find that the term they just thought to have
-finally completely grasped is defined differently in another field,
-making the confusion complete. A prime example is the term “formative”
-(measurement) which has been used to describe a causal-formative as well
-as <a href="#cmodel">a composite model</a>. See e.g., <span class="citation">Henseler (2017)</span> for a clarification.</p>
-<p>Ultimately, this is a matter of (mis)communication which, in our
-opinion, can only be satisfactorily solved by establishing a clear,
-unambiguous definition for each term and symbol that is used within the
-package. We emphasize that we do not seek to impose “our” conventions,
-nor do we claim they are the “correct” conventions, but merely seek to
-make communication between us (the authors of the package) and you (the
-package user) as unambiguous and error-free as possible.</p>
-<p>Hence, we provide a <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">Terminology</a>
-and a <a href="https://floschuberth.github.io/cSEM/articles/Notation.html" class="external-link">Notation</a>
-file that contains key terms and mathematical notation/symbols that we
-consider crucial, alongside our definition. Users are encouraged to read
-these files carefully to avoid potential misunderstandings.</p>
+over the years. This “terminological mess” is one of the major obstacles
+in interdisciplinary research and (scientific) debate, as it hinders a
+broader understanding of methodological issues and, even worse, promotes
+systematic misuse (e.g., the use of Cronbach’s alpha as an estimator for
+congeneric reliability). This is especially true for users who are new
+to SEM, or for practitioners who are overwhelmed by the terminology of
+their own field, only to find that the term they thought to have finally
+understood is defined differently in another field, adding to the
+confusion. A prime example is the term “formative” (measurement) which
+has been used to describe both a causal-formative and <a href="#cmodel">a composite model</a>, see e.g., <span class="citation">Henseler (2017)</span> for a clarification.</p>
+<p>Ultimately, this is a matter of (mis)communication, which we believe
+can only be satisfactorily resolved by providing a clear, unambiguous
+definition for each term and symbol used in the package. We emphasize
+that we are not trying to impose “our” conventions, nor are we claiming
+they are the “correct” conventions, but merely trying to make
+communication between us (the authors of the package) and you (users of
+the package) as unambiguous and error-free as possible.</p>
+<p>Therefore, we provide a <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">Terminology</a>
+file and a <a href="https://floschuberth.github.io/cSEM/articles/Notation.html" class="external-link">Notation</a>
+file, which contain key terms and mathematical notation/symbols that we
+consider important, along with our definition. Users are encouraged to
+read these files carefully to avoid potential misunderstandings.</p>
 <ol style="list-style-type: decimal">
 <li>The <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">Terminology</a>
-file contains each term that we think should be defined and explained in
-order to make sure package users understand complementary help files and
-vignettes the way the package authors intended them to be
-understood.</li>
+file contains any term that we feel should be defined and explained to
+ensure that package users understand the supplementary help files and
+vignettes in the way the package authors intended.</li>
 <li>The <a href="https://floschuberth.github.io/cSEM/articles/Notation.html" class="external-link">Notation</a>
-files contains some fundamental mathematical notation/ symbols used in
-the package documentation alongside a definition. Bearing some
-exceptions, we mostly follow standard notation as laid out in e.g.,
-<span class="citation">Bollen (1989)</span>.</li>
+file contains some fundamental mathematical notation/symbols used in the
+package documentation, along with a definition. With a few exceptions,
+we mostly follow standard notation as laid out in e.g., <span class="citation">Bollen (1989)</span>.</li>
 </ol>
-<p>The package is designed based on a set of principles and a
-terminology that is partly in contrast to commonly used open-source or
-commercial software packages offering similar content (e.g., smartPLS).
-Together with the <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">Terminology</a>
+<p>The package has been designed according to a set of principles and
+terminology that are in part different from those of other commonly used
+open source or commercial software packages with similar content (e.g.,
+SmartPLS). Together with the <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">Terminology</a>
 and <a href="https://floschuberth.github.io/cSEM/articles/Notation.html" class="external-link">Notation</a>
-file this introduction seeks to explain these principles. Lastly, to use
+files this introduction explains these principles. Finally, to use
 <strong>cSEM</strong> effectively, it is helpful to understand its
-design. Hence, the package architecture and design as well as what we
-consider the “cSEM workflow” are discussed.</p>
+design. Therefore, the architecture and design of the package and what
+we call the “cSEM workflow” will be discussed.</p>
 </div>
 <div class="section level2">
 <h2 id="composite-based-structural-equation-modeling">Composite-based structural equation modeling<a class="anchor" aria-label="anchor" href="#composite-based-structural-equation-modeling"></a>
@@ -576,9 +573,8 @@ model.</p>
 <span><span class="st">QUAL =~ IMAG + EXPE</span></span>
 <span><span class="st">"</span></span></code></pre></div>
 <p>In this case <code>QUAL</code> is modeled as a second-order common
-factor measuring <code>IMAG</code> and <code>EXPE</code>, where
-<code>IMAG</code> is modeled as a composite and and <code>EXPE</code> is
-itself a common factor.</p>
+factor measured by <code>IMAG</code> and <code>EXPE</code>, where both
+<code>IMAG</code> and <code>EXPE</code> are modeled as composites.</p>
 </div>
 </div>
 <div class="section level4">
@@ -731,7 +727,7 @@ object to <code><a href="../reference/resamplecSEMResults.html">resamplecSEMResu
 <span><span class="co">##  Number of admissible results       = 499</span></span>
 <span><span class="co">##  Approach to handle inadmissibles   = "drop"</span></span>
 <span><span class="co">##  Sign change option                 = "none"</span></span>
-<span><span class="co">##  Random seed                        = -161468314</span></span>
+<span><span class="co">##  Random seed                        = 1562766742</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##  Construct details:</span></span>
 <span><span class="co">##  ------------------</span></span>
@@ -747,37 +743,37 @@ object to <code><a href="../reference/resamplecSEMResults.html">resamplecSEMResu
 <span><span class="co">## ============================</span></span>
 <span><span class="co">##                                                              CI_percentile   </span></span>
 <span><span class="co">##   Path           Estimate  Std. error   t-stat.   p-value         95%        </span></span>
-<span><span class="co">##   eta2 ~ eta1      0.6713      0.0425   15.7998    0.0000 [ 0.5881; 0.7510 ] </span></span>
-<span><span class="co">##   eta3 ~ eta1      0.4585      0.0792    5.7913    0.0000 [ 0.3145; 0.6192 ] </span></span>
-<span><span class="co">##   eta3 ~ eta2      0.3052      0.0843    3.6187    0.0003 [ 0.1328; 0.4600 ] </span></span>
+<span><span class="co">##   eta2 ~ eta1      0.6713      0.0422   15.8920    0.0000 [ 0.5917; 0.7473 ] </span></span>
+<span><span class="co">##   eta3 ~ eta1      0.4585      0.0807    5.6819    0.0000 [ 0.2927; 0.6133 ] </span></span>
+<span><span class="co">##   eta3 ~ eta2      0.3052      0.0838    3.6401    0.0003 [ 0.1433; 0.4676 ] </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Estimated loadings:</span></span>
 <span><span class="co">## ===================</span></span>
 <span><span class="co">##                                                              CI_percentile   </span></span>
 <span><span class="co">##   Loading        Estimate  Std. error   t-stat.   p-value         95%        </span></span>
-<span><span class="co">##   eta1 =~ y11      0.6631      0.0426   15.5589    0.0000 [ 0.5825; 0.7454 ] </span></span>
-<span><span class="co">##   eta1 =~ y12      0.6493      0.0423   15.3568    0.0000 [ 0.5635; 0.7339 ] </span></span>
-<span><span class="co">##   eta1 =~ y13      0.7613      0.0342   22.2331    0.0000 [ 0.6894; 0.8243 ] </span></span>
-<span><span class="co">##   eta2 =~ y21      0.5165      0.0550    9.3820    0.0000 [ 0.4045; 0.6278 ] </span></span>
-<span><span class="co">##   eta2 =~ y22      0.7554      0.0356   21.2451    0.0000 [ 0.6856; 0.8232 ] </span></span>
-<span><span class="co">##   eta2 =~ y23      0.7997      0.0368   21.7364    0.0000 [ 0.7315; 0.8672 ] </span></span>
-<span><span class="co">##   eta3 =~ y31      0.8223      0.0322   25.5303    0.0000 [ 0.7571; 0.8830 ] </span></span>
-<span><span class="co">##   eta3 =~ y32      0.6581      0.0415   15.8665    0.0000 [ 0.5769; 0.7313 ] </span></span>
-<span><span class="co">##   eta3 =~ y33      0.7474      0.0387   19.3015    0.0000 [ 0.6679; 0.8166 ] </span></span>
+<span><span class="co">##   eta1 =~ y11      0.6631      0.0400   16.5880    0.0000 [ 0.5777; 0.7340 ] </span></span>
+<span><span class="co">##   eta1 =~ y12      0.6493      0.0392   16.5431    0.0000 [ 0.5725; 0.7232 ] </span></span>
+<span><span class="co">##   eta1 =~ y13      0.7613      0.0313   24.2989    0.0000 [ 0.6972; 0.8213 ] </span></span>
+<span><span class="co">##   eta2 =~ y21      0.5165      0.0514   10.0558    0.0000 [ 0.4105; 0.6051 ] </span></span>
+<span><span class="co">##   eta2 =~ y22      0.7554      0.0365   20.6750    0.0000 [ 0.6853; 0.8251 ] </span></span>
+<span><span class="co">##   eta2 =~ y23      0.7997      0.0372   21.5165    0.0000 [ 0.7223; 0.8649 ] </span></span>
+<span><span class="co">##   eta3 =~ y31      0.8223      0.0348   23.6388    0.0000 [ 0.7499; 0.8897 ] </span></span>
+<span><span class="co">##   eta3 =~ y32      0.6581      0.0411   16.0055    0.0000 [ 0.5777; 0.7394 ] </span></span>
+<span><span class="co">##   eta3 =~ y33      0.7474      0.0404   18.5038    0.0000 [ 0.6577; 0.8099 ] </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Estimated weights:</span></span>
 <span><span class="co">## ==================</span></span>
 <span><span class="co">##                                                              CI_percentile   </span></span>
 <span><span class="co">##   Weight         Estimate  Std. error   t-stat.   p-value         95%        </span></span>
-<span><span class="co">##   eta1 &lt;~ y11      0.3956      0.0231   17.1055    0.0000 [ 0.3522; 0.4411 ] </span></span>
-<span><span class="co">##   eta1 &lt;~ y12      0.3873      0.0211   18.3543    0.0000 [ 0.3456; 0.4292 ] </span></span>
-<span><span class="co">##   eta1 &lt;~ y13      0.4542      0.0205   22.1695    0.0000 [ 0.4156; 0.4959 ] </span></span>
-<span><span class="co">##   eta2 &lt;~ y21      0.3058      0.0277   11.0508    0.0000 [ 0.2504; 0.3557 ] </span></span>
-<span><span class="co">##   eta2 &lt;~ y22      0.4473      0.0221   20.2426    0.0000 [ 0.4046; 0.4904 ] </span></span>
-<span><span class="co">##   eta2 &lt;~ y23      0.4735      0.0214   22.0783    0.0000 [ 0.4357; 0.5188 ] </span></span>
-<span><span class="co">##   eta3 &lt;~ y31      0.4400      0.0180   24.4137    0.0000 [ 0.4076; 0.4756 ] </span></span>
-<span><span class="co">##   eta3 &lt;~ y32      0.3521      0.0188   18.7136    0.0000 [ 0.3149; 0.3874 ] </span></span>
-<span><span class="co">##   eta3 &lt;~ y33      0.3999      0.0199   20.0916    0.0000 [ 0.3587; 0.4377 ] </span></span>
+<span><span class="co">##   eta1 &lt;~ y11      0.3956      0.0214   18.4914    0.0000 [ 0.3500; 0.4360 ] </span></span>
+<span><span class="co">##   eta1 &lt;~ y12      0.3873      0.0195   19.8652    0.0000 [ 0.3506; 0.4261 ] </span></span>
+<span><span class="co">##   eta1 &lt;~ y13      0.4542      0.0199   22.7738    0.0000 [ 0.4185; 0.4949 ] </span></span>
+<span><span class="co">##   eta2 &lt;~ y21      0.3058      0.0260   11.7482    0.0000 [ 0.2526; 0.3529 ] </span></span>
+<span><span class="co">##   eta2 &lt;~ y22      0.4473      0.0217   20.6036    0.0000 [ 0.4100; 0.4925 ] </span></span>
+<span><span class="co">##   eta2 &lt;~ y23      0.4735      0.0214   22.1094    0.0000 [ 0.4327; 0.5166 ] </span></span>
+<span><span class="co">##   eta3 &lt;~ y31      0.4400      0.0192   22.9308    0.0000 [ 0.4050; 0.4794 ] </span></span>
+<span><span class="co">##   eta3 &lt;~ y32      0.3521      0.0204   17.2777    0.0000 [ 0.3140; 0.3934 ] </span></span>
+<span><span class="co">##   eta3 &lt;~ y33      0.3999      0.0195   20.4835    0.0000 [ 0.3608; 0.4339 ] </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ------------------------------------ Effects -----------------------------------</span></span>
 <span><span class="co">## </span></span>
@@ -785,15 +781,15 @@ object to <code><a href="../reference/resamplecSEMResults.html">resamplecSEMResu
 <span><span class="co">## ========================</span></span>
 <span><span class="co">##                                                               CI_percentile   </span></span>
 <span><span class="co">##   Total effect    Estimate  Std. error   t-stat.   p-value         95%        </span></span>
-<span><span class="co">##   eta2 ~ eta1       0.6713      0.0425   15.7998    0.0000 [ 0.5881; 0.7510 ] </span></span>
-<span><span class="co">##   eta3 ~ eta1       0.6634      0.0379   17.5182    0.0000 [ 0.5860; 0.7338 ] </span></span>
-<span><span class="co">##   eta3 ~ eta2       0.3052      0.0843    3.6187    0.0003 [ 0.1328; 0.4600 ] </span></span>
+<span><span class="co">##   eta2 ~ eta1       0.6713      0.0422   15.8920    0.0000 [ 0.5917; 0.7473 ] </span></span>
+<span><span class="co">##   eta3 ~ eta1       0.6634      0.0393   16.8981    0.0000 [ 0.5834; 0.7377 ] </span></span>
+<span><span class="co">##   eta3 ~ eta2       0.3052      0.0838    3.6401    0.0003 [ 0.1433; 0.4676 ] </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Estimated indirect effects:</span></span>
 <span><span class="co">## ===========================</span></span>
 <span><span class="co">##                                                                  CI_percentile   </span></span>
 <span><span class="co">##   Indirect effect    Estimate  Std. error   t-stat.   p-value         95%        </span></span>
-<span><span class="co">##   eta3 ~ eta1          0.2049      0.0566    3.6207    0.0003 [ 0.0936; 0.3139 ] </span></span>
+<span><span class="co">##   eta3 ~ eta1          0.2049      0.0566    3.6210    0.0003 [ 0.0985; 0.3151 ] </span></span>
 <span><span class="co">## ________________________________________________________________________________</span></span></code></pre>
 <p>Or directly via <code><a href="../reference/infer.html">infer()</a></code></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
@@ -801,17 +797,17 @@ object to <code><a href="../reference/resamplecSEMResults.html">resamplecSEMResu
 <span><span class="va">ii</span><span class="op">$</span><span class="va">Path_estimates</span></span></code></pre></div>
 <pre><code><span><span class="co">## $CI_standard_z</span></span>
 <span><span class="co">##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2</span></span>
-<span><span class="co">## 99%L   0.5603039   0.2488461  0.09508848</span></span>
-<span><span class="co">## 99%U   0.7791980   0.6567106  0.52950919</span></span>
-<span><span class="co">## 95%L   0.5864720   0.2976051  0.14702217</span></span>
-<span><span class="co">## 95%U   0.7530298   0.6079516  0.47757550</span></span>
+<span><span class="co">## 99%L   0.5620988   0.2537689  0.08498793</span></span>
+<span><span class="co">## 99%U   0.7797227   0.6694886  0.51685742</span></span>
+<span><span class="co">## 95%L   0.5881151   0.3034669  0.13661663</span></span>
+<span><span class="co">## 95%U   0.7537064   0.6197906  0.46522872</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $CI_percentile</span></span>
 <span><span class="co">##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2</span></span>
-<span><span class="co">## 99%L   0.5736620   0.2519290  0.08569849</span></span>
-<span><span class="co">## 99%U   0.7765140   0.6548325  0.49523535</span></span>
-<span><span class="co">## 95%L   0.5881028   0.3144850  0.13281681</span></span>
-<span><span class="co">## 95%U   0.7509529   0.6191628  0.46003557</span></span></code></pre>
+<span><span class="co">## 99%L   0.5657830   0.2510366  0.06209671</span></span>
+<span><span class="co">## 99%U   0.7763454   0.6589145  0.50449563</span></span>
+<span><span class="co">## 95%L   0.5917045   0.2927340  0.14329920</span></span>
+<span><span class="co">## 95%U   0.7473347   0.6132758  0.46760720</span></span></code></pre>
 <p>Both bootstrap and jackknife resampling support platform-independent
 multiprocessing as well as random seeds via the <a href="https://github.com/HenrikBengtsson/future/" class="external-link">future framework</a>.
 For multiprocessing simply set <code>.eval_plan = "multiprocess"</code>
@@ -1171,7 +1167,7 @@ scheme in its core.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
 </div>
 
       </footer>

@@ -226,7 +226,8 @@ increases computation time (there are now <code>M * M2</code> resamples to compu
 <code>M2</code> is <code>.R2</code> or <code>N</code>).
 Resamples of a resample are required, e.g., for the studentized confidence
 interval computed by the <code><a href="infer.html">infer()</a></code> function. Typically, bootstrap resamples
-are used in this case Davison1997cSEM.</p>
+are used in this case (Davison and Hinkley 1997)
+.</p>
 <p>As <code><a href="csem.html">csem()</a></code> accepts a single data set, a list of data sets as well as data sets
 that contain a column name used to split the data into groups,
 the <a href="csem_results.html">cSEMResults</a> object may contain multiple data sets.
@@ -239,16 +240,20 @@ is able to deal with each case.</p>
 <p>The number of bootstrap runs for the first and second run are given by <code>.R</code> and <code>.R2</code>.
 The default is <code>499</code> for the first and <code>199</code> for the second run
 but should be increased in real applications. See e.g.,
-Hesterberg2015;textualcSEM, p.380,
-Davison1997;textualcSEM, and
-Efron2016;textualcSEM for recommendations.
+Hesterberg (2015)
+, p.380,
+Davison and Hinkley (1997)
+, and
+Efron and Hastie (2016)
+ for recommendations.
 For jackknife <code>.R</code> are <code>.R2</code> are ignored.</p>
 <p>Resampling may produce inadmissible results (as checked by <code><a href="verify.html">verify()</a></code>).
 By default these results are dropped however users may choose to <code>"ignore"</code>
 or <code>"replace"</code> inadmissible results in which resampling continuous until
 the necessary number of admissible results is reached.</p>
 <p>The <span class="pkg">cSEM</span> package supports (multi)processing via the <a href="https://github.com/HenrikBengtsson/future/" class="external-link">future</a>
-framework Bengtsson2018cSEM. Users may simply choose an evaluation plan
+framework (Bengtsson 2018)
+. Users may simply choose an evaluation plan
 via <code>.eval_plan</code> and the package takes care of all the complicated backend
 issues. Currently, users may choose between standard single-core/single-session
 evaluation (<code>"sequential"</code>) and multiprocessing (<code>"multisession"</code> or <code>"multicore"</code>). The future package
@@ -261,7 +266,8 @@ when only a "small" number of replications is required as the overhead of
 initializing new sessions or distributing tasks to different cores
 will not immediately be compensated by the availability of multiple sessions/cores.</p>
 <p>Random number generation (RNG) uses the L'Ecuyer-CRMR RGN stream as implemented in the
-<a href="https://github.com/HenrikBengtsson/future.apply/" class="external-link">future.apply package</a> Bengtsson2018acSEM.
+<a href="https://github.com/HenrikBengtsson/future.apply/" class="external-link">future.apply package</a> (Bengtsson 2018)
+.
 It is independent of the evaluation plan. Hence, setting e.g., <code>.seed = 123</code> will
 generate the same random number and replicates
 for both <code>.eval_plan = "sequential"</code>, <code>.eval_plan = "multisession"</code>, and <code>.eval_plan = "multicore"</code>.
@@ -269,7 +275,22 @@ See <a href="https://future.apply.futureverse.org/reference/future_lapply.html" 
     </div>
     <div id="references">
     <h2>References</h2>
-    <p></p>
+    <p>Bengtsson H (2018).
+<em>future: Unified Parallel and Distributed Processing in R for Everyone</em>.
+R package version 1.10.0, <a href="https://CRAN.R-project.org/package=future" class="external-link">https://CRAN.R-project.org/package=future</a>.<br><br> Bengtsson H (2018).
+<em>future.apply: Apply Function to Elements in Parallel using Futures</em>.
+R package version 1.0.1, <a href="https://CRAN.R-project.org/package=future.apply" class="external-link">https://CRAN.R-project.org/package=future.apply</a>.<br><br> Davison AC, Hinkley DV (1997).
+<em>Bootstrap Methods and their Application</em>.
+Cambridge University Press.
+<a href="https://doi.org/10.1017/cbo9780511802843" class="external-link">doi:10.1017/cbo9780511802843</a>
+.<br><br> Efron B, Hastie T (2016).
+<em>Computer Age Statistical Inference</em>.
+Cambridge University Pr.
+ISBN 1107149894.<br><br> Hesterberg TC (2015).
+“What Teachers Should Know About the Bootstrap: Resampling in the Undergraduate Statistics Curriculum.”
+<em>The American Statistician</em>, <b>69</b>(4), 371–386.
+<a href="https://doi.org/10.1080/00031305.2015.1089789" class="external-link">doi:10.1080/00031305.2015.1089789</a>
+.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -381,7 +402,7 @@ See <a href="https://future.apply.futureverse.org/reference/future_lapply.html" 
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
 </div>
 
       </footer></div>
