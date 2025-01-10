@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function(e) {
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -44,7 +44,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -156,7 +156,7 @@ code span.ot { color: #007020; }
 <section class="page-header">
 <h1 class="title toc-ignore project-name">Introduction to cSEM</h1>
 <h4 class="author project-author">Manuel Rademaker</h4>
-<h4 class="date project-date">Last edited: 2023-10-30</h4>
+<h4 class="date project-date">Last edited: 2025-01-10</h4>
 </section>
 
 
@@ -212,54 +212,51 @@ scheme and partial least squares (PLS)</a></li>
 <div id="preface" class="section level1">
 <h1>Preface</h1>
 <p>Structural equation modeling (SEM) has been used and developed for
-decades across various research fields such as (among others)
-psychology, sociology, and business research.</p>
+decades across a variety of research fields, including psychology,
+sociology, and business research.</p>
 <p>As an almost inevitable consequence, a different terminology system
 and, to some extent, mathematical notation has evolved within each field
-over the years. This “terminology mess” is one of the major obstacles in
-interdisciplinary research and (scientific) debates, since it hampers a
-broader understanding of methodological issues, and, even worse,
-promotes systematic misuse (e.g., the use of Cronbach’s alpha as an
-estimator for congeneric reliability). This is particularly true for
-users new to SEM or practitioners who are overwhelmed by terminology of
-their own field only to find that the term they just thought to have
-finally completely grasped is defined differently in another field,
-making the confusion complete. A prime example is the term “formative”
-(measurement) which has been used to describe a causal-formative as well
-as <a href="#cmodel">a composite model</a>. See e.g., <span class="citation">Henseler (2017)</span> for a clarification.</p>
-<p>Ultimately, this is a matter of (mis)communication which, in our
-opinion, can only be satisfactorily solved by establishing a clear,
-unambiguous definition for each term and symbol that is used within the
-package. We emphasize that we do not seek to impose “our” conventions,
-nor do we claim they are the “correct” conventions, but merely seek to
-make communication between us (the authors of the package) and you (the
-package user) as unambiguous and error-free as possible.</p>
-<p>Hence, we provide a <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html">Terminology</a>
-and a <a href="https://floschuberth.github.io/cSEM/articles/Notation.html">Notation</a>
-file that contains key terms and mathematical notation/symbols that we
-consider crucial, alongside our definition. Users are encouraged to read
-these files carefully to avoid potential misunderstandings.</p>
+over the years. This “terminological mess” is one of the major obstacles
+in interdisciplinary research and (scientific) debate, as it hinders a
+broader understanding of methodological issues and, even worse, promotes
+systematic misuse (e.g., the use of Cronbach’s alpha as an estimator for
+congeneric reliability). This is especially true for users who are new
+to SEM, or for practitioners who are overwhelmed by the terminology of
+their own field, only to find that the term they thought to have finally
+understood is defined differently in another field, adding to the
+confusion. A prime example is the term “formative” (measurement) which
+has been used to describe both a causal-formative and <a href="#cmodel">a composite model</a>, see e.g., <span class="citation">Henseler (2017)</span> for a clarification.</p>
+<p>Ultimately, this is a matter of (mis)communication, which we believe
+can only be satisfactorily resolved by providing a clear, unambiguous
+definition for each term and symbol used in the package. We emphasize
+that we are not trying to impose “our” conventions, nor are we claiming
+they are the “correct” conventions, but merely trying to make
+communication between us (the authors of the package) and you (users of
+the package) as unambiguous and error-free as possible.</p>
+<p>Therefore, we provide a <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html">Terminology</a>
+file and a <a href="https://floschuberth.github.io/cSEM/articles/Notation.html">Notation</a>
+file, which contain key terms and mathematical notation/symbols that we
+consider important, along with our definition. Users are encouraged to
+read these files carefully to avoid potential misunderstandings.</p>
 <ol style="list-style-type: decimal">
 <li>The <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html">Terminology</a>
-file contains each term that we think should be defined and explained in
-order to make sure package users understand complementary help files and
-vignettes the way the package authors intended them to be
-understood.</li>
+file contains any term that we feel should be defined and explained to
+ensure that package users understand the supplementary help files and
+vignettes in the way the package authors intended.</li>
 <li>The <a href="https://floschuberth.github.io/cSEM/articles/Notation.html">Notation</a>
-files contains some fundamental mathematical notation/ symbols used in
-the package documentation alongside a definition. Bearing some
-exceptions, we mostly follow standard notation as laid out in e.g.,
-<span class="citation">Bollen (1989)</span>.</li>
+file contains some fundamental mathematical notation/symbols used in the
+package documentation, along with a definition. With a few exceptions,
+we mostly follow standard notation as laid out in e.g., <span class="citation">Bollen (1989)</span>.</li>
 </ol>
-<p>The package is designed based on a set of principles and a
-terminology that is partly in contrast to commonly used open-source or
-commercial software packages offering similar content (e.g., smartPLS).
-Together with the <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html">Terminology</a>
+<p>The package has been designed according to a set of principles and
+terminology that are in part different from those of other commonly used
+open source or commercial software packages with similar content (e.g.,
+SmartPLS). Together with the <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html">Terminology</a>
 and <a href="https://floschuberth.github.io/cSEM/articles/Notation.html">Notation</a>
-file this introduction seeks to explain these principles. Lastly, to use
+files this introduction explains these principles. Finally, to use
 <strong>cSEM</strong> effectively, it is helpful to understand its
-design. Hence, the package architecture and design as well as what we
-consider the “cSEM workflow” are discussed.</p>
+design. Therefore, the architecture and design of the package and what
+we call the “cSEM workflow” will be discussed.</p>
 </div>
 <div id="composite-based-structural-equation-modeling" class="section level1">
 <h1>Composite-based structural equation modeling</h1>
@@ -639,9 +636,8 @@ model.</p>
 <span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="st">QUAL =~ IMAG + EXPE</span></span>
 <span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="st">&quot;</span></span></code></pre></div>
 <p>In this case <code>QUAL</code> is modeled as a second-order common
-factor measuring <code>IMAG</code> and <code>EXPE</code>, where
-<code>IMAG</code> is modeled as a composite and and <code>EXPE</code> is
-itself a common factor.</p>
+factor measured by <code>IMAG</code> and <code>EXPE</code>, where both
+<code>IMAG</code> and <code>EXPE</code> are modeled as composites.</p>
 </div>
 </div>
 <div id="estimate-using-csem" class="section level3">
@@ -788,7 +784,7 @@ object to <code>resamplecSEMResults()</code> and subsequently using
 ##  Number of admissible results       = 499
 ##  Approach to handle inadmissibles   = &quot;drop&quot;
 ##  Sign change option                 = &quot;none&quot;
-##  Random seed                        = -1997446547
+##  Random seed                        = -559329440
 ## 
 ##  Construct details:
 ##  ------------------
@@ -804,37 +800,37 @@ object to <code>resamplecSEMResults()</code> and subsequently using
 ## ============================
 ##                                                              CI_percentile   
 ##   Path           Estimate  Std. error   t-stat.   p-value         95%        
-##   eta2 ~ eta1      0.6713      0.0435   15.4390    0.0000 [ 0.5793; 0.7482 ] 
-##   eta3 ~ eta1      0.4585      0.0806    5.6909    0.0000 [ 0.2905; 0.6148 ] 
-##   eta3 ~ eta2      0.3052      0.0834    3.6582    0.0003 [ 0.1471; 0.4750 ] 
+##   eta2 ~ eta1      0.6713      0.0430   15.6181    0.0000 [ 0.5834; 0.7542 ] 
+##   eta3 ~ eta1      0.4585      0.0809    5.6688    0.0000 [ 0.2966; 0.6220 ] 
+##   eta3 ~ eta2      0.3052      0.0845    3.6107    0.0003 [ 0.1265; 0.4674 ] 
 ## 
 ## Estimated loadings:
 ## ===================
 ##                                                              CI_percentile   
 ##   Loading        Estimate  Std. error   t-stat.   p-value         95%        
-##   eta1 =~ y11      0.6631      0.0417   15.9075    0.0000 [ 0.5796; 0.7440 ] 
-##   eta1 =~ y12      0.6493      0.0386   16.8169    0.0000 [ 0.5670; 0.7186 ] 
-##   eta1 =~ y13      0.7613      0.0319   23.8308    0.0000 [ 0.6994; 0.8224 ] 
-##   eta2 =~ y21      0.5165      0.0517    9.9874    0.0000 [ 0.4088; 0.6114 ] 
-##   eta2 =~ y22      0.7554      0.0375   20.1680    0.0000 [ 0.6710; 0.8263 ] 
-##   eta2 =~ y23      0.7997      0.0364   21.9659    0.0000 [ 0.7276; 0.8649 ] 
-##   eta3 =~ y31      0.8223      0.0338   24.3269    0.0000 [ 0.7556; 0.8826 ] 
-##   eta3 =~ y32      0.6581      0.0377   17.4442    0.0000 [ 0.5814; 0.7219 ] 
-##   eta3 =~ y33      0.7474      0.0394   18.9918    0.0000 [ 0.6714; 0.8254 ] 
+##   eta1 =~ y11      0.6631      0.0419   15.8160    0.0000 [ 0.5777; 0.7393 ] 
+##   eta1 =~ y12      0.6493      0.0375   17.3040    0.0000 [ 0.5705; 0.7226 ] 
+##   eta1 =~ y13      0.7613      0.0315   24.1555    0.0000 [ 0.6951; 0.8256 ] 
+##   eta2 =~ y21      0.5165      0.0519    9.9455    0.0000 [ 0.4131; 0.6116 ] 
+##   eta2 =~ y22      0.7554      0.0370   20.3917    0.0000 [ 0.6855; 0.8266 ] 
+##   eta2 =~ y23      0.7997      0.0387   20.6696    0.0000 [ 0.7220; 0.8745 ] 
+##   eta3 =~ y31      0.8223      0.0343   23.9965    0.0000 [ 0.7498; 0.8869 ] 
+##   eta3 =~ y32      0.6581      0.0421   15.6290    0.0000 [ 0.5673; 0.7345 ] 
+##   eta3 =~ y33      0.7474      0.0368   20.3372    0.0000 [ 0.6801; 0.8200 ] 
 ## 
 ## Estimated weights:
 ## ==================
 ##                                                              CI_percentile   
 ##   Weight         Estimate  Std. error   t-stat.   p-value         95%        
-##   eta1 &lt;~ y11      0.3956      0.0225   17.5651    0.0000 [ 0.3515; 0.4383 ] 
-##   eta1 &lt;~ y12      0.3873      0.0187   20.7660    0.0000 [ 0.3512; 0.4195 ] 
-##   eta1 &lt;~ y13      0.4542      0.0204   22.2860    0.0000 [ 0.4176; 0.4953 ] 
-##   eta2 &lt;~ y21      0.3058      0.0273   11.1891    0.0000 [ 0.2541; 0.3557 ] 
-##   eta2 &lt;~ y22      0.4473      0.0215   20.7850    0.0000 [ 0.4078; 0.4952 ] 
-##   eta2 &lt;~ y23      0.4735      0.0208   22.7584    0.0000 [ 0.4343; 0.5117 ] 
-##   eta3 &lt;~ y31      0.4400      0.0197   22.3761    0.0000 [ 0.4049; 0.4803 ] 
-##   eta3 &lt;~ y32      0.3521      0.0182   19.3516    0.0000 [ 0.3168; 0.3871 ] 
-##   eta3 &lt;~ y33      0.3999      0.0187   21.4222    0.0000 [ 0.3670; 0.4410 ] 
+##   eta1 &lt;~ y11      0.3956      0.0221   17.9231    0.0000 [ 0.3526; 0.4380 ] 
+##   eta1 &lt;~ y12      0.3873      0.0195   19.8667    0.0000 [ 0.3511; 0.4276 ] 
+##   eta1 &lt;~ y13      0.4542      0.0193   23.5766    0.0000 [ 0.4170; 0.4919 ] 
+##   eta2 &lt;~ y21      0.3058      0.0274   11.1445    0.0000 [ 0.2509; 0.3587 ] 
+##   eta2 &lt;~ y22      0.4473      0.0221   20.2240    0.0000 [ 0.4072; 0.4930 ] 
+##   eta2 &lt;~ y23      0.4735      0.0207   22.8482    0.0000 [ 0.4366; 0.5191 ] 
+##   eta3 &lt;~ y31      0.4400      0.0185   23.7607    0.0000 [ 0.4048; 0.4764 ] 
+##   eta3 &lt;~ y32      0.3521      0.0189   18.6758    0.0000 [ 0.3143; 0.3878 ] 
+##   eta3 &lt;~ y33      0.3999      0.0197   20.3334    0.0000 [ 0.3623; 0.4406 ] 
 ## 
 ## ------------------------------------ Effects -----------------------------------
 ## 
@@ -842,32 +838,32 @@ object to <code>resamplecSEMResults()</code> and subsequently using
 ## ========================
 ##                                                               CI_percentile   
 ##   Total effect    Estimate  Std. error   t-stat.   p-value         95%        
-##   eta2 ~ eta1       0.6713      0.0435   15.4390    0.0000 [ 0.5793; 0.7482 ] 
-##   eta3 ~ eta1       0.6634      0.0386   17.1945    0.0000 [ 0.5888; 0.7332 ] 
-##   eta3 ~ eta2       0.3052      0.0834    3.6582    0.0003 [ 0.1471; 0.4750 ] 
+##   eta2 ~ eta1       0.6713      0.0430   15.6181    0.0000 [ 0.5834; 0.7542 ] 
+##   eta3 ~ eta1       0.6634      0.0390   17.0011    0.0000 [ 0.5878; 0.7392 ] 
+##   eta3 ~ eta2       0.3052      0.0845    3.6107    0.0003 [ 0.1265; 0.4674 ] 
 ## 
 ## Estimated indirect effects:
 ## ===========================
 ##                                                                  CI_percentile   
 ##   Indirect effect    Estimate  Std. error   t-stat.   p-value         95%        
-##   eta3 ~ eta1          0.2049      0.0570    3.5965    0.0003 [ 0.0994; 0.3289 ] 
+##   eta3 ~ eta1          0.2049      0.0569    3.5999    0.0003 [ 0.0866; 0.3189 ] 
 ## ________________________________________________________________________________</code></pre>
 <p>Or directly via <code>infer()</code></p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>ii <span class="ot">&lt;-</span> <span class="fu">infer</span>(b1, <span class="at">.quantity =</span> <span class="fu">c</span>(<span class="st">&quot;CI_standard_z&quot;</span>, <span class="st">&quot;CI_percentile&quot;</span>), <span class="at">.alpha =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.05</span>))</span>
 <span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>ii<span class="sc">$</span>Path_estimates</span></code></pre></div>
 <pre><code>## $CI_standard_z
 ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-## 99%L   0.5606857   0.2540565  0.08539936
-## 99%U   0.7846951   0.6691206  0.51512262
-## 95%L   0.5874653   0.3036761  0.13677149
-## 95%U   0.7579155   0.6195009  0.46375050
+## 99%L   0.5612126   0.2440523  0.09190552
+## 99%U   0.7826537   0.6607279  0.52729008
+## 95%L   0.5876852   0.2938646  0.14395444
+## 95%U   0.7561811   0.6109156  0.47524117
 ## 
 ## $CI_percentile
 ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-## 99%L   0.5536130   0.2563176   0.1076651
-## 99%U   0.7731236   0.6580034   0.5274995
-## 95%L   0.5792905   0.2905099   0.1471391
-## 95%U   0.7481722   0.6148228   0.4749681</code></pre>
+## 99%L   0.5691319   0.2636709  0.09517528
+## 99%U   0.7693886   0.6616893  0.51934515
+## 95%L   0.5833985   0.2966277  0.12648813
+## 95%U   0.7542139   0.6220095  0.46742846</code></pre>
 <p>Both bootstrap and jackknife resampling support platform-independent
 multiprocessing as well as random seeds via the <a href="https://github.com/HenrikBengtsson/future/">future framework</a>.
 For multiprocessing simply set <code>.eval_plan = &quot;multiprocess&quot;</code>
@@ -1115,7 +1111,7 @@ less.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> In
 </div>
 <div id="literature" class="section level1 unnumbered">
 <h1 class="unnumbered">Literature</h1>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-Beran1985" class="csl-entry">
 Beran, Rudolf, and Muni S. Srivastava. 1985. <span>“Bootstrap Tests and
 Confidence Regions for Functions of a Covariance Matrix.”</span> <em>The
