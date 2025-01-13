@@ -257,10 +257,10 @@ calculateAVE <- function(
     
     out <- lapply(.object, calculateAVE, .only_common_factors = .only_common_factors)
     out$Second_stage <- out$Second_stage[c_names2]
-    out <- if(is.na(out$Second_stage)) {
+    out <- if(all(is.na(out$Second_stage))) {
       out$First_stage
     } else {
-      out <- c(out$First_stage, out$Second_stage)
+      out <- c(out$First_stage, out$Second_stage[!is.na(out$Second_stage)])
     }
     return(out)
     
