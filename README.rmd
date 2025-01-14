@@ -29,7 +29,7 @@ test the model fit, compute confidence intervals, compare groups, etc.).
 
 ## News (2022-05-09):
 
-- bug fix in the calculateAVE() function. Now AVE is reported for models containing more than one second-order construct. Thanks Jean-Baptiste.
+- bug fix in the calculateAVE() and calculateRho() functions. Now results are reported for models containing more than one second-order construct. Thanks Jean-Baptiste.
 
 - `predict()` function is now able to predict categorical indicators (a procedure known as
    OrdPLScPredict). 
