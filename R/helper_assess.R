@@ -876,10 +876,10 @@ calculateRhoC <- function(
                   .weighted            = .weighted)
     
     out$Second_stage <- out$Second_stage[c_names2]
-    out <- if(is.na(out$Second_stage)) {
+    out <- if(all(is.na(out$Second_stage))) {
       out$First_stage
     } else {
-      c(out$First_stage, out$Second_stage)
+      c(out$First_stage, out$Second_stage[!is.na(out$Second_stage)])
     }
     return(out)
     
@@ -991,10 +991,10 @@ calculateRhoT <- function(
     )
     if(.output_type == "vector") {
       out$Second_stage <- out$Second_stage[c_names2]
-      out <- if(is.na(out$Second_stage)) {
+      out <- if(all(is.na(out$Second_stage))) {
         out$First_stage
       } else {
-        c(out$First_stage, out$Second_stage)
+        c(out$First_stage, out$Second_stage[!is.na(out$Second_stage)])
       }
     } else {
       out$Second_stage <- out$Second_stage[out$Second_stage$Construct %in% c_names2, ]
