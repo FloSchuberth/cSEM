@@ -6,28 +6,24 @@
 #' 
 #' @usage plotModel(
 #' .object, 
-#' .show_stars = TRUE, 
 #' .title = "",
-#' .run_correlation_lines = FALSE,
-#' .show_structural_model_only = FALSE,
+#' .plot_significances = args_default()$.plot_significances,  
+#' .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
+#' .plot_structural_model_only = args_default()$.plot_structural_model_only,
+#' .plot_stage_SOC = c("second", "first"),
 #' .node_ranks = NULL, 
 #' .graph_attrs = NULL,
 #' .remove_colors = FALSE, 
-#' .edge_lengths = NULL,
-#' .stage = c("second", "first")
+#' .edge_lengths = NULL
 #' ) 
 #'
 #' @inheritParams csem_arguments
-#' @param .show_stars Logical, whether to show significance stars based on p-values.
 #' @param .title Character string. Plot title.
-#' @param .run_correlation_lines Logical. Should the correlations between the indicators displayed? Defaults to `FALSE`. 
-#' @param .show_structural_model_only Logical. Should only the structural model, 
-#' i.e., the constructs and their relationships be displayed? Default to `FALSE`.
 #' @param .node_ranks List specifying the ranks for nodes (e.g., list(rank1 = c("Node1", "Node2"))), DiagrammeR syntax.
 #' @param .graph_attrs Character vector of custom graph attributes for the DOT graph (e.g., c("rankdir=LR", "ranksep=1.0")). DiagrammeR syntax.
 #' @param .remove_colors Logical. Should the plot be colored? Defaults to `FALSE`. 
 #' @param .edge_lengths Integer. Length of edges in the DOT graph.
-#' @param .stage Character string. Which stage of the two-stage approach for models containing second-order constructs should be displayed? 
+#' @param .plot_stage_SOC Character string. Which stage of the two-stage approach for models containing second-order constructs should be displayed? 
 #' Defaults to `second`.
 #' 
 #' 
@@ -40,19 +36,19 @@
 #' @export
 plotModel <- function(
     .object, 
-    .show_stars = TRUE, 
     .title = "",
-    .run_correlation_lines = FALSE,
-    .show_structural_model_only = FALSE,
+    .plot_significances = args_default()$.plot_significances, 
+    .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
+    .plot_structural_model_only = args_default()$.plot_structural_model_only,
+    .plot_stage_SOC = c("second", "first"),
     .node_ranks = NULL, 
     .graph_attrs = NULL,
     .remove_colors = FALSE, 
-    .edge_lengths = NULL,
-    .stage = c("second", "first")
+    .edge_lengths = NULL
                       ) {
   
   # Match the stage argument
-  .stage <- match.arg(.stage)
+  .plot_stage_SOC <- match.arg(.plot_stage_SOC)
   
   # Check if the object is a multi-group object
   if (inherits(.object, "cSEMResults_multi")) {
@@ -65,9 +61,9 @@ plotModel <- function(
       } else {
         group_title <- paste0(.title, " Group_", group_name)
       }
-      plotModel(group_object, .show_stars, .title = group_title,
-                .run_correlation_lines,.show_structural_model_only,
-                .node_ranks, .graph_attrs, .remove_colors, .edge_lengths, .stage)
+      plotModel(group_object, .plot_significances, .title = group_title,
+                .plot_indicator_correlations,.plot_structural_model_only,
+                .node_ranks, .graph_attrs, .remove_colors, .edge_lengths, .plot_stage_SOC)
     })
     
     # name each plot for later use
@@ -84,7 +80,7 @@ plotModel <- function(
     # models is used (after minor adaptations)
     # Check if the object is a second-order model and perform plot generation accordingly
     if(inherits(.object, "cSEMResults_2ndorder")){
-      if(.stage == "second"){
+      if(.plot_stage_SOC == "second"){
         # Ensure that the second-stage path estimates exist
         if (is.null(.object$Second_stage$Estimates$Path_estimates)) stop2("Second-stage path estimates could not be found.")
         
@@ -255,7 +251,7 @@ plotModel <- function(
       }
       
       # Create subgraph for each construct's indicators, unless showing structural model only
-      if (!.show_structural_model_only) {
+      if (!.plot_structural_model_only) {
         dot_code <- paste0(dot_code, "subgraph cluster_", construct, " {\n",
                            "label=\"\";\n",
                            "style=invis;\n")
@@ -276,8 +272,8 @@ plotModel <- function(
             loading <- round(loadings[construct, indicator], 3)
             weight_name <- paste(construct, "<~", indicator)
             loading_name <- paste(construct, "=~", indicator)
-            weight_stars <- if (.show_stars) get_significance_stars(weight_p_values[weight_name]) else ""
-            loading_stars <- if (.show_stars) get_significance_stars(loading_p_values[loading_name]) else ""
+            weight_stars <- if (.plot_significances) get_significance_stars(weight_p_values[weight_name]) else ""
+            loading_stars <- if (.plot_significances) get_significance_stars(loading_p_values[loading_name]) else ""
             
             # Create label for edge
             label <- if (construct_type == "Common factor") {
@@ -314,7 +310,7 @@ plotModel <- function(
         coefficient <- round(dependent_paths[predictor], 3)
         path_name <- paste(dependent, "~", predictor)
         
-        stars <- if (.show_stars) get_significance_stars(path_p_values[path_name]) else ""
+        stars <- if (.plot_significances) get_significance_stars(path_p_values[path_name]) else ""
         
         if (grepl("\\.", predictor)) {
           # Create a new node for the predictor with dot in its name
@@ -341,7 +337,7 @@ plotModel <- function(
     # Add dashed lines for exogenous construct correlations
     for (i in seq_along(exo_construct_correlation_names)) {
       correlation <- round(exo_construct_correlation_estimates[i], 3)
-      stars <- if (.show_stars) get_significance_stars(exo_construct_correlation_p_values[i]) else ""
+      stars <- if (.plot_significances) get_significance_stars(exo_construct_correlation_p_values[i]) else ""
       names_split <- strsplit(exo_construct_correlation_names[i], " ~~ ")[[1]]
       dot_code <- paste0(dot_code,
                          names_split[1], " -> ", names_split[2],
@@ -350,10 +346,10 @@ plotModel <- function(
     }
     
     # Add dashed lines for indicator correlations if `run_correlation_lines` is TRUE
-    if (.run_correlation_lines) {
+    if (.plot_indicator_correlations) {
       for (i in seq_along(indicator_correlation_names)) {
         correlation <- round(indicator_correlation_estimates[i], 3)
-        stars <- if (.show_stars) get_significance_stars(indicator_correlation_p_values[i]) else ""
+        stars <- if (.plot_significances) get_significance_stars(indicator_correlation_p_values[i]) else ""
         names_split <- strsplit(indicator_correlation_names[i], " ~~ ")[[1]]
         dot_code <- paste0(dot_code,
                            names_split[1], " -> ", names_split[2],

@@ -222,7 +222,11 @@
 #'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
 #'   "*geo_of_harmonic*". Defaults to "*dist_squared_euclid*". 
 #'   Ignored if `.disattenuate = FALSE` or if `.approach_weights` is not PLS-PM.
+#' @param .plot_indicator_correlations Logical. Should the correlations between the indicators be plotted? Defaults to `FALSE`.
 #' @param .plot_package Character string. Indicates which packages should be used for plotting.
+#' @param .plot_significances Logical. Should p-values in the form of stars be plotted? Defaults to `TRUE`.
+#' @param .plot_structural_model_only Logical. Should only the structural model, 
+#' i.e., the constructs and their relationships be plotted? Defaults to `FALSE`.
 #' @param .plot_type Character string. Indicates the type of plot that is produced.
 #' @param .PLS_ignore_structural_model Logical. Should the structural model be ignored
 #'   when calculating the inner weights of the PLS-PM algorithm? Defaults to `FALSE`.
@@ -511,7 +515,10 @@ args_default <- function(.choices = FALSE) {
     .parameters_to_compare   = NULL,
     .path                    = NULL,
     .path_coefficients       = NULL,
+    .plot_indicator_correlations = FALSE,
     .plot_package            = NULL,
+    .plot_significances      = TRUE,
+    .plot_structural_model_only = FALSE,
     .plot_type               = NULL,
     .probs                   = NULL,
     .PLS_approach_cf         = c("dist_squared_euclid", "dist_euclid_weighted", 

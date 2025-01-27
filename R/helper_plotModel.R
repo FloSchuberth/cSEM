@@ -38,7 +38,7 @@ get_significance_stars <- function(.pvalue) {
 #' 
 #' @inheritParams csem_arguments
 #' 
-#' @return 
+#' @return NULL.
 #' 
 #' @keywords internal
 #' 
@@ -72,11 +72,12 @@ save_single_plot <- function(diagrammer_obj, out_file) {
 #'  .file) 
 #'
 #' @param plot_object The DiagrammeR plot object to be saved. If not provided, the function will try to retrieve `latest_plot` from the global environment.
-#' @param .file The name of the file to save the plot to (supports 'pdf', 'png', 'svg', and 'dot' formats).
+#' @param .file Character string. The name of the file to save the plot to (supports 'pdf', 'png', 'svg', and 'dot' formats).
 #'
 #' @return NULL (the function saves the plot to a file and provides messages on completion)
 #'
 #' @examples
+#' \dontrun{
 #' # Example 1: Automatically retrieve the latest plot and save as DOT format
 #' plotModel(.object)
 #' plotModelSave(.file = "sem_plot.dot")
@@ -84,9 +85,7 @@ save_single_plot <- function(diagrammer_obj, out_file) {
 #' # Example 2: Save a plot object to a pdf file
 #' plot_object <- plotModel(.object)
 #' plotModelSave(plot_object, .file = "sem_plot.pdf")
-#' # Or:
-#' plotModelSave(plot_object, "sem_plot.pdf")
-#'
+#' }
 #' @export
 plotModelSave <- function(plot_object, .file) {
   

@@ -6,28 +6,31 @@
 \usage{
 plotModel(
 .object, 
-.show_stars = TRUE, 
 .title = "",
-.run_correlation_lines = FALSE,
-.show_structural_model_only = FALSE,
+.plot_significances = args_default()$.plot_significances,  
+.plot_indicator_correlations = args_default()$.plot_indicator_correlations,
+.plot_structural_model_only = args_default()$.plot_structural_model_only,
+.plot_stage_SOC = c("second", "first"),
 .node_ranks = NULL, 
 .graph_attrs = NULL,
 .remove_colors = FALSE, 
-.edge_lengths = NULL,
-.stage = c("second", "first")
+.edge_lengths = NULL
 )
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.show_stars}{Logical, whether to show significance stars based on p-values.}
-
 \item{.title}{Character string. Plot title.}
 
-\item{.run_correlation_lines}{Logical. Should the correlations between the indicators displayed? Defaults to \code{FALSE}.}
+\item{.plot_significances}{Logical. Should p-values in the form of stars be plotted? Defaults to \code{TRUE}.}
 
-\item{.show_structural_model_only}{Logical. Should only the structural model,
-i.e., the constructs and their relationships be displayed? Default to \code{FALSE}.}
+\item{.plot_indicator_correlations}{Logical. Should the correlations between the indicators be plotted? Defaults to \code{FALSE}.}
+
+\item{.plot_structural_model_only}{Logical. Should only the structural model,
+i.e., the constructs and their relationships be plotted? Defaults to \code{FALSE}.}
+
+\item{.plot_stage_SOC}{Character string. Which stage of the two-stage approach for models containing second-order constructs should be displayed?
+Defaults to \code{second}.}
 
 \item{.node_ranks}{List specifying the ranks for nodes (e.g., list(rank1 = c("Node1", "Node2"))), DiagrammeR syntax.}
 
@@ -36,9 +39,6 @@ i.e., the constructs and their relationships be displayed? Default to \code{FALS
 \item{.remove_colors}{Logical. Should the plot be colored? Defaults to \code{FALSE}.}
 
 \item{.edge_lengths}{Integer. Length of edges in the DOT graph.}
-
-\item{.stage}{Character string. Which stage of the two-stage approach for models containing second-order constructs should be displayed?
-Defaults to \code{second}.}
 }
 \value{
 A DiagrammeR graph object or a list of DiagrammeR graph objects in case of a multi analysis.

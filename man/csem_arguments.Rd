@@ -298,7 +298,14 @@ factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weigh
 "\emph{geo_of_harmonic}". Defaults to "\emph{dist_squared_euclid}".
 Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS-PM.}
 
+\item{.plot_indicator_correlations}{Logical. Should the correlations between the indicators be plotted? Defaults to \code{FALSE}.}
+
 \item{.plot_package}{Character string. Indicates which packages should be used for plotting.}
+
+\item{.plot_significances}{Logical. Should p-values in the form of stars be plotted? Defaults to \code{TRUE}.}
+
+\item{.plot_structural_model_only}{Logical. Should only the structural model,
+i.e., the constructs and their relationships be plotted? Defaults to \code{FALSE}.}
 
 \item{.plot_type}{Character string. Indicates the type of plot that is produced.}
 
