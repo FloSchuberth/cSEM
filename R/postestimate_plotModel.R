@@ -1,6 +1,6 @@
 #' Plot model
 #' 
-#' \lifecycle{stable}
+#' \lifecycle{experimental}
 #'
 #' Create a plot of a cSEM model
 #' 
@@ -25,7 +25,7 @@
 #' i.e., the constructs and their relationships be displayed? Default to `FALSE`.
 #' @param .node_ranks List specifying the ranks for nodes (e.g., list(rank1 = c("Node1", "Node2"))), DiagrammeR syntax.
 #' @param .graph_attrs Character vector of custom graph attributes for the DOT graph (e.g., c("rankdir=LR", "ranksep=1.0")). DiagrammeR syntax.
-#' @param .remove_colors Logical. Should the plot be colored? Defaults to `FASLE`. 
+#' @param .remove_colors Logical. Should the plot be colored? Defaults to `FALSE`. 
 #' @param .edge_lengths Integer. Length of edges in the DOT graph.
 #' @param .stage Character string. Which stage of the two-stage approach for models containing second-order constructs should be displayed? 
 #' Defaults to `second`.
@@ -74,8 +74,8 @@ plotModel <- function(
     names(plots) <- names(.object)
     
     # Assign the list of plots to the global variable latest_plot
-    class(plots) <- c("cSEMPlotMulti", class(plots))
-    assign("latest_plot", plots, envir = .GlobalEnv)
+    class(plots) <- c("cSEMPlot_multi", class(plots))
+    # assign("latest_plot", plots, envir = .GlobalEnv)
     
     return(plots)
     
@@ -231,7 +231,7 @@ plotModel <- function(
       }
     }
     
-    # Define constructs with R² values and subgraphs for their indicators
+    # Define constructs with R2 values and subgraphs for their indicators
     constructs <- names(construct_types)
     
     # Iterate over constructs
@@ -242,9 +242,9 @@ plotModel <- function(
       shape <- if (construct_type == "Composite") "hexagon" else "circle"
       fixed_size <- "width=1.5, height=1.5, fixedsize=true"
       
-      # Add R² value to label if available
+      # Add R2 value to label if available
       if (!is.na(r2_values[construct])) {
-        r2_label <- paste0("R² = ", round(r2_values[construct], 3))
+        r2_label <- paste0("R\u00b2 = ", round(r2_values[construct], 3))
         dot_code <- paste0(dot_code, construct,
                            " [label=\"", construct, "\\n", r2_label,
                            "\", shape=", shape, ", style=filled, color=", color, ", ", fixed_size, "];\n")
@@ -376,10 +376,10 @@ plotModel <- function(
     dot_code <- paste0(dot_code, "}")
     
     # Visualize using DiagrammeR
-    latest_plot <- grViz(dot_code)
+    latest_plot <- DiagrammeR::grViz(dot_code)
     
     # Assign latest_plot to the global environment
-    assign("latest_plot", latest_plot, envir = .GlobalEnv)
+    # assign("latest_plot", latest_plot, envir = .GlobalEnv)
     
     # Return the plot object
     latest_plot

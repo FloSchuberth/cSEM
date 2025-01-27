@@ -33,7 +33,7 @@ i.e., the constructs and their relationships be displayed? Default to \code{FALS
 
 \item{.graph_attrs}{Character vector of custom graph attributes for the DOT graph (e.g., c("rankdir=LR", "ranksep=1.0")). DiagrammeR syntax.}
 
-\item{.remove_colors}{Logical. Should the plot be colored? Defaults to \code{FASLE}.}
+\item{.remove_colors}{Logical. Should the plot be colored? Defaults to \code{FALSE}.}
 
 \item{.edge_lengths}{Integer. Length of edges in the DOT graph.}
 
@@ -44,7 +44,7 @@ Defaults to \code{second}.}
 A DiagrammeR graph object or a list of DiagrammeR graph objects in case of a multi analysis.
 }
 \description{
-\lifecycle{stable}
+\lifecycle{experimental}
 }
 \details{
 Create a plot of a cSEM model
