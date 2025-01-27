@@ -56,7 +56,6 @@ plotModel <- function(
   
   # Check if the object is a multi-group object
   if (inherits(.object, "cSEMResults_multi")) {
-    # Use lapply to handle the multi-group case:
     plots <- lapply(names(.object), function(group_name) {
       
       group_object <- .object[[group_name]]
@@ -87,7 +86,7 @@ plotModel <- function(
     if(inherits(.object, "cSEMResults_2ndorder")){
       if(.stage == "second"){
         # Ensure that the second-stage path estimates exist
-        if (is.null(.object$Second_stage$Estimates$Path_estimates)) stop("Second-stage path estimates not found in the model.")
+        if (is.null(.object$Second_stage$Estimates$Path_estimates)) stop2("Second-stage path estimates could not be found.")
         
         # Summarize results to get estimates and p-values
         results <- summarize(.object)$Second_stage
@@ -167,7 +166,7 @@ plotModel <- function(
       
     } else {
       # Ensure that the path estimates exist
-      if (is.null(.object$Estimates$Path_estimates)) stop("Path estimates not found in the model.")
+      if (is.null(.object$Estimates$Path_estimates)) stop2("Path estimates could not be found.")
       
       # Summarize results to get estimates and p-values
       results <- summarize(.object)
@@ -202,15 +201,7 @@ plotModel <- function(
       exo_construct_correlation_p_values <- results$Estimates$Exo_construct_correlation$p_value
     }
     
-    # Helper function to determine significance stars based on p-value
-    get_significance_stars <- function(p_value) {
-      if (is.na(p_value)) return("")
-      else if (p_value < 0.001) return("***")
-      else if (p_value < 0.01) return("**")
-      else if (p_value < 0.05) return("*")
-      else return("")
-    }
-    
+
     # Initialize DOT code for Graphviz
     dot_code <- "digraph SEM {\n"
     
