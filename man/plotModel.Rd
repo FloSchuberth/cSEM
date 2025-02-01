@@ -10,7 +10,7 @@ plotModel(
 .plot_significances = args_default()$.plot_significances,  
 .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
 .plot_structural_model_only = args_default()$.plot_structural_model_only,
-...
+.graph_attrs = NULL
 )
 }
 \arguments{
@@ -26,7 +26,7 @@ or indicators be plotted? Defaults to \code{exo}.}
 \item{.plot_structural_model_only}{Logical. Should only the structural model,
 i.e., the constructs and their relationships be plotted? Defaults to \code{FALSE}.}
 
-\item{...}{additional parameters that can be passed through to the \code{grViz()} function}
+\item{.graph_attrs}{Character String. attributes that should be passed to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0")). DiagrammeR syntax.}
 }
 \value{
 A DiagrammeR graph object or a list of DiagrammeR graph objects in case of a multi analysis.
@@ -35,7 +35,7 @@ A DiagrammeR graph object or a list of DiagrammeR graph objects in case of a mul
 \lifecycle{experimental}
 }
 \details{
-Create a plot of a cSEM model
+The \code{plotModel()} function creates a plot of a cSEM model using the \link[DiagrammeR]{grViz} function of the  DiagrammeR package.
 }
 \examples{
 \dontrun{

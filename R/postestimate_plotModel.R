@@ -2,7 +2,7 @@
 #' 
 #' \lifecycle{experimental}
 #'
-#' Create a plot of a cSEM model
+#' The `plotModel()` function creates a plot of a cSEM model using the \link[DiagrammeR]{grViz} function of the  DiagrammeR package.
 #' 
 #' @usage plotModel(
 #' .object, 
@@ -10,12 +10,13 @@
 #' .plot_significances = args_default()$.plot_significances,  
 #' .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
 #' .plot_structural_model_only = args_default()$.plot_structural_model_only,
-#' ...
+#' .graph_attrs = NULL
 #' ) 
 #'
 #' @inheritParams csem_arguments
 #' @param .title Character string. Plot title.
-#' @param ... additional parameters that can be passed through to the `grViz()` function 
+#' @param .graph_attrs Character String. attributes that should be passed to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0")). DiagrammeR syntax.
+#' 
 #' 
 #' @return A DiagrammeR graph object or a list of DiagrammeR graph objects in case of a multi analysis.
 #' 
@@ -25,14 +26,27 @@
 #' 
 #' @export
 
-#------------------------------------------------------------
-# plotModel: main plotting function.
-plotModel <- function(.object, 
-                      .title = "",
-                      .plot_significances = args_default()$.plot_significances, 
-                      .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
-                      .plot_structural_model_only = args_default()$.plot_structural_model_only,
-                      ...) {
+plotModel <- function(
+    .object, 
+    .title = "",
+    .plot_significances = args_default()$.plot_significances, 
+    .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
+    .plot_structural_model_only = args_default()$.plot_structural_model_only,
+    .graph_attrs = NULL
+) {
+  UseMethod("plotModel")
+}
+
+#'@export
+
+plotModel.cSEMResults_default <- function(
+    .object, 
+    .title = "",
+    .plot_significances = args_default()$.plot_significances, 
+    .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
+    .plot_structural_model_only = args_default()$.plot_structural_model_only,
+    .graph_attrs = NULL
+                      ){
   
   if (inherits(.object, "cSEMResults_multi")) {
     plots <- lapply(names(.object), function(group_name) {
@@ -43,7 +57,7 @@ plotModel <- function(.object,
                 .plot_significances = .plot_significances, 
                 .plot_indicator_correlations = .plot_indicator_correlations,
                 .plot_structural_model_only = .plot_structural_model_only,
-                ...)
+                .graph_attrs = .graph_attrs)
     })
     names(plots) <- names(.object)
     class(plots) <- c("cSEMPlot_multi", class(plots))
@@ -55,7 +69,7 @@ plotModel <- function(.object,
                              .plot_significances = .plot_significances,  
                              .plot_indicator_correlations = .plot_indicator_correlations,
                              .plot_structural_model_only = .plot_structural_model_only,
-                             ...))
+                             .graph_attrs = .graph_attrs))
   } else {
     results <- summarize(.object)
     constructs <- .object$Information$Model$construct_type  # named vector of construct types
@@ -81,7 +95,7 @@ plotModel <- function(.object,
     }
     
     dot_code <- buildDotCode(title = .title,
-                             graph_attrs = NULL,
+                             graph_attrs = .graph_attrs,
                              constructs = constructs,
                              r2_values = r2_values,
                              measurement_edge_fun = measurement_edge_fun,
@@ -93,18 +107,21 @@ plotModel <- function(.object,
                              plot_structural_model_only = .plot_structural_model_only,
                              is_second_order = FALSE)
     
-    return(DiagrammeR::grViz(dot_code,...))
+    return(DiagrammeR::grViz(dot_code))
   }
 }
 
-#------------------------------------------------------------
-# plotModel2ndOrder (for second–order models)
-plotModel2ndOrder <- function(.object,
-                              .title = "",
-                              .plot_significances = args_default()$.plot_significances,  
-                              .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
-                              .plot_structural_model_only = args_default()$.plot_structural_model_only,
-                              ...) {
+#' @export
+
+plotModel.cSEMResults_2ndorder <- function(
+    .object,
+    .title = "",
+    .plot_significances = args_default()$.plot_significances,  
+    .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
+    .plot_structural_model_only = args_default()$.plot_structural_model_only,
+    .graph_attrs = NULL
+    ){
+  
   if (!inherits(.object, "cSEMResults_2ndorder")) {
     stop("plotModel2ndOrder requires a cSEMResults_2ndorder object.")
   }
@@ -221,7 +238,7 @@ plotModel2ndOrder <- function(.object,
   # Build the DOT script.
   # Pass is_second_order = TRUE so that buildDotCode always calls the measurement_edge_fun.
   dot_code <- buildDotCode(title = .title,
-                           graph_attrs = NULL,
+                           graph_attrs = .graph_attrs,
                            constructs = constructs,
                            r2_values = r2_values,
                            measurement_edge_fun = measurement_edge_fun,
@@ -233,5 +250,5 @@ plotModel2ndOrder <- function(.object,
                            plot_structural_model_only = .plot_structural_model_only,
                            is_second_order = TRUE)
   
-  return(DiagrammeR::grViz(dot_code,...))
+  return(DiagrammeR::grViz(dot_code))
 }
