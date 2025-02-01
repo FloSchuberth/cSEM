@@ -5,16 +5,17 @@
 \title{Internal: secondOrderMeasurementEdges}
 \usage{
 secondOrderMeasurementEdges(
-weights_first,
-loadings_first,
+ construct,
+ weights_first,
+ loadings_first,
  weight_p_first,
-  loading_p_first,
-  weights_second,
-   weight_p_second,
-   plot_signif, 
-   constructTypes,
-   only_second_stage = FALSE
-   )
+ loading_p_first,
+ weights_second,
+ weight_p_second,
+ plot_signif, 
+ constructTypes,
+ only_second_stage = FALSE
+ )
 }
 \value{
 Character string. .

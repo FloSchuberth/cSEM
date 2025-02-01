@@ -200,16 +200,17 @@ firstOrderMeasurementEdges <- function(
 #' 
 #'
 #'@usage secondOrderMeasurementEdges(
-#' weights_first,
-#' loadings_first,
+#'  construct,
+#'  weights_first,
+#'  loadings_first,
 #'  weight_p_first,
-#'   loading_p_first,
-#'   weights_second,
-#'    weight_p_second,
-#'    plot_signif, 
-#'    constructTypes,
-#'    only_second_stage = FALSE
-#'    )
+#'  loading_p_first,
+#'  weights_second,
+#'  weight_p_second,
+#'  plot_signif, 
+#'  constructTypes,
+#'  only_second_stage = FALSE
+#'  )
 #'
 #' 
 #' @inheritParams csem_arguments
@@ -218,17 +219,18 @@ firstOrderMeasurementEdges <- function(
 #' 
 #' @keywords internal
 #'
-secondOrderMeasurementEdges <- function(construct,
-                                        weights_first,
-                                        loadings_first,
-                                        weight_p_first,
-                                        loading_p_first,
-                                        weights_second,
-                                        weight_p_second,
-                                        plot_signif,
-                                        constructTypes,
-                                        only_second_stage = FALSE
-                                        ){
+secondOrderMeasurementEdges <- function(
+    construct,
+    weights_first,
+    loadings_first,
+    weight_p_first, 
+    loading_p_first,
+    weights_second, 
+    weight_p_second,
+    plot_signif,
+    constructTypes,
+    only_second_stage = FALSE
+    ){
   
   code <- paste0("subgraph cluster_", gsub("[^A-Za-z0-9]", "_", construct),
                  " {\nlabel=\"\";\nstyle=invis;\n")
