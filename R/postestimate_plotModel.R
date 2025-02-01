@@ -20,7 +20,7 @@
 #' 
 #' @return A DiagrammeR graph object or a list of DiagrammeR graph objects in case of a multi analysis.
 #' 
-#' @seealso [csem()], [cSEMResults]
+#' @seealso [csem()], [cSEMResults], \link[DiagrammeR]{grViz}
 #' 
 #' @example inst/examples/example_plotModel.R
 #' 
@@ -63,13 +63,6 @@ plotModel.cSEMResults_default <- function(
     class(plots) <- c("cSEMPlot_multi", class(plots))
     return(plots)
     
-  } else if (inherits(.object, "cSEMResults_2ndorder")) {
-    return(plotModel2ndOrder(.object, 
-                             .title = .title,
-                             .plot_significances = .plot_significances,  
-                             .plot_indicator_correlations = .plot_indicator_correlations,
-                             .plot_structural_model_only = .plot_structural_model_only,
-                             .graph_attrs = .graph_attrs))
   } else {
     results <- summarize(.object)
     constructs <- .object$Information$Model$construct_type  # named vector of construct types
@@ -123,7 +116,7 @@ plotModel.cSEMResults_2ndorder <- function(
     ){
   
   if (!inherits(.object, "cSEMResults_2ndorder")) {
-    stop("plotModel2ndOrder requires a cSEMResults_2ndorder object.")
+    stop2("plotModel2ndOrder requires a cSEMResults_2ndorder object.")
   }
   
   # Extract first– and second–stage models and summaries.

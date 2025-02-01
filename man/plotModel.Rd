@@ -62,5 +62,5 @@ model_Bergami_int="
 }
 }
 \seealso{
-\code{\link[=csem]{csem()}}, \link{cSEMResults}
+\code{\link[=csem]{csem()}}, \link{cSEMResults}, \link[DiagrammeR]{grViz}
 }
