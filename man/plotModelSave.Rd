@@ -24,11 +24,8 @@ plot_object,
 }
 \examples{
 \dontrun{
-# Example 1: Automatically retrieve the latest plot and save as DOT format
-plotModel(.object)
-plotModelSave(.file = "sem_plot.dot")
 
-# Example 2: Save a plot object to a pdf file
+# Example: Save a plot object to a pdf file
 plot_object <- plotModel(.object)
 plotModelSave(plot_object, .file = "sem_plot.pdf")
 }

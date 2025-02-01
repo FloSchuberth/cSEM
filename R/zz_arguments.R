@@ -222,7 +222,8 @@
 #'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
 #'   "*geo_of_harmonic*". Defaults to "*dist_squared_euclid*". 
 #'   Ignored if `.disattenuate = FALSE` or if `.approach_weights` is not PLS-PM.
-#' @param .plot_indicator_correlations Logical. Should the correlations between the indicators be plotted? Defaults to `FALSE`.
+#' @param .plot_indicator_correlations Logical. Should the correlations between the exogenous constructs
+#'   or indicators be plotted? Defaults to `exo`.
 #' @param .plot_package Character string. Indicates which packages should be used for plotting.
 #' @param .plot_significances Logical. Should p-values in the form of stars be plotted? Defaults to `TRUE`.
 #' @param .plot_structural_model_only Logical. Should only the structural model, 
@@ -401,21 +402,21 @@ NULL
 #' @keywords internal
 
 args_assess_dotdotdot <- function(
-  .absolute            = TRUE,
-  .alpha               = 0.05,
-  .ci                  = c("CI_standard_z", "CI_standard_t", "CI_percentile", 
-                           "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
-  .closed_form_ci      = FALSE,
-  .handle_inadmissibles= c("drop", "ignore", "replace"),
-  .inference           = FALSE,
-  .null_model          = FALSE,
-  .R                   = 499,
-  .saturated           = FALSE,
-  .seed                = NULL,
-  .type_gfi            = c("ML", "GLS", "ULS"),
-  .type_vcv            = "indicator"
+    .absolute            = TRUE,
+    .alpha               = 0.05,
+    .ci                  = c("CI_standard_z", "CI_standard_t", "CI_percentile", 
+                             "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
+    .closed_form_ci      = FALSE,
+    .handle_inadmissibles= c("drop", "ignore", "replace"),
+    .inference           = FALSE,
+    .null_model          = FALSE,
+    .R                   = 499,
+    .saturated           = FALSE,
+    .seed                = NULL,
+    .type_gfi            = c("ML", "GLS", "ULS"),
+    .type_vcv            = "indicator"
 ) {NULL}
-  
+
 #' Show argument defaults or candidates
 #'
 #' Show all arguments used by package functions including default or candidate
@@ -515,7 +516,7 @@ args_default <- function(.choices = FALSE) {
     .parameters_to_compare   = NULL,
     .path                    = NULL,
     .path_coefficients       = NULL,
-    .plot_indicator_correlations = FALSE,
+    .plot_indicator_correlations = c("exo", "both", "none"),
     .plot_package            = NULL,
     .plot_significances      = TRUE,
     .plot_structural_model_only = FALSE,
@@ -588,11 +589,11 @@ args_default <- function(.choices = FALSE) {
     .y                       = NULL,
     .z                       = NULL
   )
-
+  
   if(!.choices) {
     args <- lapply(args, function(x) eval(x)[1])
   }
-    
+  
   args_sorted <- args[sort(names(args))]
   
   return(args_sorted)
@@ -632,13 +633,13 @@ handleArgs <- function(.args_used) {
   # choices_logical <- Filter(function(x) any(is.logical(x)), args_default(.choices = TRUE))
   # choices_numeric <- Filter(function(x) any(is.numeric(x)), args_default(.choices = TRUE))
   choices_character <- Filter(function(x) any(is.character(x)), args_default(.choices = TRUE))
-
+  
   character_args <- intersect(names(choices_character), args_used_names)
   x <- Map(function(x, y) x %in% y, 
-      x = .args_used[character_args], 
-      y = choices_character[character_args]
-      )
-
+           x = .args_used[character_args], 
+           y = choices_character[character_args]
+  )
+  
   lapply(seq_along(x), function(i) {
     if(isFALSE(x[[i]])) {
       n <- names(x[i])
@@ -648,7 +649,7 @@ handleArgs <- function(.args_used) {
            "Choices are: ", paste0("`", a[-length(a)],"`", collapse = ", "), 
            " or " , paste0("`", a[length(a)], "`"), call. = FALSE)
     }
-
+    
   })
   ## Replace all arguments that were changed or explicitly given and keep
   #  the default values for the others

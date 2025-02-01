@@ -10,11 +10,7 @@ plotModel(
 .plot_significances = args_default()$.plot_significances,  
 .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
 .plot_structural_model_only = args_default()$.plot_structural_model_only,
-.plot_stage_SOC = c("second", "first"),
-.node_ranks = NULL, 
-.graph_attrs = NULL,
-.remove_colors = FALSE, 
-.edge_lengths = NULL
+...
 )
 }
 \arguments{
@@ -24,21 +20,13 @@ plotModel(
 
 \item{.plot_significances}{Logical. Should p-values in the form of stars be plotted? Defaults to \code{TRUE}.}
 
-\item{.plot_indicator_correlations}{Logical. Should the correlations between the indicators be plotted? Defaults to \code{FALSE}.}
+\item{.plot_indicator_correlations}{Logical. Should the correlations between the exogenous constructs
+or indicators be plotted? Defaults to \code{exo}.}
 
 \item{.plot_structural_model_only}{Logical. Should only the structural model,
 i.e., the constructs and their relationships be plotted? Defaults to \code{FALSE}.}
 
-\item{.plot_stage_SOC}{Character string. Which stage of the two-stage approach for models containing second-order constructs should be displayed?
-Defaults to \code{second}.}
-
-\item{.node_ranks}{List specifying the ranks for nodes (e.g., list(rank1 = c("Node1", "Node2"))), DiagrammeR syntax.}
-
-\item{.graph_attrs}{Character vector of custom graph attributes for the DOT graph (e.g., c("rankdir=LR", "ranksep=1.0")). DiagrammeR syntax.}
-
-\item{.remove_colors}{Logical. Should the plot be colored? Defaults to \code{FALSE}.}
-
-\item{.edge_lengths}{Integer. Length of edges in the DOT graph.}
+\item{...}{additional parameters that can be passed through to the \code{grViz()} function}
 }
 \value{
 A DiagrammeR graph object or a list of DiagrammeR graph objects in case of a multi analysis.
