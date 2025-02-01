@@ -20,6 +20,9 @@ is_second_order = FALSE
 )
 }
 \arguments{
+\item{graph_attrs}{Character String. Additional attributes that should be passed
+to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emph{NULL}.}
+
 \item{path_coefficients}{List. A list that contains the resampled and the original
 path coefficient estimates. Typically a part of a \code{cSEMResults_resampled} object.
 Defaults to \code{NULL}.}

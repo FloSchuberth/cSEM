@@ -16,8 +16,6 @@ plotModel(
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.title}{Character string. Plot title.}
-
 \item{.plot_significances}{Logical. Should p-values in the form of stars be plotted? Defaults to \code{TRUE}.}
 
 \item{.plot_indicator_correlations}{Logical. Should the correlations between the exogenous constructs
@@ -26,10 +24,11 @@ or indicators be plotted? Defaults to \code{exo}.}
 \item{.plot_structural_model_only}{Logical. Should only the structural model,
 i.e., the constructs and their relationships be plotted? Defaults to \code{FALSE}.}
 
-\item{.graph_attrs}{Character String. attributes that should be passed to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0")). DiagrammeR syntax.}
+\item{.graph_attrs}{Character String. Additional attributes that should be passed
+to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emph{NULL}.}
 }
 \value{
-A DiagrammeR graph object or a list of DiagrammeR graph objects in case of a multi analysis.
+A DiagrammeR graph object or a list of DiagrammeR graph objects in case of a multigroup analysis.
 }
 \description{
 \lifecycle{experimental}

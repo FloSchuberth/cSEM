@@ -14,11 +14,9 @@
 #' ) 
 #'
 #' @inheritParams csem_arguments
-#' @param .title Character string. Plot title.
-#' @param .graph_attrs Character String. attributes that should be passed to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0")). DiagrammeR syntax.
 #' 
 #' 
-#' @return A DiagrammeR graph object or a list of DiagrammeR graph objects in case of a multi analysis.
+#' @return A DiagrammeR graph object or a list of DiagrammeR graph objects in case of a multigroup analysis.
 #' 
 #' @seealso [csem()], [cSEMResults], \link[DiagrammeR]{grViz}
 #' 
@@ -28,12 +26,12 @@
 
 plotModel <- function(
     .object, 
-    .title = "",
+    .title = args_default()$.title,
     .plot_significances = args_default()$.plot_significances, 
     .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
     .plot_structural_model_only = args_default()$.plot_structural_model_only,
-    .graph_attrs = NULL
-) {
+    .graph_attrs = args_default()$.graph_attrs
+  ){
   UseMethod("plotModel")
 }
 
@@ -41,12 +39,12 @@ plotModel <- function(
 
 plotModel.cSEMResults_default <- function(
     .object, 
-    .title = "",
+    .title = args_default()$.title,
     .plot_significances = args_default()$.plot_significances, 
     .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
     .plot_structural_model_only = args_default()$.plot_structural_model_only,
-    .graph_attrs = NULL
-                      ){
+    .graph_attrs = args_default()$.graph_attrs
+  ){
   
   if (inherits(.object, "cSEMResults_multi")) {
     plots <- lapply(names(.object), function(group_name) {
@@ -108,16 +106,12 @@ plotModel.cSEMResults_default <- function(
 
 plotModel.cSEMResults_2ndorder <- function(
     .object,
-    .title = "",
-    .plot_significances = args_default()$.plot_significances,  
+    .title = args_default()$.title,
+    .plot_significances = args_default()$.plot_significances, 
     .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
     .plot_structural_model_only = args_default()$.plot_structural_model_only,
-    .graph_attrs = NULL
+    .graph_attrs = args_default()$.graph_attrs
     ){
-  
-  if (!inherits(.object, "cSEMResults_2ndorder")) {
-    stop2("plotModel2ndOrder requires a cSEMResults_2ndorder object.")
-  }
   
   # Extract first– and second–stage models and summaries.
   fs <- .object$First_stage
