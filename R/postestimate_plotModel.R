@@ -6,11 +6,11 @@
 #' 
 #' @usage plotModel(
 #' .object, 
-#' .title = "",
+#' .title =  args_default()$.title,
 #' .plot_significances = args_default()$.plot_significances,  
 #' .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
 #' .plot_structural_model_only = args_default()$.plot_structural_model_only,
-#' .graph_attrs = NULL
+#' .graph_attrs = args_default()$.graph_attrs
 #' ) 
 #'
 #' @inheritParams csem_arguments
