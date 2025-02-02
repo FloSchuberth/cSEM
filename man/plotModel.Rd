@@ -16,6 +16,8 @@ plotModel(
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
+\item{.title}{Character string. Title of an object. Defaults to \emph{NULL}.}
+
 \item{.plot_significances}{Logical. Should p-values in the form of stars be plotted? Defaults to \code{TRUE}.}
 
 \item{.plot_indicator_correlations}{Logical. Should the correlations between the exogenous constructs

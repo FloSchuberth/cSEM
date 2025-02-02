@@ -431,8 +431,9 @@ training data.}
 
 \item{.testtype}{Character string. One of "\emph{twosided}" (H1: The models do not
 perform equally in predicting indicators belonging to endogenous constructs)"
-and \emph{onesided}" (H1: Model 1 performs better in predicting indicators belonging
-@param .title Character string. Title of an object. Defaults to \emph{NULL}.}
+and \emph{onesided}" (H1: Model 1 performs better in predicting indicators belonging}
+
+\item{.title}{Character string. Title of an object. Defaults to \emph{NULL}.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}

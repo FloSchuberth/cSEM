@@ -320,7 +320,7 @@
 #' @param .testtype Character string. One of "*twosided*" (H1: The models do not 
 #'  perform equally in predicting indicators belonging to endogenous constructs)"
 #'  and *onesided*" (H1: Model 1 performs better in predicting indicators belonging 
-#'  @param .title Character string. Title of an object. Defaults to *NULL*.
+#' @param .title Character string. Title of an object. Defaults to *NULL*.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
 #' @param .treat_as_continuous Logical. Should the indicators for the benchmark predictions

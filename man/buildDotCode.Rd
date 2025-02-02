@@ -20,6 +20,8 @@ is_second_order = FALSE
 )
 }
 \arguments{
+\item{title}{Character string. Title of an object. Defaults to \emph{NULL}.}
+
 \item{graph_attrs}{Character String. Additional attributes that should be passed
 to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emph{NULL}.}
 
