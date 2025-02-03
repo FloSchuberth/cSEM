@@ -433,7 +433,7 @@ training data.}
 perform equally in predicting indicators belonging to endogenous constructs)"
 and \emph{onesided}" (H1: Model 1 performs better in predicting indicators belonging}
 
-\item{.title}{Character string. Title of an object. Defaults to \emph{NULL}.}
+\item{.title}{Character string. Title of an object. Defaults to \emph{""}.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
