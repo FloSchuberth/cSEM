@@ -1,0 +1,61 @@
+#' Save plotMOdel object to a file
+#'
+#' This function saves a given plot of a cSEM model to a specified file format.
+#'
+#'  @usage saveplotModel(
+#'  .plot_object,
+#'  .file) 
+#'
+#' @param .plot_object Object returned by the [plotModel()] function.
+#' @param .file Character string. The name of the file to save the plot to (supports 'pdf', 'png', 'svg', and 'dot' formats).
+#'
+#' @return NULL (the function saves the plot to a file and provides messages on completion)
+#'
+#' @examples
+#' \dontrun{
+#'
+#' # Example: Save a plot object to a pdf file
+#' plot_object <- plotModel(.object)
+#' saveplotModel(plot_object, .file = "sem_plot.pdf")
+#' }
+#' @export
+saveplotModel <- function(
+    .plot_object,
+    .file
+    ){
+  if (missing(.plot_object)) {
+    stop2(".plot_object must be provided to saveplotModel().")
+  }
+  
+  # Ensure .file is provided
+  if (missing(.file)) {
+    stop2("Filename must be specified.")
+  }
+  
+  # Check if the provided plot object is a multi-plot (list of plots)
+  is_multi <- inherits(.plot_object, "cSEMPlot_multi") 
+  
+  
+  # Handle saving for multi-plot and single-plot cases
+  if (is_multi) {
+    # --- MULTI-PLOT CASE ---
+    # Save each sub-plot in the list with an appended identifier in the filename
+    for (i in seq_along(.plot_object)) {
+      this_plot  <- .plot_object[[i]]
+      this_name  <- names(.plot_object)[i]  # Extract the name of the sub-plot
+      
+      # Generate a unique filename for each sub-plot
+      base_name <- gsub("\\.(pdf|png|svg|dot)$", "", .file, ignore.case = TRUE)
+      ext       <- tools::file_ext(.file)
+      file_i    <- paste0(base_name, "_", this_name, ".", ext)
+      
+      # Save the sub-plot
+      save_single_plot(this_plot, file_i)
+    }
+  } else {
+    # --- SINGLE-PLOT CASE ---
+    save_single_plot(.plot_object, .file)
+  }
+  
+  invisible(NULL)  # Return NULL invisibly
+}

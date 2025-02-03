@@ -17,118 +17,13 @@
 #'
 get_significance_stars <- function(
     .pvalue
-    ){
+){
   if (is.na(.pvalue)) return("")
   else if (.pvalue < 0.001) return("***")
   else if (.pvalue < 0.01) return("**")
   else if (.pvalue < 0.05) return("*")
   else return("")
 }
-
-
-#' Internal: save_single_plot
-#' Helper function to save a single DiagrammeR plot based on the file extension
-#' 
-#' `diagrammer_obj` DiagrammeR plot object to be saved.
-#' `out_file` The name of the file to save the plot to (supports 'pdf', 'png', 'svg', and 'dot' formats).
-#' 
-#' 
-#' @usage save_single_plot(
-#' diagrammer_obj, 
-#' out_file
-#' )
-#' 
-#' @inheritParams csem_arguments
-#' 
-#' @return NULL.
-#' 
-#' @keywords internal
-#' 
-save_single_plot <- function(
-    diagrammer_obj, 
-    out_file){
-  extension <- tolower(tools::file_ext(out_file))  # Get the file extension
-  if (extension == "pdf") {
-    export_svg(diagrammer_obj) %>% charToRaw() %>% rsvg::rsvg_pdf(out_file)
-    message("Plot saved to ", out_file)
-  } else if (extension == "png") {
-    export_svg(diagrammer_obj) %>% charToRaw() %>% rsvg::rsvg_png(out_file)
-    message("Plot saved to ", out_file)
-  } else if (extension == "svg") {
-    svg_code <- DiagrammeRsvg::export_svg(diagrammer_obj)
-    writeLines(svg_code, con = out_file)
-    message("Plot saved to ", out_file)
-  } else if (extension == "dot") {
-    dot_code <- diagrammer_obj$x$diagram  # Extract DOT code
-    writeLines(dot_code, con = out_file)
-    message("Plot saved to ", out_file)
-  } else {
-    stop2("Unsupported file format! Please use 'pdf', 'png', 'svg', or 'dot'.")
-  }
-}
-
-#' Save plotMOdel object to a file
-#'
-#' This function saves a given plot of a cSEM model to a specified file format.
-#'
-#'  @usage plotModelSave(
-#'  plot_object,
-#'  .file) 
-#'
-#' @param plot_object The DiagrammeR plot object to be saved. If not provided, the function will try to retrieve `latest_plot` from the global environment.
-#' @param .file Character string. The name of the file to save the plot to (supports 'pdf', 'png', 'svg', and 'dot' formats).
-#'
-#' @return NULL (the function saves the plot to a file and provides messages on completion)
-#'
-#' @examples
-#' \dontrun{
-#'
-#' # Example: Save a plot object to a pdf file
-#' plot_object <- plotModel(.object)
-#' plotModelSave(plot_object, .file = "sem_plot.pdf")
-#' }
-#' @export
-plotModelSave <- function(
-    plot_object,
-    .file) {
-  if (missing(plot_object)) {
-    stop2("plot_object must be provided to plotModelSave().")
-  }
-  
-  # Ensure .file is provided
-  if (missing(.file)) {
-    stop2("Filename must be specified.")
-  }
-  
-  # Check if the provided plot object is a multi-plot (list of plots)
-  is_multi <- inherits(plot_object, "cSEMPlot_multi") 
-  
-  
-  # Handle saving for multi-plot and single-plot cases
-  if (is_multi) {
-    # --- MULTI-PLOT CASE ---
-    # Save each sub-plot in the list with an appended identifier in the filename
-    for (i in seq_along(plot_object)) {
-      this_plot  <- plot_object[[i]]
-      this_name  <- names(plot_object)[i]  # Extract the name of the sub-plot
-      
-      # Generate a unique filename for each sub-plot
-      base_name <- gsub("\\.(pdf|png|svg|dot)$", "", .file, ignore.case = TRUE)
-      ext       <- tools::file_ext(.file)
-      file_i    <- paste0(base_name, "_", this_name, ".", ext)
-      
-      # Save the sub-plot
-      save_single_plot(this_plot, file_i)
-    }
-  } else {
-    # --- SINGLE-PLOT CASE ---
-    save_single_plot(plot_object, .file)
-  }
-  
-  invisible(NULL)  # Return NULL invisibly
-}
-
-
 
 
 #' Internal: secondOrderMeasurementEdges
@@ -230,7 +125,7 @@ secondOrderMeasurementEdges <- function(
     plot_signif,
     constructTypes,
     only_second_stage = FALSE
-    ){
+){
   
   code <- paste0("subgraph cluster_", gsub("[^A-Za-z0-9]", "_", construct),
                  " {\nlabel=\"\";\nstyle=invis;\n")
@@ -241,6 +136,7 @@ secondOrderMeasurementEdges <- function(
       if (length(non_zero_idx) > 0) {
         indicators <- colnames(weights_first)[non_zero_idx]
         for (indicator in indicators) {
+          if (cleanNode(construct) == cleanNode(indicator)) next  
           code <- paste0(code, "\"", indicator, "\"", " [shape=box];\n")
           weight <- round(weights_first[construct, indicator], 3)
           loading <- round(loadings_first[construct, indicator], 3)
@@ -269,20 +165,20 @@ secondOrderMeasurementEdges <- function(
     if (length(non_zero_idx) > 0) {
       indicators <- colnames(weights_second)[non_zero_idx]
       for (indicator in indicators) {
+        if (cleanNode(construct) == cleanNode(indicator)) next
         code <- paste0(code, "\"", indicator, "\"", " [shape=box];\n")
         weight <- round(weights_second[construct, indicator], 3)
         weight_name <- paste(construct, "<~", indicator)
         weight_stars <- if (plot_signif) get_significance_stars(weight_p_second[weight_name]) else ""
         label <- paste0(weight, weight_stars)
-        code <- paste0(code, "\"", indicator, "\"", " -> ", "\"", construct, "\"",
-                       " [label=\"", label, "\", style=dashed];\n")
+        direction <- paste0("\"", indicator, "\"", " -> ", "\"", construct, "\"")
+        code <- paste0(code, direction, " [label=\"", label, "\", style=dashed];\n")
       }
     }
   }
   code <- paste0(code, "}\n")
   return(code)
 }
-
 
 #' Internal: buildDotCode
 #'
@@ -311,6 +207,12 @@ secondOrderMeasurementEdges <- function(
 #' 
 #' @keywords internal
 #'
+
+# Common helper: Remove a trailing "_temp" from a node name.
+cleanNode <- function(node) {
+  gsub("_temp$", "", node)
+}
+
 buildDotCode <- function(title, 
                          graph_attrs,
                          constructs, 
@@ -323,7 +225,7 @@ buildDotCode <- function(title,
                          plot_indicator_correlations,
                          plot_structural_model_only,
                          is_second_order = FALSE
-                         ){
+){
   
   dot_code <- "digraph SEM {\n"
   
@@ -369,24 +271,29 @@ buildDotCode <- function(title,
   # Add structural model (path) edges.
   for (dependent in rownames(path_coefficients)) {
     depPaths <- path_coefficients[dependent, ]
-    predictors <- names(depPaths[which(depPaths != 0)])
+    predictors <- names(depPaths)[which(depPaths != 0)]
     for (predictor in predictors) {
+      # Clean both node names.
+      cleaned_dependent <- cleanNode(dependent)
+      cleaned_predictor <- cleanNode(predictor)
+      # In second–order models, skip if cleaning makes the two nodes identical.
+      if (is_second_order && (cleaned_dependent == cleaned_predictor)) next
       coefficient <- round(depPaths[predictor], 3)
       path_name <- paste(dependent, "~", predictor)
       stars <- if (plot_significances) get_significance_stars(path_p_values[path_name]) else ""
       if (grepl("\\.", predictor)) {
         # For predictors with a dot, create a diamond node.
-        predictor_clean <- gsub("_temp", "", predictor)
+        cleaned_predictor <- gsub("_temp", "", predictor)
         dot_code <- paste0(dot_code,
-                           "\"", predictor_clean, "\"",
-                           " [label=\"", predictor_clean, "\", shape=diamond, width=1.5, height=1.5, fixedsize=true];\n")
+                           "\"", cleaned_predictor, "\"",
+                           " [label=\"", cleaned_predictor, "\", shape=diamond, width=1.5, height=1.5, fixedsize=true];\n")
         dot_code <- paste0(dot_code,
-                           "\"", predictor_clean, "\"", " -> ", dependent,
+                           "\"", cleaned_predictor, "\"", " -> ", cleaned_dependent,
                            " [label=<", coefficient, stars, ">",
                            ", style=dashed, penwidth=2.5];\n")
       } else {
         dot_code <- paste0(dot_code,
-                           predictor, " -> ", dependent,
+                           cleaned_predictor, " -> ", cleaned_dependent,
                            " [label=<", coefficient, stars, ">",
                            ", penwidth=2.5];\n")
       }

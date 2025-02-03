@@ -46,6 +46,12 @@ plotModel.cSEMResults_default <- function(
     .graph_attrs = args_default()$.graph_attrs
   ){
   
+  ## Install DiagrammeR if not already installed
+  if (!requireNamespace("DiagrammeR", quietly = TRUE)) {
+    stop2(
+      "Package `DiagrammeR` required. Use `install.packages(\"DiagrammeR\")` and rerun.")
+  }
+  
   if (inherits(.object, "cSEMResults_multi")) {
     plots <- lapply(names(.object), function(group_name) {
       group_object <- .object[[group_name]]
