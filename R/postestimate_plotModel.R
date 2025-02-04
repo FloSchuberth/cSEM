@@ -5,7 +5,7 @@
 #' The `plotModel()` function creates a plot of a cSEM model using the \link[DiagrammeR]{grViz} function of the  DiagrammeR package.
 #' 
 #' @usage plotModel(
-#' .object, 
+#' .object = NULL, 
 #' .title =  args_default()$.title,
 #' .plot_significances = args_default()$.plot_significances,  
 #' .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
@@ -24,7 +24,7 @@
 #' 
 #' @export
 plotModel <- function(
-    .object, 
+    .object = NULL, 
     .title =  args_default()$.title,
     .plot_significances = args_default()$.plot_significances, 
     .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
@@ -36,7 +36,7 @@ plotModel <- function(
 
 #'@export
 plotModel.cSEMResults_default <- function(
-    .object, 
+    .object = NULL, 
     .title = args_default()$.title,
     .plot_significances = args_default()$.plot_significances, 
     .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
@@ -50,22 +50,22 @@ plotModel.cSEMResults_default <- function(
       "Package `DiagrammeR` required. Use `install.packages(\"DiagrammeR\")` and rerun.")
   }
   
-  if (inherits(.object, "cSEMResults_multi")) {
-    plots <- lapply(names(.object), function(group_name) {
-      group_object <- .object[[group_name]]
-      group_title <- if (.title == "") paste0("Group_", group_name) else paste0(.title, " Group_", group_name)
-      plotModel(group_object, 
-                .title = group_title, 
-                .plot_significances = .plot_significances, 
-                .plot_indicator_correlations = .plot_indicator_correlations,
-                .plot_structural_model_only = .plot_structural_model_only,
-                .graph_attrs = .graph_attrs)
-    })
-    names(plots) <- names(.object)
-    class(plots) <- c("cSEMPlot_multi", class(plots))
-    return(plots)
-    
-  } else {
+  # if (inherits(.object, "cSEMResults_multi")) {
+  #   plots <- lapply(names(.object), function(group_name) {
+  #     group_object <- .object[[group_name]]
+  #     group_title <- if (.title == "") paste0("Group_", group_name) else paste0(.title, " Group_", group_name)
+  #     plotModel(group_object, 
+  #               .title = group_title, 
+  #               .plot_significances = .plot_significances, 
+  #               .plot_indicator_correlations = .plot_indicator_correlations,
+  #               .plot_structural_model_only = .plot_structural_model_only,
+  #               .graph_attrs = .graph_attrs)
+  #   })
+  #   names(plots) <- names(.object)
+  #   class(plots) <- c("cSEMPlot_multi", class(plots))
+  #   return(plots)
+  #   
+  # } else {
     results <- summarize(.object)
     constructs <- .object$Information$Model$construct_type  # named vector of construct types
     r2_values <- results$Estimates$R2
@@ -103,39 +103,62 @@ plotModel.cSEMResults_default <- function(
                              is_second_order = FALSE)
     
     return(DiagrammeR::grViz(dot_code))
-  }
+  # }
 }
 
 #' @export
-plotModel.cSEMResults <- function(
-    .object, 
-    .title = args_default()$.title,
+
+plotModel.cSEMResults_multi <- function(
+    .object = NULL, 
+    .title =  args_default()$.title,
     .plot_significances = args_default()$.plot_significances, 
     .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
     .plot_structural_model_only = args_default()$.plot_structural_model_only,
     .graph_attrs = args_default()$.graph_attrs
 ) {
   
-  # If the model contains second-stage information, treat it as a second‐order model;
-  # otherwise call the default (first‐order) plotModel.
-  if (!is.null(.object$Second_stage)) {
-    plotModel.cSEMResults_2ndorder(
-      .object,
-      .title = .title,
-      .plot_significances = .plot_significances,
-      .plot_indicator_correlations = .plot_indicator_correlations,
-      .plot_structural_model_only = .plot_structural_model_only,
-      .graph_attrs = .graph_attrs)
+  if(inherits(.object, "cSEMResults_2ndorder")) {
+    lapply(.object, plotModel.cSEMResults_2ndorder, 
+           .title,.plot_significances,.plot_indicator_correlations,
+           .plot_structural_model_only, .graph_attrs)
   } else {
-    plotModel.cSEMResults_default(
-      .object,
-      .title = .title,
-      .plot_significances = .plot_significances,
-      .plot_indicator_correlations = .plot_indicator_correlations,
-      .plot_structural_model_only = .plot_structural_model_only,
-      .graph_attrs = .graph_attrs)
+    lapply(.object, plotModel.cSEMResults_default, 
+           .title,.plot_significances,.plot_indicator_correlations,
+           .plot_structural_model_only, .graph_attrs)
   }
 }
+
+
+
+# plotModel.cSEMResults <- function(
+#     .object,
+#     .title = args_default()$.title,
+#     .plot_significances = args_default()$.plot_significances,
+#     .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
+#     .plot_structural_model_only = args_default()$.plot_structural_model_only,
+#     .graph_attrs = args_default()$.graph_attrs
+# ) {
+# 
+#   # If the model contains second-stage information, treat it as a second‐order model;
+#   # otherwise call the default (first‐order) plotModel.
+#   if (!is.null(.object$Second_stage)) {
+#     plotModel.cSEMResults_2ndorder(
+#       .object,
+#       .title = .title,
+#       .plot_significances = .plot_significances,
+#       .plot_indicator_correlations = .plot_indicator_correlations,
+#       .plot_structural_model_only = .plot_structural_model_only,
+#       .graph_attrs = .graph_attrs)
+#   } else {
+#     plotModel.cSEMResults_default(
+#       .object,
+#       .title = .title,
+#       .plot_significances = .plot_significances,
+#       .plot_indicator_correlations = .plot_indicator_correlations,
+#       .plot_structural_model_only = .plot_structural_model_only,
+#       .graph_attrs = .graph_attrs)
+#   }
+# }
 
 #' @export
 plotModel.cSEMResults_2ndorder <- function(
@@ -147,23 +170,23 @@ plotModel.cSEMResults_2ndorder <- function(
     .graph_attrs = args_default()$.graph_attrs
 ){
   
-  ## Handle multi-group objects:
-  if (inherits(.object, "cSEMResults_multi")) {
-    plots <- lapply(names(.object), function(group_name) {
-      group_object <- .object[[group_name]] # Extract results for each group
-      group_title <- if (.title == "") paste0("Group_", group_name) else paste0(.title, " Group_", group_name)
-      plotModel(group_object, # Recursively call plotModel for each group (now a single-group 2nd-order object)
-                .title = group_title,
-                .plot_significances = .plot_significances,
-                .plot_indicator_correlations = .plot_indicator_correlations,
-                .plot_structural_model_only = .plot_structural_model_only,
-                .graph_attrs = .graph_attrs)
-    })
-    names(plots) <- names(.object)
-    class(plots) <- c("cSEMPlot_multi", class(plots))
-    return(plots)
+  # ## Handle multi-group objects:
+  # if (inherits(.object, "cSEMResults_multi")) {
+  #   plots <- lapply(names(.object), function(group_name) {
+  #     group_object <- .object[[group_name]] # Extract results for each group
+  #     group_title <- if (.title == "") paste0("Group_", group_name) else paste0(.title, " Group_", group_name)
+  #     plotModel(group_object, # Recursively call plotModel for each group (now a single-group 2nd-order object)
+  #               .title = group_title,
+  #               .plot_significances = .plot_significances,
+  #               .plot_indicator_correlations = .plot_indicator_correlations,
+  #               .plot_structural_model_only = .plot_structural_model_only,
+  #               .graph_attrs = .graph_attrs)
+  #   })
+  #   names(plots) <- names(.object)
+  #   class(plots) <- c("cSEMPlot_multi", class(plots))
+  #   return(plots)
     
-  } else { # --- Single-group case ---
+  # } else { # --- Single-group case ---
     
     # Extract first– and second–stage models and summaries.
     fs <- .object$First_stage
@@ -288,5 +311,5 @@ plotModel.cSEMResults_2ndorder <- function(
                              is_second_order = TRUE)
     
     return(DiagrammeR::grViz(dot_code))
-  }
+  # }
 }

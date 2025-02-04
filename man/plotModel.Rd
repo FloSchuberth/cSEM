@@ -5,7 +5,7 @@
 \title{Plot model}
 \usage{
 plotModel(
-.object, 
+.object = NULL, 
 .title =  args_default()$.title,
 .plot_significances = args_default()$.plot_significances,  
 .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
