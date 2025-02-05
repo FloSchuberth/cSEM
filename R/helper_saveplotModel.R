@@ -22,10 +22,10 @@ save_single_plot <- function(
     ){
   extension <- tolower(tools::file_ext(out_file))  # Get the file extension
   if (extension == "pdf") {
-    export_svg(diagrammer_obj) %>% charToRaw() %>% rsvg::rsvg_pdf(out_file)
+    DiagrammeRsvg::export_svg(diagrammer_obj) %>% charToRaw() %>% rsvg::rsvg_pdf(out_file)
     message("Plot saved to ", out_file)
   } else if (extension == "png") {
-    export_svg(diagrammer_obj) %>% charToRaw() %>% rsvg::rsvg_png(out_file)
+    DiagrammeRsvg::export_svg(diagrammer_obj) %>% charToRaw() %>% rsvg::rsvg_png(out_file)
     message("Plot saved to ", out_file)
   } else if (extension == "svg") {
     svg_code <- DiagrammeRsvg::export_svg(diagrammer_obj)

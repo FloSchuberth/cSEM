@@ -27,7 +27,7 @@ or indicators be plotted? Defaults to \code{exo}.}
 i.e., the constructs and their relationships be plotted? Defaults to \code{FALSE}.}
 
 \item{.graph_attrs}{Character String. Additional attributes that should be passed
-to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emph{NULL}.}
+to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emph{c("rankdir=LR","fixedsize=true)}.}
 }
 \value{
 A DiagrammeR graph object or a list of DiagrammeR graph objects in case of a multigroup analysis.

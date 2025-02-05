@@ -32,6 +32,12 @@ saveplotModel <- function(
     stop2("Filename must be specified.")
   }
   
+  ## Install DiagrammeR if not already installed
+  if (!requireNamespace("DiagrammeRsvg", quietly = TRUE)) {
+    stop2(
+      "Package `DiagrammeRsvg` required. Use `install.packages(\"DiagrammeRsvg\")` and rerun.")
+  }
+  
   # Check if the provided plot object is a multi-plot (list of plots)
   is_multi <- inherits(.plot_object, "cSEMPlot_multi") 
   

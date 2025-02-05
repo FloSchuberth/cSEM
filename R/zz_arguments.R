@@ -142,7 +142,7 @@
 #' @param .full_output Logical. Should the full output of summarize be printed.
 #'   Defaults to `TRUE`.
 #' @param .graph_attrs Character String. Additional attributes that should be passed 
-#' to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to *NULL*.
+#' to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to *c("rankdir=LR","fixedsize=true)*.
 #' @param .H The (N x J) matrix of construct scores.
 #' @param .handle_inadmissibles Character string. How should inadmissible results 
 #'   be treated? One of "*drop*", "*ignore*", or "*replace*". If "*drop*", all
@@ -489,7 +489,7 @@ args_default <- function(.choices = FALSE) {
     .first_resample          = NULL,
     .force                   = FALSE,
     .full_output             = TRUE,
-    .graph_attrs             = NULL,
+    .graph_attrs             = c("rankdir=LR","fixedsize=true"),
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,

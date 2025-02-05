@@ -185,7 +185,7 @@ already?. Defaults to \code{FALSE}.}
 Defaults to \code{TRUE}.}
 
 \item{.graph_attrs}{Character String. Additional attributes that should be passed
-to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emph{NULL}.}
+to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emph{c("rankdir=LR","fixedsize=true)}.}
 
 \item{.H}{The (N x J) matrix of construct scores.}
 
