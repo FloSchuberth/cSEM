@@ -47,7 +47,7 @@ plotModel.cSEMResults_default <- function(
   ## Install DiagrammeR if not already installed
   if (!requireNamespace("DiagrammeR", quietly = TRUE)) {
     stop2(
-      "Package `DiagrammeR` required. Use `install.packages(\"DiagrammeR\")` and rerun.")
+      "Package `DiagrammeR` is required. Use `install.packages(\"DiagrammeR\")` and rerun.")
   }
   
     results <- summarize(.object)
