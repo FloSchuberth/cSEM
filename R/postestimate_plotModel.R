@@ -99,7 +99,7 @@ plotModel.cSEMResults_multi <- function(
     .plot_structural_model_only = args_default()$.plot_structural_model_only,
     .graph_attrs = args_default()$.graph_attrs
 ) {
-  plots <- Map(function(group_name, group_object) {
+   plots <- Map(function(group_name, group_object) {
     group_title <- if (.title == "") paste0("Group_", group_name) else paste0(.title, " Group_", group_name)
     plotModel(group_object,
               .title = group_title,
@@ -108,18 +108,9 @@ plotModel.cSEMResults_multi <- function(
               .plot_structural_model_only = .plot_structural_model_only,
               .graph_attrs = .graph_attrs)
   }, names(.object), .object)
+   
   class(plots) <- c("cSEMPlot_multi", class(plots))
   return(plots)
-  
-  if(inherits(.object, "cSEMResults_2ndorder")) {
-    lapply(.object, plotModel.cSEMResults_2ndorder, 
-           .title,.plot_significances,.plot_indicator_correlations,
-           .plot_structural_model_only, .graph_attrs)
-  } else {
-    lapply(.object, plotModel.cSEMResults_default, 
-           .title,.plot_significances,.plot_indicator_correlations,
-           .plot_structural_model_only, .graph_attrs)
-  }
 }
 
 
