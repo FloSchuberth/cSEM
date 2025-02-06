@@ -247,7 +247,7 @@ buildDotCode <- function(title,
   for (construct in names(constructs)) {
     constrType <- constructs[[construct]]
     shape <- if (constrType == "Composite") "hexagon" else "circle"
-    fixed_size <- "width=1.5, height=1.5, fixedsize=true"
+    fixed_size <- "width=1.5, height=1.5, fixedsize=false"
     if (!is.na(r2_values[construct])) {
       r2_label <- paste0("R\u00b2 = ", round(r2_values[construct], 3))
       dot_code <- paste0(dot_code, construct,
@@ -286,7 +286,7 @@ buildDotCode <- function(title,
         cleaned_predictor <- gsub("_temp", "", predictor)
         dot_code <- paste0(dot_code,
                            "\"", cleaned_predictor, "\"",
-                           " [label=\"", cleaned_predictor, "\", shape=diamond, width=1.5, height=1.5, fixedsize=true];\n")
+                           " [label=\"", cleaned_predictor, "\", shape=diamond, width=1.5, height=1.5, fixedsize=false];\n")
         dot_code <- paste0(dot_code,
                            "\"", cleaned_predictor, "\"", " -> ", cleaned_dependent,
                            " [label=<", coefficient, stars, ">",
