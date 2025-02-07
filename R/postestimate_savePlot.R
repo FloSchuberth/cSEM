@@ -1,30 +1,27 @@
-#' Save plotMOdel object to a file
+#' savePlot
 #'
-#' This function saves a given plot of a cSEM model to a specified file format.
+#' This function saves a given plot of a cSEMResults object to a specified file format.
 #'
-#'  @usage saveplotModel(
+#' @usage savePlot(
 #'  .plot_object,
 #'  .file) 
 #'
 #' @param .plot_object Object returned by the [plotModel()] function.
 #' @param .file Character string. The name of the file to save the plot to (supports 'pdf', 'png', 'svg', and 'dot' formats).
 #'
-#' @return NULL (the function saves the plot to a file and provides messages on completion)
+#' @return NULL
 #'
-#' @examples
-#' \dontrun{
+#' @seealso [plot.cSEM_default()]
 #'
-#' # Example: Save a plot object to a pdf file
-#' plot_object <- plotModel(.object)
-#' saveplotModel(plot_object, .file = "sem_plot.pdf")
-#' }
+#' @example inst/examples/example_plot.cSEMResults.R
+#' 
 #' @export
-saveplotModel <- function(
+savePlot <- function(
     .plot_object,
     .file
     ){
   if (missing(.plot_object)) {
-    stop2(".plot_object must be provided to saveplotModel().")
+    stop2(".plot_object must be provided to savePlot().")
   }
   
   # Ensure .file is provided

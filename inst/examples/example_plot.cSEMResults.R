@@ -18,5 +18,10 @@ model_Bergami_int="
                         .tolerance = 1e-6,
                         .resample_method = 'none')
   
-  plotModel(outBergamiInt)
+  outPlot <- plot(outBergamiInt)
+  outPlot
+  savePlot(outPlot,.file='plot.pdf')
+  savePlot(outPlot,.file='plot.png')
+  savePlot(outPlot,.file='plot.svg')
+  savePlot(outPlot,.file='plot.dot')
 }
