@@ -184,26 +184,6 @@ secondOrderMeasurementEdges <- function(
 #'
 #' Build DOT code from common components.
 #' 
-#'
-#'@usage buildDotCode(
-#'title, 
-#'graph_attrs,
-#'constructs, 
-#'r2_values,
-#'measurement_edge_fun,
-#'path_coefficients, 
-#'path_p_values,
-#'correlations,
-#'plot_significances,
-#'plot_indicator_correlations,
-#'plot_structural_model_only,
-#'is_second_order = FALSE
-#')
-#'
-#' 
-#' @inheritParams csem_arguments
-#' 
-#' @return Character string. .
 #' 
 #' @keywords internal
 #'

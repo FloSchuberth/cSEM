@@ -4,23 +4,7 @@
 \alias{cleanNode}
 \title{Internal: buildDotCode}
 \usage{
-buildDotCode(
-title, 
-graph_attrs,
-constructs, 
-r2_values,
-measurement_edge_fun,
-path_coefficients, 
-path_p_values,
-correlations,
-plot_significances,
-plot_indicator_correlations,
-plot_structural_model_only,
-is_second_order = FALSE
-)
-}
-\value{
-Character string. .
+cleanNode(node)
 }
 \description{
 Build DOT code from common components.

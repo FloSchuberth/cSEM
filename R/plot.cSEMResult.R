@@ -5,10 +5,11 @@
 #' Creates a plot of a `cSEMResults` object using the \link[DiagrammeR]{grViz} function.
 #' 
 #' @inheritParams csem_arguments
+#' @param x An R object of class `cSEMResults_default` object.
+#' @param ... Currently ignored.
 #' 
 #' 
-#' 
-#' @seealso [save.cSEMPlot_single()] [csem()], [cSEMResults], \link[DiagrammeR]{grViz}
+#' @seealso [savePlot()] [csem()], [cSEMResults], \link[DiagrammeR]{grViz}
 #' 
 #' @example inst/examples/example_plot.cSEMResults.R
 #'
@@ -16,12 +17,13 @@
 #' @export
 
 plot.cSEMResults_default <- function(
-    .object = NULL, 
+    x = NULL, 
     .title = args_default()$.title,
     .plot_significances = args_default()$.plot_significances, 
     .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
     .plot_structural_model_only = args_default()$.plot_structural_model_only,
-    .graph_attrs = args_default()$.graph_attrs
+    .graph_attrs = args_default()$.graph_attrs,
+    ...
 ){
   
   ## Install DiagrammeR if not already installed
@@ -30,16 +32,16 @@ plot.cSEMResults_default <- function(
       "Package `DiagrammeR` is required. Use `install.packages(\"DiagrammeR\")` and rerun.")
   }
   
-  results <- summarize(.object)
-  constructs <- .object$Information$Model$construct_type  # named vector of construct types
+  results <- summarize(x)
+  constructs <- x$Information$Model$construct_type  # named vector of construct types
   r2_values <- results$Estimates$R2
-  weights <- as.data.frame(.object$Estimates$Weight_estimates)
-  loadings <- as.data.frame(.object$Estimates$Loading_estimates)
+  weights <- as.data.frame(x$Estimates$Weight_estimates)
+  loadings <- as.data.frame(x$Estimates$Loading_estimates)
   weight_p_values <- results$Estimates$Weight_estimates$p_value
   names(weight_p_values) <- results$Estimates$Weight_estimates$Name
   loading_p_values <- results$Estimates$Loading_estimates$p_value
   names(loading_p_values) <- results$Estimates$Loading_estimates$Name
-  path_coefficients <- as.data.frame(.object$Estimates$Path_estimates)
+  path_coefficients <- as.data.frame(x$Estimates$Path_estimates)
   path_p_values <- results$Estimates$Path_estimates$p_value
   ind_corr <- list(names = results$Estimates$Indicator_correlation$Name,
                    estimates = results$Estimates$Indicator_correlation$Estimate,
@@ -80,7 +82,8 @@ plot.cSEMResults_default <- function(
 #' Creates a plot of a `cSEMResults` object using the \link[DiagrammeR]{grViz} function.
 #' 
 #' @inheritParams csem_arguments
-#' 
+#' @param x An R object of class `cSEMResults_multi` object.
+#' @param ... Currently ignored.
 #' 
 #' @seealso [csem()], [cSEMResults], \link[DiagrammeR]{grViz}
 #' 
@@ -89,13 +92,14 @@ plot.cSEMResults_default <- function(
 #' @export
 
 plot.cSEMResults_multi <- function(
-    .object = NULL, 
+    x = NULL, 
     .title =  args_default()$.title,
     .plot_significances = args_default()$.plot_significances, 
     .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
     .plot_structural_model_only = args_default()$.plot_structural_model_only,
-    .graph_attrs = args_default()$.graph_attrs
-) {
+    .graph_attrs = args_default()$.graph_attrs,
+    ...
+){
   plots <- Map(function(group_name, group_object) {
     group_title <- if (.title == "") paste0("Group_", group_name) else paste0(.title, " Group_", group_name)
     plot(group_object,
@@ -104,7 +108,7 @@ plot.cSEMResults_multi <- function(
               .plot_indicator_correlations = .plot_indicator_correlations,
               .plot_structural_model_only = .plot_structural_model_only,
               .graph_attrs = .graph_attrs)
-  }, names(.object), .object)
+  }, names(x), x)
   
   class(plots) <- c("cSEMPlot_multi",class(plots))
   return(plots)
@@ -118,7 +122,8 @@ plot.cSEMResults_multi <- function(
 #' Creates a plot of a `cSEMResults` object using the \link[DiagrammeR]{grViz} function.
 #' 
 #' @inheritParams csem_arguments
-#' 
+#' @param x An R object of class `cSEMResults_2ndorder` object.
+#' @param ... Currently ignored.
 #' 
 #' @seealso [csem()], [cSEMResults], \link[DiagrammeR]{grViz}
 #' 
@@ -126,19 +131,20 @@ plot.cSEMResults_multi <- function(
 #' 
 #' @export
 plot.cSEMResults_2ndorder <- function(
-    .object,
+    x,
     .title = args_default()$.title,
     .plot_significances = args_default()$.plot_significances,
     .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
     .plot_structural_model_only = args_default()$.plot_structural_model_only,
-    .graph_attrs = args_default()$.graph_attrs
+    .graph_attrs = args_default()$.graph_attrs,
+    ...
 ){
   
   # Extract first– and second–stage models and summaries.
-  fs <- .object$First_stage
-  ss <- .object$Second_stage
-  results_fs <- summarize(.object)$First_stage
-  results_ss <- summarize(.object)$Second_stage
+  fs <- x$First_stage
+  ss <- x$Second_stage
+  results_fs <- summarize(x)$First_stage
+  results_ss <- summarize(x)$Second_stage
   
   # Merge construct types from first– and second–stage.
   ct_first <- fs$Information$Model$construct_type

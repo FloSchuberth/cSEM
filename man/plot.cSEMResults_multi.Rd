@@ -5,16 +5,17 @@
 \title{\code{cSEMResults} method for \code{plot()}}
 \usage{
 \method{plot}{cSEMResults_multi}(
-  .object = NULL,
+  x = NULL,
   .title = args_default()$.title,
   .plot_significances = args_default()$.plot_significances,
   .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
   .plot_structural_model_only = args_default()$.plot_structural_model_only,
-  .graph_attrs = args_default()$.graph_attrs
+  .graph_attrs = args_default()$.graph_attrs,
+  ...
 )
 }
 \arguments{
-\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+\item{x}{An R object of class \code{cSEMResults_multi} object.}
 
 \item{.title}{Character string. Title of an object. Defaults to \emph{""}.}
 
@@ -28,6 +29,8 @@ i.e., the constructs and their relationships be plotted? Defaults to \code{FALSE
 
 \item{.graph_attrs}{Character String. Additional attributes that should be passed
 to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emph{c("rankdir=LR","fixedsize=true)}.}
+
+\item{...}{Currently ignored.}
 }
 \description{
 \lifecycle{experimental}

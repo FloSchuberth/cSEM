@@ -6,12 +6,13 @@
 #'  .plot_object,
 #'  .file) 
 #'
-#' @param .plot_object Object returned by the [plotModel()] function.
+#' @param .plot_object Object returned by one of the following functions [plot.cSEMResults_default()], [plot.cSEMResults_multi()], or
+#' [plot.cSEMResults_2ndorder()].
 #' @param .file Character string. The name of the file to save the plot to (supports 'pdf', 'png', 'svg', and 'dot' formats).
 #'
 #' @return NULL
 #'
-#' @seealso [plot.cSEM_default()]
+#' @seealso [plot.cSEMResults_default()] [plot.cSEMResults_multi()] [plot.cSEMResults_2ndorder()]
 #'
 #' @example inst/examples/example_plot.cSEMResults.R
 #' 

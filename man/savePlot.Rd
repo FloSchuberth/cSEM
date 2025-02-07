@@ -9,7 +9,8 @@ savePlot(
  .file)
 }
 \arguments{
-\item{.plot_object}{Object returned by the \code{\link[=plotModel]{plotModel()}} function.}
+\item{.plot_object}{Object returned by one of the following functions \code{\link[=plot.cSEMResults_default]{plot.cSEMResults_default()}}, \code{\link[=plot.cSEMResults_multi]{plot.cSEMResults_multi()}}, or
+\code{\link[=plot.cSEMResults_2ndorder]{plot.cSEMResults_2ndorder()}}.}
 
 \item{.file}{Character string. The name of the file to save the plot to (supports 'pdf', 'png', 'svg', and 'dot' formats).}
 }
@@ -46,5 +47,5 @@ model_Bergami_int="
 }
 }
 \seealso{
-\code{\link[=plot.cSEM_default]{plot.cSEM_default()}}
+\code{\link[=plot.cSEMResults_default]{plot.cSEMResults_default()}} \code{\link[=plot.cSEMResults_multi]{plot.cSEMResults_multi()}} \code{\link[=plot.cSEMResults_2ndorder]{plot.cSEMResults_2ndorder()}}
 }
