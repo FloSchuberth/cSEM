@@ -132,7 +132,7 @@
 #' @param .eval_plan Character string. The evaluation plan to use. One of 
 #'   "*sequential*", "*multicore*", or "*multisession*". In the two latter cases 
 #'   all available cores will be used. Defaults to "*sequential*".
-#' @param .filename Character string. The file name. Defaults to "results.xlsx".
+#' @param .filename Character string. The file name. 
 #' @param .first_resample A list containing the `.R` resamples based on the original
 #'   data obtained by resamplecSEMResults().
 #' @param .fit_measures Logical. (EXPERIMENTAL) Should additional fit measures 
@@ -215,7 +215,7 @@
 #'   compared across groups. Defaults to `NULL` in which case all weights, loadings and 
 #'   path coefficients of the originally specified model are compared.
 #' @param .path Character string. Path of the directory to save the file to. Defaults
-#'   to the current working directory.
+#'   to `NULL`.
 #' @param .path_coefficients List. A list that contains the resampled and the original 
 #' path coefficient estimates. Typically a part of a `cSEMResults_resampled` object.
 #' Defaults to `NULL`. 
@@ -484,7 +484,7 @@ args_default <- function(.choices = FALSE) {
     .effect                  = NULL,
     .estimate_structural     = TRUE,
     .eval_plan               = c("sequential", "multicore","multisession"),
-    .filename                = "results.xlsx",
+    .filename                = NULL,
     .fit_measures            = FALSE,
     .first_resample          = NULL,
     .force                   = FALSE,

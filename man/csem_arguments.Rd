@@ -170,7 +170,7 @@ be estimated? Defaults to \code{TRUE}.}
 "\emph{sequential}", "\emph{multicore}", or "\emph{multisession}". In the two latter cases
 all available cores will be used. Defaults to "\emph{sequential}".}
 
-\item{.filename}{Character string. The file name. Defaults to "results.xlsx".}
+\item{.filename}{Character string. The file name.}
 
 \item{.first_resample}{A list containing the \code{.R} resamples based on the original
 data obtained by resamplecSEMResults().}
@@ -289,7 +289,7 @@ compared across groups. Defaults to \code{NULL} in which case all weights, loadi
 path coefficients of the originally specified model are compared.}
 
 \item{.path}{Character string. Path of the directory to save the file to. Defaults
-to the current working directory.}
+to \code{NULL}.}
 
 \item{.path_coefficients}{List. A list that contains the resampled and the original
 path coefficient estimates. Typically a part of a \code{cSEMResults_resampled} object.
