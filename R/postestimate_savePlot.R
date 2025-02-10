@@ -4,29 +4,31 @@
 #'
 #' @usage savePlot(
 #'  .plot_object,
-#'  .file) 
+#'  .filename,
+#   .path = NULL) 
 #'
 #' @param .plot_object Object returned by one of the following functions [plot.cSEMResults_default()], [plot.cSEMResults_multi()], or
 #' [plot.cSEMResults_2ndorder()].
-#' @param .file Character string. The name of the file to save the plot to (supports 'pdf', 'png', 'svg', and 'dot' formats).
+#' @param .filename Character string. The name of the file to save the plot to (supports 'pdf', 'png', 'svg', and 'dot' formats).
+#' @param .path Character string. Path of the directory to save the file to. Defaults
+#'   to the current working directory.
 #'
 #' @return NULL
 #'
 #' @seealso [plot.cSEMResults_default()] [plot.cSEMResults_multi()] [plot.cSEMResults_2ndorder()]
-#'
-#' @example inst/examples/example_plot.cSEMResults.R
 #' 
 #' @export
 savePlot <- function(
     .plot_object,
-    .file
-    ){
+    .filename,
+    .path = NULL) {   # Added .path argument with NULL default
+  
   if (missing(.plot_object)) {
     stop2(".plot_object must be provided to savePlot().")
   }
   
-  # Ensure .file is provided
-  if (missing(.file)) {
+  # Ensure .filename is provided
+  if (missing(.filename)) {
     stop2("Filename must be specified.")
   }
   
@@ -49,16 +51,16 @@ savePlot <- function(
       this_name  <- names(.plot_object)[i]  # Extract the name of the sub-plot
       
       # Generate a unique filename for each sub-plot
-      base_name <- gsub("\\.(pdf|png|svg|dot)$", "", .file, ignore.case = TRUE)
-      ext       <- tools::file_ext(.file)
+      base_name <- gsub("\\.(pdf|png|svg|dot)$", "", .filename, ignore.case = TRUE)
+      ext       <- tools::file_ext(.filename)
       file_i    <- paste0(base_name, "_", this_name, ".", ext)
       
       # Save the sub-plot
-      save_single_plot(this_plot, file_i)
+      save_single_plot(this_plot, file_i, .path) #added .path here
     }
   } else {
     # --- SINGLE-PLOT CASE ---
-    save_single_plot(.plot_object, .file)
+    save_single_plot(.plot_object, .filename, .path) #added .path here
   }
   
   invisible(NULL)  # Return NULL invisibly

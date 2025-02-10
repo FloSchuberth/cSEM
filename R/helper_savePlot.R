@@ -18,8 +18,18 @@
 #' 
 save_single_plot <- function(
     diagrammer_obj, 
-    out_file
-    ){
+    out_file,
+    .path = NULL) {
+  
+  #Set path
+  if(is.null(.path)) {
+    .path = getwd()
+  } else {
+    .path = normalizePath(.path)
+  }
+  
+  out_file = file.path(.path, out_file)
+  
   extension <- tolower(tools::file_ext(out_file))  # Get the file extension
   if (extension == "pdf") {
     DiagrammeRsvg::export_svg(diagrammer_obj) %>% charToRaw() %>% rsvg::rsvg_pdf(out_file)
