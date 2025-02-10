@@ -7,8 +7,8 @@
 #' 
 #' @usage save_single_plot(
 #' diagrammer_obj, 
-#' out_file
-#' )
+#' out_file,
+#' .path = NULL)
 #' 
 #' @inheritParams csem_arguments
 #' 

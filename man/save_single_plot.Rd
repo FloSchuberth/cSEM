@@ -7,8 +7,12 @@ Helper function to save a single DiagrammeR plot based on the file extension}
 \usage{
 save_single_plot(
 diagrammer_obj, 
-out_file
-)
+out_file,
+.path = NULL)
+}
+\arguments{
+\item{.path}{Character string. Path of the directory to save the file to. Defaults
+to \code{NULL}.}
 }
 \value{
 NULL.

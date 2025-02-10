@@ -5,7 +5,7 @@
 #' @usage savePlot(
 #'  .plot_object,
 #'  .filename,
-#   .path = NULL) 
+#'  .path = NULL) 
 #'
 #' @param .plot_object Object returned by one of the following functions [plot.cSEMResults_default()], [plot.cSEMResults_multi()], or
 #' [plot.cSEMResults_2ndorder()].
@@ -21,7 +21,8 @@
 savePlot <- function(
     .plot_object,
     .filename,
-    .path = NULL) {   # Added .path argument with NULL default
+    .path = NULL
+    ){   
   
   if (missing(.plot_object)) {
     stop2(".plot_object must be provided to savePlot().")

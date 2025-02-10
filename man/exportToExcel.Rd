@@ -14,21 +14,21 @@ exportToExcel(
 \item{.postestimation_object}{An object resulting from a call to one of cSEM's
 postestimation functions (e.g. \code{\link[=summarize]{summarize()}}).}
 
-\item{.filename}{Character string. The file name. Defaults to "results.xlsx".}
+\item{.filename}{Character string. The file name.}
 
 \item{.path}{Character string. Path of the directory to save the file to. Defaults
-to the current working directory.}
+to \code{NULL}.}
 }
 \description{
 \lifecycle{experimental}
 }
 \details{
 Export results from postestimation functions \code{\link[=assess]{assess()}}, \code{\link[=predict]{predict()}},
-\code{\link[=summarize]{summarize()}} and \code{\link[=testOMF]{testOMF()}} to an .xlsx (Excel) file. The function uses the openxlsx
+\code{\link[=summarize]{summarize()}} and \code{\link[=testOMF]{testOMF()}} to an .xlsx (Excel) file. The function uses the \link[openxlsx]{openxlsx}
 package which does not depend on Java!
 
-The function is deliberately kept simple: all it does is to take all the
-relevant elements in \code{.postestimation_object} and write them (worksheet by worksheet) into
+The function is deliberately kept simple: it takes all the
+relevant elements in \code{.postestimation_object} and writes them (worksheet by worksheet) into
 an .xlsx file named \code{.filename} in the directory given by \code{.path} (the current
 working directory by default).
 
