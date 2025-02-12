@@ -20,7 +20,7 @@ plot.cSEMResults_default <- function(
     x = NULL, 
     .title = args_default()$.title,
     .plot_significances = args_default()$.plot_significances, 
-    .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
+    .plot_correlations = args_default()$.plot_correlations,
     .plot_structural_model_only = args_default()$.plot_structural_model_only,
     .graph_attrs = args_default()$.graph_attrs,
     ...
@@ -64,7 +64,7 @@ plot.cSEMResults_default <- function(
                            path_p_values = path_p_values,
                            correlations = correlations,
                            plot_significances = .plot_significances,
-                           plot_indicator_correlations = .plot_indicator_correlations,
+                           plot_indicator_correlations = .plot_correlations,
                            plot_structural_model_only = .plot_structural_model_only,
                            is_second_order = FALSE)
   
@@ -95,7 +95,7 @@ plot.cSEMResults_multi <- function(
     x = NULL, 
     .title =  args_default()$.title,
     .plot_significances = args_default()$.plot_significances, 
-    .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
+    .plot_correlations = args_default()$.plot_correlations,
     .plot_structural_model_only = args_default()$.plot_structural_model_only,
     .graph_attrs = args_default()$.graph_attrs,
     ...
@@ -105,7 +105,7 @@ plot.cSEMResults_multi <- function(
     plot(group_object,
               .title = group_title,
               .plot_significances = .plot_significances,
-              .plot_indicator_correlations = .plot_indicator_correlations,
+              .plot_correlations = .plot_correlations,
               .plot_structural_model_only = .plot_structural_model_only,
               .graph_attrs = .graph_attrs)
   }, names(x), x)
@@ -134,7 +134,7 @@ plot.cSEMResults_2ndorder <- function(
     x,
     .title = args_default()$.title,
     .plot_significances = args_default()$.plot_significances,
-    .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
+    .plot_correlations = args_default()$.plot_correlations,
     .plot_structural_model_only = args_default()$.plot_structural_model_only,
     .graph_attrs = args_default()$.graph_attrs,
     ...
@@ -258,7 +258,7 @@ plot.cSEMResults_2ndorder <- function(
                            path_p_values = combined_path_p,
                            correlations = correlations,
                            plot_significances = .plot_significances,
-                           plot_indicator_correlations = .plot_indicator_correlations,
+                           plot_indicator_correlations = .plot_correlations,
                            plot_structural_model_only = .plot_structural_model_only,
                            is_second_order = TRUE)
   

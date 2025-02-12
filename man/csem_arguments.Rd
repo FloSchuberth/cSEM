@@ -301,8 +301,8 @@ factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weigh
 "\emph{geo_of_harmonic}". Defaults to "\emph{dist_squared_euclid}".
 Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS-PM.}
 
-\item{.plot_indicator_correlations}{Logical. Should the correlations between the exogenous constructs
-or indicators be plotted? Defaults to \code{exo}.}
+\item{.plot_correlations}{Character string. Specify which correlations should be plotted, i.e.,
+between the exogenous constructs (\code{exo}), between the exogenous constructs and between the indicators (\code{both}), or not at all (\code{none})? Defaults to \code{exo}.}
 
 \item{.plot_package}{Character string. Indicates which packages should be used for plotting.}
 

@@ -224,8 +224,8 @@
 #'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
 #'   "*geo_of_harmonic*". Defaults to "*dist_squared_euclid*". 
 #'   Ignored if `.disattenuate = FALSE` or if `.approach_weights` is not PLS-PM.
-#' @param .plot_indicator_correlations Logical. Should the correlations between the exogenous constructs
-#'   or indicators be plotted? Defaults to `exo`.
+#' @param .plot_correlations Character string. Specify which correlations should be plotted, i.e., 
+#'  between the exogenous constructs (`exo`), between the exogenous constructs and between the indicators (`both`), or not at all (`none`)? Defaults to `exo`.
 #' @param .plot_package Character string. Indicates which packages should be used for plotting.
 #' @param .plot_significances Logical. Should p-values in the form of stars be plotted? Defaults to `TRUE`.
 #' @param .plot_structural_model_only Logical. Should only the structural model, 
@@ -520,7 +520,7 @@ args_default <- function(.choices = FALSE) {
     .parameters_to_compare   = NULL,
     .path                    = NULL,
     .path_coefficients       = NULL,
-    .plot_indicator_correlations = c("exo", "both", "none"),
+    .plot_correlations = c("exo", "both", "none"),
     .plot_package            = NULL,
     .plot_significances      = TRUE,
     .plot_structural_model_only = FALSE,

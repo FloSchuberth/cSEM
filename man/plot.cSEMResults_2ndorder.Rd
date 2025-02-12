@@ -8,7 +8,7 @@
   x,
   .title = args_default()$.title,
   .plot_significances = args_default()$.plot_significances,
-  .plot_indicator_correlations = args_default()$.plot_indicator_correlations,
+  .plot_correlations = args_default()$.plot_correlations,
   .plot_structural_model_only = args_default()$.plot_structural_model_only,
   .graph_attrs = args_default()$.graph_attrs,
   ...
@@ -21,8 +21,8 @@
 
 \item{.plot_significances}{Logical. Should p-values in the form of stars be plotted? Defaults to \code{TRUE}.}
 
-\item{.plot_indicator_correlations}{Logical. Should the correlations between the exogenous constructs
-or indicators be plotted? Defaults to \code{exo}.}
+\item{.plot_correlations}{Character string. Specify which correlations should be plotted, i.e.,
+between the exogenous constructs (\code{exo}), between the exogenous constructs and between the indicators (\code{both}), or not at all (\code{none})? Defaults to \code{exo}.}
 
 \item{.plot_structural_model_only}{Logical. Should only the structural model,
 i.e., the constructs and their relationships be plotted? Defaults to \code{FALSE}.}
