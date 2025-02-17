@@ -185,7 +185,7 @@ already?. Defaults to \code{FALSE}.}
 Defaults to \code{TRUE}.}
 
 \item{.graph_attrs}{Character String. Additional attributes that should be passed
-to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emph{c("rankdir=LR","fixedsize=true)}.}
+to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emph{c("rankdir=LR")}.}
 
 \item{.H}{The (N x J) matrix of construct scores.}
 
@@ -302,7 +302,11 @@ factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weigh
 Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS-PM.}
 
 \item{.plot_correlations}{Character string. Specify which correlations should be plotted, i.e.,
-between the exogenous constructs (\code{exo}), between the exogenous constructs and between the indicators (\code{both}), or not at all (\code{none})? Defaults to \code{exo}.}
+between the exogenous constructs (\code{exo}), between the exogenous constructs and the indicators (\code{exoind}),
+between the constructs VCV (\code{convcv}), between the indicator VCV (\code{indvcv}), or not at all (\code{none})?
+Defaults to \code{exo}.}
+
+\item{.plot_labels}{Logical. Whether to display edge labels. Defaults to TRUE.}
 
 \item{.plot_package}{Character string. Indicates which packages should be used for plotting.}
 

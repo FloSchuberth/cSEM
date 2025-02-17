@@ -142,7 +142,7 @@
 #' @param .full_output Logical. Should the full output of summarize be printed.
 #'   Defaults to `TRUE`.
 #' @param .graph_attrs Character String. Additional attributes that should be passed 
-#' to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to *c("rankdir=LR","fixedsize=true)*.
+#' to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to *c("rankdir=LR")*.
 #' @param .H The (N x J) matrix of construct scores.
 #' @param .handle_inadmissibles Character string. How should inadmissible results 
 #'   be treated? One of "*drop*", "*ignore*", or "*replace*". If "*drop*", all
@@ -225,7 +225,10 @@
 #'   "*geo_of_harmonic*". Defaults to "*dist_squared_euclid*". 
 #'   Ignored if `.disattenuate = FALSE` or if `.approach_weights` is not PLS-PM.
 #' @param .plot_correlations Character string. Specify which correlations should be plotted, i.e., 
-#'  between the exogenous constructs (`exo`), between the exogenous constructs and between the indicators (`both`), or not at all (`none`)? Defaults to `exo`.
+#'  between the exogenous constructs (`exo`), between the exogenous constructs and the indicators (`exoind`),
+#' between the constructs VCV (`convcv`), between the indicator VCV (`indvcv`), or not at all (`none`)? 
+#' Defaults to `exo`.
+#' @param .plot_labels Logical. Whether to display edge labels. Defaults to TRUE.
 #' @param .plot_package Character string. Indicates which packages should be used for plotting.
 #' @param .plot_significances Logical. Should p-values in the form of stars be plotted? Defaults to `TRUE`.
 #' @param .plot_structural_model_only Logical. Should only the structural model, 
@@ -489,7 +492,7 @@ args_default <- function(.choices = FALSE) {
     .first_resample          = NULL,
     .force                   = FALSE,
     .full_output             = TRUE,
-    .graph_attrs             = c("rankdir=LR","fixedsize=true"),
+    .graph_attrs             = c("rankdir=LR"),
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
@@ -520,7 +523,8 @@ args_default <- function(.choices = FALSE) {
     .parameters_to_compare   = NULL,
     .path                    = NULL,
     .path_coefficients       = NULL,
-    .plot_correlations = c("exo", "both", "none"),
+    .plot_correlations       = c("exo", "none", "convcv", "exoind", "indvcv"),
+    .plot_labels             = TRUE,
     .plot_package            = NULL,
     .plot_significances      = TRUE,
     .plot_structural_model_only = FALSE,

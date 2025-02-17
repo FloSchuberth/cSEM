@@ -2,11 +2,17 @@
 % Please edit documentation in R/helper_plot.cSEMResults.R
 \name{cleanNode}
 \alias{cleanNode}
-\title{Internal: buildDotCode}
+\title{Internal: Clean a node name.}
 \usage{
 cleanNode(node)
 }
+\arguments{
+\item{node}{A node name.}
+}
+\value{
+A cleaned node name.
+}
 \description{
-Build DOT code from common components.
+Removes a trailing "_temp" from a node name.
 }
 \keyword{internal}

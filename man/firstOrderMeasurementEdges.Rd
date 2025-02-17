@@ -2,20 +2,24 @@
 % Please edit documentation in R/helper_plot.cSEMResults.R
 \name{firstOrderMeasurementEdges}
 \alias{firstOrderMeasurementEdges}
-\title{Internal: secondOrderMeasurementEdges}
+\title{Internal: firstOrderMeasurementEdges}
 \usage{
 firstOrderMeasurementEdges(
-    construct, 
+    construct,
     weights,
-    loadings, 
-    weight_p_values, 
-    loading_p_values, 
-    plot_signif, 
+    loadings,
+    weight_p_values,
+    loading_p_values,
+    plot_signif,
+    plot_labels,
     constructTypes
     )
 }
+\arguments{
+\item{plot_labels}{Logical. Whether to display edge labels. Defaults to TRUE.}
+}
 \value{
-Character string. .
+Character string containing DOT code.
 }
 \description{
 Build measurement edges for a first–order model.

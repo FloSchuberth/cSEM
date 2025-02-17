@@ -11,14 +11,20 @@ secondOrderMeasurementEdges(
  weight_p_first,
  loading_p_first,
  weights_second,
+ loadings_second,
  weight_p_second,
- plot_signif, 
+ loading_p_second,
+ plot_signif,
+ plot_labels,
  constructTypes,
  only_second_stage = FALSE
  )
 }
+\arguments{
+\item{plot_labels}{Logical. Whether to display edge labels. Defaults to TRUE.}
+}
 \value{
-Character string. .
+Character string.
 }
 \description{
 Build measurement edges for a second–order model.

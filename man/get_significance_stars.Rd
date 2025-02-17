@@ -15,6 +15,6 @@ Character string. A p-value transformed into a star.
 Transforms a p-value into stars.
 }
 \details{
-\code{.pvalue} Numeric. A p-value that is transformed into a star.
+\code{.pvalue} Numeric. A p-value that is transformed into significance stars.
 }
 \keyword{internal}

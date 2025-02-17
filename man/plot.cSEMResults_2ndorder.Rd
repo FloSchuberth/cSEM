@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.cSEMResult.R
 \name{plot.cSEMResults_2ndorder}
 \alias{plot.cSEMResults_2ndorder}
-\title{\code{cSEMResults} method for \code{plot()}}
+\title{\code{cSEMResults} method for \code{plot()} for second-order models.}
 \usage{
 \method{plot}{cSEMResults_2ndorder}(
   x,
@@ -10,6 +10,7 @@
   .plot_significances = args_default()$.plot_significances,
   .plot_correlations = args_default()$.plot_correlations,
   .plot_structural_model_only = args_default()$.plot_structural_model_only,
+  .plot_labels = args_default()$.plot_labels,
   .graph_attrs = args_default()$.graph_attrs,
   ...
 )
@@ -22,13 +23,17 @@
 \item{.plot_significances}{Logical. Should p-values in the form of stars be plotted? Defaults to \code{TRUE}.}
 
 \item{.plot_correlations}{Character string. Specify which correlations should be plotted, i.e.,
-between the exogenous constructs (\code{exo}), between the exogenous constructs and between the indicators (\code{both}), or not at all (\code{none})? Defaults to \code{exo}.}
+between the exogenous constructs (\code{exo}), between the exogenous constructs and the indicators (\code{exoind}),
+between the constructs VCV (\code{convcv}), between the indicator VCV (\code{indvcv}), or not at all (\code{none})?
+Defaults to \code{exo}.}
 
 \item{.plot_structural_model_only}{Logical. Should only the structural model,
 i.e., the constructs and their relationships be plotted? Defaults to \code{FALSE}.}
 
+\item{.plot_labels}{Logical. Whether to display edge labels and node R² values. Defaults to TRUE.}
+
 \item{.graph_attrs}{Character String. Additional attributes that should be passed
-to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emph{c("rankdir=LR","fixedsize=true)}.}
+to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emph{c("rankdir=LR")}.}
 
 \item{...}{Currently ignored.}
 }
@@ -36,36 +41,7 @@ to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emp
 \lifecycle{experimental}
 }
 \details{
-Creates a plot of a \code{cSEMResults} object using the \link[DiagrammeR]{grViz} function.
-}
-\examples{
-\dontrun{
-model_Bergami_int="
-  # Common factor and composite models
-  OrgPres <~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 
-  OrgIden =~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6
-  AffJoy =~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7
-  AffLove  =~ orgcmt5 + orgcmt6 + orgcmt8
-
-  # Structural model 
-  OrgIden ~ OrgPres 
-  AffLove ~ OrgPres+OrgIden+OrgPres.OrgIden
-  AffJoy  ~ OrgPres+OrgIden
-  "
-  
-  outBergamiInt <- csem(.data = BergamiBagozzi2000,.model = model_Bergami_int,
-                        .disattenuate = T,
-                        .PLS_weight_scheme_inner = 'factorial',
-                        .tolerance = 1e-6,
-                        .resample_method = 'none')
-  
-  outPlot <- plot(outBergamiInt)
-  outPlot
-  savePlot(outPlot,.file='plot.pdf')
-  savePlot(outPlot,.file='plot.png')
-  savePlot(outPlot,.file='plot.svg')
-  savePlot(outPlot,.file='plot.dot')
-}
+Creates a plot of a \code{cSEMResults_2ndorder} object using the \link[DiagrammeR]{grViz} function.
 }
 \seealso{
 \code{\link[=csem]{csem()}}, \link{cSEMResults}, \link[DiagrammeR]{grViz}
