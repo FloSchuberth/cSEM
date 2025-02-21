@@ -225,9 +225,8 @@
 #'   "*geo_of_harmonic*". Defaults to "*dist_squared_euclid*". 
 #'   Ignored if `.disattenuate = FALSE` or if `.approach_weights` is not PLS-PM.
 #' @param .plot_correlations Character string. Specify which correlations should be plotted, i.e., 
-#'  between the exogenous constructs (`exo`), between the exogenous constructs and the indicators (`exoind`),
-#' between the constructs VCV (`convcv`), between the indicator VCV (`indvcv`), or not at all (`none`)? 
-#' Defaults to `exo`.
+#'   between the exogenous constructs (`exo`), between the exogenous constructs and the indicators (`all`),
+#'   or not at all (`none`). Defaults to `exo`.
 #' @param .plot_labels Logical. Whether to display edge labels. Defaults to TRUE.
 #' @param .plot_package Character string. Indicates which packages should be used for plotting.
 #' @param .plot_significances Logical. Should p-values in the form of stars be plotted? Defaults to `TRUE`.
@@ -523,7 +522,7 @@ args_default <- function(.choices = FALSE) {
     .parameters_to_compare   = NULL,
     .path                    = NULL,
     .path_coefficients       = NULL,
-    .plot_correlations       = c("exo", "none", "convcv", "exoind", "indvcv"),
+    .plot_correlations       = c("exo", "none", "all"),
     .plot_labels             = TRUE,
     .plot_package            = NULL,
     .plot_significances      = TRUE,

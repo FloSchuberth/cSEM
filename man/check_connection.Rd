@@ -12,12 +12,14 @@ check_connection(
 )
 }
 \arguments{
-\item{.indicator1, }{.indicator2 Character string. The names of the indicators.}
+\item{.indicator1}{Character string. The name of the indicator 1.}
 
-\item{.model_measurement}{a matrix. The measurement matrix mimicking the relationship
+\item{.indicator2}{Character string. The name of the indicator 1.}
+
+\item{.model_measurement}{Matrix. The measurement matrix indicating the relationship
 between constructs and indicators.}
 
-\item{.model_error_cor}{a matrix. The matrix mimicking the error correlation structure.}
+\item{.model_error_cor}{Matrix. The matrix indicates the error correlation structure.}
 }
 \value{
 TRUE if both indicators belong to the same construct, FALSE otherwise.

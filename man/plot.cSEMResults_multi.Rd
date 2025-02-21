@@ -23,9 +23,8 @@
 \item{.plot_significances}{Logical. Should p-values in the form of stars be plotted? Defaults to \code{TRUE}.}
 
 \item{.plot_correlations}{Character string. Specify which correlations should be plotted, i.e.,
-between the exogenous constructs (\code{exo}), between the exogenous constructs and the indicators (\code{exoind}),
-between the constructs VCV (\code{convcv}), between the indicator VCV (\code{indvcv}), or not at all (\code{none})?
-Defaults to \code{exo}.}
+between the exogenous constructs (\code{exo}), between the exogenous constructs and the indicators (\code{all}),
+or not at all (\code{none}). Defaults to \code{exo}.}
 
 \item{.plot_structural_model_only}{Logical. Should only the structural model,
 i.e., the constructs and their relationships be plotted? Defaults to \code{FALSE}.}

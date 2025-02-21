@@ -12,7 +12,7 @@
 #' @keywords internal
 get_significance_stars <- function(
     .pvalue
-    ){
+){
   if (is.na(.pvalue)) return("")
   else if (.pvalue < 0.001) return("***")
   else if (.pvalue < 0.01) return("**")
@@ -249,10 +249,11 @@ cleanNode <- function(node) {
 #'
 #' Checks whether two indicators belong to the same construct.
 #'
-#' @param .indicator1, .indicator2 Character string. The names of the indicators.
-#' @param .model_measurement a matrix. The measurement matrix mimicking the relationship
+#' @param .indicator1 Character string. The name of the indicator 1.
+#' @param .indicator2 Character string. The name of the indicator 1.
+#' @param .model_measurement Matrix. The measurement matrix indicating the relationship
 #' between constructs and indicators. 
-#' @param .model_error_cor a matrix. The matrix mimicking the error correlation structure.
+#' @param .model_error_cor Matrix. The matrix indicates the error correlation structure.
 #'
 #' @return TRUE if both indicators belong to the same construct, FALSE otherwise.
 #' @keywords internal
@@ -283,14 +284,13 @@ check_connection <- function(.indicator1, .indicator2, .model_measurement, .mode
 #' @param path_p_values Named vector of path p-values. Used for construct correlations too.
 #' @param correlations List containing correlations (exogenous and indicator).
 #' @param plot_significances Logical. Whether to display significance levels.
-#' @param plot_correlations Option for indicator correlations ("none", "exo", "exoind", "convcv", "indvcv").
+#' @param plot_correlations Option for indicator correlations ("none", "exo", or "all").
 #' @param plot_structural_model_only Logical. Whether to display only the structural model.
 #' @param is_second_order Logical. Whether the model is second-order.
 #' @param model_measurement a matrix. The measurement matrix.
 #' @param model_error_cor a matrix.
 #' @param construct_correlations A matrix. The construct correlation matrix.
 #' @param indicator_correlations A matrix. The indicator correlation matrix.
-#' @param plot_labels Logical. Whether to include edge labels and node R² values.
 #'
 #' @return A character string containing the complete DOT code.
 #' @keywords internal
@@ -303,7 +303,7 @@ buildDotCode <- function(title,
                          path_p_values,
                          correlations,
                          plot_significances,
-                         plot_correlations,  # valid: "none", "exo", "exoind", "convcv", "indvcv"
+                         plot_correlations, 
                          plot_structural_model_only,
                          plot_labels,
                          is_second_order = FALSE,
@@ -349,9 +349,9 @@ buildDotCode <- function(title,
                    paste0(construct, " [label=\"", node_label,
                           "\", shape=", shape, ", ", fixed_size, "];"))
     # In a full plot we normally add measurement edges.
-    # Here even if plot_structural_model_only is TRUE, if indicator correlations are being plotted with option "indvcv" or "exoind"
+    # Here even if plot_structural_model_only is TRUE, if indicator correlations are being plotted with option "all"
     # we want to add the measurement (indicator) edges so that indicator correlation edges are attached.
-    if (!plot_structural_model_only || (plot_structural_model_only && plot_correlations %in% c("indvcv", "exoind"))) {
+    if (!plot_structural_model_only || (plot_structural_model_only && plot_correlations == "all")) {
       dot_lines <- c(dot_lines, measurement_edge_fun(construct))
     }
   }
@@ -397,11 +397,11 @@ buildDotCode <- function(title,
                        paste0("\"", cleaned_predictor, "\" [label=\"", cleaned_predictor,
                               "\", shape=diamond, width=1.5, height=1.5, fixedsize=false];"),
                        paste0("\"", cleaned_predictor, "\" -> ", cleaned_dependent,
-                              " [label=<", edge_label, ">, style=dashed, penwidth=2.5];"))
+                              " [label=<", edge_label, ">, style=dashed, penwidth=2.5, weight=10, minlen=2];"))
       } else {
         dot_lines <- c(dot_lines,
                        paste0(cleaned_predictor, " -> ", cleaned_dependent,
-                              " [label=<", edge_label, ">, penwidth=2.5];"))
+                              " [label=<", edge_label, ">, penwidth=2.5, weight=10, minlen=2];"))
       }
     }
   }
@@ -422,14 +422,14 @@ buildDotCode <- function(title,
       if (plot_structural_model_only) {
         dot_lines <- c(dot_lines,
                        paste0(names_split[1], " -> ", names_split[2],
-                              " [label=<", label_text, ">, style=dashed, arrowhead=vee, arrowtail=vee, dir=both];"))
+                              " [label=<", label_text, ">, style=dashed, arrowhead=vee, arrowtail=vee, dir=both, penwidth=2.5, weight=10];"))
       } else {
         dot_lines <- c(dot_lines,
                        paste0(names_split[1], " -> ", names_split[2],
-                              " [label=<", label_text, ">, style=dashed, arrowhead=vee, arrowtail=vee, dir=both, penwidth=2.5];"))
+                              " [label=<", label_text, ">, style=dashed, arrowhead=vee, arrowtail=vee, dir=both, penwidth=2.5, weight=10];"))
       }
     }
-  } else if (plot_correlations == "exoind") {
+  } else if (plot_correlations == "all") {
     for (i in seq_along(correlations$exo$names)) {
       label_text <- if(plot_labels) {
         corr <- round(correlations$exo$estimates[i], 3)
@@ -470,50 +470,8 @@ buildDotCode <- function(title,
         }
       }
     }
-  } else if (plot_correlations == "convcv") {
-    if (!is.null(construct_correlations) && nrow(construct_correlations) > 0) {
-      for (i in 2:nrow(construct_correlations)) {
-        for (j in 1:(i - 1)) {
-          construct1 <- rownames(construct_correlations)[i]
-          construct2 <- colnames(construct_correlations)[j]
-          if (construct_correlations[i, j] != 0) {
-            label_text <- if(plot_labels) {
-              corr <- round(construct_correlations[i, j], 3)
-              paste0("(", corr, ")")
-            } else {
-              ""
-            }
-            dot_lines <- c(dot_lines,
-                           paste0(cleanNode(construct1), " -> ", cleanNode(construct2),
-                                  " [label=<", label_text, ">, style=dashed, dir=both, arrowhead=vee, arrowtail=vee, penwidth=1];"))
-          }
-        }
-      }
-    }
-  } else if (plot_correlations == "indvcv") {
-    if (!is.null(indicator_correlations) && nrow(indicator_correlations) > 0) {
-      for (i in 2:nrow(indicator_correlations)) {
-        for (j in 1:(i - 1)) {
-          indicator1 <- rownames(indicator_correlations)[i]
-          indicator2 <- colnames(indicator_correlations)[j]
-          if (check_connection(indicator1, indicator2, model_measurement, model_error_cor)) {
-            if (indicator_correlations[i, j] != 0) {
-              label_text <- if(plot_labels) {
-                corr <- round(indicator_correlations[i, j], 3)
-                paste0("(", corr, ")")
-              } else {
-                ""
-              }
-              dot_lines <- c(dot_lines,
-                             paste0(cleanNode(indicator1), " -> ", cleanNode(indicator2),
-                                    " [label=<", label_text, ">, style=dashed, dir=both, arrowhead=vee, arrowtail=vee, penwidth=1];"))
-            }
-          }
-        }
-      }
-    }
   } else {
-    stop("Invalid option for plot_correlations. Valid options are 'none', 'exo', 'convcv', 'exoind', or 'indvcv'.")
+    stop("Invalid option for plot_correlations. Valid options are 'none', 'exo', or 'all'.")
   }
   
   dot_lines <- c(dot_lines, "}")

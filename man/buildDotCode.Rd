@@ -43,11 +43,9 @@ buildDotCode(
 
 \item{plot_significances}{Logical. Whether to display significance levels.}
 
-\item{plot_correlations}{Option for indicator correlations ("none", "exo", "exoind", "convcv", "indvcv").}
+\item{plot_correlations}{Option for indicator correlations ("none", "exo", or "all").}
 
 \item{plot_structural_model_only}{Logical. Whether to display only the structural model.}
-
-\item{plot_labels}{Logical. Whether to include edge labels and node R² values.}
 
 \item{is_second_order}{Logical. Whether the model is second-order.}
 

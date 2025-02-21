@@ -154,7 +154,7 @@ plot.cSEMResults_2ndorder <- function(
   constructs <- c(ct_second, ct_first)
   constructs <- constructs[!duplicated(names(constructs))]
   
-  if (.plot_structural_model_only && !(.plot_correlations %in% c("indvcv", "exoind"))) {
+  if (.plot_structural_model_only && !(.plot_correlations %in% c("all"))) {
     constructs <- ct_second
   }
   
@@ -201,7 +201,7 @@ plot.cSEMResults_2ndorder <- function(
   
   # Only skip measurement edges when no indicator correlations should be added.
   measurement_edge_fun <- function(construct) {
-    if (.plot_structural_model_only && !(.plot_correlations %in% c("indvcv", "exoind"))) return("")
+    if (.plot_structural_model_only && (.plot_correlations != "all")) return("")
     if (construct %in% ct2_names) {
       return(secondOrderMeasurementEdges(construct,
                                          weights_first    = weights_fs,

@@ -302,9 +302,8 @@ factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weigh
 Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS-PM.}
 
 \item{.plot_correlations}{Character string. Specify which correlations should be plotted, i.e.,
-between the exogenous constructs (\code{exo}), between the exogenous constructs and the indicators (\code{exoind}),
-between the constructs VCV (\code{convcv}), between the indicator VCV (\code{indvcv}), or not at all (\code{none})?
-Defaults to \code{exo}.}
+between the exogenous constructs (\code{exo}), between the exogenous constructs and the indicators (\code{all}),
+or not at all (\code{none}). Defaults to \code{exo}.}
 
 \item{.plot_labels}{Logical. Whether to display edge labels. Defaults to TRUE.}
 
