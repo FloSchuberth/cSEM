@@ -266,7 +266,7 @@ when only a "small" number of replications is required as the overhead of
 initializing new sessions or distributing tasks to different cores
 will not immediately be compensated by the availability of multiple sessions/cores.</p>
 <p>Random number generation (RNG) uses the L'Ecuyer-CRMR RGN stream as implemented in the
-<a href="https://github.com/HenrikBengtsson/future.apply/" class="external-link">future.apply package</a> (Bengtsson 2018)
+<a href="https://github.com/futureverse/future.apply/" class="external-link">future.apply package</a> (Bengtsson 2018)
 .
 It is independent of the evaluation plan. Hence, setting e.g., <code>.seed = 123</code> will
 generate the same random number and replicates
