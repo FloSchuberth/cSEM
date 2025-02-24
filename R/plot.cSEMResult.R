@@ -3,6 +3,7 @@
 #' \lifecycle{experimental}
 #'
 #' Creates a plot of a `cSEMResults` object using the \link[DiagrammeR]{grViz} function.
+#' For more details on customizing plot, see \href{https://rpubs.com/nguyen_mot/1275413}{https://rpubs.com/nguyen_mot/1275413}.
 #' 
 #' @inheritParams csem_arguments
 #' @param x An R object of class `cSEMResults_default` object.
@@ -81,6 +82,7 @@ plot.cSEMResults_default <- function(
 #' \lifecycle{experimental}
 #'
 #' Creates a plot of a `cSEMResults` object using the \link[DiagrammeR]{grViz} function.
+#' For more details on customizing plot, see \href{https://rpubs.com/nguyen_mot/1275413}{https://rpubs.com/nguyen_mot/1275413}.
 #' 
 #' @inheritParams csem_arguments
 #' @param x An R object of class `cSEMResults_multi` object.
@@ -118,6 +120,7 @@ plot.cSEMResults_multi <- function(
 #' \lifecycle{experimental}
 #'
 #' Creates a plot of a `cSEMResults_2ndorder` object using the \link[DiagrammeR]{grViz} function.
+#' For more details on customizing plot, see \href{https://rpubs.com/nguyen_mot/1275413}{https://rpubs.com/nguyen_mot/1275413}.
 #' 
 #' @inheritParams csem_arguments
 #' @param x An R object of class `cSEMResults_2ndorder` object.

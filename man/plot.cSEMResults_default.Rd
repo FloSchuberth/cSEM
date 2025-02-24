@@ -32,7 +32,7 @@ i.e., the constructs and their relationships be plotted? Defaults to \code{FALSE
 \item{.plot_labels}{Logical. Whether to display edge labels and R² values in the nodes.
 Defaults to TRUE (i.e. original plot).}
 
-\item{.graph_attrs}{Character String. Additional attributes that should be passed
+\item{.graph_attrs}{Character string. Additional attributes that should be passed
 to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emph{c("rankdir=LR")}.}
 
 \item{...}{Currently ignored.}
@@ -42,6 +42,7 @@ to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emp
 }
 \details{
 Creates a plot of a \code{cSEMResults} object using the \link[DiagrammeR]{grViz} function.
+For more details on customizing plot, see \href{https://rpubs.com/nguyen_mot/1275413}{https://rpubs.com/nguyen_mot/1275413}.
 }
 \examples{
 \dontrun{

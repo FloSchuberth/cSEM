@@ -184,7 +184,7 @@ already?. Defaults to \code{FALSE}.}
 \item{.full_output}{Logical. Should the full output of summarize be printed.
 Defaults to \code{TRUE}.}
 
-\item{.graph_attrs}{Character String. Additional attributes that should be passed
+\item{.graph_attrs}{Character string. Additional attributes that should be passed
 to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emph{c("rankdir=LR")}.}
 
 \item{.H}{The (N x J) matrix of construct scores.}
