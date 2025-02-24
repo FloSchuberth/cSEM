@@ -50,7 +50,7 @@
 #'  3.) If `N/k` is not not an integer the last fold will have less observations.
 #' 
 #' Random number generation (RNG) uses the L'Ecuyer-CRMR RGN stream as implemented
-#' in the \href{https://github.com/HenrikBengtsson/future.apply/}{future.apply package} 
+#' in the \href{https://github.com/futureverse/future.apply/}{future.apply package} 
 #' \insertCite{Bengtsson2018a}{cSEM}.
 #' See [?future_lapply][future.apply::future_lapply] for details. By default
 #' a random seed is chosen.
@@ -426,7 +426,7 @@ resampleData <- function(
 #' will not immediately be compensated by the availability of multiple sessions/cores.
 #'
 #' Random number generation (RNG) uses the L'Ecuyer-CRMR RGN stream as implemented in the
-#' \href{https://github.com/HenrikBengtsson/future.apply/}{future.apply package} \insertCite{Bengtsson2018a}{cSEM}.
+#' \href{https://github.com/futureverse/future.apply/}{future.apply package} \insertCite{Bengtsson2018a}{cSEM}.
 #' It is independent of the evaluation plan. Hence, setting e.g., `.seed = 123` will
 #' generate the same random number and replicates
 #' for both `.eval_plan = "sequential"`, `.eval_plan = "multisession"`, and `.eval_plan = "multicore"`.

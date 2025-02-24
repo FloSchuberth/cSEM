@@ -502,7 +502,7 @@ ii$Path_estimates
 ```
 
 Both bootstrap and jackknife resampling support platform-independent multiprocessing
-as well as random seeds via the [future framework](https://github.com/HenrikBengtsson/future/).
+as well as random seeds via the [future framework](https://github.com/futureverse/future/).
 For multiprocessing simply set `.eval_plan = "multiprocess"` in which case the maximum number of available cores
 is used if not on Windows. On Windows as many separate R instances are opened in the
 background as there are cores available instead. Note that this naturally has some overhead.

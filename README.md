@@ -928,7 +928,7 @@ infer(b1, .quantity = c("CI_standard_z", "CI_percentile")) # no print method yet
 
 Both bootstrap and jackknife resampling support platform-independent
 multiprocessing as well as setting random seeds via the [future
-framework](https://github.com/HenrikBengtsson/future/). For
+framework](https://github.com/futureverse/future/). For
 multiprocessing simply set `.eval_plan = "multisession"` in which case
 the maximum number of available cores is used if not on Windows. On
 Windows as many separate R instances are opened in the background as
