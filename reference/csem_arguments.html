@@ -336,7 +336,7 @@ all available cores will be used. Defaults to "<em>sequential</em>".</p></dd>
 
 
 <dt id="arg--filename">.filename<a class="anchor" aria-label="anchor" href="#arg--filename"></a></dt>
-<dd><p>Character string. The file name. Defaults to "results.xlsx".</p></dd>
+<dd><p>Character string. The file name.</p></dd>
 
 
 <dt id="arg--first-resample">.first_resample<a class="anchor" aria-label="anchor" href="#arg--first-resample"></a></dt>
@@ -357,6 +357,11 @@ already?. Defaults to <code>FALSE</code>.</p></dd>
 <dt id="arg--full-output">.full_output<a class="anchor" aria-label="anchor" href="#arg--full-output"></a></dt>
 <dd><p>Logical. Should the full output of summarize be printed.
 Defaults to <code>TRUE</code>.</p></dd>
+
+
+<dt id="arg--graph-attrs">.graph_attrs<a class="anchor" aria-label="anchor" href="#arg--graph-attrs"></a></dt>
+<dd><p>Character string. Additional attributes that should be passed
+to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to <em>c("rankdir=LR")</em>.</p></dd>
 
 
 <dt id="arg--h">.H<a class="anchor" aria-label="anchor" href="#arg--h"></a></dt>
@@ -523,7 +528,7 @@ path coefficients of the originally specified model are compared.</p></dd>
 
 <dt id="arg--path">.path<a class="anchor" aria-label="anchor" href="#arg--path"></a></dt>
 <dd><p>Character string. Path of the directory to save the file to. Defaults
-to the current working directory.</p></dd>
+to <code>NULL</code>.</p></dd>
 
 
 <dt id="arg--path-coefficients">.path_coefficients<a class="anchor" aria-label="anchor" href="#arg--path-coefficients"></a></dt>
@@ -540,8 +545,27 @@ factors for PLSc. One of: "<em>dist_squared_euclid</em>", "<em>dist_euclid_weigh
 Ignored if <code>.disattenuate = FALSE</code> or if <code>.approach_weights</code> is not PLS-PM.</p></dd>
 
 
+<dt id="arg--plot-correlations">.plot_correlations<a class="anchor" aria-label="anchor" href="#arg--plot-correlations"></a></dt>
+<dd><p>Character string. Specify which correlations should be plotted, i.e.,
+between the exogenous constructs (<code>exo</code>), between the exogenous constructs and the indicators (<code>all</code>),
+or not at all (<code>none</code>). Defaults to <code>exo</code>.</p></dd>
+
+
+<dt id="arg--plot-labels">.plot_labels<a class="anchor" aria-label="anchor" href="#arg--plot-labels"></a></dt>
+<dd><p>Logical. Whether to display edge labels. Defaults to TRUE.</p></dd>
+
+
 <dt id="arg--plot-package">.plot_package<a class="anchor" aria-label="anchor" href="#arg--plot-package"></a></dt>
 <dd><p>Character string. Indicates which packages should be used for plotting.</p></dd>
+
+
+<dt id="arg--plot-significances">.plot_significances<a class="anchor" aria-label="anchor" href="#arg--plot-significances"></a></dt>
+<dd><p>Logical. Should p-values in the form of stars be plotted? Defaults to <code>TRUE</code>.</p></dd>
+
+
+<dt id="arg--plot-structural-model-only">.plot_structural_model_only<a class="anchor" aria-label="anchor" href="#arg--plot-structural-model-only"></a></dt>
+<dd><p>Logical. Should only the structural model,
+i.e., the constructs and their relationships be plotted? Defaults to <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg--plot-type">.plot_type<a class="anchor" aria-label="anchor" href="#arg--plot-type"></a></dt>
@@ -728,6 +752,10 @@ training data.</p></dd>
 <dd><p>Character string. One of "<em>twosided</em>" (H1: The models do not
 perform equally in predicting indicators belonging to endogenous constructs)"
 and <em>onesided</em>" (H1: Model 1 performs better in predicting indicators belonging</p></dd>
+
+
+<dt id="arg--title">.title<a class="anchor" aria-label="anchor" href="#arg--title"></a></dt>
+<dd><p>Character string. Title of an object. Defaults to <em>""</em>.</p></dd>
 
 
 <dt id="arg--tolerance">.tolerance<a class="anchor" aria-label="anchor" href="#arg--tolerance"></a></dt>

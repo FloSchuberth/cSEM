@@ -95,21 +95,21 @@ postestimation functions (e.g. <code><a href="summarize.html">summarize()</a></c
 
 
 <dt id="arg--filename">.filename<a class="anchor" aria-label="anchor" href="#arg--filename"></a></dt>
-<dd><p>Character string. The file name. Defaults to "results.xlsx".</p></dd>
+<dd><p>Character string. The file name.</p></dd>
 
 
 <dt id="arg--path">.path<a class="anchor" aria-label="anchor" href="#arg--path"></a></dt>
 <dd><p>Character string. Path of the directory to save the file to. Defaults
-to the current working directory.</p></dd>
+to <code>NULL</code>.</p></dd>
 
 </dl></div>
     <div id="details">
     <h2>Details</h2>
     <p>Export results from postestimation functions <code><a href="assess.html">assess()</a></code>, <code><a href="predict.html">predict()</a></code>,
-<code><a href="summarize.html">summarize()</a></code> and <code><a href="testOMF.html">testOMF()</a></code> to an .xlsx (Excel) file. The function uses the openxlsx
+<code><a href="summarize.html">summarize()</a></code> and <code><a href="testOMF.html">testOMF()</a></code> to an .xlsx (Excel) file. The function uses the <a href="https://rdrr.io/pkg/openxlsx/man/openxlsx.html" class="external-link">openxlsx</a>
 package which does not depend on Java!</p>
-<p>The function is deliberately kept simple: all it does is to take all the
-relevant elements in <code>.postestimation_object</code> and write them (worksheet by worksheet) into
+<p>The function is deliberately kept simple: it takes all the
+relevant elements in <code>.postestimation_object</code> and writes them (worksheet by worksheet) into
 an .xlsx file named <code>.filename</code> in the directory given by <code>.path</code> (the current
 working directory by default).</p>
 <p>If <code>.postestimation_object</code> has class attribute <code>_2ndorder</code> two .xlsx files

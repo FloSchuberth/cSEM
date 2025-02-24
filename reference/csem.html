@@ -560,6 +560,9 @@ fit measures, HTMT, R2 etc.</p></dd>
 <dd><p>Calculate common inferential quantities, e.g., standard errors,
 confidence intervals.</p></dd>
 
+<dt><code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code></dt>
+<dd><p>Creates a plot of the model. For the help file see <code><a href="plot.cSEMResults_default.html">plot.cSEMResults_default()</a></code>.</p></dd>
+
 <dt><code><a href="predict.html">predict()</a></code></dt>
 <dd><p>Predict endogenous indicator scores and compute common prediction metrics.</p></dd>
 
@@ -571,13 +574,18 @@ confidence intervals.</p></dd>
 
 
 </dl><p>Tests are performed using the test-family of functions. Currently the following
-tests are implemented:</p><dl><dt><code><a href="testOMF.html">testOMF()</a></code></dt>
+tests are implemented:</p><dl><dt><code><a href="testCVPAT.html">testCVPAT()</a></code></dt>
+<dd><p>Cross-validated predictive ability test proposed by Liengaard et al. (2021)</p></dd>
+
+<dt><code><a href="testOMF.html">testOMF()</a></code></dt>
 <dd><p>Bootstrap-based test for overall model fit based on
-Beran and Srivastava (1985)</p></dd>
+Beran and Srivastava (1985)
+.</p></dd>
 
 <dt><code><a href="testMICOM.html">testMICOM()</a></code></dt>
 <dd><p>Permutation-based test for measurement invariance of composites
-proposed by Henseler et al. (2016)</p></dd>
+proposed by Henseler et al. (2016)
+.</p></dd>
 
 <dt><code><a href="testMGD.html">testMGD()</a></code></dt>
 <dd><p>Several (mainly) permutation-based tests for multi-group comparisons.</p></dd>
@@ -635,7 +643,9 @@ Sage publications.<br><br> Henseler J, Ringle CM, Sarstedt M (2016).
 “Generalized structured component analysis with uniqueness terms for accommodating measurement error.”
 <em>Frontiers in Psychology</em>, <b>8</b>(2137), 1–12.<br><br> Joereskog KG, Wold HO (1982).
 <em>Systems under Indirect Observation: Causality, Structure, Prediction - Part II</em>, volume 139.
-North Holland.<br><br> Ringle CM, Sarstedt M, Straub D (2012).
+North Holland.<br><br> Liengaard BD, Sharma PN, Hult GTM, Jensen MB, Sarstedt M, Hair JF, Ringle CM (2021).
+“Prediction: Coveted, Yet Forsaken? Introducing a Cross-Validated Predictive Ability Test in Partial Least Squares Path Modeling.”
+<em>Decision Sciences</em>, <b>52</b>(2), 362–392.<br><br> Ringle CM, Sarstedt M, Straub D (2012).
 “A Critical Look at the Use of PLS-SEM in MIS Quarterly.”
 <em>MIS Quarterly</em>, <b>36</b>(1), iii–xiv.<br><br> Schuberth F, Rademaker ME, Henseler J (2020).
 “Estimating and assessing second-order constructs using PLS-PM: the case of composites of composites.”
@@ -654,7 +664,7 @@ North Holland.<br><br> Ringle CM, Sarstedt M, Straub D (2012).
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="args_default.html">args_default()</a></code>, <a href="csem_arguments.html">cSEMArguments</a>, <a href="csem_results.html">cSEMResults</a>, <code><a href="foreman.html">foreman()</a></code>, <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code>,
-<code><a href="assess.html">assess()</a></code>, <code><a href="infer.html">infer()</a></code>, <code><a href="predict.html">predict()</a></code>, <code><a href="summarize.html">summarize()</a></code>, <code><a href="verify.html">verify()</a></code>, <code><a href="testOMF.html">testOMF()</a></code>,
+<code><a href="assess.html">assess()</a></code>, <code><a href="infer.html">infer()</a></code>, <code><a href="plot.cSEMResults_default.html">plot.cSEMResults_default()</a></code>, <code><a href="predict.html">predict()</a></code>, <code><a href="summarize.html">summarize()</a></code>, <code><a href="verify.html">verify()</a></code>, <code><a href="testCVPAT.html">testCVPAT()</a></code>, <code><a href="testOMF.html">testOMF()</a></code>,
 <code><a href="testMGD.html">testMGD()</a></code>, <code><a href="testMICOM.html">testMICOM()</a></code>, <code><a href="testHausman.html">testHausman()</a></code></p></div>
     </div>
 
