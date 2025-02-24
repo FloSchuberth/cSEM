@@ -2,9 +2,9 @@ citHeader("To cite cSEM in publications use:")
 
 vers <- paste0("Package version: ", meta$Version)
 
-bibEntry(bibtype = "Manual",
+bibentry(bibtype = "Manual",
   title        = "cSEM: Composite-Based Structural Equation Modeling",
-  author       = c(person("Manuel E.", "Rademaker", role = "aut",
+  author       = c(person(c("Manuel", "E."), "Rademaker", role = "aut",
          comment = "S original"),
        person("Florian", "Schuberth", role = c("aut","cre"),
          email = "f.schuberth@utwente.nl")),

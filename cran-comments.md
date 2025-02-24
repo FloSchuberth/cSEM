@@ -1,3 +1,32 @@
+## Resubmission 
+Package CITATION file contains call(s) to old-style personList() or
+as.personList().  Please use c() on person objects instead.
+Package CITATION file contains call(s) to old-style citEntry().  Please
+use bibentry() instead.
+
+Fix issues in the citation file. 
+
+
+Found the following (possibly) invalid URLs:
+  URL: https://github.com/HenrikBengtsson/future.apply/ (moved to https://github.com/futureverse/future.apply)
+    From: man/resampleData.Rd
+          man/resamplecSEMResults.Rd
+    Status: 301
+    Message: Moved Permanently
+  URL: https://github.com/HenrikBengtsson/future/ (moved to https://github.com/futureverse/future)
+    From: man/resamplecSEMResults.Rd
+          inst/doc/cSEM.html
+          README.md
+          
+Replace the two links.
+
+
+checkRd: (-1) calculateEffects.Rd:24: Lost braces; missing escapes or markup?
+    24 | equals (I-B)^{(-1)}Gamma. The indirect effect equals the difference between
+       |  
+       
+Removed brackets {}.
+
 ## Notes
 
 - This is version 0.6.0
