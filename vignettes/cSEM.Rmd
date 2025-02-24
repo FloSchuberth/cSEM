@@ -120,7 +120,7 @@ However, in **cSEM**, the term "composite *__model__*" is only used to refer to 
 in a the former sense, i.e., a model in which the [composite][Terminology] is a direct representation
 of [concept/construct][Terminology]!
 
-Parameters in composite models are retrivied by a composite-based approach such as partial 
+Parameters in composite models are retrieved by a composite-based approach such as partial 
 least squares path modeling (PLS-PM), generalized structured component analysis (GSCA) or 
 dimension reduction techniques such as principal component analysis (PCA). The basic idea of any composite-based approach
 is to build scores/composites for each concept and subsequently retrieve structural
@@ -637,8 +637,8 @@ construct level counterparts (construct correlations, loadings and
 path coefficients) unless the proxy is a perfect representation of its
 construct level counterpart. This is commonly referred to as **attenuation bias**.
 Several approaches have been suggested to correct for these biases.
-In **cSEM** estimates are correctly dissattenuated by default if any of the
-concepts involved is modeled as a common factor! Disattentuation is controlled
+In **cSEM** estimates are correctly disattenuated by default if any of the
+concepts involved is modeled as a common factor! Disattenuation is controlled
 by the `.disattenuate` argument of `csem()`.
 
 **Example**

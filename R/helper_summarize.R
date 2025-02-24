@@ -195,7 +195,7 @@ addInfer <- function(.what = NULL, .estimates = NULL, .ci = NULL) {
   .estimates["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
   
   if(!is.null(.ci)) {
-    ## Add CI's
+    ## Add CIs
     # Column names
     ci_colnames <- paste0(rep(names(temp[.ci]), sapply(temp[.ci], function(x) nrow(x))), ".",
                           unlist(lapply(temp[.ci], rownames)))

@@ -186,7 +186,7 @@ summarize.cSEMResults_default <- function(
   for(i in names(x2$Model$construct_type)) {
     indicators <- colnames(x2$Model$measurement[i, x2$Model$measurement[i, ] != 0, drop = FALSE])
     
-    # For common factors only the measurment errors specified by the user
+    # For common factors only the measurement errors specified by the user
     # are returned. Since they are already contained in cor_selector nothing needs
     # to be done
     if(x2$Model$construct_type[i] == "Composite") {
@@ -322,7 +322,7 @@ summarize.cSEMResults_default <- function(
           x["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
           
           if(!is.null(.ci)) {
-            ## Add CI's
+            ## Add CIs
             # Column names
             ci_colnames <- paste0(rep(names(temp[.ci]), sapply(temp[.ci], function(x) nrow(x))), ".",
                                   unlist(lapply(temp[.ci], rownames)))
@@ -480,7 +480,7 @@ summarize.cSEMResults_2ndorder <- function(
     ## Check arguments
     match.arg(.ci, args_default(.choices = TRUE)$.ci, several.ok = TRUE)
     
-    ## The 95% percentile CI is returned by default (BCa is acutally better 
+    ## The 95% percentile CI is returned by default (BCa is actually better 
     ##  but requires a second resampling run and should therefore not be the 
     ##  default).
     if(is.null(.ci)) .ci <- "CI_percentile"
@@ -503,7 +503,7 @@ summarize.cSEMResults_2ndorder <- function(
     x21$Path_estimates["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
     
     if(!is.null(.ci)) {
-      ## Add CI's
+      ## Add CIs
       # Column names
       ci_colnames <- paste0(rep(names(temp[.ci]), sapply(temp[.ci], function(x) nrow(x))), ".",
                             unlist(lapply(temp[.ci], rownames)))
@@ -526,8 +526,8 @@ summarize.cSEMResults_2ndorder <- function(
       y["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
       
       if(!is.null(.ci)) {
-        ## Add CI's
-        # Add cis to data frame and set names
+        ## Add CIs
+        # Add cIs to data frame and set names
         ci_temp <- t(do.call(rbind, temp[.ci]))[y$Name, , drop =FALSE]
         y <- cbind(y, ci_temp)
         rownames(y) <- NULL
@@ -548,8 +548,8 @@ summarize.cSEMResults_2ndorder <- function(
       y["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
       
       if(!is.null(.ci)) {
-        ## Add CI's
-        # Add cis to data frame and set names
+        ## Add CIs
+        # Add cIs to data frame and set names
         ci_temp <- t(do.call(rbind, temp[.ci]))[y$Name, , drop =FALSE]
         y <- cbind(y, ci_temp)
         rownames(y) <- NULL
@@ -575,8 +575,8 @@ summarize.cSEMResults_2ndorder <- function(
       x21$Exo_construct_correlation["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
       
       if(!is.null(.ci)) {
-        ## Add CI's
-        # Add cis to data frame and set names
+        ## Add CIs
+        # Add cIs to data frame and set names
         x21$Exo_construct_correlation <- cbind(x21$Exo_construct_correlation, t(do.call(rbind, temp[.ci])))
         rownames(x21$Exo_construct_correlation) <- NULL
         colnames(x21$Exo_construct_correlation)[(length(colnames(x21$Exo_construct_correlation)) - 
@@ -594,8 +594,8 @@ summarize.cSEMResults_2ndorder <- function(
       x11$Residual_correlation["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
       
       if(!is.null(.ci)) {
-        ## Add CI's
-        # Add cis to data frame and set names
+        ## Add CIs
+        # Add cIs to data frame and set names
         x11$Residual_correlation <- cbind(x11$Residual_correlation, t(do.call(rbind, temp[.ci])))
         rownames(x11$Residual_correlationn) <- NULL
         colnames(x11$Residual_correlation)[(length(colnames(x11$Residual_correlation)) - 
@@ -613,8 +613,8 @@ summarize.cSEMResults_2ndorder <- function(
       x11$Indicator_correlation["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
       
       if(!is.null(.ci)) {
-        ## Add CI's
-        # Add cis to data frame and set names
+        ## Add CIs
+        # Add CIs to data frame and set names
         x11$Indicator_correlation <- cbind(x11$Indicator_correlation, t(do.call(rbind, temp[.ci])))
         rownames(x11$Indicator_correlationn) <- NULL
         colnames(x11$Indicator_correlation)[(length(colnames(x11$Indicator_correlation)) - 
@@ -636,7 +636,7 @@ summarize.cSEMResults_2ndorder <- function(
           x["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
           
           if(!is.null(.ci)) {
-            ## Add CI's
+            ## Add CIs
             # Column names
             ci_colnames <- paste0(rep(names(temp[.ci]), sapply(temp[.ci], function(x) nrow(x))), ".",
                                   unlist(lapply(temp[.ci], rownames)))

@@ -1,7 +1,7 @@
 Package: cSEM
 Title: Composite-Based Structural Equation Modeling
-Version: 0.5.0.9000
-Date: 2022-11-24
+Version: 0.6.0
+Date: 2025-02-24
 Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     role  = c("aut"),
                     email = "manuel-rademaker@outlook.de",
@@ -84,6 +84,8 @@ Suggests:
     testthat (>= 3.0.0),
     ggplot2,
     openxlsx,
-    graphics
+    graphics,
+    spelling
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+Language: en-US

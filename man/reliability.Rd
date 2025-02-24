@@ -80,7 +80,7 @@ instead.
 For the tau-equivalent reliability ("\code{rho_T}" or "\code{cronbachs_alpha}") a closed-form
 confidence interval may be computed \insertCite{Trinchera2018}{cSEM} by setting
 \code{.closed_form_ci = TRUE} (default is \code{FALSE}). If \code{.alpha} is a vector
-several CI's are returned.
+several CIs are returned.
 }
 \section{Functions}{
 \itemize{

@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function(e) {
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -44,7 +44,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -159,7 +159,7 @@ model</h1>
 <h3 class="subtitle project-tagline">Using the <code>assess()</code>
 function</h3>
 <h4 class="author project-author">Manuel Rademaker</h4>
-<h4 class="date project-date">Last edited: 2023-09-18</h4>
+<h4 class="date project-date">Last edited: 2025-02-24</h4>
 </section>
 
 
@@ -556,7 +556,7 @@ scaled to be unity.</li>
 <li>If all constructs are allowed to freely covary, i.e., there is no
 structural model and no structural parameters, all constructs are
 considered exogenous.</li>
-<li>If the strucutral model contains nonlinear terms (e.g., <span class="math inline">\(\eta^2_1\)</span> or <span class="math inline">\(\eta_1\eta_2\)</span>), degrees of freedom
+<li>If the structural model contains nonlinear terms (e.g., <span class="math inline">\(\eta^2_1\)</span> or <span class="math inline">\(\eta_1\eta_2\)</span>), degrees of freedom
 computation is currently unclear (at least to us). A warning is printed
 to inform the user that the calculation is may not be correct.</li>
 </ol>
@@ -598,7 +598,7 @@ applied users should be aware that only little is known about their
 applicability, intuition, and interpretability in the context of models
 containing constructs modeled as composites or for models estimated
 using a composite-based approach.</p>
-<p>Independent of the approach and model used, a particularily
+<p>Independent of the approach and model used, a particularly
 controversial issue are cutoff values for fit indices <span class="citation">(e.g., Marsh, Hau, and Wen 2004)</span>. In
 factor-based SEM cutoff values are rather popular. The basis for these
 are numerous simulation studies, most notably <span class="citation">Hu
@@ -608,8 +608,8 @@ or worse - no cutoff values have been suggested.<a href="#fn1" class="footnote-r
 keep in mind that the value of a fit index is just <em>some</em>
 indication of good or bad fit. Other aspects related to model fit must
 be considered as well. It is unreasonable to make a binary decision
-about rejection or non-rejection of a model by soley comparing the value
-of a fit index with a (more or less) arbitrary cutoff value.</p>
+about rejection or non-rejection of a model by solely comparing the
+value of a fit index with a (more or less) arbitrary cutoff value.</p>
 <p>The definitions of fit indices calculated by <code>assess()</code>
 are given in the following:</p>
 <ul>
@@ -632,7 +632,7 @@ a certain baseline model called the “null model”.</li>
 <li>The <strong>non-normed fit index</strong> (NNFI) accounts for the
 degrees of freedom of the involved models. It is the ratio of the
 distance between the fit of the baseline model and the fit of the
-specified model (each per degree of freedom) and the distance beetween
+specified model (each per degree of freedom) and the distance between
 the fit of the baseline model and the expected fit of the specified
 model (each per degree of freedom).</li>
 <li>The <strong>comparative fit index</strong> (CFI) estimates the
@@ -1018,12 +1018,12 @@ as consistent as possible by relying on a paper by <span class="citation">Cho (2
 formula-generating methods and a systematic naming conventions for all
 common reliability measures. Naturally, some of the conventional
 terminology is deeply entrenched within the nomenclatura of a particular
-filed (e.g., coefficient alpha alias Cronbach’s alpha in pychonometrics)
+filed (e.g., coefficient alpha alias Cronbach’s alpha in pychometrics)
 such that a new, albeit consistent, naming scheme seems superfluous at
 best. However, we belief the merit of a “standardized” naming pattern
 will eventually be helpful to all users as it helps clarify potential
 misconceptions thus preventing potential misuse, such as the (ab)use of
-Cronbach alpha as a reliability measure for congernic measurement
+Cronbach alpha as a reliability measure for congeneric measurement
 models.</p>
 <p>Apart from these considerations, this package takes a pragmatic
 stance in a sense that we use consistent naming because it naturally
@@ -1058,7 +1058,7 @@ Standardized alpha, Split-half reliability</td>
 <tr class="even">
 <td align="center">Tau-equivalent reliability</td>
 <td align="center"><span class="math inline">\(\rho_T\)</span></td>
-<td align="center">Cronbach’s alpha, <span class="math inline">\(\alpha\)</span>, Coefficient alpha Guttmans <span class="math inline">\(\lambda_3\)</span>, KR-20</td>
+<td align="center">Cronbach’s alpha, <span class="math inline">\(\alpha\)</span>, Coefficient alpha Guttman’s <span class="math inline">\(\lambda_3\)</span>, KR-20</td>
 </tr>
 <tr class="odd">
 <td align="center">Tau-equivalent reliability weighted</td>
@@ -1069,7 +1069,7 @@ Standardized alpha, Split-half reliability</td>
 <td align="center">Congeneric reliability</td>
 <td align="center"><span class="math inline">\(\rho_C\)</span></td>
 <td align="center">Composite reliability, Jöreskog’s <span class="math inline">\(\rho\)</span>, Construct reliability, <span class="math inline">\(\omega\)</span>, reliability coefficient,
-Dillon-Goldsteins’s <span class="math inline">\(\rho\)</span></td>
+Dillon-Goldstein’s <span class="math inline">\(\rho\)</span></td>
 </tr>
 <tr class="odd">
 <td align="center">Congeneric reliability weighted</td>
@@ -1150,7 +1150,7 @@ assess convergent and discriminant validity.</p>
 <!-- Spearman-Brown formulae/prophecy, standarized alpha. In `cSEM` parallel  -->
 <!-- reliability is always identical to tau-equivalent reliability as indicators -->
 <!-- are always standardized. Hence, only $\rho_T$ is reported. -->
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-Bentler1990" class="csl-entry">
 Bentler, Peter M. 1990. <span>“Comparative <span>Fit</span>
 <span>Indexes</span> in <span>Structural</span>

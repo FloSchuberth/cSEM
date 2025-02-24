@@ -272,7 +272,7 @@ modeled as common factors only and \code{.disattenuate = TRUE}. See below.}
 \code{"SUMCORR"}, \code{"MAXVAR"}, \code{"SSQCORR"}, \code{"MINVAR"}, \code{"GENVAR"}.}
 \item{Principal component analysis (\code{"PCA"})}
 \item{Factor score regression using sum scores (\code{"unit"}),
-regression (\code{"regression"}) or bartlett scores (\code{"bartlett"})}
+regression (\code{"regression"}) or Bartlett scores (\code{"bartlett"})}
 }
 
 It is possible to supply starting values for the weighting algorithm
@@ -443,7 +443,7 @@ proposed by \insertCite{Henseler2016;textual}{cSEM}}
 Other miscellaneous postestimation functions belong do the do-family of functions.
 Currently three do functions are implemented:
 \describe{
-\item{\code{\link[=doIPMA]{doIPMA()}}}{Performs an importance-performance matrix analyis (IPMA).}
+\item{\code{\link[=doIPMA]{doIPMA()}}}{Performs an importance-performance matrix analysis (IPMA).}
 \item{\code{\link[=doNonlinearEffectsAnalysis]{doNonlinearEffectsAnalysis()}}}{Perform a nonlinear effects analysis as
 described in e.g.,
 \insertCite{Spiller2013;textual}{cSEM}}

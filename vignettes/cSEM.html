@@ -156,7 +156,7 @@ code span.ot { color: #007020; }
 <section class="page-header">
 <h1 class="title toc-ignore project-name">Introduction to cSEM</h1>
 <h4 class="author project-author">Manuel Rademaker</h4>
-<h4 class="date project-date">Last edited: 2025-01-10</h4>
+<h4 class="date project-date">Last edited: 2025-02-24</h4>
 </section>
 
 
@@ -337,7 +337,7 @@ variable</a>. However, in <strong>cSEM</strong>, the term “composite
 <em><strong>model</strong></em>” is only used to refer to a model in a
 the former sense, i.e., a model in which the <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html">composite</a>
 is a direct representation of <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html">concept/construct</a>!</p>
-<p>Parameters in composite models are retrivied by a composite-based
+<p>Parameters in composite models are retrieved by a composite-based
 approach such as partial least squares path modeling (PLS-PM),
 generalized structured component analysis (GSCA) or dimension reduction
 techniques such as principal component analysis (PCA). The basic idea of
@@ -484,7 +484,7 @@ R’s rich and easy to learn data import and data processing capabilities.
 While these topics may have been overwhelming for newcomers several
 years ago, data import and data transformation have become extremely
 simple and user-friendly if the right tools packages are used. The best
-place to start is the <a href="https://posit.co/resources/cheatsheets/">Rstudio Cheat sheet
+place to start is the <a href="https://posit.co/resources/cheatsheets/">RStudio Cheat sheet
 webpage</a>, especially the <em>Data Import</em> and the <em>Data
 Transformation</em> cheat sheets.</p>
 <p><strong>cSEM</strong> is relatively flexible as to the type of data
@@ -784,7 +784,7 @@ object to <code>resamplecSEMResults()</code> and subsequently using
 ##  Number of admissible results       = 499
 ##  Approach to handle inadmissibles   = &quot;drop&quot;
 ##  Sign change option                 = &quot;none&quot;
-##  Random seed                        = -559329440
+##  Random seed                        = -186919783
 ## 
 ##  Construct details:
 ##  ------------------
@@ -800,37 +800,37 @@ object to <code>resamplecSEMResults()</code> and subsequently using
 ## ============================
 ##                                                              CI_percentile   
 ##   Path           Estimate  Std. error   t-stat.   p-value         95%        
-##   eta2 ~ eta1      0.6713      0.0430   15.6181    0.0000 [ 0.5834; 0.7542 ] 
-##   eta3 ~ eta1      0.4585      0.0809    5.6688    0.0000 [ 0.2966; 0.6220 ] 
-##   eta3 ~ eta2      0.3052      0.0845    3.6107    0.0003 [ 0.1265; 0.4674 ] 
+##   eta2 ~ eta1      0.6713      0.0455   14.7652    0.0000 [ 0.5846; 0.7634 ] 
+##   eta3 ~ eta1      0.4585      0.0870    5.2714    0.0000 [ 0.3041; 0.6311 ] 
+##   eta3 ~ eta2      0.3052      0.0903    3.3790    0.0007 [ 0.1170; 0.4629 ] 
 ## 
 ## Estimated loadings:
 ## ===================
 ##                                                              CI_percentile   
 ##   Loading        Estimate  Std. error   t-stat.   p-value         95%        
-##   eta1 =~ y11      0.6631      0.0419   15.8160    0.0000 [ 0.5777; 0.7393 ] 
-##   eta1 =~ y12      0.6493      0.0375   17.3040    0.0000 [ 0.5705; 0.7226 ] 
-##   eta1 =~ y13      0.7613      0.0315   24.1555    0.0000 [ 0.6951; 0.8256 ] 
-##   eta2 =~ y21      0.5165      0.0519    9.9455    0.0000 [ 0.4131; 0.6116 ] 
-##   eta2 =~ y22      0.7554      0.0370   20.3917    0.0000 [ 0.6855; 0.8266 ] 
-##   eta2 =~ y23      0.7997      0.0387   20.6696    0.0000 [ 0.7220; 0.8745 ] 
-##   eta3 =~ y31      0.8223      0.0343   23.9965    0.0000 [ 0.7498; 0.8869 ] 
-##   eta3 =~ y32      0.6581      0.0421   15.6290    0.0000 [ 0.5673; 0.7345 ] 
-##   eta3 =~ y33      0.7474      0.0368   20.3372    0.0000 [ 0.6801; 0.8200 ] 
+##   eta1 =~ y11      0.6631      0.0409   16.2173    0.0000 [ 0.5785; 0.7472 ] 
+##   eta1 =~ y12      0.6493      0.0395   16.4382    0.0000 [ 0.5693; 0.7178 ] 
+##   eta1 =~ y13      0.7613      0.0327   23.3142    0.0000 [ 0.6958; 0.8242 ] 
+##   eta2 =~ y21      0.5165      0.0516   10.0116    0.0000 [ 0.4099; 0.6065 ] 
+##   eta2 =~ y22      0.7554      0.0361   20.9419    0.0000 [ 0.6857; 0.8242 ] 
+##   eta2 =~ y23      0.7997      0.0374   21.3643    0.0000 [ 0.7220; 0.8618 ] 
+##   eta3 =~ y31      0.8223      0.0337   24.3947    0.0000 [ 0.7556; 0.8859 ] 
+##   eta3 =~ y32      0.6581      0.0410   16.0415    0.0000 [ 0.5758; 0.7320 ] 
+##   eta3 =~ y33      0.7474      0.0435   17.1917    0.0000 [ 0.6550; 0.8308 ] 
 ## 
 ## Estimated weights:
 ## ==================
 ##                                                              CI_percentile   
 ##   Weight         Estimate  Std. error   t-stat.   p-value         95%        
-##   eta1 &lt;~ y11      0.3956      0.0221   17.9231    0.0000 [ 0.3526; 0.4380 ] 
-##   eta1 &lt;~ y12      0.3873      0.0195   19.8667    0.0000 [ 0.3511; 0.4276 ] 
-##   eta1 &lt;~ y13      0.4542      0.0193   23.5766    0.0000 [ 0.4170; 0.4919 ] 
-##   eta2 &lt;~ y21      0.3058      0.0274   11.1445    0.0000 [ 0.2509; 0.3587 ] 
-##   eta2 &lt;~ y22      0.4473      0.0221   20.2240    0.0000 [ 0.4072; 0.4930 ] 
-##   eta2 &lt;~ y23      0.4735      0.0207   22.8482    0.0000 [ 0.4366; 0.5191 ] 
-##   eta3 &lt;~ y31      0.4400      0.0185   23.7607    0.0000 [ 0.4048; 0.4764 ] 
-##   eta3 &lt;~ y32      0.3521      0.0189   18.6758    0.0000 [ 0.3143; 0.3878 ] 
-##   eta3 &lt;~ y33      0.3999      0.0197   20.3334    0.0000 [ 0.3623; 0.4406 ] 
+##   eta1 &lt;~ y11      0.3956      0.0215   18.3628    0.0000 [ 0.3518; 0.4388 ] 
+##   eta1 &lt;~ y12      0.3873      0.0199   19.5078    0.0000 [ 0.3490; 0.4242 ] 
+##   eta1 &lt;~ y13      0.4542      0.0205   22.1859    0.0000 [ 0.4191; 0.4942 ] 
+##   eta2 &lt;~ y21      0.3058      0.0281   10.9019    0.0000 [ 0.2509; 0.3576 ] 
+##   eta2 &lt;~ y22      0.4473      0.0212   21.1161    0.0000 [ 0.4086; 0.4884 ] 
+##   eta2 &lt;~ y23      0.4735      0.0202   23.4220    0.0000 [ 0.4345; 0.5134 ] 
+##   eta3 &lt;~ y31      0.4400      0.0187   23.5495    0.0000 [ 0.4019; 0.4764 ] 
+##   eta3 &lt;~ y32      0.3521      0.0206   17.1175    0.0000 [ 0.3112; 0.3923 ] 
+##   eta3 &lt;~ y33      0.3999      0.0205   19.5188    0.0000 [ 0.3599; 0.4424 ] 
 ## 
 ## ------------------------------------ Effects -----------------------------------
 ## 
@@ -838,32 +838,32 @@ object to <code>resamplecSEMResults()</code> and subsequently using
 ## ========================
 ##                                                               CI_percentile   
 ##   Total effect    Estimate  Std. error   t-stat.   p-value         95%        
-##   eta2 ~ eta1       0.6713      0.0430   15.6181    0.0000 [ 0.5834; 0.7542 ] 
-##   eta3 ~ eta1       0.6634      0.0390   17.0011    0.0000 [ 0.5878; 0.7392 ] 
-##   eta3 ~ eta2       0.3052      0.0845    3.6107    0.0003 [ 0.1265; 0.4674 ] 
+##   eta2 ~ eta1       0.6713      0.0455   14.7652    0.0000 [ 0.5846; 0.7634 ] 
+##   eta3 ~ eta1       0.6634      0.0417   15.8926    0.0000 [ 0.5850; 0.7480 ] 
+##   eta3 ~ eta2       0.3052      0.0903    3.3790    0.0007 [ 0.1170; 0.4629 ] 
 ## 
 ## Estimated indirect effects:
 ## ===========================
 ##                                                                  CI_percentile   
 ##   Indirect effect    Estimate  Std. error   t-stat.   p-value         95%        
-##   eta3 ~ eta1          0.2049      0.0569    3.5999    0.0003 [ 0.0866; 0.3189 ] 
+##   eta3 ~ eta1          0.2049      0.0607    3.3762    0.0007 [ 0.0788; 0.3120 ] 
 ## ________________________________________________________________________________</code></pre>
 <p>Or directly via <code>infer()</code></p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>ii <span class="ot">&lt;-</span> <span class="fu">infer</span>(b1, <span class="at">.quantity =</span> <span class="fu">c</span>(<span class="st">&quot;CI_standard_z&quot;</span>, <span class="st">&quot;CI_percentile&quot;</span>), <span class="at">.alpha =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.05</span>))</span>
 <span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>ii<span class="sc">$</span>Path_estimates</span></code></pre></div>
 <pre><code>## $CI_standard_z
 ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-## 99%L   0.5612126   0.2440523  0.09190552
-## 99%U   0.7826537   0.6607279  0.52729008
-## 95%L   0.5876852   0.2938646  0.14395444
-## 95%U   0.7561811   0.6109156  0.47524117
+## 99%L   0.5539019   0.2299198  0.07451714
+## 99%U   0.7881333   0.6780135  0.53974884
+## 95%L   0.5819036   0.2834881  0.13013419
+## 95%U   0.7601316   0.6244453  0.48413178
 ## 
 ## $CI_percentile
 ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-## 99%L   0.5691319   0.2636709  0.09517528
-## 99%U   0.7693886   0.6616893  0.51934515
-## 95%L   0.5833985   0.2966277  0.12648813
-## 95%U   0.7542139   0.6220095  0.46742846</code></pre>
+## 99%L   0.5433598   0.2672311  0.04849572
+## 99%U   0.7834993   0.7028866  0.50192794
+## 95%L   0.5846093   0.3041188  0.11701717
+## 95%U   0.7633932   0.6311174  0.46293209</code></pre>
 <p>Both bootstrap and jackknife resampling support platform-independent
 multiprocessing as well as random seeds via the <a href="https://github.com/HenrikBengtsson/future/">future framework</a>.
 For multiprocessing simply set <code>.eval_plan = &quot;multiprocess&quot;</code>
@@ -1026,8 +1026,8 @@ and path coefficients) unless the proxy is a perfect representation of
 its construct level counterpart. This is commonly referred to as
 <strong>attenuation bias</strong>. Several approaches have been
 suggested to correct for these biases. In <strong>cSEM</strong>
-estimates are correctly dissattenuated by default if any of the concepts
-involved is modeled as a common factor! Disattentuation is controlled by
+estimates are correctly disattenuated by default if any of the concepts
+involved is modeled as a common factor! Disattenuation is controlled by
 the <code>.disattenuate</code> argument of <code>csem()</code>.</p>
 <p><strong>Example</strong></p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="st">&quot;</span></span>

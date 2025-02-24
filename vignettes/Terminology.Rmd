@@ -22,7 +22,7 @@ bibliography: ../inst/REFERENCES.bib
 ### Common factor{#commonfactor}
 
 A common factor or latent variable is a type of [construct](#construct). The name common factor
-is motivated by the theorized relationship to its [indicators](#indicator). This relation is commonly refered to as
+is motivated by the theorized relationship to its [indicators](#indicator). This relation is commonly referred to as
 the [measurement model](#mm). Two kinds of 
 measurement models exist: the reflective and the (causal-)formative measurement model. 
 The defining feature of a common factor in a reflective measurement model is the 
@@ -32,10 +32,10 @@ The idea of the reflective measurement model is closely related to the
 [true score](#truescore) theory. Accordingly, indicators related to the common factor
 are modeled as measurement error-prone manifestations of a common variable, 
 cause or factor. Although there are subtle conceptional differences, the terms 
-common factor, true score, and latent variable are mostly used synommenoulsy in **cSEM**.
+common factor, true score, and latent variable are mostly used synonymously in **cSEM**.
 
 The common factor is also the central entity in the causal-formative 
-measurment model. Here the indicators are modeled as causing the/one common factor.
+measurement model. Here the indicators are modeled as causing the/one common factor.
 This type of measurement looks similar to the [composite (measurement) model](#composite), however, 
 both models are, in fact, quite different. While the causal-formative measurement
 model assumes that the common factor is imperfectly measured by its indicators (i.e., 
@@ -55,18 +55,18 @@ composites are used as [stand-ins](#standin) for a [latent variable](#latentvari
 the measurement model is called causal-formative [@Henseler2017]. 
 
 Note that, although we sometimes use it this way as well, the term "measurement" 
-is acutally rather inadequate for the composite model since in a composite model
+is actually rather inadequate for the composite model since in a composite model
 the construct is build/formed by its related indicators. Hence no measurement 
-in the acutal sense of the word takes place.
+in the actual sense of the word takes place.
     
 ### Composite-based methods{#cbased}
 
 Composite-based methods or composite-based SEM refers to the entirety of methods 
-centered around the use as of [composites](#composite) (linear compounts of observables) 
+centered around the use as of [composites](#composite) (linear compounds of observables) 
 as [stand-ins](#standin) or error-free representations for the [concepts](#concept) under investigation.
 Composite-based methods are often also called
-variance-based methods as focal parameters are usually retrived such that explained 
-variance of the dependend constructs in a structural model is maximized.
+variance-based methods as focal parameters are usually retrieved such that explained 
+variance of the dependent constructs in a structural model is maximized.
 
 ### Composite-based SEM{#cbasedsem}
 
@@ -77,7 +77,7 @@ See: [Composite-based methods](#cbased)
 An entity defined by a conceptual/theoretical definition. In line with @Rigdon2016
 variables representing or subsuming a concept are called conceptual variables. 
 The precise nature/meaning of a conceptual variable depends on 
-"differnt assumptions, philosophies or worldviews [of the researcher]" 
+"different assumptions, philosophies or worldviews [of the researcher]" 
 [@Rigdon2016, p. 2]. Unless otherwise stated, in **cSEM**, it is sufficient
 to think of concepts as entities that exist simply because they 
 have been defined. Hence, abstract terms such as "loyalty" or "depression" as 
@@ -108,15 +108,15 @@ See: [Factor-based methods](#fbmethods)
 Factor-based methods or factor-based SEM refers to the entirety of methods 
 centered around the use of [common factors](#commonfactor) as statistical 
 [proxies](#proxy) for the [concepts](#concept) under investigation. Factor-based methods are also called
-covariance-based methods as focal parameters are retrived such that the
+covariance-based methods as focal parameters are retrieved such that the
 difference between the model-implied $\bm\Sigma(\theta)$ and the empirical indicator covariance 
 matrix $\bm S$ is minimized.
     
 ### Indicator{#indicator}
 
-An observable variable. In **cSEM** observable variables are generally refered 
+An observable variable. In **cSEM** observable variables are generally referred 
 to as indicators, however, terms such as item, manifest variable, or 
-observable (variable) are sometimes used synommenoulsy.
+observable (variable) are sometimes used synonymously.
     
 ### Latent variable{#latentvariable}
 
@@ -125,7 +125,7 @@ See: [Common factor](#commonfactor)
 ### Measurement model{#mm}
 
 The measurement model is a statistical model relating [indicators](#indicator) to [constructs](#construct)
-(the statistical representiation of a [concept](#concept)). If the concept under 
+(the statistical representation of a [concept](#concept)). If the concept under 
 study is modeled as a [common factor](#commonfactor) two measurement models exist:
 
 - The reflective measurement model
@@ -137,9 +137,9 @@ measurement model:
 - composite (measurement) model
 
 Note that, although we sometimes use it this way as well, the term "measurement" 
-is acutally rather inadequate for the composite model since in a composite model
+is actually rather inadequate for the composite model since in a composite model
 the construct is build/formed by its related indicators. Hence no measurement 
-in the acutal sense of the word takes place.
+in the actual sense of the word takes place.
 
 ### Model
 
@@ -185,7 +185,7 @@ closely linked to the [latent variable/common factor](#commonfactor) model in th
 score of a set of indicators are linear functions of some underlying common factor. 
 Mathematically speaking, the correspondence is $\eta_{jk} = \lambda_{jk}\eta_j$  
 where $\eta_{jk}$ is the true score, $\eta_j$ the underlying latent variable and $\lambda_{jk}$ the loading.
-Despite some differences, the term true score can generally be used synommenoulsy 
+Despite some differences, the term true score can generally be used synonymously 
 to the terms common factor and latent variable in **cSEM** without risking a misunderstanding.
     
 ### Proxy {#proxy}
@@ -218,4 +218,4 @@ between [concepts](#concept) and/or observables.
 
 See: [Composite-based methods](#cbased)
 
-## Literatur
+## Literature

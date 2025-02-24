@@ -112,7 +112,7 @@
   a tibble (data frame) summarizing the test decisions in a user-friendly way 
   is returned. (#398)
   
-- Remove warning from `fit()` when polycoric or polyserial indicator correlation 
+- Remove warning from `fit()` when polychoric or polyserial indicator correlation 
   is used during estimation. (#413)
   
 - `print.cSEMAssess()` no longer prints zero for VIF values of constructs that
@@ -189,7 +189,7 @@
 
 - Allow users to specify a lavaan model without a structural model. Now, users
   can specify a model with several measurement equations (via `<~` or `=~`)
-  but no strucutral equations. Instead the correlations between all! constructs
+  but no structural equations. Instead the correlations between all! constructs
   must be given. Failing to do so causes an error.
   
 ### New example data
@@ -262,7 +262,7 @@
 
 - Add the density of the residuals as plot to `plot.cSEMPredict()`. (#337)
 - Remove argument `.only_common_factors` for postestimation function `predict()`.
-  Now `predict()` retruns predictions for composite models as well.
+  Now `predict()` returns predictions for composite models as well.
   This will break existing code that uses `predict(..., .only_common_factors = ...)`.
   You will get an `unused argument (.only_common_factors = FALSE)` error. 
   Simply remove the argument to fix it. (#330)

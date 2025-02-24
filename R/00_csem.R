@@ -55,7 +55,7 @@
 #'   `"SUMCORR"`, `"MAXVAR"`, `"SSQCORR"`, `"MINVAR"`, `"GENVAR"`.}
 #' \item{Principal component analysis (`"PCA"`)}
 #' \item{Factor score regression using sum scores (`"unit"`), 
-#'    regression (`"regression"`) or bartlett scores (`"bartlett"`)}
+#'    regression (`"regression"`) or Bartlett scores (`"bartlett"`)}
 #' }
 #' 
 #' It is possible to supply starting values for the weighting algorithm 
@@ -285,7 +285,7 @@
 #' Other miscellaneous postestimation functions belong do the do-family of functions.
 #' Currently three do functions are implemented:
 #' \describe{
-#' \item{[doIPMA()]}{Performs an importance-performance matrix analyis (IPMA).}
+#' \item{[doIPMA()]}{Performs an importance-performance matrix analysis (IPMA).}
 #' \item{[doNonlinearEffectsAnalysis()]}{Perform a nonlinear effects analysis as
 #'   described in e.g.,
 #'   \insertCite{Spiller2013;textual}{cSEM}}
