@@ -170,7 +170,7 @@ be estimated? Defaults to \code{TRUE}.}
 "\emph{sequential}", "\emph{multicore}", or "\emph{multisession}". In the two latter cases
 all available cores will be used. Defaults to "\emph{sequential}".}
 
-\item{.filename}{Character string. The file name. Defaults to "results.xlsx".}
+\item{.filename}{Character string. The file name.}
 
 \item{.first_resample}{A list containing the \code{.R} resamples based on the original
 data obtained by resamplecSEMResults().}
@@ -183,6 +183,9 @@ already?. Defaults to \code{FALSE}.}
 
 \item{.full_output}{Logical. Should the full output of summarize be printed.
 Defaults to \code{TRUE}.}
+
+\item{.graph_attrs}{Character string. Additional attributes that should be passed
+to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emph{c("rankdir=LR")}.}
 
 \item{.H}{The (N x J) matrix of construct scores.}
 
@@ -286,7 +289,7 @@ compared across groups. Defaults to \code{NULL} in which case all weights, loadi
 path coefficients of the originally specified model are compared.}
 
 \item{.path}{Character string. Path of the directory to save the file to. Defaults
-to the current working directory.}
+to \code{NULL}.}
 
 \item{.path_coefficients}{List. A list that contains the resampled and the original
 path coefficient estimates. Typically a part of a \code{cSEMResults_resampled} object.
@@ -298,7 +301,18 @@ factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weigh
 "\emph{geo_of_harmonic}". Defaults to "\emph{dist_squared_euclid}".
 Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS-PM.}
 
+\item{.plot_correlations}{Character string. Specify which correlations should be plotted, i.e.,
+between the exogenous constructs (\code{exo}), between the exogenous constructs and the indicators (\code{all}),
+or not at all (\code{none}). Defaults to \code{exo}.}
+
+\item{.plot_labels}{Logical. Whether to display edge labels. Defaults to TRUE.}
+
 \item{.plot_package}{Character string. Indicates which packages should be used for plotting.}
+
+\item{.plot_significances}{Logical. Should p-values in the form of stars be plotted? Defaults to \code{TRUE}.}
+
+\item{.plot_structural_model_only}{Logical. Should only the structural model,
+i.e., the constructs and their relationships be plotted? Defaults to \code{FALSE}.}
 
 \item{.plot_type}{Character string. Indicates the type of plot that is produced.}
 
@@ -421,6 +435,8 @@ training data.}
 \item{.testtype}{Character string. One of "\emph{twosided}" (H1: The models do not
 perform equally in predicting indicators belonging to endogenous constructs)"
 and \emph{onesided}" (H1: Model 1 performs better in predicting indicators belonging}
+
+\item{.title}{Character string. Title of an object. Defaults to \emph{""}.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
