@@ -1,4 +1,4 @@
-# <Development version: cSEM 0.5.0.9000
+# <Development version: cSEM 0.6.0 (2025-02-24)
 
 - Add the plotModel() function which illustrates cSEM models. Thanks to Nguyen Huu Phuc for this contribution. 
 
