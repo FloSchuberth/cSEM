@@ -167,7 +167,7 @@ initializing new sessions or distributing tasks to different cores
 will not immediately be compensated by the availability of multiple sessions/cores.
 
 Random number generation (RNG) uses the L'Ecuyer-CRMR RGN stream as implemented in the
-\href{https://github.com/HenrikBengtsson/future.apply/}{future.apply package} \insertCite{Bengtsson2018a}{cSEM}.
+\href{https://github.com/futureverse/future.apply/}{future.apply package} \insertCite{Bengtsson2018a}{cSEM}.
 It is independent of the evaluation plan. Hence, setting e.g., \code{.seed = 123} will
 generate the same random number and replicates
 for both \code{.eval_plan = "sequential"}, \code{.eval_plan = "multisession"}, and \code{.eval_plan = "multicore"}.

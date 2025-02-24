@@ -484,7 +484,7 @@ R’s rich and easy to learn data import and data processing capabilities.
 While these topics may have been overwhelming for newcomers several
 years ago, data import and data transformation have become extremely
 simple and user-friendly if the right tools packages are used. The best
-place to start is the <a href="https://posit.co/resources/cheatsheets/">RStudio Cheat sheet
+place to start is the <a href="https://posit.co/resources/cheatsheets/">Rstudio Cheat sheet
 webpage</a>, especially the <em>Data Import</em> and the <em>Data
 Transformation</em> cheat sheets.</p>
 <p><strong>cSEM</strong> is relatively flexible as to the type of data
@@ -784,7 +784,7 @@ object to <code>resamplecSEMResults()</code> and subsequently using
 ##  Number of admissible results       = 499
 ##  Approach to handle inadmissibles   = &quot;drop&quot;
 ##  Sign change option                 = &quot;none&quot;
-##  Random seed                        = -186919783
+##  Random seed                        = -1102858340
 ## 
 ##  Construct details:
 ##  ------------------
@@ -800,37 +800,37 @@ object to <code>resamplecSEMResults()</code> and subsequently using
 ## ============================
 ##                                                              CI_percentile   
 ##   Path           Estimate  Std. error   t-stat.   p-value         95%        
-##   eta2 ~ eta1      0.6713      0.0455   14.7652    0.0000 [ 0.5846; 0.7634 ] 
-##   eta3 ~ eta1      0.4585      0.0870    5.2714    0.0000 [ 0.3041; 0.6311 ] 
-##   eta3 ~ eta2      0.3052      0.0903    3.3790    0.0007 [ 0.1170; 0.4629 ] 
+##   eta2 ~ eta1      0.6713      0.0447   15.0050    0.0000 [ 0.5807; 0.7591 ] 
+##   eta3 ~ eta1      0.4585      0.0875    5.2411    0.0000 [ 0.2741; 0.6202 ] 
+##   eta3 ~ eta2      0.3052      0.0899    3.3938    0.0007 [ 0.1429; 0.4854 ] 
 ## 
 ## Estimated loadings:
 ## ===================
 ##                                                              CI_percentile   
 ##   Loading        Estimate  Std. error   t-stat.   p-value         95%        
-##   eta1 =~ y11      0.6631      0.0409   16.2173    0.0000 [ 0.5785; 0.7472 ] 
-##   eta1 =~ y12      0.6493      0.0395   16.4382    0.0000 [ 0.5693; 0.7178 ] 
-##   eta1 =~ y13      0.7613      0.0327   23.3142    0.0000 [ 0.6958; 0.8242 ] 
-##   eta2 =~ y21      0.5165      0.0516   10.0116    0.0000 [ 0.4099; 0.6065 ] 
-##   eta2 =~ y22      0.7554      0.0361   20.9419    0.0000 [ 0.6857; 0.8242 ] 
-##   eta2 =~ y23      0.7997      0.0374   21.3643    0.0000 [ 0.7220; 0.8618 ] 
-##   eta3 =~ y31      0.8223      0.0337   24.3947    0.0000 [ 0.7556; 0.8859 ] 
-##   eta3 =~ y32      0.6581      0.0410   16.0415    0.0000 [ 0.5758; 0.7320 ] 
-##   eta3 =~ y33      0.7474      0.0435   17.1917    0.0000 [ 0.6550; 0.8308 ] 
+##   eta1 =~ y11      0.6631      0.0408   16.2678    0.0000 [ 0.5830; 0.7461 ] 
+##   eta1 =~ y12      0.6493      0.0403   16.0913    0.0000 [ 0.5654; 0.7271 ] 
+##   eta1 =~ y13      0.7613      0.0317   24.0524    0.0000 [ 0.6964; 0.8182 ] 
+##   eta2 =~ y21      0.5165      0.0528    9.7777    0.0000 [ 0.4066; 0.6100 ] 
+##   eta2 =~ y22      0.7554      0.0360   20.9933    0.0000 [ 0.6815; 0.8262 ] 
+##   eta2 =~ y23      0.7997      0.0370   21.6011    0.0000 [ 0.7249; 0.8642 ] 
+##   eta3 =~ y31      0.8223      0.0342   24.0346    0.0000 [ 0.7525; 0.8847 ] 
+##   eta3 =~ y32      0.6581      0.0407   16.1584    0.0000 [ 0.5851; 0.7321 ] 
+##   eta3 =~ y33      0.7474      0.0404   18.5080    0.0000 [ 0.6723; 0.8251 ] 
 ## 
 ## Estimated weights:
 ## ==================
 ##                                                              CI_percentile   
 ##   Weight         Estimate  Std. error   t-stat.   p-value         95%        
-##   eta1 &lt;~ y11      0.3956      0.0215   18.3628    0.0000 [ 0.3518; 0.4388 ] 
-##   eta1 &lt;~ y12      0.3873      0.0199   19.5078    0.0000 [ 0.3490; 0.4242 ] 
-##   eta1 &lt;~ y13      0.4542      0.0205   22.1859    0.0000 [ 0.4191; 0.4942 ] 
-##   eta2 &lt;~ y21      0.3058      0.0281   10.9019    0.0000 [ 0.2509; 0.3576 ] 
-##   eta2 &lt;~ y22      0.4473      0.0212   21.1161    0.0000 [ 0.4086; 0.4884 ] 
-##   eta2 &lt;~ y23      0.4735      0.0202   23.4220    0.0000 [ 0.4345; 0.5134 ] 
-##   eta3 &lt;~ y31      0.4400      0.0187   23.5495    0.0000 [ 0.4019; 0.4764 ] 
-##   eta3 &lt;~ y32      0.3521      0.0206   17.1175    0.0000 [ 0.3112; 0.3923 ] 
-##   eta3 &lt;~ y33      0.3999      0.0205   19.5188    0.0000 [ 0.3599; 0.4424 ] 
+##   eta1 &lt;~ y11      0.3956      0.0219   18.1005    0.0000 [ 0.3522; 0.4402 ] 
+##   eta1 &lt;~ y12      0.3873      0.0199   19.4618    0.0000 [ 0.3465; 0.4243 ] 
+##   eta1 &lt;~ y13      0.4542      0.0196   23.1301    0.0000 [ 0.4156; 0.4929 ] 
+##   eta2 &lt;~ y21      0.3058      0.0282   10.8558    0.0000 [ 0.2493; 0.3599 ] 
+##   eta2 &lt;~ y22      0.4473      0.0216   20.6748    0.0000 [ 0.4044; 0.4891 ] 
+##   eta2 &lt;~ y23      0.4735      0.0201   23.5029    0.0000 [ 0.4293; 0.5082 ] 
+##   eta3 &lt;~ y31      0.4400      0.0193   22.7804    0.0000 [ 0.4027; 0.4773 ] 
+##   eta3 &lt;~ y32      0.3521      0.0192   18.2935    0.0000 [ 0.3155; 0.3900 ] 
+##   eta3 &lt;~ y33      0.3999      0.0197   20.2805    0.0000 [ 0.3617; 0.4386 ] 
 ## 
 ## ------------------------------------ Effects -----------------------------------
 ## 
@@ -838,36 +838,36 @@ object to <code>resamplecSEMResults()</code> and subsequently using
 ## ========================
 ##                                                               CI_percentile   
 ##   Total effect    Estimate  Std. error   t-stat.   p-value         95%        
-##   eta2 ~ eta1       0.6713      0.0455   14.7652    0.0000 [ 0.5846; 0.7634 ] 
-##   eta3 ~ eta1       0.6634      0.0417   15.8926    0.0000 [ 0.5850; 0.7480 ] 
-##   eta3 ~ eta2       0.3052      0.0903    3.3790    0.0007 [ 0.1170; 0.4629 ] 
+##   eta2 ~ eta1       0.6713      0.0447   15.0050    0.0000 [ 0.5807; 0.7591 ] 
+##   eta3 ~ eta1       0.6634      0.0410   16.1960    0.0000 [ 0.5826; 0.7397 ] 
+##   eta3 ~ eta2       0.3052      0.0899    3.3938    0.0007 [ 0.1429; 0.4854 ] 
 ## 
 ## Estimated indirect effects:
 ## ===========================
 ##                                                                  CI_percentile   
 ##   Indirect effect    Estimate  Std. error   t-stat.   p-value         95%        
-##   eta3 ~ eta1          0.2049      0.0607    3.3762    0.0007 [ 0.0788; 0.3120 ] 
+##   eta3 ~ eta1          0.2049      0.0605    3.3855    0.0007 [ 0.0945; 0.3274 ] 
 ## ________________________________________________________________________________</code></pre>
 <p>Or directly via <code>infer()</code></p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>ii <span class="ot">&lt;-</span> <span class="fu">infer</span>(b1, <span class="at">.quantity =</span> <span class="fu">c</span>(<span class="st">&quot;CI_standard_z&quot;</span>, <span class="st">&quot;CI_percentile&quot;</span>), <span class="at">.alpha =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.05</span>))</span>
 <span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>ii<span class="sc">$</span>Path_estimates</span></code></pre></div>
 <pre><code>## $CI_standard_z
 ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-## 99%L   0.5539019   0.2299198  0.07451714
-## 99%U   0.7881333   0.6780135  0.53974884
-## 95%L   0.5819036   0.2834881  0.13013419
-## 95%U   0.7601316   0.6244453  0.48413178
+## 99%L   0.5548900   0.2327441  0.07249573
+## 99%U   0.7853787   0.6834242  0.53570816
+## 95%L   0.5824443   0.2866216  0.12787139
+## 95%U   0.7578244   0.6295467  0.48033251
 ## 
 ## $CI_percentile
 ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-## 99%L   0.5433598   0.2672311  0.04849572
-## 99%U   0.7834993   0.7028866  0.50192794
-## 95%L   0.5846093   0.3041188  0.11701717
-## 95%U   0.7633932   0.6311174  0.46293209</code></pre>
+## 99%L   0.5427165   0.2217410  0.08772717
+## 99%U   0.7891046   0.6693476  0.51498031
+## 95%L   0.5806663   0.2740805  0.14292271
+## 95%U   0.7590550   0.6202288  0.48537383</code></pre>
 <p>Both bootstrap and jackknife resampling support platform-independent
-multiprocessing as well as random seeds via the <a href="https://github.com/HenrikBengtsson/future/">future framework</a>.
-For multiprocessing simply set <code>.eval_plan = &quot;multiprocess&quot;</code>
-in which case the maximum number of available cores is used if not on
+multiprocessing as well as random seeds via the <a href="https://github.com/futureverse/future/">future framework</a>. For
+multiprocessing simply set <code>.eval_plan = &quot;multiprocess&quot;</code> in
+which case the maximum number of available cores is used if not on
 Windows. On Windows as many separate R instances are opened in the
 background as there are cores available instead. Note that this
 naturally has some overhead. Consequently, for a small number of
