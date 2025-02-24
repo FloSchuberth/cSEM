@@ -266,6 +266,7 @@
 #'   fit measures, HTMT, R2 etc.}
 #' \item{[infer()]}{Calculate common inferential quantities, e.g., standard errors, 
 #'   confidence intervals.}
+#' \item{[plot()]}{Creates a plot of the model. For the help file see [plot.cSEMResults_default()].}  
 #' \item{[predict()]}{Predict endogenous indicator scores and compute common prediction metrics.}
 #' \item{[summarize()]}{Summarize the results. Mainly called for its side-effect the print method.}
 #' \item{[verify()]}{Verify/Check admissibility of the estimates.}
@@ -274,10 +275,11 @@
 #' Tests are performed using the test-family of functions. Currently the following
 #' tests are implemented:
 #' \describe{
+#' \item{[testCVPAT()]}{Cross-validated predictive ability test proposed by \insertCite{Liengaard2021;textual}{cSEM}}
 #' \item{[testOMF()]}{Bootstrap-based test for overall model fit based on 
-#'   \insertCite{Beran1985;textual}{cSEM}}
+#'   \insertCite{Beran1985;textual}{cSEM}.}
 #' \item{[testMICOM()]}{Permutation-based test for measurement invariance of composites
-#' proposed by \insertCite{Henseler2016;textual}{cSEM}}
+#' proposed by \insertCite{Henseler2016;textual}{cSEM}.}
 #' \item{[testMGD()]}{Several (mainly) permutation-based tests for multi-group comparisons.}
 #' \item{[testHausman()]}{Regression-based Hausman test to test for endogeneity.}
 #' }
@@ -297,7 +299,7 @@
 #'   \insertAllCited{}
 #'
 #' @seealso [args_default()], [cSEMArguments], [cSEMResults], [foreman()], [resamplecSEMResults()],
-#'   [assess()], [infer()], [predict()], [summarize()], [verify()], [testOMF()],
+#'   [assess()], [infer()], [plot.cSEMResults_default()], [predict()], [summarize()], [verify()], [testCVPAT()], [testOMF()],
 #'   [testMGD()], [testMICOM()], [testHausman()]
 #' 
 #' @example inst/examples/example_csem.R
