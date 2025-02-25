@@ -30,13 +30,13 @@ procedures (e.g., verify admissibility of the estimates, assess the
 model fit, test the model fit, compute confidence intervals, compare
 groups, etc.).
 
-## News (2022-05-09):
+## News (2025-02-24):
 
-- `predict()` function is now able to predict categorical indicators (a
-  procedure known as OrdPLScPredict).
+- Release of cSEM Version 0.6.0
 
-- Use singular value decomposition in GSCAm to deal with large datasets,
-  which allows for large datasets (thanks to Heungsun Hwang)
+- Implementation of a `plot()` function to visualize cSEM models. Thanks to Nguyen.
+
+- Enhancement of the `predict()` function
 
 ## Installation
 
@@ -81,12 +81,14 @@ and three do-family of function:
 - `infer()` : calculate common inferential quantities (e.g., standard
   errors, confidence intervals)
 - `predict()` : predict endogenous indicator values
+- `plot()` : Plot the cSEM model
 - `summarize()` : summarize the results
 - `verify()` : verify admissibility of the estimates
 
 Tests are performed by using the test family of functions. Currently,
 the following tests are implemented:
 
+- `testCVPAT()` performs a cross-validated predictive ability test
 - `testOMF()` : performs a test for overall model fit
 - `testMICOM()` : performs a test for composite measurement invariance
 - `testMGD()` : performs several tests to assess multi-group differences

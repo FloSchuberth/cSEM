@@ -1,6 +1,6 @@
 # <Development version: cSEM 0.6.0 (2025-02-24)
 
-- Add the plotModel() function which illustrates cSEM models. Thanks to Nguyen Huu Phuc for this contribution. 
+- Add the plotModel() function which illustrates cSEM models. Thanks to Nguyen Huu Phuc for this contribution (#430). 
 
 - Bug fix in the predict function when the model contains only a single categorical indicator. 
 
