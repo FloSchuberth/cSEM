@@ -411,7 +411,7 @@ resampleData <- function(
 #' or `"replace"` inadmissible results in which resampling continuous until
 #' the necessary number of admissible results is reached.
 #' 
-#' The \pkg{cSEM} package supports (multi)processing via the \href{https://github.com/HenrikBengtsson/future/}{future} 
+#' The \pkg{cSEM} package supports (multi)processing via the \href{https://github.com/futureverse/future/}{future} 
 #' framework \insertCite{Bengtsson2018}{cSEM}. Users may simply choose an evaluation plan
 #' via `.eval_plan` and the package takes care of all the complicated backend 
 #' issues. Currently, users may choose between standard single-core/single-session
