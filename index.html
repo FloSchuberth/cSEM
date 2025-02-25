@@ -102,11 +102,12 @@
 <p>Estimate, analyse, test, and study linear, nonlinear, hierarchical and multi-group structural equation models using composite-based approaches and procedures, including estimation techniques such as partial least squares path modeling (PLS-PM) and its derivatives (PLSc, OrdPLSc, robustPLSc), generalized structured component analysis (GSCA), generalized structured component analysis with uniqueness terms (GSCAm), generalized canonical correlation analysis (GCCA), principal component analysis (PCA), factor score regression (FSR) using sum score, regression or Bartlett scores (including bias correction using Croon’s approach), as well as several tests and typical post-estimation procedures (e.g., verify admissibility of the estimates, assess the model fit, test the model fit, compute confidence intervals, compare groups, etc.).</p>
 </div>
 <div class="section level2">
-<h2 id="news-2022-05-09">News (2022-05-09):<a class="anchor" aria-label="anchor" href="#news-2022-05-09"></a>
+<h2 id="news-2025-02-24">News (2025-02-24):<a class="anchor" aria-label="anchor" href="#news-2025-02-24"></a>
 </h2>
 <ul>
-<li><p><code><a href="reference/predict.html">predict()</a></code> function is now able to predict categorical indicators (a procedure known as OrdPLScPredict).</p></li>
-<li><p>Use singular value decomposition in GSCAm to deal with large datasets, which allows for large datasets (thanks to Heungsun Hwang)</p></li>
+<li><p>Release of cSEM Version 0.6.0</p></li>
+<li><p>Implementation of a <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function to visualize cSEM models. Thanks to Nguyen.</p></li>
+<li><p>Enhancement of the <code><a href="reference/predict.html">predict()</a></code> function</p></li>
 </ul>
 </div>
 <div class="section level2">
@@ -153,12 +154,16 @@
 <li>
 <code><a href="reference/predict.html">predict()</a></code> : predict endogenous indicator values</li>
 <li>
+<code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> : Plot the cSEM model</li>
+<li>
 <code><a href="reference/summarize.html">summarize()</a></code> : summarize the results</li>
 <li>
 <code><a href="reference/verify.html">verify()</a></code> : verify admissibility of the estimates</li>
 </ul>
 <p>Tests are performed by using the test family of functions. Currently, the following tests are implemented:</p>
 <ul>
+<li>
+<code><a href="reference/testCVPAT.html">testCVPAT()</a></code> performs a cross-validated predictive ability test</li>
 <li>
 <code><a href="reference/testOMF.html">testOMF()</a></code> : performs a test for overall model fit</li>
 <li>
