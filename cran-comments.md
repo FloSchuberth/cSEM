@@ -18,14 +18,14 @@ Found the following (possibly) invalid URLs:
           inst/doc/cSEM.html
           README.md
           
-Replace the two links.
+Replaced the two links.
 
 
 checkRd: (-1) calculateEffects.Rd:24: Lost braces; missing escapes or markup?
     24 | equals (I-B)^{(-1)}Gamma. The indirect effect equals the difference between
        |  
        
-Removed brackets {}.
+Removed brackets around -1.
 
 ## Notes
 
