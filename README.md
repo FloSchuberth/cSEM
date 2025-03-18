@@ -13,6 +13,7 @@ status](https://ci.appveyor.com/api/projects/status/github/M-E-Rademaker/cSEM?br
 Status](https://img.shields.io/badge/lifecycle-maturing-blue.svg)
 [![CRAN
 downloads](https://cranlogs.r-pkg.org/badges/cSEM)](https://cran.r-project.org/package=cSEM)
+[![CodeFactor](https://www.codefactor.io/repository/github/floschuberth/csem/badge/master)](https://www.codefactor.io/repository/github/floschuberth/csem/overview/master)
 
 ## Purpose
 
