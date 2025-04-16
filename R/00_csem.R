@@ -2,7 +2,7 @@
 #'
 #'\lifecycle{stable}
 #'
-#' Estimate linear, nonlinear, hierarchical or multigroup structural equation
+#' Estimate linear, nonlinear, hierarchical and multigroup structural equation
 #' models using a composite-based approach. In \pkg{cSEM} 
 #' any method or approach that involves linear compounds (scores/proxies/composites)
 #' of observables (indicators/items/manifest variables) is defined as composite-based.
