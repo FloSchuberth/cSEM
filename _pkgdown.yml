@@ -1,5 +1,4 @@
+url: https://floschuberth.github.io/cSEM/
 template:
   bootstrap: 5
-  params:
-    bootswatch: flatly
-    ganalytics: UA-156347841-1
+
