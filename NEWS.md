@@ -1,5 +1,3 @@
-# cSEM 0.6.1
-
 # <Development version: cSEM 0.6.1.9999 
 
 # cSEM 0.6.1
