@@ -1,7 +1,7 @@
 Package: cSEM
 Title: Composite-Based Structural Equation Modeling
-Version: 0.6.0.9999
-Date: 2025-02-24
+Version: 0.6.0
+Date: 2025-05-15
 Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     role  = c("aut"),
                     email = "manuel-rademaker@outlook.de",
@@ -47,6 +47,7 @@ BugReports: https://github.com/FloSchuberth/cSEM/issues/
 URL: https://github.com/FloSchuberth/cSEM/, https://floschuberth.github.io/cSEM/
 License: GPL-3
 Encoding: UTF-8
+NeedsCompilation: no
 LazyData: true
 Imports: 
     alabama,

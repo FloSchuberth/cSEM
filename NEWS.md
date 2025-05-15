@@ -1,4 +1,7 @@
-# <Development version: cSEM 0.6.0.9999 
+# <Development version: cSEM 0.6.1.9999 
+
+# cSEM 0.6.1
+- Adjust description file, i.e., NeedsCompilation: no 
 
 # cSEM 0.6.0 (2025-02-24)
 - Implement `plot()` function which visualizes cSEM models. Thanks to Nguyen Huu Phuc for this contribution (#430). 
