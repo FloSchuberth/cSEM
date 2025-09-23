@@ -73,7 +73,7 @@ fit.cSEMResults_default <- function(
   }
   
   mod       <- .object$Information$Model
-  S         <- .object$Estimates$Indicator
+  S         <- .object$Estimates$Indicator_VCV
   Lambda    <- .object$Estimates$Loading_estimates
   Theta     <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
   dimnames(Theta) <- dimnames(S)
