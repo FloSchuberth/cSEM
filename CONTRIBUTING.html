@@ -41,7 +41,7 @@
 
 <div class="section level2">
 <h2 id="notes-to-contributors">Notes to contributors<a class="anchor" aria-label="anchor" href="#notes-to-contributors"></a></h2>
-<p>Stick to the structure, design choices and style conventions described below. For questions: please contact the <a href="mailto:manuel-rademaker@outlook.de">author</a>.</p>
+<p>Stick to the structure, design choices and style conventions described below. For questions: please contact the <a href="mailto:f.schuberth@utwente.nl">author</a>.</p>
 <!-- ### Structure -->
 <!-- The package structure is best understood with reference to a (hierarchically organized)  -->
 <!-- company. In analogy to company departments, two separate "function departments"  -->
@@ -138,7 +138,7 @@
 <div class="section level3">
 <h3 id="matrices">Matrices<a class="anchor" aria-label="anchor" href="#matrices"></a></h3>
 <ul><li>Whenever possible: variables belong in columns, observations belong to rows. This implies: whenever a matrix contains observations, variables are in columns, no matter if they are indicators, proxies, errors or anything else.</li>
-<li>Covariance matrices: indicators <strong>always</strong> belong to columns and proxies to rows, i.e., the matrix of weights <em>W</em> for PLS is therefore (<em>J</em> × <em>K</em>) where <em>J</em> is the number of proxies and <em>K</em> the number of indicators.</li>
+<li>Covariance matrices: indicators <strong>always</strong> belong to columns and proxies to rows, i.e., the matrix of weights <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>W</mi><annotation encoding="application/x-tex">W</annotation></semantics></math> for PLS is therefore <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mi>J</mi><mo>×</mo><mi>K</mi><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(J \times K)</annotation></semantics></math> where <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>J</mi><annotation encoding="application/x-tex">J</annotation></semantics></math> is the number of proxies and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math> the number of indicators.</li>
 <li>Naming: matrices within the package should be named according to the naming schemes of the related SEM literature.</li>
 </ul></div>
 <div class="section level3">
