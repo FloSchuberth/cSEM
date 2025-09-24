@@ -1,6 +1,8 @@
 # <Development version: cSEM 0.6.1.9999 
 
 # cSEM 0.6.1
+- fix issue in the `fit()` function to avoid partial matching. Thanks to Kss2k for this contribution (#558) 
+
 - Adjust description file, i.e., NeedsCompilation: no 
 
 # cSEM 0.6.0 (2025-02-24)
