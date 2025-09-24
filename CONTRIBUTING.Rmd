@@ -8,7 +8,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Notes to contributors
 
 Stick to the structure, design choices and style conventions described below.
-For questions: please contact the [author](mailto:manuel-rademaker@outlook.de).
+For questions: please contact the [author](mailto:f.schuberth@utwente.nl).
 
 <!-- ### Structure -->
 
