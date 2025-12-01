@@ -449,7 +449,7 @@ calculateReliabilities <- function(
       
         if ((isTRUE(.disattenuate) &
             all(.csem_model$construct_type == "Common factor")) | any(.csem_model$construct_type == "Common factor")) {
-          browser()
+          # browser()
           # Currently, GSCAm only supports pure common factor models. This may change
           # in the future.
           
