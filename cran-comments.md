@@ -1,35 +1,18 @@
-## Resubmission
-This is a resubmission. In this version I have:
-
-* replaced https://www.posit.co/ by https://posit.co/
-
-
-## Resubmission
-This is a resubmission. In this version I have:
-
-* replaced all 'http' by 'https' in urls; if possible. 
-
-* added trainling slashes to urls. 
-
-* replaced https://www.rstudio.com/ by https://www.posit.co/  
-
-* replaced https://www.rstudio.com/resources/cheatsheets/ by https://posit.co/resources/cheatsheets/
-
-* adjusted the date field
-
+## Submission 
 ## Notes
 
-- This is version 0.5.0
-- Add a couple of bug fixes, new features, as described in the NEWS file.
+- This is version 0.6.1
+- Added NeedsCompilation: no to the description file as asked by the CRAN team.
 
 ## Tests
 
 Tested using GitHub Actions on 
 
-* Windows-latest (x86_64-w64-mingw32 (64-bit)); R-current (R 4.2.2)
-* macOS-latest (x86_64-apple-darwin17.0 (64-bit)); R-current (R 4.2.2)
-* ubuntu-20.04 (x86_64-pc-linux-gnu (64-bit)); R-current (R 4.2.2)
-* ubuntu 20.04 R-devel
+*macos-latest (r: 'release')
+*windows-latest (r: 'release')
+*windows-latest r: '4.1'}
+*ubuntu-latest (r: 'devel')
+*ubuntu-latest  (r: 'release)
 
 There were no errors or warnings.
 
@@ -37,19 +20,14 @@ There were no errors or warnings.
 I also tested the package using devtools::check() with default arguments.
 There were no errors or warnings but the following 2 notes:
 
-N  checking dependencies in R code (3.5s) Namespace in Imports field not imported from: 'Rdpack'
-     All declared Imports should be used.
+❯ checking for future file timestamps ... NOTE
+  unable to verify current time
+   
+This is a known issue with devtools::check() and does not affect the package.
+
+
+❯ checking dependencies in R code ... NOTE
+  Namespace in Imports field not imported from: 'Rdpack'
+    All declared Imports should be used
      
 The Rdpack package is required for referencing.
-
-N  checking package dependencies (3.7s)
-   Imports includes 21 non-default packages.
-   Importing from so many packages makes the package vulnerable to any of
-   them becoming unavailable.  Move as many as possible to Suggests and
-   use conditionally.
-
-I checked the dependencies and all listed packages are required.
-
-## Other issues
-
-- The maintainer changed.

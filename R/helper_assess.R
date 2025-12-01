@@ -74,6 +74,10 @@ calculateModelSelectionCriteria <- function(
     args <- .object$Information$Arguments
     args$.model$structural[lower.tri(args$.model$structural)] <- 1
     
+    # set the .id argument to NULL; this is necessary as otherwise csem treats it as multigroup object,
+    # which produces errors.  
+    args$.id <- NULL
+    
     out_saturated <- do.call(csem, args)
     
     MSE <- (1 - out_saturated$Estimates$R2)[names(x1$R2)]
@@ -253,10 +257,10 @@ calculateAVE <- function(
     
     out <- lapply(.object, calculateAVE, .only_common_factors = .only_common_factors)
     out$Second_stage <- out$Second_stage[c_names2]
-    out <- if(is.na(out$Second_stage)) {
+    out <- if(all(is.na(out$Second_stage))) {
       out$First_stage
     } else {
-      out <- c(out$First_stage, out$Second_stage)
+      out <- c(out$First_stage, out$Second_stage[!is.na(out$Second_stage)])
     }
     return(out)
     
@@ -282,7 +286,7 @@ calculateAVE <- function(
   
   names(AVEs) <- c_names
   
-  # By default AVE's for composites are not returned
+  # By default AVEs for composites are not returned
   if(.only_common_factors){
     ## Extract construct type
     con_types <-.object$Information$Model$construct_type
@@ -560,7 +564,7 @@ calculateDf <- function(
 #'   )
 #'
 #' @return A matrix with the squared construct correlations on the off-diagonal and 
-#' the AVE's on the main diagonal.
+#' the AVEs on the main diagonal.
 #'   
 #' @inheritParams csem_arguments
 #' @param ... Ignored.
@@ -817,7 +821,7 @@ calculateRelativeGoF <- function(
 #' For the tau-equivalent reliability ("`rho_T`" or "`cronbachs_alpha`") a closed-form 
 #' confidence interval may be computed \insertCite{Trinchera2018}{cSEM} by setting
 #' `.closed_form_ci = TRUE` (default is `FALSE`). If `.alpha` is a vector
-#' several CI's are returned.
+#' several CIs are returned.
 #'
 #' @return For `calculateRhoC()` and `calculateRhoT()` (if `.output_type = "vector"`) 
 #'   a named numeric vector containing the reliability estimates.
@@ -872,10 +876,10 @@ calculateRhoC <- function(
                   .weighted            = .weighted)
     
     out$Second_stage <- out$Second_stage[c_names2]
-    out <- if(is.na(out$Second_stage)) {
+    out <- if(all(is.na(out$Second_stage))) {
       out$First_stage
     } else {
-      c(out$First_stage, out$Second_stage)
+      c(out$First_stage, out$Second_stage[!is.na(out$Second_stage)])
     }
     return(out)
     
@@ -987,10 +991,10 @@ calculateRhoT <- function(
     )
     if(.output_type == "vector") {
       out$Second_stage <- out$Second_stage[c_names2]
-      out <- if(is.na(out$Second_stage)) {
+      out <- if(all(is.na(out$Second_stage))) {
         out$First_stage
       } else {
-        c(out$First_stage, out$Second_stage)
+        c(out$First_stage, out$Second_stage[!is.na(out$Second_stage)])
       }
     } else {
       out$Second_stage <- out$Second_stage[out$Second_stage$Construct %in% c_names2, ]
@@ -1042,7 +1046,7 @@ calculateRhoT <- function(
       # Calculation of the CIs are based on Trinchera et al. (2018).
       # The code for the calculation of the CIs is addpated from the paper.
 
-      ## If CI's are computed:
+      ## If CIs are computed:
       # Calculation of the CIs are based on Trinchera et al. (2018).
       # In the paper, the CI was proposed and studied using Monte Carlo simulation
       # assuming scores are build as sum scores. Therefore a warning is

@@ -16,23 +16,28 @@ output: github_document
 ## Purpose
 
 Estimate, analyse, test, and study linear, nonlinear, hierarchical and
-multi-group structural equation models using composite-based approaches and procedures, including 
-estimation techniques such as partial least squares path 
-modeling (PLS-PM) and its derivatives (PLSc, OrdPLSc, robustPLSc), generalized 
-structured component analysis (GSCA), generalized structured component 
-analysis with uniqueness terms (GSCAm), generalized canonical correlation analysis (GCCA),
-principal component analysis (PCA), factor score regression (FSR) using
-sum score, regression or Bartlett scores (including bias correction using
-Croon's approach), as well as several tests and typical post-estimation 
-procedures (e.g., verify admissibility of the estimates, assess the model fit, 
-test the model fit, compute confidence intervals, compare groups, etc.).
+multi-group structural equation models using composite-based approaches
+and procedures, including estimation techniques such as partial least
+squares path modeling (PLS-PM) and its derivatives (PLSc, OrdPLSc,
+robustPLSc), generalized structured component analysis (GSCA),
+generalized structured component analysis with uniqueness terms (GSCAm),
+generalized canonical correlation analysis (GCCA), principal component
+analysis (PCA), factor score regression (FSR) using sum score,
+regression or Bartlett scores (including bias correction using Croon’s
+approach), as well as several tests and typical post-estimation
+procedures (e.g., verify admissibility of the estimates, assess the
+model fit, test the model fit, compute confidence intervals, compare
+groups, etc.).
 
-## News (2022-05-09):
+## News (2025-05-15):
 
-- `predict()` function is now able to predict categorical indicators (a procedure known as
-   OrdPLScPredict). 
+- Release of cSEM version 0.6.1
 
-- Use singular value decomposition in GSCAm to deal with large datasets, which allows for large datasets (thanks to Heungsun Hwang)
+- Release of cSEM Version 0.6.0
+
+- Implementation of a `plot()` function to visualize cSEM models. Thanks to Nguyen.
+
+- Enhancement of the `predict()` function
 
 ## Installation
 The package is available on [CRAN](https://cran.r-project.org/):
@@ -72,14 +77,17 @@ There are five major post-estimation verbs, three test family functions and
 three do-family of function: 
 
 - `assess()` : assess the model using common quality criteria
-- `infer()` : calculate common inferential quantities (e.g., standard errors, confidence intervals)
+- `infer()` : calculate common inferential quantities (e.g., standard
+  errors, confidence intervals)
 - `predict()` : predict endogenous indicator values
+- `plot()` : Plot the cSEM model
 - `summarize()` : summarize the results
 - `verify()` : verify admissibility of the estimates
 
 Tests are performed by using the test family of functions. Currently, the following
 tests are implemented:
 
+- `testCVPAT()` performs a cross-validated predictive ability test
 - `testOMF()` : performs a test for overall model fit
 - `testMICOM()` : performs a test for composite measurement invariance
 - `testMGD()` : performs several tests to assess multi-group differences
@@ -247,7 +255,7 @@ infer(b1, .quantity = c("CI_standard_z", "CI_percentile")) # no print method yet
 ```
 
 Both bootstrap and jackknife resampling support platform-independent multiprocessing 
-as well as setting random seeds via the [future framework](https://github.com/HenrikBengtsson/future/). 
+as well as setting random seeds via the [future framework](https://github.com/futureverse/future/). 
 For multiprocessing simply set `.eval_plan = "multisession"` in which case the maximum number of available cores
 is used if not on Windows. On Windows as many separate R instances are opened in the
 background as there are cores available instead. Note

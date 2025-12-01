@@ -40,7 +40,7 @@
 #'   \href{https://floschuberth.github.io/cSEM/index.html}{cSEM website} for details.
 #'   Alternative but synonymous names for `"rho_C"` are: 
 #'   composite reliability, construct reliability, reliability coefficient, 
-#'   Joereskog's rho, coefficient omega, or Dillon-Goldstein's rho. 
+#'   Jöreskog's rho, coefficient omega, or Dillon-Goldstein's rho. 
 #'   For `"rho_C_weighted"`: (Dijkstra-Henselers) rhoA. `rho_C_mm` and `rho_C_weighted_mm`
 #'   have no corresponding names. The former uses unit weights scaled by (w'Sw)^(-1/2) and
 #'   the latter weights scaled by (w'Sigma_hat w)^(-1/2) where Sigma_hat is 
@@ -75,23 +75,24 @@
 #'   alternative specification with the k'th variable dropped (R2_excluded).
 #'   Calculation is done by [calculatef2()].}
 #' \item{Fit indices; "chi_square", "chi_square_df", "cfi", "cn", "gfi", "ifi", "nfi", 
-#'       "nnfi",  "rmsea", "rms_theta", "srmr", "FIT", "FIT_m", "FIT_s"}{
+#'       "nnfi",  "rmsea", "rms_theta", "srmr"}{
 #'   Several absolute and incremental fit indices. Note that their suitability
 #'   for models containing constructs modeled as composites is still an
 #'   open research question. Also note that fit indices are not tests in a 
 #'   hypothesis testing sense and
 #'   decisions based on common one-size-fits-all cut-offs proposed in the literature 
 #'   suffer from serious statistical drawbacks. Calculation is done by [calculateChiSquare()],
-#'   [calculateChiSquareDf()], [calculateCFI()], [calculateGFI()],
-#'   [calculateIFI()], [calculateNFI()], [calculateNNFI()], [calculateRMSEA()],
-#'   [calculateRMSTheta()], [calculateSRMR()], [calculateFIT()],
+#'   [calculateChiSquareDf()], [calculateCFI()], 
+#'   [calculateGFI()], [calculateIFI()], [calculateNFI()], [calculateNNFI()], 
+#'   [calculateRMSEA()], [calculateRMSTheta()], [calculateSRMR()], [calculateFIT()],
 #'   [calculateFIT_m()] and [calculateFIT_s()].}
+#'
 #' \item{Fornell-Larcker criterion; "fl_criterion"}{A rule suggested by \insertCite{Fornell1981;textual}{cSEM}
 #'   to assess discriminant validity. The Fornell-Larcker
 #'   criterion is a decision rule based on a comparison between the squared
 #'   construct correlations and the average variance extracted. FL returns
 #'   a matrix with the squared construct correlations on the off-diagonal and 
-#'   the AVE's on the main diagonal. Calculation is done by `calculateFLCriterion()`.}
+#'   the AVEs on the main diagonal. Calculation is done by `calculateFLCriterion()`.}
 #' \item{Goodness of Fit (GoF); "gof"}{The GoF is defined as the square root 
 #'   of the mean of the R squares of the structural model times the mean 
 #'   of the variances in the indicators that are explained by their 
@@ -134,8 +135,8 @@
 #'   article on the \href{https://floschuberth.github.io/cSEM/index.html}{cSEM website} 
 #'   there are many different estimators for the (internal consistency) reliability.
 #'   Choosing `.quality_criterion = "reliability"` computes the three most common
-#'   measures, namely: "Cronbachs alpha" (identical to "rho_T"), "Jöreskogs rho" (identical to "rho_C_mm"),
-#'   and "Dijkstra-Henselers rho A" (identical to "rho_C_weighted_mm").
+#'   measures, namely: "Cronbach's alpha" (identical to "rho_T"), "Jöreskog's rho" (identical to "rho_C_mm"),
+#'   and "Dijkstra-Henseler's rho A" (identical to "rho_C_weighted_mm").
 #'   Reliability is inherently
 #'   tied to the common factor model. It is therefore unclear how to meaningfully 
 #'   interpret reliability estimates for constructs modeled as composites. 
@@ -481,7 +482,7 @@ assess <- function(
   if(any(.quality_criterion %in% c("all", "srmr"))) {
     out[["SRMR"]] <- calculateSRMR(.object, ...)
   }
-  
+    
   if(!is.null(.object$Information$Arguments$.approach_weights)) {
     if (any(.quality_criterion %in% c("all", "FIT")) &
         (.object$Information$Arguments$.approach_weights %in% c("GSCA", "IGSCA"))) {

@@ -190,7 +190,7 @@ parseModel <- function(
       # with a "."!
       
       # Construct names of the measurement model (including nonlinear terms;
-      # Constructs of the rhs of the measurment model are considered first order constructs
+      # Constructs of the rhs of the measurement model are considered first order constructs
       # attached to a second order construct)
       names_c_m_lhs    <- unique(tbl_m$lhs)
       names_c_m_rhs    <- intersect(names_i, c(names_c_m_lhs, names_i_nl))
@@ -588,7 +588,7 @@ parseModel <- function(
     explained_by_exo <- setdiff(cons_endo, explained_by_exo_endo)
     
     ### Order =======================
-    # First the endogenous constructs that are soley explained by the exogenous constructs
+    # First the endogenous constructs that are solely explained by the exogenous constructs
     model_ordered <- temp[explained_by_exo, , drop = FALSE]
     
     # Add constructs that have already been ordered/taken care of to a vector

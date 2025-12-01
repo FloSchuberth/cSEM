@@ -1,7 +1,7 @@
 Package: cSEM
 Title: Composite-Based Structural Equation Modeling
-Version: 0.5.0.9000
-Date: 2022-11-24
+Version: 0.6.1.9000
+Date: 2025-05-15
 Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     role  = c("aut"),
                     email = "manuel-rademaker@outlook.de",
@@ -22,6 +22,10 @@ Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     role  = c("ctb"),
                     email = "",
                     comment = c(ORCID = "0000-0002-2884-1819")),
+             person(given = "Huu Phuc", family = "Nguyen",
+                    role  = c("ctb"),
+                    email = "",
+                    comment = c(ORCID = "0009-0000-9344-7132")),       
              person(given = "Theo K.", family = "Dijkstra",
                     role  = c("ctb"),
                     email = ""),
@@ -47,6 +51,7 @@ BugReports: https://github.com/FloSchuberth/cSEM/issues/
 URL: https://github.com/FloSchuberth/cSEM/, https://floschuberth.github.io/cSEM/
 License: GPL-3
 Encoding: UTF-8
+NeedsCompilation: no
 LazyData: true
 Imports: 
     alabama,
@@ -78,15 +83,18 @@ Imports:
     Formula,
     boot
 RdMacros: Rdpack, lifecycle
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
 Suggests: 
+    DiagrammeR,
+    DiagrammeRsvg,
     dplyr,
     tidyr,
     knitr,
     nnls,
     prettydoc,
     plotly,
+    rsvg,
     rmarkdown,
     rootSolve,
     listviewer,
@@ -94,8 +102,7 @@ Suggests:
     ggplot2,
     openxlsx,
     graphics,
-    waldo
+    spelling
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-LinkingTo: 
-    Rcpp, RcppArmadillo
+Language: en-US

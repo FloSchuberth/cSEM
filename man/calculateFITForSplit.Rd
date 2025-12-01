@@ -27,9 +27,7 @@ or a \link{cSEMModel} list.}
 
 \item{.id}{Character string or integer. A character string giving the name or
 an integer of the position of the column of \code{.data} whose levels are used
-to split \code{.data} into groups. Values of the column referred to by \code{.id}
-cannot be solely comprised of \code{Estimates} or \code{Information} as these are
-internal identifiers for \code{\link[=csem]{csem()}} functionality. Defaults to \code{NULL}.}
+to split \code{.data} into groups. Defaults to \code{NULL}.}
 
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",

@@ -36,9 +36,7 @@ leave-one-out cross-validation samples. Defaults to \code{10}.}
 
 \item{.id}{Character string or integer. A character string giving the name or
 an integer of the position of the column of \code{.data} whose levels are used
-to split \code{.data} into groups. Values of the column referred to by \code{.id}
-cannot be solely comprised of \code{Estimates} or \code{Information} as these are
-internal identifiers for \code{\link[=csem]{csem()}} functionality. Defaults to \code{NULL}.}
+to split \code{.data} into groups. Defaults to \code{NULL}.}
 
 \item{.R}{Integer. The number of bootstrap runs, permutation runs
 or cross-validation repetitions to use. Defaults to \code{499}.}
@@ -142,7 +140,7 @@ Note: 1.) At least 2 folds required  (\code{k > 1}); 2.) \code{k} can not be lar
 3.) If \code{N/k} is not not an integer the last fold will have less observations.
 
 Random number generation (RNG) uses the L'Ecuyer-CRMR RGN stream as implemented
-in the \href{https://github.com/HenrikBengtsson/future.apply/}{future.apply package}
+in the \href{https://github.com/futureverse/future.apply/}{future.apply package}
 \insertCite{Bengtsson2018a}{cSEM}.
 See \link[future.apply:future_lapply]{?future_lapply} for details. By default
 a random seed is chosen.

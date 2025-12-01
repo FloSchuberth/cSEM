@@ -1,7 +1,7 @@
 #' Internal: Calculate direct, indirect and total effect
 #' 
 #' The direct effects are equal to the estimated coefficients. The total effect 
-#' equals (I-B)^{-1}Gamma. The indirect effect equals the difference between
+#' equals \eqn{(I-B)^{-1}\Gamma}. The indirect effect equals the difference between
 #' the total effect and the indirect effect. In addition, the variance accounted
 #' for (VAF) is calculated. The VAF is defined as the ratio of a variables
 #' indirect effect to its total effect. Helper for generic functions [summarize()] and [assess()].
@@ -195,7 +195,7 @@ addInfer <- function(.what = NULL, .estimates = NULL, .ci = NULL) {
   .estimates["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
   
   if(!is.null(.ci)) {
-    ## Add CI's
+    ## Add CIs
     # Column names
     ci_colnames <- paste0(rep(names(temp[.ci]), sapply(temp[.ci], function(x) nrow(x))), ".",
                           unlist(lapply(temp[.ci], rownames)))

@@ -15,7 +15,6 @@ foreman(
   .disattenuate                = args_default()$.disattenuate,
   .dominant_indicators         = args_default()$.dominant_indicators,
   .estimate_structural         = args_default()$.estimate_structural,
-  .GSCA_modes                  = args_default()$.GSCA_modes,
   .id                          = args_default()$.id,
   .instruments                 = args_default()$.instruments,
   .iter_max                    = args_default()$.iter_max,
@@ -79,6 +78,9 @@ Default to \code{NULL}.}
 \item{.estimate_structural}{Logical. Should the structural coefficients
 be estimated? Defaults to \code{TRUE}.}
 
+\item{.GSCA_control}{Named list specifying various computational options for
+GSCA-type models.}
+
 \item{.GSCA_modes}{Either a named list specifying the mode that should be
 used for each composite in the form \code{"composite_name" = mode}, a single
 character string giving the mode that should be used for all composites.
@@ -90,9 +92,7 @@ or \code{\link[=calculateWeightsIGSCA]{calculateWeightsIGSCA()}}. Defaults to \c
 
 \item{.id}{Character string or integer. A character string giving the name or
 an integer of the position of the column of \code{.data} whose levels are used
-to split \code{.data} into groups. Values of the column referred to by \code{.id}
-cannot be solely comprised of \code{Estimates} or \code{Information} as these are
-internal identifiers for \code{\link[=csem]{csem()}} functionality. Defaults to \code{NULL}.}
+to split \code{.data} into groups. Defaults to \code{NULL}.}
 
 \item{.instruments}{A named list of vectors of instruments. The names
 of the list elements are the names of the dependent (LHS) constructs of the structural

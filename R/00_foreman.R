@@ -181,7 +181,7 @@ foreman <- function(
       .dominant_indicators = .dominant_indicators,
       .S = S)
   }
-  
+
   LambdaQ2W <- calculateReliabilities(
     .X                = X,
     .S                = S,

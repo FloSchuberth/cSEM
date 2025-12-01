@@ -3,11 +3,11 @@
 #' \lifecycle{experimental}
 #' 
 #' Export results from postestimation functions [assess()], [predict()],
-#' [summarize()] and [testOMF()] to an .xlsx (Excel) file. The function uses the openxlsx
+#' [summarize()] and [testOMF()] to an .xlsx (Excel) file. The function uses the \link[openxlsx]{openxlsx}
 #' package which does not depend on Java!
 #' 
-#' The function is deliberately kept simple: all it does is to take all the 
-#' relevant elements in `.postestimation_object` and write them (worksheet by worksheet) into 
+#' The function is deliberately kept simple: it takes all the 
+#' relevant elements in `.postestimation_object` and writes them (worksheet by worksheet) into 
 #' an .xlsx file named `.filename` in the directory given by `.path` (the current 
 #' working directory by default).
 #' 
@@ -170,12 +170,12 @@ exportToExcel <- function(
     openxlsx::writeData(wb, sheet = "HTMT", if(is.null(.postestimation_object$HTMT)) {
       NA
     } else {
-      .postestimation_object$HTMT$out_print
+      .postestimation_object$HTMT$htmts
     })
     openxlsx::writeData(wb, sheet = "HTMT2", if(is.null(.postestimation_object$HTMT2)) {
       NA
     } else {
-      .postestimation_object$HTMT2$out_print
+      .postestimation_object$HTMT2$htmts
     })
     openxlsx::writeData(wb, sheet = "Fornell-Larcker matrix", if(is.null(.postestimation_object$`Fornell-Larcker`)) {
       NA

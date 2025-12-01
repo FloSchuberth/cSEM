@@ -306,7 +306,7 @@ In addition, for each construct $\eta_j$ (including the second-order constructs)
 1. If all constructs are allowed to freely covary, i.e., there is no 
    structural model and no structural parameters, all constructs are considered
    exogenous.
-2. If the strucutral model contains nonlinear terms (e.g., $\eta^2_1$ or $\eta_1\eta_2$),
+2. If the structural model contains nonlinear terms (e.g., $\eta^2_1$ or $\eta_1\eta_2$),
    degrees of freedom computation is currently unclear (at least to us).
    A warning is printed to inform the user that the calculation is may not be
    correct.
@@ -338,7 +338,7 @@ However, applied users should be aware that only little is known about their app
 intuition, and interpretability in the context of models containing constructs
 modeled as composites or for models estimated using a composite-based approach.
 
-Independent of the approach and model used, a particularily controversial issue 
+Independent of the approach and model used, a particularly controversial issue 
 are cutoff values for fit indices [e.g., @Marsh2004]. In factor-based SEM cutoff
 values are rather popular. The basis for these are numerous simulation studies, most notably @Hu1999. 
 In contrast for composite models - for better or worse - no cutoff values have been suggested.[^1]
@@ -346,7 +346,7 @@ Using `assess()` to calculate fit indices, the user should always keep in mind
 that the value of a fit index is just *some* indication of good or bad fit.
 Other aspects related to model fit must be considered as well. 
 It is unreasonable to make a binary decision about rejection or non-rejection
-of a model by soley comparing the value of a fit index with a (more or less)
+of a model by solely comparing the value of a fit index with a (more or less)
 arbitrary cutoff value.
 
 The definitions of fit indices calculated by `assess()` are given in the following:
@@ -367,7 +367,7 @@ The definitions of fit indices calculated by `assess()` are given in the followi
 - The **non-normed fit index** (NNFI) accounts for the degrees of freedom 
   of the involved models. It is the ratio of the distance between the fit of
   the baseline model and the fit of the specified model (each per degree of freedom)
-  and the distance beetween the fit of the baseline model and the expected fit of the specified model (each per degree of freedom).
+  and the distance between the fit of the baseline model and the expected fit of the specified model (each per degree of freedom).
 - The **comparative fit index** (CFI) estimates the relative decrease in 
   non-centrality when specifying the model under consideration instead of the baseline model. 
 - The **incremental fit index** (IFI) is the ratio of the distance between the 
@@ -685,11 +685,11 @@ possible by relying on a paper by @Cho2016 who proposed uniform
 formula-generating methods and a systematic naming conventions for all
 common reliability measures. Naturally, some of the conventional terminology 
 is deeply entrenched within the nomenclatura of a particular filed (e.g., coefficient
-alpha alias Cronbach's alpha in pychonometrics) such that a new, albeit consistent,
+alpha alias Cronbach's alpha in psychometrics) such that a new, albeit consistent,
 naming scheme seems superfluous at best. However, we belief the merit of a 
 "standardized" naming pattern will eventually be helpful to all users as it
 helps clarify potential misconceptions thus preventing potential misuse, such as
-the (ab)use of Cronbach alpha as a reliability measure for congernic measurement models.
+the (ab)use of Cronbach alpha as a reliability measure for congeneric measurement models.
 
 Apart from these considerations, this package takes a pragmatic stance
 in a sense that we use consistent naming because it naturally provides
@@ -707,14 +707,14 @@ different naming systems and conventions we provide a "translation table" below:
                                                                  Standardized alpha, Split-half reliability
 
  Tau-equivalent reliability        $\rho_T$                      Cronbach's alpha, $\alpha$, Coefficient alpha
-                                                                 Guttmans $\lambda_3$, KR-20
+                                                                 Guttman's $\lambda_3$, KR-20
 
  Tau-equivalent reliability        $\rho_{T;\text{weighted}}$    --
  weighted  
   
  Congeneric reliability            $\rho_C$                      Composite reliability, Jöreskog's $\rho$,
                                                                  Construct reliability, $\omega$,
-                                                                 reliability coefficient, Dillon-Goldsteins's $\rho$
+                                                                 reliability coefficient, Dillon-Goldstein's $\rho$
                                                                  
  Congeneric reliability            $\rho_{C;\text{weighted}}$    Dijkstra-Henseler's $\rho_A$
  weighted

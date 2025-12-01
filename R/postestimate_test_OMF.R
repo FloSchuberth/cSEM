@@ -184,7 +184,7 @@ testOMF <- function(
   
   # Save old seed and restore on exit! This is important since users may have
   # set a seed before, in which case the global seed would be
-  # overwritten if not explicitly restored
+  # overwritten if not explicitly restored.
   old_seed <- .Random.seed
   on.exit({.Random.seed <<- old_seed})
   

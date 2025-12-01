@@ -22,7 +22,7 @@ Defaults to \code{TRUE}.}
 }
 \value{
 A matrix with the squared construct correlations on the off-diagonal and
-the AVE's on the main diagonal.
+the AVEs on the main diagonal.
 }
 \description{
 Computes the Fornell-Larcker matrix.

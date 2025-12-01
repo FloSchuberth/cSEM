@@ -48,11 +48,11 @@ Therefore, unless otherwise stated:
 
 $$E(\hat\eta_j) = 0\quad\quad \text{and}\quad\quad Var(\hat\eta_j) = E(\hat\eta^2_j) = 1$$
 
-Since the relations between [concepts][Terminology](or its statistical sibbling the 
+Since the relations between [concepts][Terminology](or its statistical sibling the 
 constructs) are a product of the researcher's theory
 and assumptions to be analyzed, some constructs are typically not directly connected 
 by a path. Technically this implies a restriction of the path between construct
-$j$ and $i$ to zero. If all constructs of the reserchers model are connected by 
+<!-- $j$ and $i$ to zero. If all constructs of the researchers model are connected by  -->
 a path we call the structural model [saturated][Terminology]. 
 If at least one path is restricted to zero, the structural model is called 
 [non-saturated][Terminology].

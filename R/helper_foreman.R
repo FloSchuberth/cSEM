@@ -87,7 +87,7 @@ calculateCorrectionFactors <- function(
         stop2(
           "The following error occured while calculating the correction factor:\n",
           "At least one pair of indicators with uncorrelated measurement errors",
-          " required in each measurment equation.\n", 
+          " required in each measurement equation.\n", 
           "Measurement equation: `", j, "` has none.")
       }
       
