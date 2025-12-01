@@ -1,5 +1,3 @@
-context("predict")
-
 source("test-main.R")
 # source("tests/testthat/test-main.R")
 

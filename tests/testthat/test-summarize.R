@@ -1,5 +1,3 @@
-context("summarize")
-
 source("test-main.R")
 # source("tests/testthat/test-main.R")
 

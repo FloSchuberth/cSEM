@@ -1,5 +1,3 @@
-context("csem")
-
 ## Source 
 source("test-main.R")
 

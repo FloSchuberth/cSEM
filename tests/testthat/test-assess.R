@@ -1,5 +1,3 @@
-context("assess")
-
 ## Linear
 model_linear <- "
 # Structural model
