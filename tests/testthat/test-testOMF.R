@@ -17,7 +17,8 @@ for(i in DGPs) {
         .object = res,
         .R      = 4,
         .handle_inadmissibles = "replace" # to make sure there are enough admissibles
-    )
+    ) |> 
+      expect_no_error()
   })
   
   test_that(paste("All arguments of testOMF work for DGP: ", i),  {
@@ -28,7 +29,8 @@ for(i in DGPs) {
         .alpha  = c(0.1, 0.05),
         .handle_inadmissibles = "replace", # to make sure there are enough admissibles
         .seed   = 2010
-      )
+      ) |> 
+        expect_no_error()
   })
 }
 
@@ -42,7 +44,8 @@ test_that(paste(".seed in testOMF works corretly"),  {
     .object = res,
     .R      = 10,
     .seed   = 1303
-  )
+  ) |> 
+        expect_no_error()
   
   # Save after calling testOMF()
   r2 <- .Random.seed
@@ -51,7 +54,8 @@ test_that(paste(".seed in testOMF works corretly"),  {
     .object = res,
     .R      = 10,
     .seed   = 1303
-  )
+  ) |> 
+        expect_no_error()
   
   # .seed should produce the same results
   expect_equal(a$Information$Bootstrap_values, b$Information$Bootstrap_values)
