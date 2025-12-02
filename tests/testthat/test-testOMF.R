@@ -1,11 +1,9 @@
 
-DGPs <- list.files("../data/", pattern = "DGP_")
-# DGPs <- list.files("tests/data/", pattern = "DGP_")
+DGPs <- list.files(testthat::test_path("data/"), pattern = "DGP_")
 
 for(i in DGPs) {
   ## Model and Sigma matrix
-  load(paste0("../data/", i))
-  # load(paste0("tests/data/", i))
+  load(testthat::test_path(paste0("data/", i)))
   
   ## Draw data
   dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma$Sigma)), Sigma = Sigma$Sigma, empirical = TRUE)

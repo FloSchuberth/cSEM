@@ -1,5 +1,5 @@
 ## Source 
-source("test-main.R")
+source(testthat::test_path("test-main.R"))
 
 # ==============================================================================
 # General tests 
@@ -18,7 +18,7 @@ test_that("No data/model provided causes an error", {
 # ==============================================================================
 ### DGP_linear_2commonfactors --------------------------------------------------
 # Loads Sigma, models and population values
-load(file = "../data/DGP_linear_2commonfactors.RData")
+load(file = testthat::test_path("data/DGP_linear_2commonfactors.RData"))
 
 ## Draw data
 dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma$Sigma)), 
@@ -39,7 +39,7 @@ test_that("DPG_linear_2commonfactors is correctly estimated", {
 
 ### DGP_linear_2composites =====================================================
 # Loads Sigma, models and population values
-load(file = "../data/DGP_linear_2composites.RData")
+load(file = testthat::test_path("data/DGP_linear_2composites.RData"))
 
 ## Draw data
 dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma$Sigma)), 
@@ -62,7 +62,7 @@ test_that("DPG_linear_2composites is correctly estimated", {
 
 ### DGP_linear_3commonfactors ==================================================
 # Loads Sigma, models and population values
-load(file = "../data/DGP_linear_3commonfactors.RData") 
+load(file = testthat::test_path("data/DGP_linear_3commonfactors.RData") )
 
 ## Draw data
 dat <- MASS::mvrnorm(300, rep(0, nrow(Sigma$Sigma)), 
@@ -123,7 +123,7 @@ for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR", "PCA",
 
 ### DGP_linear_3compostites ====================================================
 # Loads Sigma, models and population values
-load(file = "../data/DGP_linear_3composites.RData") 
+load(file = testthat::test_path("data/DGP_linear_3composites.RData"))
 
 ## Draw data
 dat <- MASS::mvrnorm(300, rep(0, nrow(Sigma$Sigma)), 
@@ -157,7 +157,7 @@ for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR")) {
 
 ### DGP_2ndorder - Common factor of common factors =============================
 # Loads Sigma, models and population values
-load(file = "../data/DGP_2ndorder_cf_of_cfs.RData")  
+load(file = testthat::test_path("data/DGP_2ndorder_cf_of_cfs.RData"))
 
 ## Draw data
 dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma$Sigma)), Sigma = Sigma$Sigma, empirical = TRUE)
@@ -191,7 +191,8 @@ exportToExcel(assess(res), .filename = "test_assess", .path = "../test_results_e
 
 ### DGP_2ndorder - Common factor of composites =================================
 # Loads Sigma, models and population values
-load(file = "../data/DGP_2ndorder_cf_of_composites.RData")  
+load(testthat::test_path("data/DGP_2ndorder_cf_of_composites.RData"))
+
 
 ## Draw data
 dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma$Sigma)), Sigma = Sigma$Sigma, empirical = TRUE)
@@ -218,7 +219,7 @@ test_that("DPG_2ndorder_cf_of_composites is correctly estimated", {
 
 ### DGP_2ndorder - Composite of common factors =================================
 # Loads Sigma, models and population values
-load(file = "../data/DGP_2ndorder_composite_of_cfs.RData")  
+load(file = testthat::test_path("data/DGP_2ndorder_composite_of_cfs.RData"))
 
 ## Draw data
 dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma$Sigma)), Sigma = Sigma$Sigma, empirical = TRUE)
@@ -244,7 +245,9 @@ test_that("DPG_2ndorder_composites_of_cfs is correctly estimated", {
 })
 ### DGP_2ndorder - Composite of composites =====================================
 # Loads Sigma, models and population values
-load(file = "../data/DGP_2ndorder_composite_of_composites.RData")  
+load(
+  file = testthat::test_path("data/DGP_2ndorder_composite_of_composites.RData")
+)
 
 ## Draw data
 dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma$Sigma)), Sigma = Sigma$Sigma, empirical = TRUE)
