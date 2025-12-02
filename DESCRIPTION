@@ -53,6 +53,7 @@ License: GPL-3
 Encoding: UTF-8
 NeedsCompilation: no
 LazyData: true
+LinkingTo: Rcpp,  RcppArmadillo
 Imports: 
     alabama,
     cli,
@@ -78,6 +79,7 @@ Imports:
     TruncatedNormal,
     utils,
     Rcpp,
+    RcppArmadillo,
     generics,
     partykit,
     Formula,
