@@ -1,5 +1,6 @@
-## Source 
+## Source and set-up test-fixture if necessary
 source(testthat::test_path("test-main.R"))
+dir.create(testthat::test_path("test_results_exportToExcel"), showWarnings = FALSE)
 
 # ==============================================================================
 # General tests 
@@ -62,7 +63,7 @@ test_that("DPG_linear_2composites is correctly estimated", {
 
 ### DGP_linear_3commonfactors ==================================================
 # Loads Sigma, models and population values
-load(file = testthat::test_path("data/DGP_linear_3commonfactors.RData") )
+load(file = testthat::test_path("data/DGP_linear_3commonfactors.RData"))
 
 ## Draw data
 dat <- MASS::mvrnorm(300, rep(0, nrow(Sigma$Sigma)), 
@@ -110,15 +111,16 @@ for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR", "PCA",
     expect_equal(loadings$Estimate, loadings$Pop_value, tolerance = 0.01)
   })
   }
+
   # Export to Excel test
   exportToExcel(assess(res), .filename = paste0("test_assess_", i, ".xlsx"),
-                .path = "../test_results_exportToExcel")
+                .path = testthat::test_path("test_results_exportToExcel"))
   exportToExcel(summarize(res), .filename = paste0("test_summarize_", i, ".xlsx"),
-                .path = "../test_results_exportToExcel")
+                .path = testthat::test_path("test_results_exportToExcel"))
   exportToExcel(predict(res, .handle_inadmissibles = "ignore"), .filename = paste0("test_predict_", i, ".xlsx"),
-                .path = "../test_results_exportToExcel")
+                .path = testthat::test_path("test_results_exportToExcel"))
   exportToExcel(testOMF(res, .R = 10), .filename = paste0("test_testOMF_", i, ".xlsx"),
-                .path = "../test_results_exportToExcel")
+                .path = testthat::test_path("test_results_exportToExcel"))
 }
 
 ### DGP_linear_3compostites ====================================================
@@ -181,11 +183,11 @@ test_that("DPG_2ndorder_cf_of_cfs is correctly estimated", {
 })
 
 # Export to Excel test
-exportToExcel(summarize(res), .filename = "test_summarize", .path = "../test_results_exportToExcel")
-exportToExcel(assess(res), .filename = "test_assess", .path = "../test_results_exportToExcel")
-exportToExcel(testOMF(res, .R = 20), .filename = "test_testOMF", .path = "../test_results_exportToExcel")
-exportToExcel(assess(res), .filename = "test_assess", .path = "../test_results_exportToExcel")
-exportToExcel(assess(res), .filename = "test_assess", .path = "../test_results_exportToExcel")
+exportToExcel(summarize(res), .filename = "test_summarize", .path = testthat::test_path("test_results_exportToExcel"))
+exportToExcel(assess(res), .filename = "test_assess", .path = testthat::test_path("test_results_exportToExcel"))
+exportToExcel(testOMF(res, .R = 20), .filename = "test_testOMF", .path = testthat::test_path("test_results_exportToExcel"))
+exportToExcel(assess(res), .filename = "test_assess", .path = testthat::test_path("test_results_exportToExcel"))
+exportToExcel(assess(res), .filename = "test_assess", .path = testthat::test_path("test_results_exportToExcel"))
 
 
 
