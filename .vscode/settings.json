@@ -1,9 +1,0 @@
-{
-    "editor.fontSize": 18,
-    "workbench.colorTheme": "Sweet Dracula Monokai",
-    "editor.fontFamily": "'JetBrains Mono NL', 'monospace', monospace",
-    "terminal.integrated.fontSize": 16,
-    "debug.console.fontSize": 18,
-    "console.fontSize": 18,
-    "editor.minimap.sectionHeaderFontSize": 11
-}
