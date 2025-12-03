@@ -132,6 +132,7 @@ load(testthat::test_path("data", "igsca_gscapro.RData"))
 
 ## Compare Matlab and cSEM::igsca()------------------------------------------
 # See https://r-pkgs.org/testing-basics.html
+# TODO: Consider having a more specific column by column comparison of the equivalences/non-equivalences
 testthat::expect_failure(testthat::expect_equal(object = igsca_r_table,
                                                 expected = igsca_sim_m_table,
                                                 tolerance= .035))
