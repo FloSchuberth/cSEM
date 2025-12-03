@@ -70,8 +70,18 @@ dat <- MASS::mvrnorm(300, rep(0, nrow(Sigma$Sigma)),
                      Sigma = Sigma$Sigma, empirical = TRUE)
 
 ## Estimate
-for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR", "PCA",
-           "unit", "bartlett", "regression")) {
+for (i in c(
+  "PLS-PM",
+  "GSCA",
+  "SUMCORR",
+  "MAXVAR",
+  "MINVAR",
+  "GENVAR",
+  "PCA",
+  "unit",
+  "bartlett",
+  "regression"
+)) {
   ## - "SSQCOR" is excluded as it is rather unstable, regularly producing differences
   ##   between estimate and population value larger than 0.01.
 
@@ -137,14 +147,26 @@ for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR", "PCA",
   }
 
   # Export to Excel test
-  exportToExcel(assess(res), .filename = paste0("test_assess_", i, ".xlsx"),
-                .path = testthat::test_path("test_results_exportToExcel"))
-  exportToExcel(summarize(res), .filename = paste0("test_summarize_", i, ".xlsx"),
-                .path = testthat::test_path("test_results_exportToExcel"))
-  exportToExcel(predict(res, .handle_inadmissibles = "ignore"), .filename = paste0("test_predict_", i, ".xlsx"),
-                .path = testthat::test_path("test_results_exportToExcel"))
-  exportToExcel(testOMF(res, .R = 10), .filename = paste0("test_testOMF_", i, ".xlsx"),
-                .path = testthat::test_path("test_results_exportToExcel"))
+  exportToExcel(
+    assess(res),
+    .filename = paste0("test_assess_", i, ".xlsx"),
+    .path = testthat::test_path("test_results_exportToExcel")
+  )
+  exportToExcel(
+    summarize(res),
+    .filename = paste0("test_summarize_", i, ".xlsx"),
+    .path = testthat::test_path("test_results_exportToExcel")
+  )
+  exportToExcel(
+    predict(res, .handle_inadmissibles = "ignore"),
+    .filename = paste0("test_predict_", i, ".xlsx"),
+    .path = testthat::test_path("test_results_exportToExcel")
+  )
+  exportToExcel(
+    testOMF(res, .R = 10),
+    .filename = paste0("test_testOMF_", i, ".xlsx"),
+    .path = testthat::test_path("test_results_exportToExcel")
+  )
 }
 
 ### DGP_linear_3compostites ====================================================
