@@ -52,7 +52,7 @@
 #' @references
 #'   \insertAllCited{}
 #' @examples
-#' 
+#' \dontrun{
 #' # Specify the model according to GSCA Pro's example
 #' tutorial_igsca_model <- "
 #' # Composite Model
@@ -88,6 +88,7 @@
 #' csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "GSCA",
 #' .dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion =
 #' "sum_diff_absolute")
+#' }
 igsca <-
   function(Z0, W0, C0, B0, con_type, indicator_type, .dominant_indicators, .iter_max = 100, .tolerance = 0.0001, .conv_criterion, .S = args_default()$.S) {
     

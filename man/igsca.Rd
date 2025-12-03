@@ -83,7 +83,7 @@ This R implementation of I-GSCA is based on the Matlab implementation in igsca_s
 In the example section, the specified model is based on the tutorial I-GSCA model associated with GSCA Pro \insertCite{hwangetal2023StructuralEquationModelingAMultidisciplinaryJournal}{cSEM}.
 }
 \examples{
-
+\dontrun{
 # Specify the model according to GSCA Pro's example
 tutorial_igsca_model <- "
 # Composite Model
@@ -119,6 +119,7 @@ data(LeDang2022)
 csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "GSCA",
 .dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion =
 "sum_diff_absolute")
+}
 }
 \references{
 \insertAllCited{}

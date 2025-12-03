@@ -15,6 +15,7 @@ foreman(
   .disattenuate                = args_default()$.disattenuate,
   .dominant_indicators         = args_default()$.dominant_indicators,
   .estimate_structural         = args_default()$.estimate_structural,
+  .GSCA_control                = args_default()$.GSCA_control,
   .GSCA_modes                  = args_default()$.GSCA_modes,
   .id                          = args_default()$.id,
   .instruments                 = args_default()$.instruments,
