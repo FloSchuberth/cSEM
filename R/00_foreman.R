@@ -175,7 +175,7 @@ foreman <- function(
   }
 
   ## Dominant indicators:
-  if(!is.null(.dominant_indicators) && (.approach_weights != "IGSCA")) {
+  if(!is.null(.dominant_indicators) & (.approach_weights != "IGSCA")) {
     # TODO: This might break the GSCA functionality -- originally IGSCA should bypass this
     W$W <- setDominantIndicator(
       .W = W$W, 
@@ -259,12 +259,12 @@ foreman <- function(
       "Indicator_VCV"          = S,
       "Proxy_VCV"              = C,
       "Construct_VCV"          = P,
-      "D2"                     = if(.approach_weights == "IGSCA"){
+      "D2"                     = if(.approach_weights == "GSCA" & any(csem_model$construct_type == "Common factor")){
         W$D_squared
       } else {
         NULL
       },
-      "UniqueComponent"        = if(.approach_weights == "IGSCA"){
+      "UniqueComponent"        = if(.approach_weights == "GSCA" & any(csem_model$construct_type == "Common factor")){
         W$UniqueComponent
       } else {
         NULL
