@@ -389,6 +389,7 @@ calculateWeightsGSCA <- function(
   .starting_values             = args_default()$.starting_values,
   .tolerance                   = args_default()$.tolerance
 ) {
+  # FIXME: Consider renaming .X to something else. Either to be package consistent or consistent with the new mathematical formulation
   ### Calculation (ALS algorithm) ==============================================
   if (!is.null(.GSCA_modes)) {
     stop(".GSCA_modes is currently a non-functional argument")
@@ -513,8 +514,14 @@ calculateWeightsGSCA <- function(
   }
   
   # Return
-  l <- list("W" = W, "E" = NULL, "Modes" = "gsca", "Conv_status" = conv_status,
-            "Iterations" = iter_counter)
+  l <- list(
+    "W" = W,
+    "E" = NULL,
+    "Construct_scores" = .X %*% t(W),
+    "Modes" = "gsca",
+    "Conv_status" = conv_status,
+    "Iterations" = iter_counter
+  )
   return(l)
   
   ### For maintenance: ---------------------------------------------------------
@@ -802,6 +809,7 @@ calculateWeightsGSCAm <- function(
   l <- list("W" = t(W), 
             "C" = C,
             "B" = B,
+            "Construct_scores" = Z %*% W,
             "E" = NULL, 
             "Modes" = "gsca", 
             "Conv_status" = ifelse(iter_counter > .iter_max, FALSE, TRUE),

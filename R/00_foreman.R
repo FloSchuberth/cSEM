@@ -116,6 +116,7 @@ foreman <- function(
       stop2("cSEM currently does not support GSCA and GSCAm for models containing nonlinear terms.")
     }
     if(isTRUE(.disattenuate) & all(csem_model$construct_type == "Common factor")) {
+      # FIXME: But what about if it's all commo nfactors and .disattenuate is FALSE?
       W <- calculateWeightsGSCAm(
         .X                        = X,
         .csem_model               = csem_model,
@@ -209,6 +210,7 @@ foreman <- function(
   
   ## Calculate proxies/scores
   if (.approach_weights == "GSCA") {
+    # FIXME: Need to consider whether it's appropriate to do this independently of all the transformations of X and Weights that might occur
     H <- W$Construct_scores
   } else if (.approach_weights != "GSCA") {
     H <- X %*% t(Weights)
