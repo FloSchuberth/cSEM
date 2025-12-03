@@ -30,7 +30,7 @@ Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     email = "",
                     comment = c(ORCID = "0000-0002-9736-3048")))
 Maintainer: Florian Schuberth <f.schuberth@utwente.nl>
-Depends: R (>= 3.5.0)
+Depends: R (>= 4.1.0)
 Description: Estimate, assess, test, and study linear, nonlinear, hierarchical 
   and multigroup structural equation models using composite-based approaches 
   and procedures, including estimation techniques such as partial least squares 
@@ -74,7 +74,7 @@ Imports:
     TruncatedNormal,
     utils
 RdMacros: Rdpack, lifecycle
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
 Suggests: 
     DiagrammeR,
