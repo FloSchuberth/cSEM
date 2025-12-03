@@ -1,0 +1,110 @@
+# cSEMModel
+
+cSEMModel
+
+## Value
+
+An object of class cSEMModel is a standardized list containing the
+following components. J stands for the number of constructs and K for
+the number of indicators.
+
+- `$structural`:
+
+  A matrix mimicking the structural relationship between constructs. If
+  constructs are only linearly related, `structural` is of dimension (J
+  x J) with row- and column names equal to the construct names. If the
+  structural model contains nonlinear relationships `structural` is (J x
+  (J + J\*)) where J\* is the number of nonlinear terms. Rows are
+  ordered such that exogenous constructs are always first, followed by
+  constructs that only depend on exogenous constructs and/or previously
+  ordered constructs.
+
+- `$measurement`:
+
+  A (J x K) matrix mimicking the measurement/composite relationship
+  between constructs and their related indicators. Rows are in the same
+  order as the matrix `$structural` with row names equal to the
+  construct names. The order of the columns is such that `$measurement`
+  forms a block diagonal matrix.
+
+- `$error_cor`:
+
+  A (K x K) matrix mimicking the measurement error correlation
+  relationship. The row and column order is identical to the column
+  order of `$measurement`.
+
+- `$cor_specified`:
+
+  A matrix indicating the correlation relationships between any
+  variables of the model as specified by the user. Mainly for internal
+  purposes. Note that `$cor_specified` may also contain inadmissible
+  correlations such as a correlation between measurement errors
+  indicators and constructs.
+
+- `$construct_type`:
+
+  A named vector containing the names of each construct and their
+  respective type ("Common factor" or "Composite").
+
+- `$construct_order`:
+
+  A named vector containing the names of each construct and their
+  respective order ("First order" or "Second order").
+
+- `$model_type`:
+
+  The type of model ("Linear" or "Nonlinear").
+
+- `$instruments`:
+
+  Only if instruments are supplied: a list of structural equations
+  relating endogenous RHS variables to instruments.
+
+- `$indicators`:
+
+  The names of the indicators (i.e., observed variables and/or
+  first-order constructs)
+
+- `$cons_exo`:
+
+  The names of the exogenous constructs of the structural model (i.e.,
+  variables that do not appear on the LHS of any structural equation)
+
+- `$cons_endo`:
+
+  The names of the endogenous constructs of the structural model (i.e.,
+  variables that appear on the LHS of at least one structural equation)
+
+- `$vars_2nd`:
+
+  The names of the constructs modeled as second orders.
+
+- `$vars_attached_to_2nd`:
+
+  The names of the constructs forming or building a second order
+  construct.
+
+- `$vars_not_attached_to_2nd`:
+
+  The names of the constructs not forming or building a second order
+  construct.
+
+It is possible to supply an incomplete list to
+[`parseModel()`](https://floschuberth.github.io/cSEM/reference/parseModel.md),
+resulting in an incomplete cSEMModel list which can be passed to all
+functions that require `.csem_model` as a mandatory argument. Currently,
+only the structural and the measurement matrix are required. However,
+specifying an incomplete cSEMModel list may lead to unexpected behavior
+and errors. Use with care.
+
+## Details
+
+A standardized list containing model-related information. To convert a a
+model written in [lavaan model
+syntax](https://rdrr.io/pkg/lavaan/man/model.syntax.html) to a cSEMModel
+list use
+[`parseModel()`](https://floschuberth.github.io/cSEM/reference/parseModel.md).
+
+## See also
+
+[parseModel](https://floschuberth.github.io/cSEM/reference/parseModel.md)

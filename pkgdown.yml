@@ -1,12 +1,12 @@
 pandoc: 3.1.11
-pkgdown: 2.1.3
+pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   cSEM: cSEM.html
   Notation: Notation.html
   Terminology: Terminology.html
   Using-assess: Using-assess.html
-last_built: 2025-09-24T06:58Z
+last_built: 2025-12-03T09:44Z
 urls:
   reference: https://floschuberth.github.io/cSEM/reference
   article: https://floschuberth.github.io/cSEM/articles
