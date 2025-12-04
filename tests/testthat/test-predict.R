@@ -1,5 +1,4 @@
-source("test-main.R")
-# source("tests/testthat/test-main.R")
+source(testthat::test_path("test-main.R"))
 
 # ==============================================================================
 # Tests 
@@ -19,22 +18,22 @@ test_that("predict() fails for non-linear and 2ndorder models", {
 
 test_that("predict() works for linear models", {
   expect_s3_class({
-    predict(res_single_linear, .cv_folds = 2, .r = 2)
+    predict(res_single_linear, .cv_folds = 2, .r = 2, .benchmark = "lm", .disattenuate = FALSE)
   }, "cSEMPredict")
   expect_s3_class({
-    predict(res_multi_linear, .cv_folds = 2, .r = 2)
+    predict(res_multi_linear, .cv_folds = 2, .r = 2, .benchmark = "lm", .disattenuate = FALSE)
   }, "cSEMPredict")
   expect_s3_class({
-    predict(res_multi_id_linear, .cv_folds = 2, .r = 2)
+    predict(res_multi_id_linear, .cv_folds = 2, .r = 2, .benchmark = "lm", .disattenuate = FALSE)
   }, "cSEMPredict")
 })
 
 test_that("predict() works with ordinal categorical indicators", {
   expect_s3_class({
-    predict(res_OrdPLS_all_ordinal, .cv_folds = 2, .r = 2)
+    predict(res_OrdPLS_all_ordinal, .cv_folds = 2, .r = 2, .benchmark = "lm", .disattenuate = FALSE)
   }, "cSEMPredict")
   expect_s3_class({
-    predict(res_OrdPLS_ordinal_continuous, .cv_folds = 2, .r = 2)
+    predict(res_OrdPLS_ordinal_continuous, .cv_folds = 2, .r = 2, .benchmark = "lm", .disattenuate = FALSE)
   }, "cSEMPredict")
 })
 
@@ -46,16 +45,16 @@ test_dat  <- cSEM::threecommonfactors[-index, ]
 
 test_that("predict() works for linear models if test data is given ", {
   expect_s3_class({
-    predict(csem(train_dat, model_linear), .test_data = test_dat)
+    predict(csem(train_dat, model_linear), .test_data = test_dat, .benchmark = "lm", .disattenuate = FALSE)
   }, "cSEMPredict")
   expect_s3_class({
-    predict(csem(dat, model_linear), .test_data = test_dat)
+    predict(csem(dat, model_linear), .test_data = test_dat, .benchmark = "lm", .disattenuate = FALSE)
   }, "cSEMPredict")
   expect_s3_class({
-    predict(csem(threecommonfactors_id, model_linear, .id = "Group_id"), .test_data = test_dat)
+    predict(csem(threecommonfactors_id, model_linear, .id = "Group_id"), .test_data = test_dat, .benchmark = "lm", .disattenuate = FALSE)
   }, "cSEMPredict")
   expect_s3_class({
-    predict(res_OrdPLS_ordinal_continuous, .test_data = dat_OrdPLS_ordinal_continuous[1:100,])
+    predict(res_OrdPLS_ordinal_continuous, .test_data = dat_OrdPLS_ordinal_continuous[1:100,], .benchmark = "lm", .disattenuate = FALSE)
   }, "cSEMPredict")
 })
 
@@ -77,7 +76,7 @@ for(i in args_default(.choices = TRUE)$.benchmark) {
   if(i != "PLS-PM") {
     expect_s3_class({
       predict(csem(threecommonfactors, model_linear2), .cv_folds = 2, .r = 1,
-              .benchmark = i) 
+              .benchmark = i, .disattenuate = if (i == "lm") FALSE else TRUE) 
     }, "cSEMPredict")
   }
 }
