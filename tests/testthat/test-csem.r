@@ -315,3 +315,7 @@ test_that("DPG_2ndorder_composites_of_composites is correctly estimated", {
   expect_equal(loadings$Estimate, loadings$Pop_value)
   expect_equal(weights$Estimate, weights$Pop_value)
 })
+
+# Bugs -------------------------------------------------------------------
+# Origin: Mis-implementation of IGSCA
+expect_no_error(print(res))
