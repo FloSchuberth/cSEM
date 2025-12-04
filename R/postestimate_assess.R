@@ -485,17 +485,17 @@ assess <- function(
     
   if(!is.null(.object$Information$Arguments$.approach_weights)) {
     if (any(.quality_criterion %in% c("all", "FIT")) &
-        (.object$Information$Arguments$.approach_weights %in% c("GSCA", "IGSCA"))) {
+        (.object$Information$Arguments$.approach_weights == "GSCA")) {
       out[["FIT"]] <- calculateFIT(.object)
     }
     
     if (any(.quality_criterion %in% c("all", "FIT_m")) &
-        (.object$Information$Arguments$.approach_weights %in% c("GSCA", "IGSCA"))) {
+        (.object$Information$Arguments$.approach_weights == "GSCA")) {
       out[["FIT_m"]] <- calculateFIT_m(.object)
     }
     
     if (any(.quality_criterion %in% c("all", "FIT_s")) &
-        (.object$Information$Arguments$.approach_weights %in% c("GSCA", "IGSCA"))) {
+        (.object$Information$Arguments$.approach_weights == "GSCA")) {
       out[["FIT_s"]] <- calculateFIT_s(.object)
     }
   }

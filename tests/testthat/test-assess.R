@@ -68,28 +68,50 @@ test_that("Assess works for all choices of .quality_criterion", {
 })
 
 ## Assess using additional arguments
-assess(res,   
-            .absolute            = TRUE,
-            .alpha               = 0.05,
-            .ci                  = "CI_percentile",
-            .closed_form_ci      = FALSE,
-            .handle_inadmissibles= "drop",
-            .inference           = TRUE,
-            .null_model          = FALSE,
-            .R                   = 199,
-            .saturated           = FALSE,
-            .seed                = NULL,
-            .type_gfi            = "ML",
-            .type_vcv            = "indicator"
-            )
+assess(
+  res,
+  .absolute = TRUE,
+  .alpha = 0.05,
+  .ci = "CI_percentile",
+  .closed_form_ci = FALSE,
+  .handle_inadmissibles = "drop",
+  .inference = TRUE,
+  .null_model = FALSE,
+  .R = 199,
+  .saturated = FALSE,
+  .seed = NULL,
+  .type_gfi = "ML",
+  .type_vcv = "indicator"
+) |>
+  expect_warning(
+    regexp = "For resampling the HTMT/HTMT2, it is recommended to to set .absolute to FALSE."
+  ) |>
+  expect_warning(
+    regexp = "For resampling the HTMT/HTMT2, it is recommended to to set .absolute to FALSE."
+  )
 
 ### Test assess for other classes ----------------------------------------------
-source("test-main.R")
+source(testthat::test_path("test-main.R"))
 
 test_that("assess() works for list of data", {
   expect_equal(class(assess(res_multi_linear)), "list", ignore_attr = TRUE)  
   expect_error(class(assess(res_multi_nonlinear)))
-  expect_equal(class(assess(res_multi_2ndorder)), "list", ignore_attr = TRUE)
+  expect_equal(class(suppressWarnings(assess(res_multi_2ndorder))), "list", ignore_attr = TRUE)
+})
+
+test_that("assess() treats 2nd order models correctly", {
+  expect_warning(
+    assess(res_single_2ndorder, .quality_criterion = "rms_theta"),
+    "not supported for models containing second-order constructs"
+  )
+  expect_warning(
+    assess(res_single_2ndorder, .quality_criterion = "fl_criterion"),
+    "not supported for models containing second-order constructs"
+  )
+  expect_warning(
+    assess(res_single_2ndorder, .quality_criterion = "htmt"),
+    "not supported for models containing second-order constructs"
+  )
 })
 
 ### Test individual assess's helper functions individually ---------------------
@@ -114,12 +136,24 @@ test_that("Test that calculateDf() returns the correct output:", {
   expect_warning(calculateDf(res_single_nonlinear))
   expect_identical(calculateDf(res_single_2ndorder), 132)
   expect_warning(calculateDf(res_single_nonlinear_2ndorder))
-  
-  expect_identical(unlist(calculateDf(res_multi_linear)), 
-                   c("group1" = 22, "group2" = 22, "group3" = 22))
-  expect_warning(calculateDf(res_multi_nonlinear))
-  expect_identical(unlist(calculateDf(res_multi_2ndorder)), 
-                   c("group1" = 132, "group2" = 132))
+  expect_identical(
+    unlist(calculateDf(res_multi_linear)),
+    c("group1" = 22, "group2" = 22, "group3" = 22)
+  )
+  calculateDf(res_multi_nonlinear) |>
+    expect_warning(
+      "experimental. Computation may not be correct"
+    ) |>
+    expect_warning(
+      "experimental. Computation may not be correct"
+    ) |>
+    expect_warning(
+      "experimental. Computation may not be correct"
+    )
+  expect_identical(
+    unlist(calculateDf(res_multi_2ndorder)),
+    c("group1" = 132, "group2" = 132)
+  )
 })
 
 ## Calculatef2
