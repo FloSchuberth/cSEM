@@ -237,7 +237,8 @@ foreman <- function(
       .P              = P,
       .Q              = Q
     ) 
-    if (.approach_weights == "IGSCA") {
+    if (.approach_weights == "GSCA" & (any(csem_model$construct_type == "Composite") & any(csem_model$construct_type == "Common factor"))) {
+      # FIXME: Come back to this issue for GSCA
       estim_results$Path_estimates <- W$B
     }
   } else {
@@ -293,7 +294,7 @@ foreman <- function(
       }
     ),
     "Information" = list(
-      "Data"          = if(.approach_weights == "IGSCA"){
+      "Data"          = if(.approach_weights == "GSCA" & (.approach_weights == "GSCA" & (any(csem_model$construct_type == "Composite") & any(csem_model$construct_type == "Common factor")))){
         W$Data # TODO: identical(W$Data, X) is FALSE for IGSCA, should revisit this later
       } else {
         X

@@ -228,6 +228,10 @@ test_that("DPG_2ndorder_cf_of_cfs is correctly estimated", {
   expect_equal(loadings$Estimate, loadings$Pop_value)
 })
 
+# Guard against future bugs
+# Origin: Errors in printing the results
+expect_no_error(capture.output(print(res)))
+
 # Export to Excel test
 exportToExcel(summarize(res), .filename = "test_summarize", .path = testthat::test_path("test_results_exportToExcel"))
 exportToExcel(suppressWarnings(assess(res)), .filename = "test_assess", .path = testthat::test_path("test_results_exportToExcel"))
@@ -316,6 +320,3 @@ test_that("DPG_2ndorder_composites_of_composites is correctly estimated", {
   expect_equal(weights$Estimate, weights$Pop_value)
 })
 
-# Bugs -------------------------------------------------------------------
-# Origin: Mis-implementation of IGSCA
-expect_no_error(print(res))

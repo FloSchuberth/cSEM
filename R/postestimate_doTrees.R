@@ -32,7 +32,7 @@ doTrees <- function(.object,
 ## Warning Checks ----------------------------------------------------------
   stopifnot(
     'This function only works on single-group models of class "cSEMResults_default" and not cSEMResults_multi' = !inherits(.object, "cSEMREsults_multi"),
-    'This function is not supported for non I-GSCA models' = .object$Information$Arguments$.approach_weights == "IGSCA"
+    'This function is not supported for non I-GSCA models' = .object$Information$Arguments$.approach_weights == "GSCA"
   )
   
 
@@ -111,7 +111,7 @@ csem_fit <- function(.object,
     names(res_coef) <- out_coef[!(out_coef$op %in% c("Direct_effect", "Indirect_effect", "Total_effect")),"term"]
     
     # Objective Function
-    if(.object$Information$Arguments$.approach_weights == "IGSCA") {
+    if(.object$Information$Arguments$.approach_weights == "GSCA") {
       res_obj <- calculateIgscaObjectiveFunction(fitted_model)
       
     } else {
