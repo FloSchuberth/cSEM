@@ -38,12 +38,15 @@ data(LeDang2022)
 
 
 # Reliabilities ---------------------------------------------------------------
-testthat::expect_true(all(mod$Estimates$Reliabilities <= 1))
+
 
 # debugonce(csem)
-debugonce(foreman)
-# debugonce(calculateReliabilities)
+# debugonce(foreman)
+# debugonce(calculateWeightsIGSCA)
+debugonce(calculateReliabilities)
 (debug_mod <- csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "GSCA",
 .dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion =
 "sum_diff_absolute")
 )
+
+testthat::expect_true(all(mod$Estimates$Reliabilities <= 1))

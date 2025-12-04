@@ -394,9 +394,15 @@ calculateReliabilities <- function(
       # Weights need to be scaled s.t. the composite build using .X has
       # variance of one. Note that scaled GSCAm weights are identical
       # to PLS ModeA weights.
-      #
+      # TODO: Does calculating reliabilities also apply to GSCA only composites?
+      # TODO: Should I use the scaled weights throughout or only for computing the reliabilities?
       # This applies to both GSCA_m and IGSCA
       W <- scaleWeights(.S, .W$W)
+      #' if (interactive()) {
+      #'   (effect_of_scaling <- W - .W$W)
+      #'   c(effect_of_scaling) |> hist()
+      #'   c(effect_of_scaling <- W - .W$W) |> cut(10) |> table()
+      #' }
     }
   }
   names_cf <- names(.csem_model$construct_type[.csem_model$construct_type == "Common factor"])
