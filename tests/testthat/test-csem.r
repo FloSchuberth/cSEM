@@ -158,7 +158,7 @@ for (i in c(
     .path = testthat::test_path("test_results_exportToExcel")
   )
   exportToExcel(
-    predict(res, .handle_inadmissibles = "ignore"),
+    predict(res, .handle_inadmissibles = "ignore", .benchmark = "lm", .disattenuate = FALSE),
     .filename = paste0("test_predict_", i, ".xlsx"),
     .path = testthat::test_path("test_results_exportToExcel")
   )
@@ -232,10 +232,6 @@ test_that("DPG_2ndorder_cf_of_cfs is correctly estimated", {
 exportToExcel(summarize(res), .filename = "test_summarize", .path = testthat::test_path("test_results_exportToExcel"))
 exportToExcel(assess(res), .filename = "test_assess", .path = testthat::test_path("test_results_exportToExcel"))
 exportToExcel(testOMF(res, .R = 20), .filename = "test_testOMF", .path = testthat::test_path("test_results_exportToExcel"))
-exportToExcel(assess(res), .filename = "test_assess", .path = testthat::test_path("test_results_exportToExcel"))
-exportToExcel(assess(res), .filename = "test_assess", .path = testthat::test_path("test_results_exportToExcel"))
-
-
 
 ### DGP_2ndorder - Common factor of composites =================================
 # Loads Sigma, models and population values
