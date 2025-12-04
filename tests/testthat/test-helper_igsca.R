@@ -185,3 +185,6 @@ testthat::expect_success(testthat::expect_equal(igsca_sim_m_table,
 # condition might make it so that a global model might exit earlier than a model
 # for each sub-group?
 
+
+# Bugs -------------------------------------------------------------------
+expect_no_error(print(mod))
