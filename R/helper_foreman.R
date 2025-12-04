@@ -401,12 +401,12 @@ calculateReliabilities <- function(
       #' if (interactive()) {
       #'   (effect_of_scaling <- W - .W$W)
       #'   c(effect_of_scaling) |> hist()
-      #'   c(effect_of_scaling <- W - .W$W) |> cut(10) |> table()
+      #'   c(effect_of_scaling) |> cut(10) |> table()
       #' }
     }
   }
   names_cf <- names(.csem_model$construct_type[.csem_model$construct_type == "Common factor"])
-  names_c  <- setdiff(names(.csem_model$construct_type), names_cf)
+  names_c  <- names(.csem_model$construct_type[.csem_model$construct_type == "Composite"])
   Q        <- rep(1, times = nrow(W))
   names(Q) <- rownames(W)
   
