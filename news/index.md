@@ -2,6 +2,10 @@
 
 ## \<Development version: cSEM 0.6.1.9999
 
+## cSEM 0.6.2
+
+- Update R dependency (R\>= 4.1.0)
+
 ## cSEM 0.6.1
 
 CRAN release: 2025-05-16
