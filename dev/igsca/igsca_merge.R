@@ -1,13 +1,13 @@
 # Example ----------------------------------------------------------------
 # Specify the model according to GSCA Pro's example
 tutorial_igsca_model <- "
-# Composite Model
+# Composite (Formative Measurement) Model
 NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + 
                       Behavior7 + Behavior8 +  Behavior9
 Numberofjobinterviews <~ Interview1 + Interview2
 Numberofjoboffers <~ Offer1 + Offer2 
 
-# Reflective Measurement Model
+# Latent Variable (Reflective Measurement) Model
 HonestyHumility =~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 + 
                     Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10
 Emotionality =~ Emotion1 + Emotion2 + Emotion3 + Emotion4 + 
@@ -37,12 +37,13 @@ data(LeDang2022)
 )
 
 
-# Printing ---------------------------------------------------------------
-verify(mod)
+# Reliabilities ---------------------------------------------------------------
+testthat::expect_true(all(mod$Estimates$Reliabilities <= 1))
 
-# FIXME: Construct VCV
-# TODO: How does verify check for construct vcv?
-# TODO: Why is my implementation missing construct VCV?
-
-debugonce(verify)
-verify(mod)
+# debugonce(csem)
+debugonce(foreman)
+# debugonce(calculateReliabilities)
+(debug_mod <- csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "GSCA",
+.dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion =
+"sum_diff_absolute")
+)

@@ -30,6 +30,14 @@ mod <- csem(.data = LeDang2022,
                   .conv_criterion = "sum_diff_absolute")
 
 
+test_that("Reliabilities are correctly estimated", {
+  expect_true(all(mod$Estimates$Reliabilities) <= 1)
+})
+
+test_that("Model estimation passes standards", {
+  expect_true(all(verify(mod)))
+})
+
 ### Custom Function for Organizing IGSCA Results ----------------------------
 
 #' Converts Output of igsca functions into a table to facilitate comparisons

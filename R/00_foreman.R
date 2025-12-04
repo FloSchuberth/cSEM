@@ -89,95 +89,117 @@ foreman <- function(
   X <- scale(data.matrix(X_cleaned))
   
   ## Calculate weights
-  if(.approach_weights == "PLS-PM") {
+  if (.approach_weights == "PLS-PM") {
     W <- calculateWeightsPLS(
-      .S                        = S,
-      .csem_model               = csem_model,
-      .iter_max                 = .iter_max,
-      .PLS_modes                = .PLS_modes,
+      .S = S,
+      .csem_model = csem_model,
+      .iter_max = .iter_max,
+      .PLS_modes = .PLS_modes,
       # Arguments passed on to calculateInnerWeightsPLS
-      .PLS_ignore_structural_model  = .PLS_ignore_structural_model,
-      .PLS_weight_scheme_inner      = .PLS_weight_scheme_inner,
-      # Arguments passed on to calcuateOuterWeightsPLS 
-      .data                     = X,
+      .PLS_ignore_structural_model = .PLS_ignore_structural_model,
+      .PLS_weight_scheme_inner = .PLS_weight_scheme_inner,
+      # Arguments passed on to calcuateOuterWeightsPLS
+      .data = X,
       # Arguments passed to checkConvergence
-      .conv_criterion           = .conv_criterion,
-      .tolerance                = .tolerance,
+      .conv_criterion = .conv_criterion,
+      .tolerance = .tolerance,
       # starting values
-      .starting_values          = .starting_values
+      .starting_values = .starting_values
     )
-  } else if(.approach_weights %in% c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
+  } else if (
+    .approach_weights %in% c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")
+  ) {
     W <- calculateWeightsKettenring(
-      .S                        = S,
-      .csem_model               = csem_model,
-      .approach_gcca            = .approach_weights
+      .S = S,
+      .csem_model = csem_model,
+      .approach_gcca = .approach_weights
     )
-  } else if(.approach_weights == "GSCA") {
-    if(csem_model$model_type == "Nonlinear") {
-      stop2("cSEM currently does not support GSCA and GSCAm for models containing nonlinear terms.")
-    }
-    if(isTRUE(.disattenuate) & all(csem_model$construct_type == "Common factor")) {
-      # FIXME: But what about if it's all commo nfactors and .disattenuate is FALSE?
-      W <- calculateWeightsGSCAm(
-        .X                        = X,
-        .csem_model               = csem_model,
-        .conv_criterion           = .conv_criterion,
-        .iter_max                 = .iter_max,
-        .tolerance                = .tolerance,
-        .starting_values          = .starting_values
+  } else if (.approach_weights == "GSCA") {
+    if (csem_model$model_type == "Nonlinear") {
+      stop2(
+        "cSEM currently does not support GSCA and GSCAm for models containing nonlinear terms."
       )
+    }
+    if (all(csem_model$construct_type == "Common factor")) {
+      if (isTRUE(.disattenuate)) {
+        W <- calculateWeightsGSCAm(
+          .X = X,
+          .csem_model = csem_model,
+          .conv_criterion = .conv_criterion,
+          .iter_max = .iter_max,
+          .tolerance = .tolerance,
+          .starting_values = .starting_values
+        )
+      } else {
+        stop2(
+          "The csem argument .disattenuate should be TRUE for GSCA_M to fit with common factors"
+        )
+      }
     } else if (all(csem_model$construct_type == "Composite")) {
       W <- calculateWeightsGSCA(
-        .X                        = X,
-        .S                        = S,
-        .csem_model               = csem_model,
-        .conv_criterion           = .conv_criterion,
-        .iter_max                 = .iter_max,
-        .tolerance                = .tolerance,
-        .starting_values          = .starting_values
-      )
-    } else {
-      # IGSCA Algorithm for a mixture of Common factor and Composite constructs
-      W <- calculateWeightsIGSCA(
-        .data = X_cleaned,
+        .X = X,
+        .S = S,
         .csem_model = csem_model,
-        .tolerance = .tolerance,
-        .iter_max = .iter_max,
-        .dominant_indicators = .dominant_indicators,
         .conv_criterion = .conv_criterion,
-        .S              = S
+        .iter_max = .iter_max,
+        .tolerance = .tolerance,
+        .starting_values = .starting_values
       )
-      
-      # Transpose weights and loadings matrix for compatibility with calculateReliabilities()
-      W$W <- t(W$W)
-      W$C <- t(W$C)
-      # Transpose path coefficients matrix for comparability with IGSCA
-      W$B <- t(W$B)
+    } else if (
+      any(csem_model$construct_type == "Composite") &
+        any(csem_model$construct_type == "Common factor")
+    ) {
+      if (isTRUE(.disattenuate)) {
+        # IGSCA Algorithm for a mixture of Common factor and Composite constructs
+        W <- calculateWeightsIGSCA(
+          .data = X_cleaned,
+          .csem_model = csem_model,
+          .tolerance = .tolerance,
+          .iter_max = .iter_max,
+          .dominant_indicators = .dominant_indicators,
+          .conv_criterion = .conv_criterion,
+          .S = S
+        )
+        # Transpose weights and loadings matrix for compatibility with calculateReliabilities()
+        # TODO: Better to explicitly state what dimensions of weights, loadings and path-coefficients IGSCA returns versus what calculateReliabilities expects
+        W$W <- t(W$W)
+        W$C <- t(W$C)
+        # Transpose path coefficients matrix for comparability with IGSCA
+        W$B <- t(W$B)
+      } else {
+        stop2(
+          "The csem argument .disattenuate should be TRUE for IGSCA to fit with both common factors and composites."
+        )
+      }
     }
-    
   } else if (.approach_weights == "unit") {
-    W <- calculateWeightsUnit(.S                        = S,
-                              .csem_model               = csem_model,
-                              .starting_values          = .starting_values)
+    W <- calculateWeightsUnit(
+      .S = S,
+      .csem_model = csem_model,
+      .starting_values = .starting_values
+    )
   } else if (.approach_weights %in% c("bartlett", "regression")) {
-    
-    
-    # Note:  1. "bartlett" and "regression" weights are calculated later in the 
+    # Note:  1. "bartlett" and "regression" weights are calculated later in the
     #        calculateReliabilities() function. Here only placeholders for
     #        the weights are set in order to keep the list structure of W.
-    
-    W <- list("W" = csem_model$measurement, "E" = NULL, "Modes" = NULL, 
-              "Conv_status" = NULL, "Iterations" = 0)
-  } else if(.approach_weights == "PCA") {
+
+    W <- list(
+      "W" = csem_model$measurement,
+      "E" = NULL,
+      "Modes" = NULL,
+      "Conv_status" = NULL,
+      "Iterations" = 0
+    )
+  } else if (.approach_weights == "PCA") {
     W <- calculateWeightsPCA(
-      .S                        = S,
-      .csem_model               = csem_model
+      .S = S,
+      .csem_model = csem_model
     )
   }
 
   ## Dominant indicators:
   if(!is.null(.dominant_indicators) & (.approach_weights != "IGSCA")) {
-    # TODO: This might break the GSCA functionality -- originally IGSCA should bypass this
+    # TODO: This might break the GSCA functionality, Xoriginally IGSCA should bypass this
     W$W <- setDominantIndicator(
       .W = W$W, 
       .dominant_indicators = .dominant_indicators,
