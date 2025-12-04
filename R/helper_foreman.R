@@ -453,17 +453,17 @@ calculateReliabilities <- function(
       } 
     } else if (.approach_weights == "GSCA") {
       
-        if ((isTRUE(.disattenuate) &
-            all(.csem_model$construct_type == "Common factor")) | any(.csem_model$construct_type == "Common factor")) {
+        if (any(.csem_model$construct_type == "Common factor")) {
           # browser()
           # Currently, GSCAm only supports pure common factor models. This may change
           # in the future.
           
           # Compute consistent loadings and Q (Composite/proxy-construct correlation)
-          # Consistent factor loadings are obtained from GSCAm.
-                  
+          # Consistent factor loadings are obtained from GSCAm and IGSCA
           
           for (j in rownames(Lambda[names_cf, ])) {
+            # TODO: There is currently an issue with IGSCA where the factor OpennesstoExperience has a non-zero loading to multiple non-OpennesstoExperience indicators.
+            # TODO: This issue is resolved when we compute loadings using `Lambda   <- W %*% .S * .csem_model$measurement` instead
             Lambda[j, ] <- .W$C[j, ]
             Q[j]        <- c(W[j, ] %*% Lambda[j, ])
           }

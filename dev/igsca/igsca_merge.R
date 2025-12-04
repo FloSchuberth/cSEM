@@ -48,5 +48,9 @@ debugonce(calculateReliabilities)
 .dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion =
 "sum_diff_absolute")
 )
+# TODO: Unclear if this is the source of the bug, but currently IGSCA creates non-zero loadings to the latent-variable indicators of OTHER constructs. (OpennesstoExperience).
+# TODO: Should create a test to make sure this doesn't happen again
+# TODO: Compare against GSCA_M behavior
+# TODO: Investigate what might be wrong with my IGSCA implementation
 
 testthat::expect_true(all(mod$Estimates$Reliabilities <= 1))
