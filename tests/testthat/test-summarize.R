@@ -1,17 +1,16 @@
-source("test-main.R")
-# source("tests/testthat/test-main.R")
+source(testthat::test_path("test-main.R"))
+
 
 # ==============================================================================
-# Tests 
+# Tests
 # ==============================================================================
-
-summarize(res_single_linear)
-summarize(res_single_nonlinear)
-summarize(res_single_2ndorder)
-summarize(res_single_nonlinear_2ndorder)
-
-summarize(res_single_linear_boot)
-summarize(res_single_linear_boot)
-summarize(res_single_2ndorder_boot)
-summarize(res_single_nonlinear_2ndorder_boot)
-
+test_that("Run without errors", {
+  summarize(res_single_linear) |> expect_no_error()
+  summarize(res_single_nonlinear) |> expect_no_error()
+  summarize(res_single_2ndorder) |> expect_no_error()
+  summarize(res_single_nonlinear_2ndorder) |> expect_no_error()
+  summarize(res_single_linear_boot) |> expect_no_error()
+  summarize(res_single_linear_boot) |> expect_no_error()
+  summarize(res_single_2ndorder_boot) |> expect_no_error()
+  summarize(res_single_nonlinear_2ndorder_boot) |> expect_no_error()
+})
