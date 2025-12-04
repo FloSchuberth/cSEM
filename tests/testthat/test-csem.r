@@ -186,8 +186,6 @@ test_that("DPG_2ndorder_cf_of_cfs is correctly estimated", {
 exportToExcel(summarize(res), .filename = "test_summarize", .path = "../test_results_exportToExcel")
 exportToExcel(assess(res), .filename = "test_assess", .path = "../test_results_exportToExcel")
 exportToExcel(testOMF(res, .R = 20), .filename = "test_testOMF", .path = "../test_results_exportToExcel")
-exportToExcel(assess(res), .filename = "test_assess", .path = "../test_results_exportToExcel")
-exportToExcel(assess(res), .filename = "test_assess", .path = "../test_results_exportToExcel")
 
 
 
