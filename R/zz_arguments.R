@@ -68,7 +68,7 @@
 #'   is used. Defaults to "*mean*".
 #' @param .approach_weights Character string. Approach used to
 #'   obtain composite weights. One of: "*PLS-PM*", "*SUMCORR*", "*MAXVAR*",
-#'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*PCA*", "*unit*", "*bartlett*", 
+#'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*IGSCA*", "*PCA*", "*unit*", "*bartlett*", 
 #'   or "*regression*". Defaults to "*PLS-PM*".
 #' @param .args_used A list of function argument names whose value was modified 
 #'   by the user.
@@ -97,7 +97,7 @@
 #' @param .closed_form_ci Logical. Should a closed-form confidence interval be computed?
 #'   Defaults to `FALSE`.
 #' @param .conv_criterion Character string. The criterion to use for the convergence check.
-#'   One of: "*diff_absolute*", "*diff_squared*", or "*diff_relative*". Defaults
+#'   One of: "*diff_absolute*", "*diff_squared*", "*diff_relative*", or "*sum_diff_absolute*". Defaults
 #'   to "*diff_absolute*".
 #' @param .csem_model A (possibly incomplete) [cSEMModel]-list.
 #' @param .csem_resample A list resulting from a call to [resamplecSEMResults()].
@@ -138,11 +138,21 @@
 #' @param .fit_measures Logical. (EXPERIMENTAL) Should additional fit measures 
 #'   be included? Defaults to `FALSE`. 
 #' @param .force Logical. Should .object be resampled even if it contains resamples
-#'   already?. Defaults to `FALSE`.
+#' already?. Defaults to `FALSE`.
 #' @param .full_output Logical. Should the full output of summarize be printed.
 #'   Defaults to `TRUE`.
 #' @param .graph_attrs Character string. Additional attributes that should be passed 
 #' to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to *c("rankdir=LR")*.
+#' @param .GSCA_control Named list specifying various computational options for
+#'   GSCA-type models.
+#' @param .GSCA_modes Either a named list specifying the mode that should be
+#'   used for each composite in the form `"composite_name" = mode`, a single
+#'   character string giving the mode that should be used for all composites.
+#'   Possible single character string choices for `mode` are: "*canon*" for
+#'   canonical composites, or "*nomo*" for nomological composites, or `NULL` for
+#'   default behavior. Default behavior is to estimate nomological composites.
+#'   Passed to (I-)GSCA estimating functions in [cSEM::calculateWeightsGSCA()]
+#'   or [cSEM::calculateWeightsIGSCA()]. Defaults to `NULL`.
 #' @param .H The (N x J) matrix of construct scores.
 #' @param .handle_inadmissibles Character string. How should inadmissible results 
 #'   be treated? One of "*drop*", "*ignore*", or "*replace*". If "*drop*", all
@@ -177,7 +187,11 @@
 #'   Which prediction metrics should be displayed? One of: "*MAE*", "*RMSE*", "*Q2*", 
 #'   "*MER*", "*MAPE*, "*MSE2*", "*U1*", "*U2*", "*UM*", "*UR*", or "*UD*". 
 #'   Default to c("*MAE*", "*RMSE*", "*Q2*").
-#' @param .model A model in [lavaan model syntax][lavaan::model.syntax] 
+#' @param .maxdepth Maximum number of levels in the tree. See [cSEM::doTrees()]
+#'   and [partykit::mob_control].
+#' @param .minsize Minimum number of cases per node. See [cSEM::doTrees()] and
+#'   [partykit::mob_control].
+#' @param .model A model in [lavaan model syntax][lavaan::model.syntax]
 #'   or a [cSEMModel] list.
 #' @param .moderator Character string. The name of the moderator variable.
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
@@ -305,6 +319,8 @@
 #' "*individual_reestimate*", "*construct_reestimate*". Defaults to "*none*".
 #' @param .sim_points Integer. How many samples from the truncated normal distribution should
 #'   be simulated to estimate the exogenous construct scores? Defaults to "*100*".
+#' @param .splitvars Character vector. List of variables for [cSEM::doTrees()]
+#'   to consider splitting on. See [partykit::mob]
 #' @param .stage Character string. The stage the model is needed for.
 #'   One of "*first*" or "*second*". Defaults to "*first*".
 #' @param .standardized Logical. Should standardized scores be returned? Defaults
@@ -458,7 +474,7 @@ args_default <- function(.choices = FALSE) {
     .approach_score_benchmark= c("mean", "median", "mode", "round"),
     .approach_score_target   = c("mean", "median", "mode"),
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
-                                 "GSCA", "PCA", "unit", "bartlett", "regression"), 
+                                 "GSCA", "IGSCA", "PCA", "unit", "bartlett", "regression"), 
     .arguments               = NULL,
     .attributes              = NULL,
     .benchmark               = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR","NA"),
@@ -471,7 +487,7 @@ args_default <- function(.choices = FALSE) {
                                  "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
     .ci_colnames             = NULL,
     .closed_form_ci          = FALSE, 
-    .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative"),
+    .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative", "sum_diff_absolute", "mean_diff_absolute"),
     .csem_model              = NULL,
     .csem_resample           = NULL,
     .cv_folds                = 10,
@@ -492,6 +508,8 @@ args_default <- function(.choices = FALSE) {
     .force                   = FALSE,
     .full_output             = TRUE,
     .graph_attrs             = c("rankdir=LR"),
+    .GSCA_control            = list(.force_IGSCA = FALSE),
+    .GSCA_modes              = NULL,
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,

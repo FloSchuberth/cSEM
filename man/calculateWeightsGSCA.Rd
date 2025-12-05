@@ -9,6 +9,7 @@ calculateWeightsGSCA(
   .S                           = args_default()$.S,
   .csem_model                  = args_default()$.csem_model,
   .conv_criterion              = args_default()$.conv_criterion,
+  .GSCA_modes                  = args_default()$.GSCA_modes,
   .iter_max                    = args_default()$.iter_max,
   .starting_values             = args_default()$.starting_values,
   .tolerance                   = args_default()$.tolerance
@@ -22,8 +23,17 @@ calculateWeightsGSCA(
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
-One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
+One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
 to "\emph{diff_absolute}".}
+
+\item{.GSCA_modes}{Either a named list specifying the mode that should be
+used for each composite in the form \code{"composite_name" = mode}, a single
+character string giving the mode that should be used for all composites.
+Possible single character string choices for \code{mode} are: "\emph{canon}" for
+canonical composites, or "\emph{nomo}" for nomological composites, or \code{NULL} for
+default behavior. Default behavior is to estimate nomological composites.
+Passed to (I-)GSCA estimating functions in \code{\link[=calculateWeightsGSCA]{calculateWeightsGSCA()}}
+or \code{\link[=calculateWeightsIGSCA]{calculateWeightsIGSCA()}}. Defaults to \code{NULL}.}
 
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
 If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.

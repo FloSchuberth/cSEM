@@ -19,7 +19,7 @@ calculateWeightsGSCAm(
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
-One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
+One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
 to "\emph{diff_absolute}".}
 
 \item{.iter_max}{Integer. The maximum number of iterations allowed.

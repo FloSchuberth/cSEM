@@ -10,6 +10,10 @@ Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     role  = c("aut", "cre"),
                     email = "f.schuberth@utwente.nl",
                     comment = c(ORCID = "0000-0002-2110-9086")),
+             person(given = "Michael S.", family = "Truong",
+                    role = c("ctb"),
+                    email = "emstruonger@gmail.com",
+                    comment = c(ORCID = "0009-0006-4521-6528")),
              person(given = "Tamara", family = "Schamberger",
                     role  = c("ctb"),
                     email = "tamara.schamberger@uni-wuerzburg.de",
@@ -49,6 +53,7 @@ License: GPL-3
 Encoding: UTF-8
 NeedsCompilation: no
 LazyData: true
+LinkingTo: Rcpp,  RcppArmadillo
 Imports: 
     alabama,
     cli,
@@ -72,7 +77,13 @@ Imports:
     stats,
     symmoments,
     TruncatedNormal,
-    utils
+    utils,
+    Rcpp,
+    RcppArmadillo,
+    generics,
+    partykit,
+    Formula,
+    boot
 RdMacros: Rdpack, lifecycle
 RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
@@ -95,5 +106,6 @@ Suggests:
     graphics,
     spelling
 Config/testthat/edition: 3
+Config/testthat/parallel: true
 VignetteBuilder: knitr
 Language: en-US

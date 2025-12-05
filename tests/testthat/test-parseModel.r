@@ -1,5 +1,3 @@
-context("csem")
-
 ### Linear models ==============================================================
 ## 1. One exogenous and one endogenous construct -------------------------------
 

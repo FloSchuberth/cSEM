@@ -89,12 +89,9 @@ ETA3 =~ y7 + y8 + y9
 "
 
 ## Model and Sigma matrix for 2nd order DGP
-load("../data/DGP_2ndorder_cf_of_composites.RData")
-load("../data/Data_nonlinear_2ndorder.RData")
-# load("tests/data/DGP_2ndorder_cf_of_composites.RData") # uncomment to source
-# on local machine
-# load("tests/data/Data_nonlinear_2ndorder.RData") # uncomment to source
-# on local machine
+load(testthat::test_path("data/DGP_2ndorder_cf_of_composites.RData"))
+load(testthat::test_path("data/Data_nonlinear_2ndorder.RData"))
+
 model_2ndorder <- model_Sigma
 
 ### Data -----------------------------------------------------------------------

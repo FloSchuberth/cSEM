@@ -382,10 +382,31 @@ calculateReliabilities <- function(
   .PLS_approach_cf  = args_default()$.PLS_approach_cf,
   .reliabilities    = args_default()$.reliabilities
 ){
+
   modes   <- .W$Modes
-  W        <- .W$W
+  if (.approach_weights != "GSCA") {
+    W <- .W$W
+  } else if (.approach_weights == "GSCA") {
+    
+    W <- .W$W
+    
+    if (isTRUE(.disattenuate)) {
+      # Weights need to be scaled s.t. the composite build using .X has
+      # variance of one. Note that scaled GSCAm weights are identical
+      # to PLS ModeA weights.
+      # TODO: Does calculating reliabilities also apply to GSCA only composites?
+      # TODO: Should I use the scaled weights throughout or only for computing the reliabilities?
+      # This applies to both GSCA_m and IGSCA
+      W <- scaleWeights(.S, .W$W)
+      # if (interactive()) {
+      #   (effect_of_scaling <- W - .W$W)
+      #   c(effect_of_scaling) |> hist()
+      #   c(effect_of_scaling) |> cut(10) |> table()
+      # }
+    }
+  }
   names_cf <- names(.csem_model$construct_type[.csem_model$construct_type == "Common factor"])
-  names_c  <- setdiff(names(.csem_model$construct_type), names_cf)
+  names_c  <- names(.csem_model$construct_type[.csem_model$construct_type == "Composite"])
   Q        <- rep(1, times = nrow(W))
   names(Q) <- rownames(W)
   
@@ -430,20 +451,24 @@ calculateReliabilities <- function(
           Q[j]        <- c(W[j, ] %*% Lambda[j, ])
         }
       } 
-    } else if(.approach_weights == "GSCA") {
+    } else if (.approach_weights == "GSCA") {
       
-      if(.disattenuate & all(.csem_model$construct_type == "Common factor")) {
-        # Currently, GSCAm only supports pure common factor models. This may change
-        # in the future.
-        
-        # Compute consistent loadings and Q (Composite/proxy-construct correlation)
-        # Consistent factor loadings are obtained from GSCAm.
-        
-        for(j in rownames(Lambda)) {
-          Lambda[j, ] <- .W$C[j, ]
-          Q[j]        <- c(W[j, ] %*% Lambda[j, ]) 
+        if (any(.csem_model$construct_type == "Common factor")) {
+          # browser()
+          # Currently, GSCAm only supports pure common factor models. This may change
+          # in the future.
+          
+          # Compute consistent loadings and Q (Composite/proxy-construct correlation)
+          # Consistent factor loadings are obtained from GSCAm and IGSCA
+          
+          for (j in rownames(Lambda[names_cf, ])) {
+            # TODO: There is currently an issue with IGSCA where the factor OpennesstoExperience has a non-zero loading to multiple non-OpennesstoExperience indicators.
+            # TODO: This issue is resolved when we compute loadings using `Lambda   <- W %*% .S * .csem_model$measurement` instead
+            Lambda[j, ] <- .W$C[j, ]
+            Q[j]        <- c(W[j, ] %*% Lambda[j, ])
+          }
         }
-      }
+      
     } else if(.approach_weights %in% c("unit", "bartlett", "regression", "PCA", 
                 "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
     
