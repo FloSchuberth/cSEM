@@ -30,8 +30,88 @@ mod <- csem(.data = LeDang2022,
                   .conv_criterion = "sum_diff_absolute")
 
 
+# Parameter Estimates Only on Allowed Parameters -------------------------
+test_that("Only specified path-coefficients are non-zero", {
+  # Zero path coefficients where expected
+  expect_true(all(
+    c(mod$Estimate$Path_estimates)[c(mod$Information$Model$structural == 0)] ==
+      0
+  ))
+  # Non-zero path coefficients where expected
+  expect_true(all(
+    c(mod$Estimate$Path_estimates)[c(mod$Information$Model$structural == 1)] !=
+      0
+  ))
+})
+
+test_that("Only specified loadings are non-zero", {
+  # Zero loadings where expected
+  expect_true(all(
+    c(mod$Estimate$Loading_estimates)[c(mod$Information$Model$measurement == 0)] ==
+      0
+  ))
+  # Non-zero loadings where expected
+  expect_true(all(
+    c(mod$Estimate$Loading_estimates)[c(mod$Information$Model$measurement == 1)] !=
+      0
+  ))
+})
+
+test_that("Only specified weights are non-zero", {
+  # Note that we can use `mod$information$Model$measurement` as a substitute because for GSCA,
+  # all constructs will always have both weights and loadings.
+
+  # Zero weights where expected
+  expect_true(all(
+    c(mod$Estimate$Weight_estimates)[c(
+      mod$Information$Model$measurement == 0
+    )] ==
+      0
+  ))
+  # Non-zero weights where expected
+  expect_true(all(
+    c(mod$Estimate$Weight_estimates)[c(
+      mod$Information$Model$measurement == 1
+    )] !=
+      0
+  ))
+})
+
+test_that("Only indicators of common factors have uniqueness scores and unique loadings", {
+  names_cf <- names(mod$Information$Model$construct_type[
+    mod$Information$Model$construct_type == "Common factor"
+  ])
+
+  names_c <- names(mod$Information$Model$construct_type[
+    mod$Information$Model$construct_type == "Composite"
+  ])
+
+  indicator_cf <- apply(
+    mod$Information$Model$measurement[names_cf, ],
+    2,
+    function(col) as.logical(col) |> any()
+  )
+
+  indicator_c <- apply(
+    mod$Information$Model$measurement[names_c, ],
+    2,
+    function(col) as.logical(col) |> any()
+  )
+
+  absolute_sum_U <- colSums(abs(mod$Estimate$UniqueComponent))
+
+  # Zero uniqueness scores and unique loadings where expected
+  expect_true(all(absolute_sum_U[indicator_c] == 0))
+  expect_true(all(mod$Estimate$D2[indicator_c] ==0))
+
+  # Non-zero uniqueness scores and unique loadings where expected
+  expect_true(all(absolute_sum_U[indicator_cf] != 0))
+  expect_true(all(mod$Estimate$D2[indicator_cf] !=0))
+})
+
+# Valid Reliabilities ----------------------------------------------------
 test_that("Reliabilities are correctly estimated", {
-  expect_true(all(mod$Estimates$Reliabilities) <= 1)
+  expect_true(all(mod$Estimates$Reliabilities <= 1))
 })
 
 test_that("Model estimation passes standards", {

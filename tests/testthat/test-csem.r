@@ -233,9 +233,9 @@ test_that("DPG_2ndorder_cf_of_cfs is correctly estimated", {
 expect_no_error(capture.output(print(res)))
 
 # Export to Excel test
-exportToExcel(summarize(res), .filename = "test_summarize", .path = testthat::test_path("test_results_exportToExcel"))
-exportToExcel(suppressWarnings(assess(res)), .filename = "test_assess", .path = testthat::test_path("test_results_exportToExcel"))
-exportToExcel(testOMF(res, .R = 20), .filename = "test_testOMF", .path = testthat::test_path("test_results_exportToExcel"))
+exportToExcel(summarize(res), .filename = "test_summarize_sole.xlsx", .path = testthat::test_path("test_results_exportToExcel"))
+exportToExcel(suppressWarnings(assess(res)), .filename = "test_assess_sole.xlsx", .path = testthat::test_path("test_results_exportToExcel"))
+exportToExcel(testOMF(res, .R = 20), .filename = "test_testOMF_sole.xlsx", .path = testthat::test_path("test_results_exportToExcel"))
 
 ### DGP_2ndorder - Common factor of composites =================================
 # Loads Sigma, models and population values
