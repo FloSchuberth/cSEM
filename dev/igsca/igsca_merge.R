@@ -39,11 +39,16 @@ data(LeDang2022)
 
 # Reliabilities ---------------------------------------------------------------
 
+# What I iterate through
+#' devtools::load_all(".")
+#' devtools::test_active_file()
 
 # debugonce(csem)
 # debugonce(foreman)
 # debugonce(calculateWeightsIGSCA)
 debugonce(igsca)
+debugonce(initializeAlsEstimates)
+debugonce(initializeIgscaEstimates) # TODO: Add proper row and column names -> Test that everything is as usual. 
 # debugonce(calculateReliabilities)
 (debug_mod <- csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "GSCA",
 .dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion =

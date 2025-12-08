@@ -423,8 +423,8 @@ initializeAlsEstimates <- function(Z0, W0, B0, n_indicators, n_case, n_construct
   initial_est <-
     initializeIgscaEstimates(
       Z0 = Z0,
-      W0 = apply(W0 != 0, 2, as.numeric),
-      B0 = apply(B0 != 0, 2, as.numeric),
+      W0 = W0,
+      B0 = B0,
       .S = .S
     )
   
