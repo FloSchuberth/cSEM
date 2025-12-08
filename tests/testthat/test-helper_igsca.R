@@ -182,7 +182,8 @@ test_that("Reliabilities are correctly estimated", {
 })
 
 test_that("Model estimation passes standards", {
-  expect_true(all(verify(mod)))
+  # Counter-intuitively, FALSE means that convergence was OK
+  expect_true(all(!verify(mod))) 
 })
 
 ### Custom Function for Organizing IGSCA Results ----------------------------
