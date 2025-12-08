@@ -31,10 +31,10 @@ Numberofjoboffers ~ NetworkingBehavior
 
 data(LeDang2022)
 
-(mod <- csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "GSCA",
-.dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion =
-"sum_diff_absolute")
-)
+# (mod <- csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "GSCA",
+# .dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion =
+# "sum_diff_absolute")
+# )
 
 
 # Reliabilities ---------------------------------------------------------------
@@ -43,7 +43,8 @@ data(LeDang2022)
 # debugonce(csem)
 # debugonce(foreman)
 # debugonce(calculateWeightsIGSCA)
-debugonce(calculateReliabilities)
+debugonce(igsca)
+# debugonce(calculateReliabilities)
 (debug_mod <- csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "GSCA",
 .dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion =
 "sum_diff_absolute")

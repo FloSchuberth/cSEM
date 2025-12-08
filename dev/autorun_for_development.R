@@ -7,3 +7,13 @@ rlang::global_handle()
 library(lobstr)
 
 # lobstr::tree()
+
+
+# library(cli)
+cli::pretty_print_code()
+
+# Test by typing `lm` in the console
+
+#' library(tibble)
+# For printing something easier to see
+#' tibble::as_tibble()
