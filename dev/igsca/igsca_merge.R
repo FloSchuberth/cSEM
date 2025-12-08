@@ -48,7 +48,7 @@ data(LeDang2022)
 # debugonce(calculateWeightsIGSCA)
 debugonce(igsca)
 # debugonce(initializeAlsEstimates)
-# debugonce(initializeIgscaEstimates) 
+# debugonce(initializeIgscaEstimates)
 debugonce(updateCBDU)
 # debugonce(calculateReliabilities)
 (debug_mod <- csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "GSCA",

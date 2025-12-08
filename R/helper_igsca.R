@@ -100,7 +100,7 @@ igsca <-
   n_total_var <- n_indicators + n_constructs
   
   w_index <- which(c(W0) == 1) 
-  c_index <- which(c(C0) == 1)
+  c_index <- which(c(t(C0)) == 1)
   b_index <- which(c(B0) == 1)
   
   # Initialize Bindpoints for list2env
@@ -630,7 +630,6 @@ updateCBDU <-
     # M1 <- kronecker(diag(n_indicators), Gamma)
     # M1 <- M1[, c_index]
     M1 <- kroneckerC(diag(n_indicators), Gamma, c_index)
-    # TODO: Is this a problem with c_index or with the generalized inverse? What goes into the generalized inverse?
     C[c_index] <- MASS::ginv(t(M1) %*% M1) %*% (t(M1) %*% t1)
     # 
     # Kronecker bypass as shown in calculateWeightsGSCAm
