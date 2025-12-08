@@ -47,8 +47,9 @@ data(LeDang2022)
 # debugonce(foreman)
 # debugonce(calculateWeightsIGSCA)
 debugonce(igsca)
-debugonce(initializeAlsEstimates)
-debugonce(initializeIgscaEstimates) # TODO: Add proper row and column names -> Test that everything is as usual. 
+# debugonce(initializeAlsEstimates)
+# debugonce(initializeIgscaEstimates) 
+debugonce(updateCBDU)
 # debugonce(calculateReliabilities)
 (debug_mod <- csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "GSCA",
 .dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion =
@@ -60,3 +61,17 @@ debugonce(initializeIgscaEstimates) # TODO: Add proper row and column names -> T
 # TODO: Investigate what might be wrong with my IGSCA implementation
 
 testthat::expect_true(all(mod$Estimates$Reliabilities <= 1))
+
+
+
+# Within updateCBDU -------------------------------------------------------
+
+M1_R <- kronecker(diag(n_indicators), Gamma)[, c_index]
+M1_C <- kroneckerC(diag(n_indicators), Gamma, c_index)
+identical(M1_R, M1_C) # Apparently this is true
+# M1 <- M1[, c_index]
+
+# TODO: Run this everytime I need to check it
+C |> t() |> round(digits = 2)
+C |> t() |> round(digits = 2) |> subset(select = "OpennesstoExperience")
+
