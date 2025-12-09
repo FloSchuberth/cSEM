@@ -70,7 +70,7 @@ mat_end_extract_order <- c("W", "C", "B", "uniqueD")
 
 mat_end <-
   R.matlab::readMat(
-    "~/Documents/RStudio/cSEM/tests/comparisons/igsca_translation/matlab_out/end_results.MAT" # Hard-Coded value
+here::here("tests/comparisons/igsca_translation/matlab_out/end_results.MAT")
   ) |>
   {
     \(mat_env) mat_env[mat_end_extract_order]
@@ -100,7 +100,7 @@ Numberofjoboffers ~ NetworkingBehavior
 
 mod <- csem(.data = LeDang2022,
             tutorial_igsca_model,
-            .approach_weights = "IGSCA",
+            .approach_weights = "GSCA",
             .dominant_indicators = NULL,
             .tolerance = 0.0001,
             .conv_criterion = "sum_diff_absolute")
