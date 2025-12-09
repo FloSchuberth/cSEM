@@ -48,6 +48,7 @@
 #' * (5) Unique Component of Indicators (for common factors) DU
 #'  
 #' @importFrom MASS ginv 
+#' @import RcppArmadillo
 #' 
 #' @references
 #'   \insertAllCited{}
