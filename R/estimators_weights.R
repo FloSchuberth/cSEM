@@ -716,90 +716,94 @@ calculateWeightsGSCAm <- function(
   est  <-  A[which(A != 0)]
   est0 <- est + 1
   iter_counter <- 0
-  while (sum(sum(abs(est0 - est))) > .tolerance & iter_counter < .iter_max) {
-    
-    iter_counter  <- iter_counter + 1
-    est0  <- est
-    X     <- Z - U %*% D
-    WW    <- t(C) %*% solve(C %*% t(C) + Ip - 2*B + B %*% t(B))
-    for(p in 1:P) {
-      windex_p <- which(W[ , p] != 0)
-      w        <- WW[windex_p, p]
-      Xp       <- X[,windex_p, drop = FALSE]
+  
+  while ((!checkConvergence(.W_new = est, .W_old = est0,
+                            .tolerance = .tolerance,
+                            .conv_criterion = .conv_criterion)) &
+      (iter_counter <= .iter_max)
+  ) {
+    iter_counter <- iter_counter + 1
+    est0 <- est
+    X <- Z - U %*% D
+    WW <- t(C) %*% solve(C %*% t(C) + Ip - 2 * B + B %*% t(B))
+    for (p in 1:P) {
+      windex_p <- which(W[, p] != 0)
+      w <- WW[windex_p, p]
+      Xp <- X[, windex_p, drop = FALSE]
       # If construct p is a single-indicator construct, dividing w by its norm
       # sometimes doesnt yield 1 exactly due to the way norm() works. This causes
       # problems in verify() since we check if loadings are > 1, which they are
 
       # if the weight is 1.000000...0002.
-      if(length(w) == 1) {
+      if (length(w) == 1) {
         w <- 1
       } else {
-        w        <- w / norm(Xp %*% w, type = "2")
+        w <- w / norm(Xp %*% w, type = "2")
       }
       W[windex_p, p] <- w
-      Gamma[ , p]    <- Xp %*% w
+      Gamma[, p] <- Xp %*% w
     }
-    
+
     # Step 2a: Update B (the structural coefficients for a given W)
     vcv_gamma <- t(Gamma) %*% Gamma
     vars_endo <- which(colSums(B) != 0)
-    
+
     beta <- lapply(vars_endo, function(y) {
-      x    <- which(B[, y, drop = FALSE] != 0)
-      coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*% vcv_gamma[x, y, drop = FALSE]
+      x <- which(B[, y, drop = FALSE] != 0)
+      coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*%
+        vcv_gamma[x, y, drop = FALSE]
     })
     B[B != 0] <- unlist(beta)
-    
+
     # Step 2b: Update C (the loadings for a given W)
     vars_cf <- which(.csem_model$construct_type == "Common factor")
-    if(length(vars_cf) > 0) {
-      
+    if (length(vars_cf) > 0) {
       cov_gamma_indicators <- t(Gamma) %*% X
-      Y <- which(colSums(C[vars_cf, ]) !=0)
+      Y <- which(colSums(C[vars_cf, ]) != 0)
       loadings <- lapply(Y, function(y) {
-        x    <-  which(C[vars_cf, y] != 0)
-        coef <- solve(vcv_gamma[x, x, drop = FALSE]) %*% cov_gamma_indicators[x, y, drop = FALSE]
+        x <- which(C[vars_cf, y] != 0)
+        coef <- solve(vcv_gamma[x, x, drop = FALSE]) %*%
+          cov_gamma_indicators[x, y, drop = FALSE]
       })
-      
+
       # Transform
       tC <- t(C)
       tC[tC != 0] <- unlist(loadings)
       C <- t(tC)
     }
-    
-    # Implementation based on the updated MATLAB code provided by Heungsun in 
+
+    # Implementation based on the updated MATLAB code provided by Heungsun in
     # private communication to deal with big dataset (20.10.2021)
-    temp <- svd(t(Gamma)%*%Gamma)
-    gd2 <- diag(temp$d) 
+    temp <- svd(t(Gamma) %*% Gamma)
+    gd2 <- diag(temp$d)
     gv <- temp$v
-    
-    GU <- Gamma%*%gv%*%solve(sqrt(gd2))
-    M3 <- Z%*%D - GU%*%(t(GU)%*%Z)%*%t(D)
-    
-    if(N>J){
-      temp <- svd(t(M3)%*%M3)
+
+    GU <- Gamma %*% gv %*% solve(sqrt(gd2))
+    M3 <- Z %*% D - GU %*% (t(GU) %*% Z) %*% t(D)
+
+    if (N > J) {
+      temp <- svd(t(M3) %*% M3)
       d2 <- diag(temp$d)
       v <- temp$v
-      
-      u <- M3%*%v%*%solve(sqrt(d2))
-      U <- u[,1:J,drop=FALSE]%*%t(v)
+
+      u <- M3 %*% v %*% solve(sqrt(d2))
+      U <- u[, 1:J, drop = FALSE] %*% t(v)
     } else {
       temp = svd(M3)
       u <- temp$u
       v <- temp$v
-      U <- u[,1:J,drop = FALSE]%*%t(v)
+      U <- u[, 1:J, drop = FALSE] %*% t(v)
     }
-    
-    
+
     # Old GSCAm implementation
-    # 
+    #
     # Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, (P+1):N, drop = FALSE]
     # s          <- svd(D %*% t(Z) %*% Gamma_orth)
     # U_tilde    <- s$v %*% t(s$u)
     # U          <- Gamma_orth %*% U_tilde # this is the initial matrix U
-    
+
     D <- diag(diag(t(U) %*% Z))
-    
+
     # Build A
     A <- cbind(C, B)
     est <- A[which(A != 0)]
