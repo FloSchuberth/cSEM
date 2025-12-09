@@ -461,9 +461,7 @@ calculateReliabilities <- function(
           # Compute consistent loadings and Q (Composite/proxy-construct correlation)
           # Consistent factor loadings are obtained from GSCAm and IGSCA
           
-          for (j in rownames(Lambda[names_cf, ])) {
-            # TODO: There is currently an issue with IGSCA where the factor OpennesstoExperience has a non-zero loading to multiple non-OpennesstoExperience indicators.
-            # TODO: This issue is resolved when we compute loadings using `Lambda   <- W %*% .S * .csem_model$measurement` instead
+          for (j in rownames(Lambda[names_cf, ])) {   
             Lambda[j, ] <- .W$C[j, ]
             Q[j]        <- c(W[j, ] %*% Lambda[j, ])
           }

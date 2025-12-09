@@ -23,7 +23,7 @@ Numberofjoboffers ~ NetworkingBehavior
 
 ## Compute and tabulate igsca ----------------------------------------------------
 mod <- csem(.data = LeDang2022,
-                  tutorial_igsca_model,
+                  .model = tutorial_igsca_model,
                   .approach_weights = "GSCA",
                   .dominant_indicators = NULL,
                   .tolerance = 0.0001,
@@ -334,9 +334,41 @@ testthat::expect_success(testthat::expect_equal(igsca_sim_m_table,
 
 # all.equal(igsca_sim_m_table, igsca_gscapro)
 
-
 # Comparing Different Ways of Fitting Group Models ------------------------
 # TODO: Is fitting multiple models separately for each sub-group the same as
 # fitting a 'global model'? Wasn't sure if the number of iterations + exit
 # condition might make it so that a global model might exit earlier than a model
 # for each sub-group?
+
+# Accessory Functions ----------------------------------------------------
+# TODO: Write these tests for getIgscaInputs
+
+test_that("getIgscaInputs output is of the correct dimensions", {
+  out <- getIgscaInputs(
+    .data = processData(
+      .data = LeDang2022,
+      .model = tutorial_igsca_model,
+      .instruments = NULL
+    ),
+    .model = tutorial_igsca_model
+  )
+  Z0 <- out$Z0
+  W0 <- out$W0
+  B0 <- out$B0
+  C0 <- out$C0
+  con_type <- out$con_type
+  indicator_type <- out$indicator_type
+
+  # Data matrix (Z0) does not correctly correspond with Weights matrix (W0)
+  expect_equal(colnames(Z0), rownames(W0))
+  # Weights matrix (W0) does not correctly correspond with Structural matrix (B0)
+  expect_equal(colnames(W0), colnames(B0))
+  # Construct indicator does not correctly correspond with Weights Matrix (W0)
+  expect_equal(names(con_type), colnames(W0))
+  # All indicators for composite and common factor should have loadings in I-GSCA
+  expect_equal(W0, t(C0))
+  # Every indicator should only have loadings from one construct
+  expect_equal(unique(colSums(C0)), 1)
+  # Every indicator should only have weights to one construct
+  expect_equal(unique(rowSums(W0)), 1)
+})

@@ -1,9 +1,9 @@
 #' R Implementation of igsca_sim.m
-#' 
+#'
 #' This R implementation of I-GSCA is based on the Matlab implementation in igsca_sim.m by Dr. Heungsun Hwang.
-#' 
+#'
 #' In the example section, the specified model is based on the tutorial I-GSCA model associated with GSCA Pro \insertCite{hwangetal2023StructuralEquationModelingAMultidisciplinaryJournal}{cSEM}.
-#' 
+#'
 #' @param Z0 Data matrix of N cases (measurements) x J indicators with named
 #'   columns, unstandardized.
 #' @param W0 Indicator matrix of weights: J indicators (rows) and their
@@ -38,18 +38,18 @@
 #'   the optimization.
 #' @inheritParams csem
 #' @inheritParams csem_arguments
-#' 
+#'
 #' @author Michael S. Truong
-#' @return List of 4 matrices that make up a fitted I-GSCA Model: 
-#' * (1) Weights 
-#' * (2) Loadings 
-#' * (3) Squared Unique Loadings D^2 
+#' @return List of 4 matrices that make up a fitted I-GSCA Model:
+#' * (1) Weights
+#' * (2) Loadings
+#' * (3) Squared Unique Loadings D^2
 #' * (4) Path Coefficients.
 #' * (5) Unique Component of Indicators (for common factors) DU
-#'  
-#' @importFrom MASS ginv 
+#'
+#' @importFrom MASS ginv
 #' @import RcppArmadillo
-#' 
+#'
 #' @references
 #'   \insertAllCited{}
 #' @examples
@@ -57,103 +57,121 @@
 #' # Specify the model according to GSCA Pro's example
 #' tutorial_igsca_model <- "
 #' # Composite Model
-#' NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + 
+#' NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 +
 #'                       Behavior7 + Behavior8 +  Behavior9
 #' Numberofjobinterviews <~ Interview1 + Interview2
-#' Numberofjoboffers <~ Offer1 + Offer2 
-#' 
+#' Numberofjoboffers <~ Offer1 + Offer2
+#'
 #' # Reflective Measurement Model
-#' HonestyHumility =~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 + 
+#' HonestyHumility =~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 +
 #'                     Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10
-#' Emotionality =~ Emotion1 + Emotion2 + Emotion3 + Emotion4 + 
+#' Emotionality =~ Emotion1 + Emotion2 + Emotion3 + Emotion4 +
 #'                 Emotion5 + Emotion6 + Emotion8 + Emotion10
-#' Extraversion =~ Extraver2 + Extraver3 + Extraver4 + Extraver5 + 
+#' Extraversion =~ Extraver2 + Extraver3 + Extraver4 + Extraver5 +
 #'                 Extraver6 + Extraver7 + Extraver8 + Extraver9 + Extraver10
 #' Agreeableness =~ Agreeable1 + Agreeable3 + Agreeable4 + Agreeable5 +
 #'                  Agreeable7 + Agreeable8 + Agreeable9 + Agreeable10
-#' Conscientiousness =~ Conscientious1 + Conscientious3 + Conscientious4 + 
-#'                      Conscientious6 + Conscientious7 + Conscientious8 + 
+#' Conscientiousness =~ Conscientious1 + Conscientious3 + Conscientious4 +
+#'                      Conscientious6 + Conscientious7 + Conscientious8 +
 #'                      Conscientious9 + Conscientious10
-#' OpennesstoExperience =~ Openness1 + Openness2 + Openness3 + Openness5 + 
+#' OpennesstoExperience =~ Openness1 + Openness2 + Openness3 + Openness5 +
 #'                         Openness7 + Openness8 + Openness9 + Openness10
-#' 
+#'
 #' # Structural Model
-#' NetworkingBehavior ~ HonestyHumility + Emotionality + Extraversion + 
+#' NetworkingBehavior ~ HonestyHumility + Emotionality + Extraversion +
 #'                      Agreeableness + Conscientiousness + OpennesstoExperience
 #' Numberofjobinterviews ~ NetworkingBehavior
 #' Numberofjoboffers ~ NetworkingBehavior
 #' "
-#' 
+#'
 #' data(LeDang2022)
-#' 
+#'
 #' csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "GSCA",
 #' .dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion =
 #' "sum_diff_absolute")
 #' }
 igsca <-
-  function(Z0, W0, C0, B0, con_type, indicator_type, .dominant_indicators, .iter_max = 100, .tolerance = 0.0001, .conv_criterion, .S = args_default()$.S) {
-    
-  
-## Initialize Computational Variables -----------------------------------------------------
-  n_case <- nrow(Z0)
-  n_indicators <- ncol(Z0)
-  n_constructs <- ncol(W0)
-  n_total_var <- n_indicators + n_constructs
-  
-  w_index <- which(c(W0) == 1) 
-  c_index <- which(c(t(C0)) == 1)
-  b_index <- which(c(B0) == 1)
-  
-  # Initialize Bindpoints for list2env
-  Z <- matrix()
-  C <- matrix()
-  W <- matrix()
-  B <- matrix()
-  V <- matrix()
-  D <- matrix()
-  U <- matrix()
-  Gamma <- matrix()
-  X <- matrix()
-  WW <- matrix()
+  function(
+    Z0,
+    W0,
+    C0,
+    B0,
+    con_type,
+    indicator_type,
+    .dominant_indicators,
+    .iter_max = 100,
+    .tolerance = 0.0001,
+    .conv_criterion,
+    .S = args_default()$.S
+  ) {
+    ## Initialize Computational Variables -----------------------------------------------------
+    n_case <- nrow(Z0)
+    n_indicators <- ncol(Z0)
+    n_constructs <- ncol(W0)
+    n_total_var <- n_indicators + n_constructs
 
-### Initial Estimates and Preparation -------------------------------------
-  prepared_for_ALS <- initializeAlsEstimates(
-    Z0 = Z0,
-    W0 = W0,
-    B0 = B0,
-    n_indicators = n_indicators,
-    n_case = n_case,
-    n_constructs = n_constructs,
-    indicator_type = indicator_type,
-    .S = .S
-  )
-  
-  list2env(prepared_for_ALS[c("W", "C", "B", "V", "Z", "D", "U", "Gamma")],
-           envir = environment())
-  
-  
-## Alternating Least Squares Algorithm -------------------------------------
+    w_index <- which(c(W0) == 1)
+    c_index <- which(c(C0) == 1)
+    b_index <- which(c(B0) == 1)
 
-### Optimization Preparation -----------------------------------------------
+    # Initialize Bindpoints for list2env
+    Z <- matrix()
+    C <- matrix()
+    W <- matrix()
+    B <- matrix()
+    V <- matrix()
+    D <- matrix()
+    U <- matrix()
+    Gamma <- matrix()
+    X <- matrix()
+    WW <- matrix()
+
+    ### Initial Estimates and Preparation -------------------------------------
+    prepared_for_ALS <- initializeAlsEstimates(
+      Z0 = Z0,
+      W0 = W0,
+      B0 = B0,
+      n_indicators = n_indicators,
+      n_case = n_case,
+      n_constructs = n_constructs,
+      indicator_type = indicator_type,
+      .S = .S
+    )
+
+    list2env(
+      prepared_for_ALS[c("W", "C", "B", "V", "Z", "D", "U", "Gamma")],
+      envir = environment()
+    )
+
+    ## Alternating Least Squares Algorithm -------------------------------------
+
+    ### Optimization Preparation -----------------------------------------------
     # Set the initial estimates based on either the structural model or the loadings
     # if there's no structural model
     if (length(b_index) > 0) {
-      est <- B[b_index] 
+      est <- B[b_index]
     } else {
       est <- C[c_index]
-    }    
-    est0 <- est + 1 
+    }
+    est0 <- est + 1
     it <- 0
-    
-### Optimization Loop: Alternating Between Weights and Loadings ---------------
 
-    while ((!checkConvergence(.W_new = est, .W_old = est0, .tolerance = .tolerance, .conv_criterion = .conv_criterion)) && (it <= .iter_max)) {
+    ### Optimization Loop: Alternating Between Weights and Loadings ---------------
 
+    while (
+      (!checkConvergence(
+        .W_new = est,
+        .W_old = est0,
+        .tolerance = .tolerance,
+        .conv_criterion = .conv_criterion
+      )) &&
+        (it <= .iter_max)
+    ) {
       # Update Counter Variables
       it <- it + 1
       est0 <- est
-  
-#### Compute Pseudo-Weights --------------------------------------------------
+
+      #### Compute Pseudo-Weights --------------------------------------------------
       updated_X_WW_pseudo_weights <- updateXAndWW(
         Z = Z,
         U = U,
@@ -165,19 +183,17 @@ igsca <-
       # Creates X (for updating Composites) and WW (for updating Factors)
       list2env(updated_X_WW_pseudo_weights[c("X", "WW")], envir = environment())
 
-#### Sequential Updating of Constructs ---------------------------------------
+      #### Sequential Updating of Constructs ---------------------------------------
 
-      A <- cbind(C, B) 
-      
+      A <- cbind(C, B)
+
       # After each cycle, the Gamma, W and V matrices are updated
       for (gamma_idx in seq_len(n_constructs)) {
-      
         tot <- n_indicators + gamma_idx
         windex_gamma_idx <- (W0[, gamma_idx] == 1)
         X_gamma_idx <- X[, windex_gamma_idx]
-        
+
         if (con_type[gamma_idx] == "Composite") {
-          
           Theta <-
             updateCompositeTheta(
               W = W, # Changes per gamma_idx iteration
@@ -191,30 +207,25 @@ igsca <-
               windex_gamma_idx = windex_gamma_idx, # Changes per gamma_idx iteration
               .S = .S
             )
-          
         } else if (con_type[gamma_idx] == "Common factor") {
-          
           Theta <-
-             updateCommonFactorTheta(
-               WW = WW, 
-               windex_gamma_idx = windex_gamma_idx, # Changes per gamma_idx iteration
-               gamma_idx = gamma_idx # Changes per gamma_idx iteration
-               )
-          
+            updateCommonFactorTheta(
+              WW = WW,
+              windex_gamma_idx = windex_gamma_idx, # Changes per gamma_idx iteration
+              gamma_idx = gamma_idx # Changes per gamma_idx iteration
+            )
         } else {
-          
           stop("con_type should only either be `Composite` or `Common factor`")
-          
         }
-        
+
         # This is where Gamma, Weights and V are updated based on which gamma_idx
         Theta <- Theta / norm(X_gamma_idx %*% Theta, "2")
         Gamma[, gamma_idx] <- X_gamma_idx %*% Theta
         W[windex_gamma_idx, gamma_idx] <- Theta
         V[windex_gamma_idx, tot] <- Theta
-    }
-      
-#### Update Loadings, Path Coefficients and Uniqueness Terms ----------
+      }
+
+      #### Update Loadings, Path Coefficients and Uniqueness Terms ----------
       updated_C_B_D_U <- updateCBDU(
         X = X,
         Gamma = Gamma,
@@ -230,10 +241,10 @@ igsca <-
         b_index = b_index,
         con_type = con_type
       )
-      
+
       list2env(updated_C_B_D_U[c("D", "U", "C", "B")], envir = environment())
 
-#### Update estimates for while-loop condition testing -----------------------
+      #### Update estimates for while-loop condition testing -----------------------
       if (length(b_index) > 0) {
         est <- B[b_index]
       } else {
@@ -241,7 +252,7 @@ igsca <-
       }
     }
 
-## Flip Signs for Factors and Composites Based on Dominant Indicators --------
+    ## Flip Signs for Factors and Composites Based on Dominant Indicators --------
     if (!is.null(.dominant_indicators)) {
       flipped_signs <-
         flipGammaCBSigns(
@@ -252,87 +263,80 @@ igsca <-
           n_constructs = n_constructs,
           .dominant_indicators = .dominant_indicators
         )
-      
+
       list2env(flipped_signs[c("Gamma", "C", "B")], envir = environment())
     }
 
-## Output Formatting -------------------------------------------------------
-  Weights <- W
-  rownames(Weights) <- rownames(W0) 
-  
-  Loadings <- t(C)
-  rownames(Loadings) <- rownames(C0)
-  
-  SquaredUniqueLoadingsD <- diag(D) ^ 2
-  names(SquaredUniqueLoadingsD) <- rownames(Loadings) 
-  
-  # testthat::expect_equal(t(U) %*% U, diag(ncol(U)))
-  # Agreeing with page 275 of Hwang et al (2021) IGSCA publication 
-  
-  UniquePart_UD <- U %*% D
-  colnames(UniquePart_UD) <- colnames(Z)
-  
-  PathCoefficients <- B
-  
-  
+    ## Output Formatting -------------------------------------------------------
+    SquaredUniqueLoadingsD <- diag(D)^2
+    names(SquaredUniqueLoadingsD) <- colnames(Z)
+
+    Unique_Scores <- U %*% D
+    colnames(Unique_Scores) <- colnames(Z)
+
+    PathCoefficients <- B
+
     return(
       list(
-        "Data"    = Z,
-        "Weights" = Weights,
-        "Loadings" =  Loadings,
-        "Path Coefficients" =  PathCoefficients,
+        "Data" = Z,
+        "Weights" = W,
+        "Loadings" = t(C), # Note: The rest of the package expects Construct X Indicators
+        "Path Coefficients" = B,
         "Squared Unique Loadings" = SquaredUniqueLoadingsD,
-        "UniqueComponent" = UniquePart_UD,
+        "UniqueComponent" = Unique_Scores,
         "Construct Scores" = Gamma,
         "Iterations" = it
       )
     )
-
-}
+  }
 
 #' R Implementation of gsca_inione.m from Heungsun Hwang
-#' 
+#'
 #' Initializes the values for I-GSCA by using modified Generalized Structured
 #' Component Analysis (GSCA) to estimate the model.
-#' 
+#'
 #' @inheritParams igsca
 #' @inheritParams csem_arguments
-#' @importFrom MASS ginv 
+#' @importFrom MASS ginv
 #' @author Michael S. Truong
 #' @returns Returns a list of starting values for:
 #' * Weights (W)
 #' * Loadings (C)
-#' * Path Coefficients (B)  
+#' * Path Coefficients (B)
 #'
 initializeIgscaEstimates <- function(Z0, W0, B0, .S = args_default()$.S) {
-  
   N <- nrow(Z0)
   J <- nrow(W0)
   P <- ncol(W0)
   TRep <- J + P
   C0 <- t(W0)
   A0 <- cbind(C0, B0)
-  
+
   w_index <- which(W0 != 0)
   aindex <- which(A0 != 0)
-  
+
   # The original algorithm may be doing this to use a biased consistent estimator of the standard deviation instead of unbiased, not sure why.
   Z <- scale(Z0, center = TRUE, scale = TRUE) * sqrt(N) / sqrt(N - 1)
   # Random Values to W and A
   W <- W0
   A <- A0
-  
+
   W[w_index] <- rep(1, length(w_index))
   A[aindex] <- runif(length(aindex), min = 0, max = 1)
-  
+
   Gamma <- Z %*% W
   W <-
-    W / (t(sqrt(diag(t(
-      Gamma
-    ) %*% Gamma))) |> rep(each = nrow(W)))
+    W /
+    (t(sqrt(diag(
+      t(
+        Gamma
+      ) %*%
+        Gamma
+    ))) |>
+      rep(each = nrow(W)))
   V <- cbind(diag(J), W)
   Gamma <- Z %*% W
-  
+
   Psi <- Z %*% V
   vecPsi <- c(Psi)
   it <- 0
@@ -344,13 +348,13 @@ initializeIgscaEstimates <- function(Z0, W0, B0, .S = args_default()$.S) {
     # Phi <- Phi[, aindex]
     Phi <- kroneckerC(diag(TRep), Gamma, aindex)
     A[aindex] <- solve(t(Phi) %*% Phi, t(Phi)) %*% vecPsi
-    
+
     for (p in seq_len(P)) {
       t_lil <- J + p
       windex_p <- which(W0[, p] != 0)
       m <- matrix(0, nrow = 1, ncol = TRep)
       m[t_lil] <- 1
-      a <- A[p,]
+      a <- A[p, ]
       beta <- m - a
       H1 <- diag(P)
       H2 <- diag(TRep)
@@ -358,21 +362,21 @@ initializeIgscaEstimates <- function(Z0, W0, B0, .S = args_default()$.S) {
       H2[t_lil, t_lil] <- 0
       Delta <- (W %*% H1 %*% A) - (V %*% H2)
       # vecZDelta <- c(Z %*% Delta)
-      
+
       # XI <- kronecker(t(beta), Z)
       # XI <- XI[, windex_p]
-      
+
       # XI <- kroneckerC(t(beta), Z, windex_p)
       # Theta <- MASS::ginv(t(XI) %*% XI) %*% t(XI) %*% vecZDelta
-      
+
       # Kronecker bypass -- as shown in calculateWeightsGSCA.R
-      Theta <- MASS::ginv(as.numeric(beta%*%t(beta))*.S[windex_p,windex_p]) %*%
-        t(beta %*% t(Delta) %*% .S[,windex_p])
-      
-      
+      Theta <- MASS::ginv(
+        as.numeric(beta %*% t(beta)) * .S[windex_p, windex_p]
+      ) %*%
+        t(beta %*% t(Delta) %*% .S[, windex_p])
+
       zw <- Z[, windex_p] %*% Theta
-      
-      
+
       Theta <- sqrt(N) * Theta / norm(zw, "2")
       W[windex_p, p] <- Theta
       V[windex_p, t_lil] <- Theta
@@ -399,14 +403,14 @@ initializeIgscaEstimates <- function(Z0, W0, B0, .S = args_default()$.S) {
 #' Prepare for ALS Algorithm
 #'
 #' Internal I-GSCA function
-#' 
+#'
 #' @inheritParams igsca
 #' @inheritParams csem_arguments
 #' @param n_indicators Number of indicators
 #' @param n_case Number of measurements
 #' @param n_constructs Number of constructs
 #'
-#' @returns List of matrices to put through the Alternating Least Squared (ALS) algorithm: 
+#' @returns List of matrices to put through the Alternating Least Squared (ALS) algorithm:
 #' * Estimated Weights matrix (W)
 #' * Estimated Loadings matrix (C)
 #' * Estimated Path Coefficients matrix (B)
@@ -414,12 +418,20 @@ initializeIgscaEstimates <- function(Z0, W0, B0, .S = args_default()$.S) {
 #' * Estimated Uniqueness Errors vector (D)
 #' * Estimated Related to Uniqueness Errors vector (U)
 #' * Estimated Construct Scores matrix (Gamma)
-initializeAlsEstimates <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, indicator_type, .S = args_default()$.S) {
-  
+initializeAlsEstimates <- function(
+  Z0,
+  W0,
+  B0,
+  n_indicators,
+  n_case,
+  n_constructs,
+  indicator_type,
+  .S = args_default()$.S
+) {
   # Initialize Bindpoints for list2env
   W <- matrix()
   B <- matrix()
-  
+
   # Initial estimates using GSCA
   initial_est <-
     initializeIgscaEstimates(
@@ -428,9 +440,9 @@ initializeAlsEstimates <- function(Z0, W0, B0, n_indicators, n_case, n_construct
       B0 = B0,
       .S = .S
     )
-  
+
   list2env(initial_est[c("W", "C", "B")], envir = environment())
-  
+
   # Initialize matrix to hold V
   V <- cbind(diag(n_indicators), W)
   # Standardize Data Matrix
@@ -439,56 +451,55 @@ initializeAlsEstimates <- function(Z0, W0, B0, n_indicators, n_case, n_construct
   Gamma <- Z %*% W
   # Initialize Unique Error Matrix
   D <- diag(n_indicators)
-  
-  # 
+
+  #
   # Solution for Q is copied from estimators_weights.R
-  Q <- qr.Q(qr(Gamma), complete =  TRUE)
+  Q <- qr.Q(qr(Gamma), complete = TRUE)
   F_o <- Q[, (n_constructs + 1):n_case, drop = FALSE]
-  
+
   if (n_case <= n_indicators) {
     # I don't know if the following warning is necessary given that it should
     # still work -- this is said to come from the old gsca_m implementation in
     # estimators_weights.R
-    # 
+    #
     # This also comes from the Supplementary Material to GSCA_m, so I think it
     # should work
-    # 
+    #
     # warning("Model may not be correctly estimated because the number of cases is less than the number of indicators and the handling is experimental.")
-    
+
     # From estimator_weights.R, which is from one of the older GSCA_m implementations
     # Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, (n_constructs+1):n_case, drop = FALSE]
-    s          <- svd(D %*% t(Z) %*% F_o)
-    Utilde    <- s$v %*% t(s$u)
-    U          <- F_o %*% Utilde # Gamma_orth = F_o
-    
+    s <- svd(D %*% t(Z) %*% F_o)
+    Utilde <- s$v %*% t(s$u)
+    U <- F_o %*% Utilde # Gamma_orth = F_o
   } else if (n_case > n_indicators) {
     # svd between R and Matlab by Ahmed Fasih on February 1/2017
     # https://stackoverflow.com/a/41972818
-    
-    U <- tryCatch({
-      svd_out <- (D %*% t(Z) %*% F_o) |>
-        {
-          \(mx) svd(mx, nu = nrow(mx), nv = ncol(mx))
-        }()
-      u <- svd_out$u
-      v <- svd_out$v
-      # Utilde deviates from Matlab because of the SVD
-      Utilde <- v[, 1:n_indicators] %*% t(u)
-      U <- F_o %*% Utilde
-    }, error = function(e) {
-      s          <- svd(D %*% t(Z) %*% F_o)
-      Utilde    <- s$v %*% t(s$u)
-      U          <- F_o %*% Utilde # Gamma_orth = F_o
-      return(U)
-    })
-    
-    
+
+    U <- tryCatch(
+      {
+        svd_out <- (D %*% t(Z) %*% F_o) |>
+          {
+            \(mx) svd(mx, nu = nrow(mx), nv = ncol(mx))
+          }()
+        u <- svd_out$u
+        v <- svd_out$v
+        # Utilde deviates from Matlab because of the SVD
+        Utilde <- v[, 1:n_indicators] %*% t(u)
+        U <- F_o %*% Utilde
+      },
+      error = function(e) {
+        s <- svd(D %*% t(Z) %*% F_o)
+        Utilde <- s$v %*% t(s$u)
+        U <- F_o %*% Utilde # Gamma_orth = F_o
+        return(U)
+      }
+    )
   }
   # browser()
   D <- diag(diag(t(U) %*% Z))
   D[indicator_type == "Composite", indicator_type == "Composite"] <- 0
-  
-  
+
   return(list(
     "W" = W,
     "C" = C,
@@ -502,8 +513,8 @@ initializeAlsEstimates <- function(Z0, W0, B0, n_indicators, n_case, n_construct
 }
 
 #' Update X and WW (Pseudo Weights) for Composites and Common-Factors
-#' 
-#' Computation of WW matrix was converted between Matlab to R based on page 44 of \insertCite{Hiebeler2015;textual}{cSEM}.  
+#'
+#' Computation of WW matrix was converted between Matlab to R based on page 44 of \insertCite{Hiebeler2015;textual}{cSEM}.
 #' @param Z Standardized data matrix
 #' @param D Matrix of estimated unique error
 #' @param U Matrix of estimates related to unique error
@@ -514,10 +525,10 @@ initializeAlsEstimates <- function(Z0, W0, B0, n_indicators, n_case, n_construct
 #' @returns Two matrices:
 #' * X: Remaining part of data (Z) after accounting for uniqueness terms (U) and (D), used for estimating composite loadings. Also used for standardizing Theta when updating Gamma, W and V
 #' * WW: Weights after accounting for current Loading and Path-Coefficients values, used for estimating common-factor loadings
-#' 
+#'
 #' @references
 #'   \insertAllCited{}
-#' 
+#'
 #'
 updateXAndWW <- function(Z, U, D, C, B, n_constructs) {
   # X deviates from Matlab because it is an offspring of svd_out
@@ -536,8 +547,8 @@ updateXAndWW <- function(Z, U, D, C, B, n_constructs) {
 #' @param gamma_idx Index of which construct we are examining
 #'
 #' @return Theta: Used to update factor latent variables -- after accounting for loadings and path-coefficients.
-#' 
-#' 
+#'
+#'
 #'
 updateCommonFactorTheta <- function(WW, windex_gamma_idx, gamma_idx) {
   Theta <- WW[windex_gamma_idx, gamma_idx]
@@ -556,13 +567,23 @@ updateCommonFactorTheta <- function(WW, windex_gamma_idx, gamma_idx) {
 #' @param n_constructs Number of constructs
 #' @param gamma_idx Index of which construct we are examining
 #' @inheritParams csem_arguments
-#' @importFrom MASS ginv 
+#' @importFrom MASS ginv
 #' @return Theta: A matrix that will later be used to update the weights for the composite variable.
-#' 
+#'
 #'
 updateCompositeTheta <-
-  function(W, A, V, X, windex_gamma_idx, n_total_var, tot, n_constructs, gamma_idx, .S = args_default()$.S) {
-    
+  function(
+    W,
+    A,
+    V,
+    X,
+    windex_gamma_idx,
+    n_total_var,
+    tot,
+    n_constructs,
+    gamma_idx,
+    .S = args_default()$.S
+  ) {
     e <- matrix(0, nrow = 1, ncol = n_total_var)
     e[tot] <- 1
     H1 <- diag(n_total_var)
@@ -570,29 +591,28 @@ updateCompositeTheta <-
     H1[tot, tot] <- 0
     H2[gamma_idx, gamma_idx] <- 0
     Delta <- (W %*% H2 %*% A) - (V %*% H1)
-    
-    
+
     # vecZDelta <- c(X %*% Delta) # Commented out because no longer computing kronecker product
     beta <- e - A[gamma_idx, ]
     # XI <- kronecker(t(beta), X)
     # XI <- XI[, windex_gamma_idx]
-    
-    
-    
+
     # XI <- kroneckerC(t(beta), X, which(windex_gamma_idx))
     # Theta <- solve((t(XI) %*% XI), t(XI)) %*% vecZDelta
-    
+
     # Kronecker bypass -- as shown in calculateWeightsGSCA.R
     # TODO: Bypassing the kronecker product this way leads to minor differences in results,
     # but the original matlab solution may already have been inaccurate due to matrix inversion.
-    Theta <- MASS::ginv(as.numeric(beta %*% t(beta)) * .S[windex_gamma_idx, windex_gamma_idx]) %*%
+    Theta <- MASS::ginv(
+      as.numeric(beta %*% t(beta)) * .S[windex_gamma_idx, windex_gamma_idx]
+    ) %*%
       t(beta %*% t(Delta) %*% .S[, windex_gamma_idx])
-    
+
     return(Theta)
   }
 
 #' Update Loadings, Path-Coefficients and Uniqueness Terms After Updating Latent Variables
-#' 
+#'
 #' @inheritParams initializeAlsEstimates
 #' @inheritParams updateXAndWW
 #' @inheritParams igsca
@@ -602,7 +622,7 @@ updateCompositeTheta <-
 #' @param b_index Index of Path Coefficients
 #' @param n_case Number of Cases
 #' @param indicator_type Vector of whether each indicator corresponds to a common factor or composite
-#' @importFrom MASS ginv 
+#' @importFrom MASS ginv
 #' @return List of matrices:
 #'
 #' * (1) Uniqueness terms (D) and (U)
@@ -610,29 +630,29 @@ updateCompositeTheta <-
 #' * (3) Estimated Loadings matrix (C)
 #'
 updateCBDU <-
-  function(Z,
-           X,
-           Gamma,
-           C,
-           B,
-           D,
-           indicator_type,
-           n_indicators,
-           c_index,
-           n_constructs,
-           b_index,
-           n_case,
-           con_type) {
+  function(
+    Z,
+    X,
+    Gamma,
+    C,
+    B,
+    D,
+    indicator_type,
+    n_indicators,
+    c_index,
+    n_constructs,
+    b_index,
+    n_case,
+    con_type
+  ) {
+    ## Loading Update ----------------------------------------------------------
 
-## Loading Update ----------------------------------------------------------
-
-    
     t1 <- c(X)
     # M1 <- kronecker(diag(n_indicators), Gamma)
     # M1 <- M1[, c_index]
     M1 <- kroneckerC(diag(n_indicators), Gamma, c_index)
     C[c_index] <- MASS::ginv(t(M1) %*% M1) %*% (t(M1) %*% t1)
-    # 
+    #
     # Kronecker bypass as shown in calculateWeightsGSCAm
     # vcv_gamma <- t(Gamma) %*% Gamma # Came from path coefficients update in calculateWeightsGSCAm
     # TODO: This will have to be adjusted to differentiate between canonical and
@@ -644,76 +664,77 @@ updateCBDU <-
     # Y <- which(colSums(C[vars_cf_nomocomp, ]) != 0)
     # loadings <- lapply(Y, function(y) {
     #   x    <-  which(C[vars_cf_nomocomp, y] != 0)
-      # FIXME: The difference between inverse via solve and pseudo-inverse does
-      # not account for differences between this approach and kronecker
-      # coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*% cov_gamma_indicators[x, y, drop = FALSE]
+    # FIXME: The difference between inverse via solve and pseudo-inverse does
+    # not account for differences between this approach and kronecker
+    # coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*% cov_gamma_indicators[x, y, drop = FALSE]
     #   coef <- solve(vcv_gamma[x, x, drop = FALSE]) %*% cov_gamma_indicators[x, y, drop = FALSE]
     # })
-    # 
+    #
     # Ct<-t(C)
     # Ct[c_index] <- unlist(loadings, use.names = FALSE)
     # C<-t(Ct)
 
-# Path Coefficients Update ------------------------------------------------
+    # Path Coefficients Update ------------------------------------------------
 
-    
     # t2 <- c(Gamma)
     # M2 <- kronecker(diag(n_constructs), Gamma)
     # M2 <- M2[, b_index]
-    # 
+    #
     # M2 <- kroneckerC(diag(n_constructs), Gamma, b_index)
     # B[b_index] <- MASS::ginv(t(M2) %*% M2) %*% (t(M2) %*% t2)
-    # 
+    #
     # Kronecker bypass as shown in calculateWeightsGSCAm
     # TODO: Remember to comment vcv_gamma assignment out if I restore kronecker by-pass to loadings
     vcv_gamma <- t(Gamma) %*% Gamma
     vars_endo <- which(colSums(B) != 0)
-    
+
     beta <- lapply(vars_endo, function(y) {
-      x    <- which(B[, y, drop = FALSE] != 0)
-      coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*% vcv_gamma[x, y, drop = FALSE]
+      x <- which(B[, y, drop = FALSE] != 0)
+      coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*%
+        vcv_gamma[x, y, drop = FALSE]
     })
     B[b_index] <- unlist(beta, use.names = FALSE)
 
-## Uniqueness Component Update ---------------------------------------------
+    ## Uniqueness Component Update ---------------------------------------------
 
     # Solution for Q is copied from estimators_weights.R
-    Q <- qr.Q(qr(Gamma), complete =  TRUE)
+    Q <- qr.Q(qr(Gamma), complete = TRUE)
     F_o <- Q[, (n_constructs + 1):n_case]
-    
-    
+
     if (n_case <= n_indicators) {
-      
       # From estimator_weights.R, which is from one of the older GSCA_m implementations
       # Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, (n_constructs+1):n_case, drop = FALSE]
-      s          <- svd(D %*% t(Z) %*% F_o)
-      Utilde    <- s$v %*% t(s$u)
-      U          <- F_o %*% Utilde # Gamma_orth = F_o
+      s <- svd(D %*% t(Z) %*% F_o)
+      Utilde <- s$v %*% t(s$u)
+      U <- F_o %*% Utilde # Gamma_orth = F_o
     } else if (n_case > n_indicators) {
       # svd between R and Matlab by Ahmed Fasih on February 1/2017
       # https://stackoverflow.com/a/41972818
-      
-      U <- tryCatch({
-        svd_out <- (D %*% t(Z) %*% F_o) |>
-          {
-            \(mx) svd(mx, nu = nrow(mx), nv = ncol(mx))
-          }()
-        u <- svd_out$u
-        v <- svd_out$v
-        # Utilde deviates from Matlab because of the SVD
-        Utilde <- v[, 1:n_indicators] %*% t(u)
-        U <- F_o %*% Utilde
-      }, error = function(e) {
-        s          <- svd(D %*% t(Z) %*% F_o)
-        Utilde    <- s$v %*% t(s$u)
-        U          <- F_o %*% Utilde # Gamma_orth = F_o
-        return(U)
-      })
+
+      U <- tryCatch(
+        {
+          svd_out <- (D %*% t(Z) %*% F_o) |>
+            {
+              \(mx) svd(mx, nu = nrow(mx), nv = ncol(mx))
+            }()
+          u <- svd_out$u
+          v <- svd_out$v
+          # Utilde deviates from Matlab because of the SVD
+          Utilde <- v[, 1:n_indicators] %*% t(u)
+          U <- F_o %*% Utilde
+        },
+        error = function(e) {
+          s <- svd(D %*% t(Z) %*% F_o)
+          Utilde <- s$v %*% t(s$u)
+          U <- F_o %*% Utilde # Gamma_orth = F_o
+          return(U)
+        }
+      )
     }
-    
+
     D <- diag(diag(t(U) %*% Z))
     D[indicator_type == "Composite", indicator_type == "Composite"] <- 0
-    
+
     return(
       list(
         "C" = C,
@@ -725,7 +746,7 @@ updateCBDU <-
   }
 
 #' Flip signs of Gamma, Loadings and Path-Coefficients Cells Based on Dominant Indicator
-#' 
+#'
 #' @inheritParams igsca
 #' @inheritParams updateXAndWW
 #' @inheritParams updateCBDU
@@ -735,13 +756,22 @@ updateCBDU <-
 #' * Estimated Loadings matrix (C)
 #' * Estimated Path-Coefficients matrix (B)
 #'
-flipGammaCBSigns <- function(Z, Gamma, C, B, n_constructs, .dominant_indicators) {
+flipGammaCBSigns <- function(
+  Z,
+  Gamma,
+  C,
+  B,
+  n_constructs,
+  .dominant_indicators
+) {
   for (gamma_idx in seq_len(n_constructs)) {
     if (.dominant_indicators[gamma_idx] %in% colnames(Z)) {
-      if ((t(Z[, .dominant_indicators[gamma_idx]]) %*% Gamma[, gamma_idx]) < 0) {
+      if (
+        (t(Z[, .dominant_indicators[gamma_idx]]) %*% Gamma[, gamma_idx]) < 0
+      ) {
         Gamma[, gamma_idx] <- (-1 * Gamma[, gamma_idx])
-        C[gamma_idx,] <- (-1 * C[gamma_idx,])
-        B[gamma_idx,] <- (-1 * B[gamma_idx,])
+        C[gamma_idx, ] <- (-1 * C[gamma_idx, ])
+        B[gamma_idx, ] <- (-1 * B[gamma_idx, ])
         B[, gamma_idx] <- (-1 * B[, gamma_idx])
       }
     }
@@ -754,15 +784,15 @@ flipGammaCBSigns <- function(Z, Gamma, C, B, n_constructs, .dominant_indicators)
 }
 
 #' Gets the Relevant Inputs for IGSCA
-#' 
+#'
 #' In the context of igsca, this function prepares: (1) the initial indicators
 #' (Z0), weights (W0), structural (B0), loadings(C0) matrices; (2) whether a
 #' construct is a latent or composite variable (con_type); (3) whether an
 #' indicator corresponds to a latent or composite variable (indicator_type); and
 #' (4) the dominant indicator of each construct (.dominant_indicators).
-#' 
+#'
 #' @inheritParams csem
-#' 
+#'
 #'
 #' @return Returns a list of matrices/vectors required for igsca_sim() to run:
 #' * Z0
@@ -774,59 +804,56 @@ flipGammaCBSigns <- function(Z, Gamma, C, B, n_constructs, .dominant_indicators)
 getIgscaInputs <-
   function(.data, .model) {
     # Note: parseModel is from cSEM internal
-    
+
     csemify <- parseModel(.model = .model)
-    
+
     Z0 <- .data[, csemify$indicators]
-    
-    # B0 <- csemify$structural
-    B0 <- t(csemify$structural)
+
+    # Igsca assumes \eta \times B, so the rows should be from
+    # and the columns should be to. This is in contrast to 
+    # the rest of cSEM
+    B0 <- t(csemify$structural) 
+
+    C0 <- csemify$measurement
     W0 <- t(csemify$measurement)
-    
+
     # con_type <- csemify$construct_type == "Common factor"
     con_type <- csemify$construct_type
-    
+
     # Constructing indicator_type
-    indicator_type <- vector(mode = "character", length = ncol(csemify$measurement))
-    indicator_type <- rep("Composite", length(indicator_type)) # Default value must be "Composite" because of how the measurement matrix returned by parseModel uses 0 to denote both composite variables and the absence of any corresponding construct variable.
+    indicator_type <- vector(
+      mode = "character",
+      length = ncol(csemify$measurement)
+    )
+    # Default value must be "Composite" because of how the measurement matrix
+    #  returned by parseModel uses 0 to denote both composite variables and the 
+    # absence of any corresponding construct variable.
+    indicator_type <- rep("Composite", length(indicator_type))
     names(indicator_type) <- colnames(csemify$measurement)
-    
-    
+
     for (gamma_idx in rownames(csemify$measurement)) {
       for (indicator in colnames(csemify$measurement)) {
         if (csemify$construct_type[gamma_idx] == "Common factor") {
-          
           if (csemify$measurement[gamma_idx, indicator] == 1) {
             indicator_type[indicator] <- "Common factor"
           }
-          
         } else if (csemify$construct_type[gamma_idx] == "Composite") {
           # The reason why the following code breaks behavior is because
           # it makes indicator_type turn into all "Composite because in the parseModel's return
           # the value 0 in the measurement matrix denotes both a composite and
           #  no correspondence to any latent variable
-          # 
+          #
           # if(csemify$measurement[gamma_idx, indicator] == 0) {
           #   indicator_type[indicator] <- "Composite"
           # }
         } else {
-          warning("Indicator does not correspond to either a Composite or Common factor. Unsupported behavior may ensue.")
+          warning(
+            "Indicator does not correspond to either a Composite or Common factor. Unsupported behavior may ensue."
+          )
         }
       }
     }
-    
-    C0 <- W0
-    
-    
-    stopifnot(
-      "Data matrix (Z0) does not correctly correspond with Weights matrix (W0)" = identical(colnames(Z0), rownames(W0)),
-      "Weights matrix (W0) does not correctly correspond with Structural matrix (B0)" = identical(colnames(W0), colnames(B0)),
-      "Construct indicator does not correctly correspond with Weights Matrix (W0)" = identical(names(csemify$construct_type), colnames(W0)),
-      "All indicators for composite and common factor should have loadings in I-GSCA" = identical(W0, C0),
-      "Every indicator should only have loadings from one construct" = identical(unique(rowSums(C0)), 1),
-      "Every indicator should only have weights to one construct" = identical(unique(rowSums(W0)), 1)
-    )
-    
+
     return(
       list(
         "Z0" = Z0,
@@ -839,36 +866,24 @@ getIgscaInputs <-
     )
   }
 
-#' Warning Function for I-GSCA
-#' 
-#' Warning message to URL for what is currently supported and unsupported when using IGSCA
-#' 
-#' @author Michael S. Truong
-warnIgscaFeatures <- function() {
-
-  warning("The list of current suspected and confirmed limitations of the R IGSCA limitations if found here: https://github.com/FloSchuberth/cSEM/wiki/Notes-on-I%E2%80%90GSCA-Implementation#current-limitations")
-}
-
 #' Block Diagonalize Estimated Parameter Matrices to Facilitate Computation of FIT Statistics
-#' 
+#'
 #' Block diagonalizes the estimated paramater matrices as shown on Equations
 #' 3.28-3.29 on page 111 of \insertCite{Hwang2014;textual}{cSEM}. Should only be used on multi-group models
-#' 
+#'
 #' @inheritParams tidy.cSEMResults
-#' 
+#'
 #' @return cSEMResults in single-group data structure with block diagonalized parameter estimates
 #' @export
 #' @importFrom Matrix bdiag
 bdiagonalizeMultiGroupIgscaEstimates <- function(x) {
-  
   if (!identical(names(x), c("Estimates", "Information"))) {
     # Multi-Group Code
-    
 
     ## Extract Matrices ------------------------------------------------------
     # Extract Estimated Matrices
     # TODO: Test whether the following code works
-    
+
     estimates_to_be_extracted <- list(
       "Path_estimates",
       "Loading_estimates",
@@ -876,72 +891,83 @@ bdiagonalizeMultiGroupIgscaEstimates <- function(x) {
       "Construct_scores",
       "UniqueComponent"
     )
-    
+
     names(estimates_to_be_extracted) <- unlist(estimates_to_be_extracted)
-    
-    extraction <- lapply(X = estimates_to_be_extracted,
-           function(matrix_name, multigroup_output) {
-             extraction <- lapply(
-               multigroup_output,
-               function(onegroup_output, matrix_name) {
-                 return(onegroup_output[["Estimates"]][[matrix_name]])
-                 
-               },
-               matrix_name = matrix_name
-             )
-             return(extraction)
-             
-           }, multigroup_output = x)
-    
+
+    extraction <- lapply(
+      X = estimates_to_be_extracted,
+      function(matrix_name, multigroup_output) {
+        extraction <- lapply(
+          multigroup_output,
+          function(onegroup_output, matrix_name) {
+            return(onegroup_output[["Estimates"]][[matrix_name]])
+          },
+          matrix_name = matrix_name
+        )
+        return(extraction)
+      },
+      multigroup_output = x
+    )
+
     # Extract Data
     extraction$Data <- lapply(x, function(onegroup_output) {
       return(onegroup_output[["Information"]][["Data"]])
     })
-    
+
     # Remove Null Matrices
-    extracts_to_remove <- lapply(extraction, \(x) lapply(x, is.null) |> unlist() |> all())
-    
-    extraction <- extraction[which(!unlist(lapply(extraction, \(x) lapply(x, is.null) |> unlist() |> all())))]
-    
-    extraction <- mapply(function(extract, extract_name){
-      # We don't keep it as a sparse matrix because that might break
-      # functionality with other functions unless much more of Matrix is
-      # imported
-    
-      bdiaged <- Matrix::bdiag(extract)
-      colnames(bdiaged) <- rep(colnames(extract[[1]]), times = length(extract))
-      if (!(extract_name %in% c("Data", "Construct_scores", "UniqueComponent"))) {
-        rownames(bdiaged) <- rep(rownames(extract[[1]]), times = length(extract))
-      }
-      
-      return(as.matrix(bdiaged))
-    },
-    extract = extraction,
-    extract_name = names(extraction),
-    SIMPLIFY = FALSE
+    extracts_to_remove <- lapply(extraction, \(x) {
+      lapply(x, is.null) |> unlist() |> all()
+    })
+
+    extraction <- extraction[which(
+      !unlist(lapply(extraction, \(x) lapply(x, is.null) |> unlist() |> all()))
+    )]
+
+    extraction <- mapply(
+      function(extract, extract_name) {
+        # We don't keep it as a sparse matrix because that might break
+        # functionality with other functions unless much more of Matrix is
+        # imported
+
+        bdiaged <- Matrix::bdiag(extract)
+        colnames(bdiaged) <- rep(
+          colnames(extract[[1]]),
+          times = length(extract)
+        )
+        if (
+          !(extract_name %in% c("Data", "Construct_scores", "UniqueComponent"))
+        ) {
+          rownames(bdiaged) <- rep(
+            rownames(extract[[1]]),
+            times = length(extract)
+          )
+        }
+
+        return(as.matrix(bdiaged))
+      },
+      extract = extraction,
+      extract_name = names(extraction),
+      SIMPLIFY = FALSE
     )
-    
-    
-    
+
     ## Create Surrogate Output -----------------------------------------------
     surrogate_out <- list()
-     # Insert the diagonalized matrices into the surrogate
-     ## It's not simple to take x[[1]] as the surrogate structure because it has
-     ## many estimatates (such as reliabilities) that are specific to the group
-     ## model
-    
-    for (extract_name in names(extraction)[which(names(extraction) != "Data")]) {
+    # Insert the diagonalized matrices into the surrogate
+    ## It's not simple to take x[[1]] as the surrogate structure because it has
+    ## many estimatates (such as reliabilities) that are specific to the group
+    ## model
+
+    for (extract_name in names(extraction)[which(
+      names(extraction) != "Data"
+    )]) {
       surrogate_out[["Estimates"]][[extract_name]] <- extraction[[extract_name]]
     }
-    
+
     surrogate_out[["Information"]][["Data"]] <- extraction[["Data"]]
-    
+
     return(surrogate_out)
-    
-    
-  } else if (identical(names(x), c("Estimates", "Information"))){
+  } else if (identical(names(x), c("Estimates", "Information"))) {
     # Single-Group Code
     stop("This function is only meant for multi-group models.")
-    
   }
 }

@@ -838,6 +838,7 @@ calculateWeightsIGSCA <- function(.data,
                                   ) {
   
   if (is.null(.GSCA_modes)) {
+    # TODO: This function needs to be deprecated. 
     igsca_in <- getIgscaInputs(.model = .csem_model, .data = .data)
   } else {
     stop(".GSCA_modes is currently a non-functional argument")
