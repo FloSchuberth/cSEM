@@ -297,7 +297,7 @@
 #' \item{[doRedundancyAnalysis()]}{Perform a redundancy analysis (RA) as proposed by 
 #' \insertCite{Hair2016;textual}{cSEM} with reference to \insertCite{Chin1998;textual}{cSEM}}
 #' }
-#' @import Rdpack
+#' @importFrom Rdpack reprompt
 #' @references
 #'   \insertAllCited{}
 #'
