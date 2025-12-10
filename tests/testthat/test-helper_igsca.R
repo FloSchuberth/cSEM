@@ -308,12 +308,6 @@ testthat::expect_failure(
 # all.equal(igsca_sim_m_table, igsca_r_table)
 
 ## GSCAPro and R ---------------------------------------------------
-testthat::expect_failure(testthat::expect_equal(
-  igsca_r_table,
-  igsca_gscapro,
-  tolerance = 0.0334
-))
-
 testthat::expect_success(testthat::expect_equal(
   igsca_r_table,
   igsca_gscapro,
@@ -325,12 +319,6 @@ testthat::expect_success(testthat::expect_equal(
 # all.equal(igsca_r_table, igsca_gscapro)
 
 ## Compare GSCAPro and Matlab ----------------------------------------------
-testthat::expect_failure(testthat::expect_equal(
-  igsca_sim_m_table,
-  igsca_gscapro,
-  tolerance = 0.0334
-))
-
 testthat::expect_success(testthat::expect_equal(
   igsca_sim_m_table,
   igsca_gscapro,

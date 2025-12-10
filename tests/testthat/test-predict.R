@@ -72,11 +72,27 @@ eta3 =~ y31 + y32 + y33
 "
 
 ### Test benchmarks
-for(i in args_default(.choices = TRUE)$.benchmark) {
-  if(i != "PLS-PM") {
-    expect_s3_class({
-      predict(csem(threecommonfactors, model_linear2), .cv_folds = 2, .r = 1,
-              .benchmark = i, .disattenuate = if (i == "lm") FALSE else TRUE) 
-    }, "cSEMPredict")
+for (i in args_default(.choices = TRUE)$.benchmark) {
+  if (i != "PLS-PM") {
+    expect_s3_class(
+      {
+        predict(
+          csem(
+            threecommonfactors,
+            model_linear2,
+            .conv_criterion = if (i == "GSCA") {
+              "sum_diff_absolute"
+            } else {
+              "diff_absolute"
+            }
+          ),
+          .cv_folds = 2,
+          .r = 1,
+          .benchmark = i,
+          .disattenuate = if (i == "lm") FALSE else TRUE
+        )
+      },
+      "cSEMPredict"
+    )
   }
 }
