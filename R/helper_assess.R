@@ -2031,11 +2031,11 @@ calculateFIT <- function(.object = NULL) {
                       )
   }
   
-  if (!is.null(.object$Estimates$UniqueComponent)) {
-    S <- cbind(.object$Estimates$UniqueComponent, matrix(data = 0, nrow = nrow(Gamma), ncol = ncol(Gamma)))
+  if (!is.null(.object$Estimates$Unique_scores)) {
+    S <- cbind(.object$Estimates$Unique_scores, matrix(data = 0, nrow = nrow(Gamma), ncol = ncol(Gamma)))
     
-  } else if (is.null(.object$Estimates$UniqueComponent)) {
-    # UniqueComponent should be NULL when GSCA and not GSCA_m/I-GSCA is run 
+  } else if (is.null(.object$Estimates$Unique_scores)) {
+    # Unique_scores should be NULL when GSCA and not GSCA_m/I-GSCA is run 
     S <- matrix(data = 0, nrow(Psi), ncol = ncol(Psi))  
     
   }
@@ -2054,11 +2054,11 @@ calculateFIT_m <- function(.object = NULL) {
   Z <- .object$Information$Data
   Gamma <- .object$Estimates$Construct_scores
   C <- .object$Estimates$Loading_estimates
-  if (!is.null(.object$Estimates$UniqueComponent)) {
-    DU <- .object$Estimates$UniqueComponent
+  if (!is.null(.object$Estimates$Unique_scores)) {
+    DU <- .object$Estimates$Unique_scores
     
-  } else if (is.null(.object$Estimates$UniqueComponent)) {
-    # UniqueComponent should be NULL when GSCA and not GSCA_m/I-GSCA is run 
+  } else if (is.null(.object$Estimates$Unique_scores)) {
+    # Unique_scores should be NULL when GSCA and not GSCA_m/I-GSCA is run 
     DU <- matrix(data = 0, nrow(Z), ncol = ncol(Z))  
     
   }

@@ -165,7 +165,7 @@ test_that("Only indicators of common factors have uniqueness scores and unique l
     function(col) as.logical(col) |> any()
   )
 
-  absolute_sum_U <- colSums(abs(mod$Estimate$UniqueComponent))
+  absolute_sum_U <- colSums(abs(mod$Estimate$Unique_scores))
 
   # Zero uniqueness scores and unique loadings where expected
   expect_true(all(absolute_sum_U[indicator_c] == 0))

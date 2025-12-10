@@ -160,12 +160,7 @@ foreman <- function(
           .conv_criterion = .conv_criterion,
           .S = S
         )
-        # Transpose weights and loadings matrix for compatibility with calculateReliabilities()
-        # TODO: Better to explicitly state what dimensions of weights, loadings and path-coefficients IGSCA returns versus what calculateReliabilities expects
-        W$W <- t(W$W)
-        W$C <- t(W$C)
-        # Transpose path coefficients matrix for comparability with IGSCA
-        W$B <- t(W$B)
+        
       } else {
         stop2(
           "The csem argument .disattenuate should be TRUE for IGSCA to fit with both common factors and composites."
@@ -288,8 +283,8 @@ foreman <- function(
       } else {
         NULL
       },
-      "UniqueComponent"        = if(.approach_weights == "GSCA" & any(csem_model$construct_type == "Common factor")){
-        W$UniqueComponent
+      "Unique_scores"        = if(.approach_weights == "GSCA" & any(csem_model$construct_type == "Common factor")){
+        W$Unique_scores
       } else {
         NULL
       },

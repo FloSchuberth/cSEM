@@ -561,6 +561,8 @@ calculateWeightsGSCA <- function(
 #' which is a pure composite (i.e. all related loadings are zero) 
 #' and, therefore, leads to a non-invertible matrix when multiplying it with its transposed.
 #' 
+#' **Note**: Here, we assume that there is only one unique loading per indicator. 
+#' 
 #' @usage calculateWeightsGSCAm(
 #'   .X                           = args_default()$.X,
 #'   .csem_model                  = args_default()$.csem_model,
@@ -717,9 +719,13 @@ calculateWeightsGSCAm <- function(
   est0 <- est + 1
   iter_counter <- 0
   
-  while ((!checkConvergence(.W_new = est, .W_old = est0,
-                            .tolerance = .tolerance,
-                            .conv_criterion = .conv_criterion)) &
+  while (
+    (!checkConvergence(
+      .W_new = est,
+      .W_old = est0,
+      .tolerance = .tolerance,
+      .conv_criterion = .conv_criterion
+    )) &
       (iter_counter <= .iter_max)
   ) {
     iter_counter <- iter_counter + 1
@@ -808,16 +814,28 @@ calculateWeightsGSCAm <- function(
     A <- cbind(C, B)
     est <- A[which(A != 0)]
   }
+
   
+# Output Formatting ------------------------------------------------------
+  SquaredUniqueLoadingsD <- diag(D)^2
+  names(SquaredUniqueLoadingsD) <- colnames(Z)
+
+  Unique_scores <- U
+  colnames(Unique_scores) <- colnames(Z)
+
   # Return
-  l <- list("W" = t(W), 
-            "C" = C,
-            "B" = B,
-            "Construct_scores" = Z %*% W,
-            "E" = NULL, 
-            "Modes" = "gsca", 
-            "Conv_status" = ifelse(iter_counter > .iter_max, FALSE, TRUE),
-            "Iterations" = iter_counter)
+  l <- list(
+    "W" = t(W),
+    "C" = C,
+    "B" = B,
+    "Construct_scores" = Z %*% W,
+    "D_squared" = D_squared,
+    "Unique_scores" = Unique_scores,
+    "E" = NULL,
+    "Modes" = "gsca",
+    "Conv_status" = ifelse(iter_counter > .iter_max, FALSE, TRUE),
+    "Iterations" = iter_counter
+  )
   return(l)
   
 } # END calculateWeightsGSCAm
@@ -865,9 +883,9 @@ calculateWeightsIGSCA <- function(.data,
   l <- list("W" = igsca_out$Weights, 
             "C" = igsca_out$Loadings,
             "B" = igsca_out$`Path Coefficients`,
-            "Construct_scores" = igsca_out$`Construct Scores`,
-            "D_squared" = igsca_out$`Squared Unique Loadings`,
-            "UniqueComponent" = igsca_out$UniqueComponent, 
+            "Construct_scores" = igsca_out$`Construct_scores`,
+            "D_squared" = igsca_out$`D_squared`,
+            "Unique_scores" = igsca_out$Unique_scores, 
             "Modes" = "gsca", 
             "Conv_status" = ifelse(igsca_out$Iterations > .iter_max, FALSE, TRUE),
             "Iterations" = igsca_out$Iterations,

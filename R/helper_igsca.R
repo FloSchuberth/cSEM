@@ -3,7 +3,9 @@
 #' This R implementation of I-GSCA is based on the Matlab implementation in igsca_sim.m by Dr. Heungsun Hwang.
 #'
 #' In the example section, the specified model is based on the tutorial I-GSCA model associated with GSCA Pro \insertCite{hwangetal2023StructuralEquationModelingAMultidisciplinaryJournal}{cSEM}.
-#'
+#' 
+#' **Note**: Here, we assume that there is only one unique loading per indicator. 
+#' 
 #' @param Z0 Data matrix of N cases (measurements) x J indicators with named
 #'   columns, unstandardized.
 #' @param W0 Indicator matrix of weights: J indicators (rows) and their
@@ -268,23 +270,23 @@ igsca <-
     }
 
     ## Output Formatting -------------------------------------------------------
-    SquaredUniqueLoadingsD <- diag(D)^2
-    names(SquaredUniqueLoadingsD) <- colnames(Z)
+    D_squared <- diag(D)^2
+    names(D_squared) <- colnames(Z)
 
-    Unique_Scores <- U %*% D
-    colnames(Unique_Scores) <- colnames(Z)
+    Unique_scores <- U
+    colnames(Unique_scores) <- colnames(Z)
 
     PathCoefficients <- B
-
+  
     return(
       list(
         "Data" = Z,
-        "Weights" = W,
-        "Loadings" = t(C), # Note: The rest of the package expects Construct X Indicators
-        "Path Coefficients" = B,
-        "Squared Unique Loadings" = SquaredUniqueLoadingsD,
-        "UniqueComponent" = Unique_Scores,
-        "Construct Scores" = Gamma,
+        "W" = t(W), # TODO: Come back to whether these transposes are necessary and in-line with the rest of the package?
+        "C" = C, # Note: The rest of the package expects Construct X Indicators
+        "B" = t(B), # TODO: Come back to whether these transposes are necessary and in-line with the rest of the package?
+        "Construct_scores" = Z %*% W,
+        "D_squared" = D_squared,
+        "Unique_scores" = Unique_scores,
         "Iterations" = it
       )
     )
@@ -889,7 +891,7 @@ bdiagonalizeMultiGroupIgscaEstimates <- function(x) {
       "Loading_estimates",
       "Weight_estimates",
       "Construct_scores",
-      "UniqueComponent"
+      "Unique_scores"
     )
 
     names(estimates_to_be_extracted) <- unlist(estimates_to_be_extracted)
@@ -935,7 +937,7 @@ bdiagonalizeMultiGroupIgscaEstimates <- function(x) {
           times = length(extract)
         )
         if (
-          !(extract_name %in% c("Data", "Construct_scores", "UniqueComponent"))
+          !(extract_name %in% c("Data", "Construct_scores", "Unique_scores"))
         ) {
           rownames(bdiaged) <- rep(
             rownames(extract[[1]]),
