@@ -197,6 +197,7 @@ tidy.cSEMResults <- function(x,
 #' @return A one-row `data.frame` with columns:
 #' @importFrom generics glance
 #' @importFrom tibble as_tibble
+#' @importFrom tibble tibble
 #' @export
 #' 
 #' @seealso [assess()]
@@ -253,27 +254,8 @@ glance.cSEMResults <- function(
     'GoF'
   )
 
-  cbind(
+  tibble(
     as_tibble(t(unlist(fits[names(fits)[names(fits) %in% tabulatable_fits]]))),
     as_tibble(t(unlist(fits$Information)))
   )
-}
-
-#' augment Method for cSEMResults Objects
-#'
-#' Placeholder function for future development
-#' 
-#' TODO: This method should be used to obtain the construct scores and other information provided by [cSEM::predict()]
-#' 
-#' 
-#' @inheritParams tidy.cSEMResults
-#' @inheritDotParams predict
-#' 
-#' @return A `data.frame` of the original dataset alongside its construct scores and...
-#' @importFrom generics augment
-#' @author Michael s. truong
-augment.cSEMResults <- function(x, ...) {
-  # TODO: Look at predict and maybe also get the construct scores
-  # cSEM::predict()
-  print("The augment method is currently not implemented in cSEM.")
 }
