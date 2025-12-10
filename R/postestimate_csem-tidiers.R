@@ -253,12 +253,16 @@ glance.cSEMResults <- function(
     'GoF'
   )
 
-  out <- tibble(
-    as_tibble(t(unlist(fits[names(fits)[names(fits) %in% tabulatable_fits]]))),
-    as_tibble(t(unlist(fits$Information)))
-  )
+  out <- as_tibble(t(unlist(fits[names(fits)[names(fits) %in% tabulatable_fits]])))
 
+  # Either rename here or rename throughout package to be compliant with tidymodels glossary https://www.tidymodels.org/learn/develop/broom/#glossaries
+  names(out)[names(out) == "Chi_square_df"] <- "chi.square.df"
+  names(out)[names(out) == "Chi_square"] <- "chi.square"
+  names(out)[names(out) == "RMS_theta"] <- "rms.theta"
+  names(out)[names(out) == "FIT_m"] <- "fit.m"
+  names(out)[names(out) == "FIT_s"] <- "fit.s"
   names(out)<- tolower(names(out))
+
 
   return(out)
 }
