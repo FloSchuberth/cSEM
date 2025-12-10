@@ -204,7 +204,11 @@ tidy.cSEMResults <- function(x,
 #' @author Michael S. Truong
 glance.cSEMResults <- function(
   x,
-  .quality_criterion = c(
+  ...
+) {
+  fits <- assess(
+    x,
+    .quality_criterion = c(
     'dg',
     'dl',
     'dml',
@@ -224,12 +228,7 @@ glance.cSEMResults <- function(
     'FIT_m',
     'FIT_s',
     'gof'
-  ),
-  ...
-) {
-  fits <- assess(
-    x,
-    .quality_criterion = .quality_criterion
+  )
   )
 
   tabulatable_fits <- c(
@@ -254,8 +253,12 @@ glance.cSEMResults <- function(
     'GoF'
   )
 
-  tibble(
+  out <- tibble(
     as_tibble(t(unlist(fits[names(fits)[names(fits) %in% tabulatable_fits]]))),
     as_tibble(t(unlist(fits$Information)))
   )
+
+  names(out)<- tolower(names(out))
+
+  return(out)
 }

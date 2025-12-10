@@ -4,13 +4,7 @@
 \alias{glance.cSEMResults}
 \title{glance Method for cSEMResults Objects}
 \usage{
-\method{glance}{cSEMResults}(
-  x,
-  .quality_criterion = c("dg", "dl", "dml", "df", "chi_square", "chi_square_df", "cfi",
-    "gfi", "cn", "ifi", "nfi", "nnfi", "rmsea", "rms_theta", "srmr", "FIT", "FIT_m",
-    "FIT_s", "gof"),
-  ...
-)
+\method{glance}{cSEMResults}(x, ...)
 }
 \arguments{
 \item{...}{
