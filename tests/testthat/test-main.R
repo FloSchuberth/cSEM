@@ -3,6 +3,9 @@
 #   Purpose: central file to be sourced to several test-xxx.R files
 #
 ################################################################################
+
+withr::local_seed(1234)
+
 ## Function to compare path and/or loading and/or weight estimates from a cSEM object
 ## to a vector of population parameters
 comparecSEM <- function(.object, .what, .pop_parameters) {

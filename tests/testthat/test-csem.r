@@ -163,12 +163,12 @@ for (i in c(
     .path = testthat::test_path("test_results_exportToExcel")
   )
   exportToExcel(
-    predict(res, .handle_inadmissibles = "ignore", .benchmark = "lm", .disattenuate = FALSE),
+    predict(res, .handle_inadmissibles = if (i == "GSCA") "ignore" else "stop", .benchmark = "lm", .disattenuate = FALSE),
     .filename = paste0("test_predict_", i, ".xlsx"),
     .path = testthat::test_path("test_results_exportToExcel")
   )
   exportToExcel(
-    testOMF(res, .R = 10),
+    testOMF(res, .R = 10, .handle_inadmissibles = if (i == "GSCA") "ignore" else "drop"),
     .filename = paste0("test_testOMF_", i, ".xlsx"),
     .path = testthat::test_path("test_results_exportToExcel")
   )
