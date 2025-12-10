@@ -97,7 +97,7 @@ test_that("tidy.cSEMResults for IGSCA models", {
 
   # FIXME: Test multigroup models glancing + tidy
   # FIXME: conf.int level TRUE/FALSE
-  # FIXME: conf.level works
+  # FIXME: conf.level supported
   tidy_igsca <- tidy(igsca_mod)
   tidy_gsca <- tidy(gsca_mod)
   tidy_gsca_m <- tidy(gsca_m_mod)
