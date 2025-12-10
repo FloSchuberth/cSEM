@@ -10,7 +10,7 @@ dfunction(.object = NULL,
 .maxiter=20,
 .mutation_prob = 0.5,
 .seeds = c(2, 4, 5),
-.only_structural = TRUE)
+.only_structural = FALSE)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}

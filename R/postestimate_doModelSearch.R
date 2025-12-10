@@ -37,7 +37,7 @@ doModelSearch <- function(.object = NULL,
                           .popsize = 20, 
                           .maxiter=20,
                           .mutation_prob = 0.5,
-                          .seeds = c(2, 4, 5), 
+                          .seeds = c(2, 4, 5), #change seeds -> seed
                           .only_structural = FALSE){
   
   if(inherits(.object, "cSEMResults_multi")) {
@@ -102,6 +102,8 @@ doModelSearch <- function(.object = NULL,
       .pkg_state$best_individuals_all <- list()
       .pkg_state$best_individual      <- NULL
       .pkg_state$best_fitness         <- -Inf
+      
+      # best_fitness <- -Inf
       
       ga_control <- GA::ga(
         type = "binary",
