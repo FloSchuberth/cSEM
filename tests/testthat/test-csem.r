@@ -153,6 +153,16 @@ for (i in c(
     })
   }
 
+  test_that(paste("tidy method runs without failure with weighting approach", i), {
+    expect_no_error(tidy(res))
+    expect_s3_class(tidy(res), c("tbl", "tbl_df"))
+  })
+
+  test_that(paste("glance method runs without failure with weighting approach", i), {
+    expect_no_error(glance(res))
+    expect_s3_class(glance(res), c("tbl", "tbl_df"))
+  })
+
   # Export to Excel test
   exportToExcel(
     assess(res),
@@ -185,7 +195,7 @@ dat <- MASS::mvrnorm(300, rep(0, nrow(Sigma$Sigma)),
                      Sigma = Sigma$Sigma, empirical = TRUE)
 
 ## Estimate
-for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR")) {
+for (i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR")) {
   ## - "SSQCOR" is excluded as it is rather unstable, regularly producing differences
   ##   between estimate and population value larger than 0.01.
   ## - "PCA" is excluded as weights obtained by PCA are not population weights but
@@ -216,6 +226,16 @@ for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR")) {
     expect_equal(path$Estimate, path$Pop_value, tolerance = 0.001)
     expect_equal(loadings$Estimate, loadings$Pop_value, tolerance = 0.001)
     expect_equal(weights$Estimate, weights$Pop_value, tolerance = 0.001)
+  })
+
+  test_that(paste("tidy method runs without failure with weighting approach", i), {
+    expect_no_error(tidy(res))
+    expect_s3_class(tidy(res), c("tbl", "tbl_df"))
+  })
+
+  test_that(paste("glance method runs without failure with weighting approach", i), {
+    expect_no_error(glance(res))
+    expect_s3_class(glance(res), c("tbl", "tbl_df"))
   })
 }
 

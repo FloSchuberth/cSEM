@@ -83,7 +83,8 @@ Imports:
     generics,
     partykit,
     Formula,
-    boot
+    boot,
+    tibble (>= 3.0.0)
 RdMacros: Rdpack, lifecycle
 RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
@@ -105,7 +106,8 @@ Suggests:
     openxlsx,
     graphics,
     spelling,
-    withr
+    withr,
+    modeltests (>= 0.1.7)
 Config/testthat/edition: 3
 Config/testthat/parallel: true
 VignetteBuilder: knitr

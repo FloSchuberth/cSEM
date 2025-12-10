@@ -4,11 +4,15 @@
 \alias{glance.cSEMResults}
 \title{glance Method for cSEMResults Objects}
 \usage{
-\method{glance}{cSEMResults}(x, ...)
+\method{glance}{cSEMResults}(
+  x,
+  .quality_criterion = c("dg", "dl", "dml", "df", "chi_square", "chi_square_df", "cfi",
+    "gfi", "cn", "ifi", "nfi", "nnfi", "rmsea", "rms_theta", "srmr", "FIT", "FIT_m",
+    "FIT_s", "gof"),
+  ...
+)
 }
 \arguments{
-\item{x}{Fitted \code{csem} model with class \code{cSEMResults} as returned from \code{\link[=csem]{csem()}}}
-
 \item{...}{
   Arguments passed on to \code{\link[=assess]{assess}}
   \describe{
@@ -27,13 +31,14 @@ Defaults to "\emph{all}" in which case all possible quality criteria are compute
 A one-row \code{data.frame} with columns:
 }
 \description{
-Placeholder function for future development.
-}
-\details{
-TODO: This method should be used to obtain a one row \code{data.frame} with a different column for every fit-statistic/estimation information.
-
 This method and documentation is based on the \code{glance} method for \code{lavaan}, as found in \code{broom:::glance.lavaan()}.
 }
+\details{
+Note: Only fit statistics that can always be returned as part of a one-row tibble are included.
+}
+\seealso{
+\code{\link[=assess]{assess()}}
+}
 \author{
-Michael s. truong
+Michael S. Truong
 }

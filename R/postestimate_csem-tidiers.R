@@ -22,6 +22,7 @@
 #' @author Michael S. Truong
 #' 
 #' @importFrom generics tidy
+#' @importFrom tibble as_tibble
 #' @export
 #'
 tidy.cSEMResults <- function(x,
@@ -179,29 +180,83 @@ tidy.cSEMResults <- function(x,
    
  }
   
-   
+  out <- as_tibble(out) 
   return(out)
   
 }
 
 #' glance Method for cSEMResults Objects
-#' 
-#' Placeholder function for future development. 
-#' 
-#' TODO: This method should be used to obtain a one row `data.frame` with a different column for every fit-statistic/estimation information.
-#' 
+#'
+#'
 #' This method and documentation is based on the `glance` method for `lavaan`, as found in `broom:::glance.lavaan()`.
 #'
-#' @inheritParams tidy.cSEMResults
+#' Note: Only fit statistics that can always be returned as part of a one-row tibble are included.
+#'
 #' @inheritDotParams assess
 #'
-#' @return A one-row `data.frame` with columns: 
+#' @return A one-row `data.frame` with columns:
 #' @importFrom generics glance
-#' @author Michael s. truong
-glance.cSEMResults <- function(x, ...) {
-  # TODO: May want to look at assess
-  # cSEM:::assess()
-  print("The glance method is currently not implemented in cSEM.")
+#' @importFrom tibble as_tibble
+#' @export
+#' 
+#' @seealso [assess()]
+#' @author Michael S. Truong
+glance.cSEMResults <- function(
+  x,
+  .quality_criterion = c(
+    'dg',
+    'dl',
+    'dml',
+    'df',
+    'chi_square',
+    'chi_square_df',
+    'cfi',
+    'gfi',
+    'cn',
+    'ifi',
+    'nfi',
+    'nnfi',
+    'rmsea',
+    'rms_theta',
+    'srmr',
+    'FIT',
+    'FIT_m',
+    'FIT_s',
+    'gof'
+  ),
+  ...
+) {
+  fits <- assess(
+    x,
+    .quality_criterion = .quality_criterion
+  )
+
+  tabulatable_fits <- c(
+    'DG',
+    'DL',
+    'DML',
+    'Df',
+    'Chi_square',
+    'Chi_square_df',
+    'CFI',
+    'GFI',
+    'CN',
+    'IFI',
+    'NFI',
+    'NNFI',
+    'RMSEA',
+    'RMS_theta',
+    'SRMR',
+    'FIT',
+    'FIT_m',
+    'FIT_s',
+    'GoF'
+  )
+
+  cbind(
+    as_tibble(t(unlist(fits[names(fits)[names(fits) %in% tabulatable_fits]]))),
+    as_tibble(t(unlist(fits$Information)))
+  )
 }
 
 #' augment Method for cSEMResults Objects

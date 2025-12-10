@@ -562,7 +562,7 @@ args_default <- function(.choices = FALSE) {
                                  "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
                                  "cfi", "cn", "gfi", "ifi", "nfi", "nnfi", 
                                  "reliability",
-                                 "rmsea", "rms_theta", "srmr",
+                                 "rmsea", "rms_theta", "srmr", "FIT", "FIT_m", "FIT_s",
                                  "gof", "htmt", "htmt2", "r2", "r2_adj",
                                  "rho_T", "rho_T_weighted", "vif", 
                                  "vifmodeB"),
