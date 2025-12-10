@@ -89,7 +89,12 @@ for (i in args_default(.choices = TRUE)$.benchmark) {
           .cv_folds = 2,
           .r = 1,
           .benchmark = i,
-          .disattenuate = if (i == "lm") FALSE else TRUE
+          .disattenuate = if (i == "lm") FALSE else TRUE,
+          .handle_inadmissibles = if (i == "GSCA") {
+          "ignore"
+        } else {
+          "stop"
+        }
         )
       },
       "cSEMPredict"

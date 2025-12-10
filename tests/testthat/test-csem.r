@@ -121,7 +121,12 @@ for (i in c(
       dat,
       model_Sigma,
       .approach_weights = i,
-      .dominant_indicators = c("eta1" = "y11", "eta2" = "y21", "eta3" = "y31")
+      .dominant_indicators = c("eta1" = "y11", "eta2" = "y21", "eta3" = "y31"),
+      .conv_criterion = if (i == "GSCA") {
+              "sum_diff_absolute"
+            } else {
+              "diff_absolute"
+            }
     )
 
     ## Comparison
@@ -181,14 +186,23 @@ dat <- MASS::mvrnorm(300, rep(0, nrow(Sigma$Sigma)),
 for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR")) {
   ## - "SSQCOR" is excluded as it is rather unstable, regularly producing differences
   ##   between estimate and population value larger than 0.01.
-  ## - "PCA" is excluded as weights obtained by PCA are not population weights but 
+  ## - "PCA" is excluded as weights obtained by PCA are not population weights but
   ##   simply the first principal component of S_jj.
   ## - "unit" is excluded as unit weights are inconsistent "estimates" for the
   ##   population weights (weights are simply set to 1 and scaled).
-  ## - "bartlett" and "regression" are excluded as they are not meaningful 
+  ## - "bartlett" and "regression" are excluded as they are not meaningful
   ##   for models containing concepts modeled as composites
-  res <-  csem(dat, model_Sigma, .approach_weights = i, 
-               .dominant_indicators = c("eta1" = "y11", "eta2" = "y21", "eta3" = "y31"))
+  res <- csem(
+    dat,
+    model_Sigma,
+    .approach_weights = i,
+    .dominant_indicators = c("eta1" = "y11", "eta2" = "y21", "eta3" = "y31"),
+    .conv_criterion = if (i == "GSCA") {
+      "sum_diff_absolute"
+    } else {
+      "diff_absolute"
+    }
+  )
   
   ## Comparison
   path     <- comparecSEM(res, .what = "Path_estimates", pop_params_Sigma$Path_coefficients)
