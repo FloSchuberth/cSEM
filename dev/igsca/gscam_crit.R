@@ -21,6 +21,11 @@ HS.model_csem <- ' visual  =~ x1 + x2 + x3
               speed ~~ textual
               visual ~~ speed'
 
+
+HolzingerSwineford1939 <- lavaan::HolzingerSwineford1939
+debugonce(calculateWeightsGSCAm)
+debugonce(checkConvergence)
+
 sum_diff_absolute_mod <- cSEM::csem(
   .data = HolzingerSwineford1939,
   .model = HS.model_csem,
