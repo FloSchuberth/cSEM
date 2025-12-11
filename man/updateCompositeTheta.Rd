@@ -24,7 +24,7 @@ updateCompositeTheta(
 
 \item{V}{Unclear meaning}
 
-\item{X}{Pseudo-weights for composite variables}
+\item{X}{The matrix X is equal to Z - UD}
 
 \item{windex_gamma_idx}{Index of weights related to the indicators for the construct of interest}
 
@@ -42,5 +42,6 @@ updateCompositeTheta(
 Theta: A matrix that will later be used to update the weights for the composite variable.
 }
 \description{
-Update Theta for Composite Variables
+It is unintuitive that X is used here, seeing as how X = Z-UD; and we use X to update composite variables.
+However, from a non-computational point of view, it shouldn't matter because for the composite indicators, X_comp = Z_comp
 }

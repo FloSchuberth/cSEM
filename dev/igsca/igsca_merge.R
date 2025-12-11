@@ -44,7 +44,7 @@ data(LeDang2022)
 #' devtools::test_active_file()
 
 # debugonce(csem)
-debugonce(foreman)
+# debugonce(foreman)
 # debugonce(calculateWeightsIGSCA)
 # debugonce(igsca)
 # debugonce(initializeAlsEstimates)

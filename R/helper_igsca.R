@@ -200,7 +200,7 @@ igsca <-
             updateCompositeTheta(
               W = W, # Changes per gamma_idx iteration
               A = A,
-              X = X,
+              X = X, # X = Z- UD, as per updateXAndWW()
               V = V, # Changes per gamma_idx iteration
               gamma_idx = gamma_idx, # Changes per gamma_idx iteration
               tot = tot, # Changes per gamma_idx iteration
@@ -270,13 +270,14 @@ igsca <-
     }
 
     ## Output Formatting -------------------------------------------------------
-    D_squared <- diag(D)^2
+    # identical(diag(D^2), diag(D)^2)
+    D_squared <- diag(D^2)
     names(D_squared) <- colnames(Z)
+    # colnames(D_squared) <- colnames(Z)
+    # rownames(D_squared) <- colnames(Z)
 
     Unique_scores <- U
     colnames(Unique_scores) <- colnames(Z)
-
-    # browser()
 
     return(
       list(
@@ -500,8 +501,11 @@ initializeAlsEstimates <- function(
       }
     )
   }
-  # browser()
-  D <- diag(diag(t(U) %*% Z))
+  # Zeroing the initialized Unique_scores of composites is unique to our R implementation and not found in the original Matlab version
+  # AFAICT, this shouldn't affect the parameter estimates because U only affects the other parameter estimates via U %*% D, and D will
+  #  already zero the effects of the initialization
+  U[, indicator_type == "Composite"] <- 0
+  D <- diag(diag(t(U) %*% Z)) # TODO: This forces the D matrix to be diagonal-entries only.
   D[indicator_type == "Composite", indicator_type == "Composite"] <- 0
 
   return(list(
@@ -560,11 +564,14 @@ updateCommonFactorTheta <- function(WW, windex_gamma_idx, gamma_idx) {
 }
 
 #' Update Theta for Composite Variables
+#' 
+#' It is unintuitive that X is used here, seeing as how X = Z-UD; and we use X to update composite variables. 
+#' However, from a non-computational point of view, it shouldn't matter because for the composite indicators, X_comp = Z_comp
 #'
 #' @param W Weights matrix
 #' @param A Stacked matrix of loadings and path coefficients
 #' @param V Unclear meaning
-#' @param X Pseudo-weights for composite variables
+#' @param X The matrix X is equal to Z - UD
 #' @param windex_gamma_idx Index of weights related to the indicators for the construct of interest
 #' @param n_total_var Number of indicators and constructs
 #' @param tot Index dependent on which construct variable we are examining
@@ -605,8 +612,11 @@ updateCompositeTheta <-
     # Theta <- solve((t(XI) %*% XI), t(XI)) %*% vecZDelta
 
     # Kronecker bypass -- as shown in calculateWeightsGSCA.R
-    # TODO: Bypassing the kronecker product this way leads to minor differences in results,
+    # Bypassing the kronecker product this way leads to minor differences in results,
     # but the original matlab solution may already have been inaccurate due to matrix inversion.
+    #
+    # The best way to identify whether this difference does or does not matter is by a combination of mathematics
+    #  (theoretical equivalence, ignoring computational details) and simulation study
     Theta <- MASS::ginv(
       as.numeric(beta %*% t(beta)) * .S[windex_gamma_idx, windex_gamma_idx]
     ) %*%
@@ -700,7 +710,8 @@ updateCBDU <-
     B[b_index] <- unlist(beta, use.names = FALSE)
 
     ## Uniqueness Component Update ---------------------------------------------
-
+    
+    # TODO: The following procedure creates non-zero columns of U, even for composite indicators. It would be better if this could be avoided.
     # Solution for Q is copied from estimators_weights.R
     Q <- qr.Q(qr(Gamma), complete = TRUE)
     F_o <- Q[, (n_constructs + 1):n_case]
@@ -736,6 +747,7 @@ updateCBDU <-
       )
     }
 
+    U[, indicator_type == "Composite"] <- 0
     D <- diag(diag(t(U) %*% Z))
     D[indicator_type == "Composite", indicator_type == "Composite"] <- 0
 

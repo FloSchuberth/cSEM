@@ -817,7 +817,7 @@ calculateWeightsGSCAm <- function(
 
   
 # Output Formatting ------------------------------------------------------
-  D_squared <- diag(D)^2
+  D_squared <- diag(D^2)
   names(D_squared) <- colnames(Z)
 
   Unique_scores <- U
