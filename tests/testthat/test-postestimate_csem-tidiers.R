@@ -118,6 +118,7 @@ test_that("glance.cSEMResults for GSCA", {
   glance_gsca <- glance(gsca_mod)
   glance_gsca_m <- glance(gsca_m_mod)
 
+  # Claude wrote the regexp for me
   expect_error(
     check_glance_outputs(glance_igsca),
     regexp = "Expected `length\\(unacceptable\\) == 0` to be TRUE"
