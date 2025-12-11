@@ -275,8 +275,6 @@ igsca <-
 
     Unique_scores <- U
     colnames(Unique_scores) <- colnames(Z)
-
-    PathCoefficients <- B
   
     return(
       list(
