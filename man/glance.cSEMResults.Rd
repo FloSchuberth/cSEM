@@ -7,6 +7,8 @@
 \method{glance}{cSEMResults}(x, ...)
 }
 \arguments{
+\item{x}{Fitted \code{csem} model with class \code{cSEMResults} as returned from \code{\link[=csem]{csem()}}}
+
 \item{...}{
   Arguments passed on to \code{\link[=assess]{assess}}
   \describe{

@@ -191,7 +191,8 @@ tidy.cSEMResults <- function(x,
 #' This method and documentation is based on the `glance` method for `lavaan`, as found in `broom:::glance.lavaan()`.
 #'
 #' Note: Only fit statistics that can always be returned as part of a one-row tibble are included.
-#'
+#' 
+#' @param x Fitted `csem` model with class `cSEMResults` as returned from [cSEM::csem()]
 #' @inheritDotParams assess
 #'
 #' @return A one-row `data.frame` with columns:

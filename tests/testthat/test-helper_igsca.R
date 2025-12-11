@@ -169,11 +169,11 @@ test_that("Only indicators of common factors have uniqueness scores and unique l
 
   # Zero uniqueness scores and unique loadings where expected
   expect_true(all(absolute_sum_U[indicator_c] == 0))
-  expect_true(all(mod$Estimate$D2[indicator_c] ==0))
+  expect_true(all(mod$Estimate$D2[indicator_c] == 0))
 
   # Non-zero uniqueness scores and unique loadings where expected
   expect_true(all(absolute_sum_U[indicator_cf] != 0))
-  expect_true(all(mod$Estimate$D2[indicator_cf] !=0))
+  expect_true(all(mod$Estimate$D2[indicator_cf] != 0))
 })
 
 # Valid Reliabilities ----------------------------------------------------

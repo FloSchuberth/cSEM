@@ -66,6 +66,8 @@ if a construct modeled as a composite is present.
 The reason is that the measurement matrix has a zero row for every construct
 which is a pure composite (i.e. all related loadings are zero)
 and, therefore, leads to a non-invertible matrix when multiplying it with its transposed.
+
+\strong{Note}: Here, we assume that there is only one unique loading per indicator.
 }
 \references{
 \insertAllCited{}

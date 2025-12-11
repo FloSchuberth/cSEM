@@ -44,13 +44,14 @@ data(LeDang2022)
 #' devtools::test_active_file()
 
 # debugonce(csem)
-# debugonce(foreman)
+debugonce(foreman)
 # debugonce(calculateWeightsIGSCA)
-debugonce(igsca)
+# debugonce(igsca)
 # debugonce(initializeAlsEstimates)
 # debugonce(initializeIgscaEstimates)
-debugonce(updateCBDU)
+# debugonce(updateCBDU)
 # debugonce(calculateReliabilities)
+# debugonce(scaleWeights)
 (debug_mod <- csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "GSCA",
 .dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion =
 "sum_diff_absolute")
@@ -66,12 +67,12 @@ testthat::expect_true(all(mod$Estimates$Reliabilities <= 1))
 
 # Within updateCBDU -------------------------------------------------------
 
-M1_R <- kronecker(diag(n_indicators), Gamma)[, c_index]
-M1_C <- kroneckerC(diag(n_indicators), Gamma, c_index)
-identical(M1_R, M1_C) # Apparently this is true
-# M1 <- M1[, c_index]
+# M1_R <- kronecker(diag(n_indicators), Gamma)[, c_index]
+# M1_C <- kroneckerC(diag(n_indicators), Gamma, c_index)
+# identical(M1_R, M1_C) # Apparently this is true
+# # M1 <- M1[, c_index]
 
-# TODO: Run this everytime I need to check it
-C |> t() |> round(digits = 2)
-C |> t() |> round(digits = 2) |> subset(select = "OpennesstoExperience")
+# # TODO: Run this everytime I need to check it
+# C |> t() |> round(digits = 2)
+# C |> t() |> round(digits = 2) |> subset(select = "OpennesstoExperience")
 

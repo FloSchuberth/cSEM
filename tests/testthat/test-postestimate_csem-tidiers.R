@@ -92,7 +92,7 @@ gsca_m_mod <- csem(
   .conv_criterion = "sum_diff_absolute"
 )
 
-test_that("tidy.cSEMResults for IGSCA models", {
+test_that("tidy.cSEMResults for GSCA models", {
   # FIXME: Write the tests that I'd like for the method here
 
   # FIXME: Test multigroup models glancing + tidy
@@ -109,7 +109,7 @@ test_that("tidy.cSEMResults for IGSCA models", {
   modeltests::check_dims(tidy_igsca, 249, 6)
   modeltests::check_dims(tidy_gsca, 187, 6)
   # TODO: The below is wrong because gsca_m isn't returning all the output that it should
-  modeltests::check_dims(tidy_gsca_m, 187, 6)
+  modeltests::check_dims(tidy_gsca_m, 249, 6)
 })
 
 

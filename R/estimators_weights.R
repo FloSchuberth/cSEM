@@ -817,8 +817,8 @@ calculateWeightsGSCAm <- function(
 
   
 # Output Formatting ------------------------------------------------------
-  SquaredUniqueLoadingsD <- diag(D)^2
-  names(SquaredUniqueLoadingsD) <- colnames(Z)
+  D_squared <- diag(D)^2
+  names(D_squared) <- colnames(Z)
 
   Unique_scores <- U
   colnames(Unique_scores) <- colnames(Z)
@@ -880,18 +880,7 @@ calculateWeightsIGSCA <- function(.data,
     .S = .S
   )
   
-  l <- list("W" = igsca_out$Weights, 
-            "C" = igsca_out$Loadings,
-            "B" = igsca_out$`Path Coefficients`,
-            "Construct_scores" = igsca_out$`Construct_scores`,
-            "D_squared" = igsca_out$`D_squared`,
-            "Unique_scores" = igsca_out$Unique_scores, 
-            "Modes" = "gsca", 
-            "Conv_status" = ifelse(igsca_out$Iterations > .iter_max, FALSE, TRUE),
-            "Iterations" = igsca_out$Iterations,
-            "Data" = igsca_out$Data)
-  
-  return(l)
+  return(igsca_out)
   
 }
 

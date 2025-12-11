@@ -275,17 +275,21 @@ igsca <-
 
     Unique_scores <- U
     colnames(Unique_scores) <- colnames(Z)
-  
+
+    # browser()
+
     return(
       list(
-        "Data" = Z,
-        "W" = t(W), # TODO: Come back to whether these transposes are necessary and in-line with the rest of the package?
-        "C" = C, # Note: The rest of the package expects Construct X Indicators
-        "B" = t(B), # TODO: Come back to whether these transposes are necessary and in-line with the rest of the package?
+        "W" = t(W), # W is J X P, so W^T is P \times J. As shown in the examples ?csem, res$Estimates$Weight_estimates should be P \times J
+        "C" = C, # C is P \times J. As shown in the examples ?csem, res$Estimates$Loading_estimates should be P \times J
+        "B" = t(B), # B is From \times To; so t(B) is To \times From. As shown in the examples ?csem, res$Estimates$Path_estimates should be To \times From
         "Construct_scores" = Z %*% W,
         "D_squared" = D_squared,
         "Unique_scores" = Unique_scores,
-        "Iterations" = it
+        "Modes" = "gsca", 
+        "Conv_status" = ifelse(it > .iter_max, FALSE, TRUE),
+        "Iterations" = it,
+        "Data" = Z # Z is N \times P
       )
     )
   }
