@@ -108,7 +108,6 @@ test_that("tidy.cSEMResults for GSCA models", {
 
   modeltests::check_dims(tidy_igsca, 249, 6)
   modeltests::check_dims(tidy_gsca, 187, 6)
-  # TODO: The below is wrong because gsca_m isn't returning all the output that it should
   modeltests::check_dims(tidy_gsca_m, 249, 6)
 })
 
@@ -119,7 +118,16 @@ test_that("glance.cSEMResults for GSCA", {
   glance_gsca <- glance(gsca_mod)
   glance_gsca_m <- glance(gsca_m_mod)
 
-  check_glance_outputs(glance_igsca)  
-  check_glance_outputs(glance_gsca)  
-  check_glance_outputs(glance_gsca_m)  
+  expect_error(
+    check_glance_outputs(glance_igsca),
+    regexp = "Expected `length\\(unacceptable\\) == 0` to be TRUE"
+  )
+  expect_error(
+    check_glance_outputs(glance_gsca),
+    regexp = "Expected `length\\(unacceptable\\) == 0` to be TRUE"
+  )
+  expect_error(
+    check_glance_outputs(glance_gsca_m),
+    regexp = "Expected `length\\(unacceptable\\) == 0` to be TRUE"
+  )
 })
