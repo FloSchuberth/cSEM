@@ -64,12 +64,29 @@ igsca_mod <- csem(
 
 
 
-# TODO: Write the code to format everything into a one row multi-column tibble here
-
-
 # debugonce(glance)
-glance(igsca_mod)
+# glance(igsca_mod)
 
 
-debugonce(tidy)
+debugonce(tidy.cSEMResults)
+debugonce(summarize)
 tidy(igsca_mod)
+
+
+
+# Multigroup Things ------------------------------------------------------
+igsca_mod_mg <- csem(
+  .data = LeDang2022,
+  .model = tutorial_igsca_model,
+  .approach_weights = "GSCA",
+  .dominant_indicators = NULL,
+  .tolerance = 0.0001,
+  .conv_criterion = "sum_diff_absolute",
+  # TODO: Multigroup
+)
+
+debugonce(tidy.cSEMResults)
+tidy(igsca_mod_mg)
+
+debugonce(glance.cSEMResults)
+glance(igsca_mod_mg)

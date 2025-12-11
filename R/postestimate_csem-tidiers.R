@@ -121,8 +121,9 @@ tidy.cSEMResults <- function(x,
        
        # Test for what operand is consistent for the iterated dataframe
        ## This needs spaces so that we don't conflate ~~ with ~
-       operands <- c(" =~ ", " <~ ", " ~~ ", " ~ ") 
-       names(operands) <- c("=~", "<~", "~~", "~")
+       browser()
+       operands <- c(" =~ ", " <~ ", " ~~ ", " ~ ", " =~^2 ") 
+       names(operands) <- c("=~", "<~", "~~", "~", "=~^2")
        df_type <- sapply(operands, function(x) grepl(x, df$Name[1]))
        
        if (length(names(df_type)[df_type]) == 1) {
@@ -180,8 +181,8 @@ tidy.cSEMResults <- function(x,
    
  }
   
-  out <- as_tibble(out) 
-  return(out)
+  
+ as_tibble(out) 
   
 }
 

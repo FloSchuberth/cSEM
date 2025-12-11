@@ -183,7 +183,7 @@ summarize.cSEMResults_default <- function(
   # Build names
   if (!is.null(x1$D2)) {
   type <- rep(x2$Model$construct_type, times = rowSums(x2$Model$measurement))
-  temp <- paste0(names(x1$D2), " ~~ ", names(x1$D2))
+  temp <- paste0("U_", names(x1$D2), " =~^2 ", names(x1$D2))
   
   D2 <- data.frame(
     "Name"           = temp,
