@@ -44,6 +44,8 @@ This method and documentation is based on the \code{tidy} method for \code{lavaa
 }
 \details{
 \strong{Cautionary Note}: As with all \code{tidy()} methods, mis-specified arguments may be silently ignored.
+
+The attribute \code{verification} shows whether the model is admissible.
 }
 \author{
 Michael S. Truong
