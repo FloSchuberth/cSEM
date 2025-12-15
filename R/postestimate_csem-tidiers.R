@@ -4,6 +4,11 @@
 #'
 #' **Cautionary Note**: As with all `tidy()` methods, mis-specified arguments may be silently ignored.
 #'
+#' The attribute `ZERONESS` refers to whether there are non-zero parameter 
+#' estimates on parameters that are not part of the model specification. 
+#' For example, with Y ~ X1 + X2, in a dataset with columns, X1, X2, X3 and Y,
+#' receiving a parameter estimate for X3 would imply very wrong with the model estimation.
+#' 
 #' @param x Fitted `csem` model with class `cSEMResults` as returned from [cSEM::csem()]
 #' @param parameters Character string. Selects the desired parameter estimates as outputted from [cSEM::summarize()]. Defaults to `all`.
 #' @inheritDotParams summarize
@@ -50,6 +55,9 @@ tidy.cSEMResults <- function(
       "Exo_construct_correlation"
     )
   )
+
+
+  # Create Table -----------------------------------------------------------
 
   if (identical(names(x), c("Estimates", "Information"))) {
     # Single Group Summary
@@ -213,7 +221,60 @@ tidy.cSEMResults <- function(
     out <- Reduce(function(...) merge(..., all = TRUE, sort = FALSE), out)
   }
 
-  as_tibble(out)
+  # Warnings ---------------------------------------------------------------
+  # TODO: Is this going to work in the multigroup context?
+  names_cf <- names(x$Information$xel$construct_type[
+    x$Information$Model$construct_type == "Common factor"
+  ])
+
+  names_c <- names(x$Information$Model$construct_type[
+    x$Information$Model$construct_type == "Composite"
+  ])
+
+  indicator_cf <- apply(
+    x$Information$Model$measurement[names_cf, ],
+    2,
+    function(col) as.logical(col) |> any()
+  )
+
+  indicator_c <- apply(
+    x$Information$Model$measurement[names_c, ],
+    2,
+    function(col) as.logical(col) |> any()
+  )
+
+  absolute_sum_U <- colSums(abs(x$Estimate$Unique_scores))
+
+  zeroness <- c(
+  "Structural" = all(
+    c(x$Estimate$Path_estimates)[c(x$Information$Model$structural == 0)] ==
+      0
+  ),
+  "Measurement" = all(
+    c(x$Estimate$Loading_estimates)[c(x$Information$Model$measurement == 0)] ==
+      0
+  ),
+  "Weight" = all(
+    c(x$Estimate$Weight_estimates)[c(
+      x$Information$Model$measurement == 0
+    )] ==
+      0
+  ),
+  "UniqueScore" = all(absolute_sum_U[indicator_c] == 0),
+  "UniqueLoading" = all(x$Estimate$Unique_loading_estimates[indicator_c] == 0))
+
+
+  if (!any(zeroness)) {
+    warning2("The following parameter estimates are non-zero, despite not being part of the specified model and/or being constrained to 0.", names(zeroness[zeroness == FALSE]))
+  }
+
+# Format output ----------------------------------------------------------
+
+out <- as_tibble(out)
+attr(out, "ZERONESS") <- zeroness
+
+return(out)
+
 }
 
 #' glance Method for cSEMResults Objects
