@@ -106,7 +106,7 @@ test_that("tidy.cSEMResults for GSCA models", {
   expect_true(modeltests::check_tidy_output(tidy_gsca))
   expect_true(modeltests::check_tidy_output(tidy_gsca_m))
 
-  modeltests::check_dims(tidy_igsca, 249, 6)
+  modeltests::check_dims(tidy_igsca, 238, 6)
   modeltests::check_dims(tidy_gsca, 187, 6)
   modeltests::check_dims(tidy_gsca_m, 249, 6)
 })
