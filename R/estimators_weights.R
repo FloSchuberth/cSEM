@@ -817,8 +817,9 @@ calculateWeightsGSCAm <- function(
 
   
 # Output Formatting ------------------------------------------------------
-  D_squared <- diag(D^2)
-  names(D_squared) <- colnames(Z)
+  # isTRUE(identical(diag(D^2), diag(D)^2))
+  D_diag <- diag(D)
+  names(D_diag) <- colnames(Z)
 
   Unique_scores <- U
   colnames(Unique_scores) <- colnames(Z)
@@ -829,7 +830,7 @@ calculateWeightsGSCAm <- function(
     "C" = C,
     "B" = B,
     "Construct_scores" = Z %*% W,
-    "D_squared" = D_squared,
+    "Unique_loading_estimates" = D_diag,
     "Unique_scores" = Unique_scores,
     "E" = NULL,
     "Modes" = "gsca",

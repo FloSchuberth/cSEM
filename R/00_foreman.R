@@ -278,8 +278,8 @@ foreman <- function(
       "Indicator_VCV"          = S,
       "Proxy_VCV"              = C,
       "Construct_VCV"          = P,
-      "D2"                     = if(.approach_weights == "GSCA" & any(csem_model$construct_type == "Common factor")){
-        W$D_squared
+      "Unique_loading_estimates" = if (.approach_weights == "GSCA" & any(csem_model$construct_type == "Common factor")){
+        W$Unique_loadings
       } else {
         NULL
       },

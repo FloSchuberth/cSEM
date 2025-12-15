@@ -31,7 +31,7 @@ tidy.cSEMResults <- function(x,
                                "Path_estimates",
                                "Loadings_estimates",
                                "Weight_estimates",
-                               "D2",
+                               "Unique_loading_estimates",
                                "Effect_estimates",
                                "Exo_construct_correlation"
                              ),
@@ -44,7 +44,7 @@ tidy.cSEMResults <- function(x,
       "Path_estimates",
       "Loadings_estimates",
       "Weight_estimates",
-      "D2",
+      "Unique_loading_estimates",
       "Effect_estimates",
       "Exo_construct_correlation"
     )
@@ -65,10 +65,10 @@ tidy.cSEMResults <- function(x,
    if (parameters == "all") {
      
      
-     if (is.null(summarized_cSEMResults$Estimates$D2)) {
+     if (is.null(summarized_cSEMResults$Estimates$Unique_loading_estimates)) {
        general_estimates <- summarized_cSEMResults[["Estimates"]][c("Path_estimates", "Loading_estimates", "Weight_estimates", "Exo_construct_correlation")]
      } else {
-       general_estimates <- summarized_cSEMResults[["Estimates"]][c("Path_estimates", "Loading_estimates", "Weight_estimates", "D2", "Exo_construct_correlation")]
+       general_estimates <- summarized_cSEMResults[["Estimates"]][c("Path_estimates", "Loading_estimates", "Weight_estimates", "Unique_loading_estimates", "Exo_construct_correlation")]
      }
      
      
@@ -121,9 +121,8 @@ tidy.cSEMResults <- function(x,
        
        # Test for what operand is consistent for the iterated dataframe
        ## This needs spaces so that we don't conflate ~~ with ~
-       browser()
-       operands <- c(" =~ ", " <~ ", " ~~ ", " ~ ", " =~^2 ") 
-       names(operands) <- c("=~", "<~", "~~", "~", "=~^2")
+       operands <- c(" =~ ", " <~ ", " ~~ ", " ~ ") 
+       names(operands) <- c("=~", "<~", "~~", "~")
        df_type <- sapply(operands, function(x) grepl(x, df$Name[1]))
        
        if (length(names(df_type)[df_type]) == 1) {

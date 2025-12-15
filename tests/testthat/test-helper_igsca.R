@@ -169,11 +169,11 @@ test_that("Only indicators of common factors have uniqueness scores and unique l
 
   # Zero uniqueness scores and unique loadings where expected
   expect_true(all(absolute_sum_U[indicator_c] == 0))
-  expect_true(all(mod$Estimate$D2[indicator_c] == 0))
+  expect_true(all(mod$Estimate$Unique_loading_estimates[indicator_c] == 0))
 
   # Non-zero uniqueness scores and unique loadings where expected
   expect_true(all(absolute_sum_U[indicator_cf] != 0))
-  expect_true(all(mod$Estimate$D2[indicator_cf] != 0))
+  expect_true(all(mod$Estimate$Unique_loading_estimates[indicator_cf] != 0))
 })
 
 # Valid Reliabilities ----------------------------------------------------
@@ -269,7 +269,7 @@ igsca_r_table <- with(
     model = tutorial_igsca_model,
     weights = t(Weight_estimates),
     loadings = t(Loading_estimates),
-    uniqueD = D2,
+    uniqueD = Unique_loading_estimates,
     paths = t(Path_estimates)
   )
 )

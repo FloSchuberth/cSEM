@@ -179,25 +179,25 @@ summarize.cSEMResults_default <- function(
   }
   
 
-  ## D2 ----------------------------------------------------------------------
+  ## Unique Loading Estimates ----------------------------------------------------
   # Build names
-  if (!is.null(x1$D2)) {
+  if (!is.null(x1$Unique_loading_estimates)) {
   type <- rep(x2$Model$construct_type, times = rowSums(x2$Model$measurement))
-  temp <- paste0("U_", names(x1$D2), " =~^2 ", names(x1$D2))
+  temp <- paste0("U_", names(x1$Unique_loading_estimates), " =~ ", names(x1$Unique_loading_estimates))
   
-  D2 <- data.frame(
+  Unique_loading_estimates <- data.frame(
     "Name"           = temp,
     "Construct_type" = type,
-    "Estimate"       = x1$D2,
+    "Estimate"       = x1$Unique_loading_estimates,
     "Std_err"        = NA,
     "t_stat"         = NA,
     "p_value"        = NA,
     stringsAsFactors = FALSE)
   
   # Delete rownames
-  rownames(D2) <- NULL
-  } else if (is.null(x1$D2)) {
-    D2 <- x1$D2
+  rownames(Unique_loading_estimates) <- NULL
+  } else if (is.null(x1$Unique_loading_estimates)) {
+    Unique_loading_estimates <- x1$Unique_loading_estimates
   }
 
 
@@ -375,7 +375,7 @@ summarize.cSEMResults_default <- function(
   .object$Estimates$Path_estimates    <- path_estimates
   .object$Estimates$Loading_estimates <- loading_estimates
   .object$Estimates$Weight_estimates  <- weight_estimates
-  .object$Estimates$D2                <- D2
+  .object$Estimates$Unique_loading_estimates <- Unique_loading_estimates
   .object$Estimates$Residual_correlation <- residual_correlation
   .object$Estimates$Indicator_correlation <- indicator_correlation
   .object$Estimates$Exo_construct_correlation <- exo_construct_correlation

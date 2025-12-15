@@ -271,8 +271,8 @@ igsca <-
 
     ## Output Formatting -------------------------------------------------------
     # identical(diag(D^2), diag(D)^2)
-    D_squared <- diag(D^2)
-    names(D_squared) <- colnames(Z)
+    D_diag <- diag(D)
+    names(D_diag) <- colnames(Z)
     # colnames(D_squared) <- colnames(Z)
     # rownames(D_squared) <- colnames(Z)
 
@@ -285,7 +285,7 @@ igsca <-
         "C" = C, # C is P \times J. As shown in the examples ?csem, res$Estimates$Loading_estimates should be P \times J
         "B" = t(B), # B is From \times To; so t(B) is To \times From. As shown in the examples ?csem, res$Estimates$Path_estimates should be To \times From
         "Construct_scores" = Z %*% W,
-        "D_squared" = D_squared,
+        "Unique_loading_estimates" = D_diag,
         "Unique_scores" = Unique_scores,
         "Modes" = "gsca", 
         "Conv_status" = ifelse(it > .iter_max, FALSE, TRUE),
