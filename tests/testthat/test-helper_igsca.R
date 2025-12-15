@@ -154,13 +154,13 @@ test_that("Only indicators of common factors have uniqueness scores and unique l
   ])
 
   indicator_cf <- apply(
-    mod$Information$Model$measurement[names_cf, ],
+    mod$Information$Model$measurement[names_cf, , drop = FALSE],
     2,
     function(col) as.logical(col) |> any()
   )
 
   indicator_c <- apply(
-    mod$Information$Model$measurement[names_c, ],
+    mod$Information$Model$measurement[names_c, , drop = FALSE],
     2,
     function(col) as.logical(col) |> any()
   )

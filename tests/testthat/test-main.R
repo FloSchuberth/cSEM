@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-withr::local_seed(123443)
+withr::local_seed(819349)
 
 ## Function to compare path and/or loading and/or weight estimates from a cSEM object
 ## to a vector of population parameters

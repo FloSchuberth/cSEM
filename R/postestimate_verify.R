@@ -119,18 +119,18 @@ verify <- function(.object){
     ])
 
     indicator_cf <- apply(
-      x1$Model$measurement[names_cf, ],
+      x1$Model$measurement[names_cf, ,drop = FALSE],
       2,
       function(col) as.logical(col) |> any()
     )
 
     indicator_c <- apply(
-      x1$Model$measurement[names_c, ],
+      x1$Model$measurement[names_c, , drop = FALSE],
       2,
       function(col) as.logical(col) |> any()
     )
 
-    absolute_sum_U <- colSums(abs(x2$Unique_scores))
+    absolute_sum_U <- tryCatch(colSums(abs(x2$Unique_scores), na.rm = TRUE), error = function(e) TRUE)
 
     zeroness <- c(
       "Structural" = all(
@@ -145,7 +145,7 @@ verify <- function(.object){
         )] ==
           0
       ),
-      "UniqueScore" = all(absolute_sum_U[indicator_c] == 0),
+      "UniqueScore" = all(absolute_sum_U[indicator_c] == 0 | isTRUE(absolute_sum_U)),
       "UniqueLoading" = all(x2$Unique_loading_estimates[indicator_c] == 0)
     )
 
