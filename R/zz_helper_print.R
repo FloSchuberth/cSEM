@@ -402,7 +402,8 @@ printVerifyDetails <- function(.x) {
             "2" = "All absolute standardized loading estimates <= 1", 
             "3" = "Construct VCV is positive semi-definite", 
             "4" = "All reliability estimates <= 1",
-            "5" = "Model-implied indicator VCV is positive semi-definite")
+            "5" = "Model-implied indicator VCV is positive semi-definite",
+            "6" = "Non-zero parameter estimates in-contradiction with model specification")
   
   if(inherits(.x, "cSEMVerify_2ndorder")) {
     cat2(
