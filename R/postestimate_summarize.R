@@ -182,22 +182,30 @@ summarize.cSEMResults_default <- function(
   ## Unique Loading Estimates ----------------------------------------------------
   # Build names
   if (!is.null(x1$Unique_loading_estimates)) {
-  type <- rep(x2$Model$construct_type, times = rowSums(x2$Model$measurement))
-  temp <- paste0("U_", names(x1$Unique_loading_estimates), " =~ ", names(x1$Unique_loading_estimates))
-  
-  Unique_loading_estimates <- data.frame(
-    "Name"           = temp,
-    "Construct_type" = type,
-    "Estimate"       = x1$Unique_loading_estimates,
-    "Std_err"        = NA,
-    "t_stat"         = NA,
-    "p_value"        = NA,
-    stringsAsFactors = FALSE)
-  
-  # Delete rownames
-  rownames(Unique_loading_estimates) <- NULL
+    type <- rep(x2$Model$construct_type, times = rowSums(x2$Model$measurement))
+    # temp <- paste0("U_", names(x1$Unique_loading_estimates), " =~ ", names(x1$Unique_loading_estimates))
+    # Mimicking Lavaan's format for residual variances of x1 ~~ x1
+    temp <- paste0(
+      names(x1$Unique_loading_estimates),
+      " =~ ",
+      names(x1$Unique_loading_estimates)
+    )
+
+    Unique_loading_estimates <- data.frame(
+      "Name" = temp,
+      "Construct_type" = type,
+      "Estimate" = x1$Unique_loading_estimates,
+      "Std_err" = NA,
+      "t_stat" = NA,
+      "p_value" = NA,
+      stringsAsFactors = FALSE,
+      row.names = NULL
+    )
+
+    Unique_loading_estimates <- subset(Unique_loading_estimates, Construct_type == "Common factor")
+
   } else if (is.null(x1$Unique_loading_estimates)) {
-    Unique_loading_estimates <- x1$Unique_loading_estimates
+    Unique_loading_estimates <- NULL
   }
 
 

@@ -68,8 +68,8 @@ igsca_mod <- csem(
 # glance(igsca_mod)
 
 
-debugonce(tidy.cSEMResults)
-debugonce(summarize)
+# debugonce(tidy.cSEMResults)
+# debugonce(summarize)
 tidy(igsca_mod)
 
 
