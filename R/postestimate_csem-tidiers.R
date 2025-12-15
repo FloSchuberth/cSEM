@@ -223,6 +223,10 @@ tidy.cSEMResults <- function(
 out <- as_tibble(out)
 attr(out, "verification") <- verify(x)
 
+ if(any(unlist(attr(out, "verification")))) {
+   warning2(attr(x, "verification"))
+ }
+
 return(out)
 
 }

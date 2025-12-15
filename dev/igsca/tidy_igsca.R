@@ -28,61 +28,23 @@ igsca_mod <- csem(
   .conv_criterion = "sum_diff_absolute"
 )
 
-
-# fit_to_get <- c(
-#     'dg',
-#     'dl',
-#     'dml',
-#     'df',
-#     'chi_square',
-#     'chi_square_df',
-#     'cfi',
-#     'gfi',
-#     'cn',
-#     'ifi',
-#     'nfi',
-#     'nnfi',
-#     'rmsea',
-#     'rms_theta',
-#     'srmr',
-#     'FIT',
-#     'FIT_m',
-#     'FIT_s',
-#     'gof'
-#   )
-
-
-
-# x <- assess(
-#   igsca_mod,
-#   .quality_criterion = fit_to_get, 
-# )
-
-# fit_to_tabulate <- c('DG', 'DL', 'DML', 'Df', 'Chi_square', 'Chi_square_df', 'CFI', 'GFI', 'CN', 'IFI', 'NFI', 'NNFI', 'RMSEA', 'RMS_theta', 'SRMR', 'FIT', 'FIT_m', 'FIT_s', 'GoF')
-
-# cbind(as_tibble(t(unlist(x[names(x)[names(x) %in% fit_to_tabulate]]))),as_tibble(t(unlist(x$Information))))
-
-
-
 # debugonce(glance)
-# glance(igsca_mod)
+glance(igsca_mod)
 
 
 # debugonce(tidy.cSEMResults)
 # debugonce(summarize)
 tidy(igsca_mod)
 
-
-
 # Multigroup Things ------------------------------------------------------
 igsca_mod_mg <- csem(
   .data = LeDang2022,
+  .id = "Gender",
   .model = tutorial_igsca_model,
   .approach_weights = "GSCA",
   .dominant_indicators = NULL,
   .tolerance = 0.0001,
-  .conv_criterion = "sum_diff_absolute",
-  # TODO: Multigroup
+  .conv_criterion = "sum_diff_absolute"
 )
 
 debugonce(tidy.cSEMResults)

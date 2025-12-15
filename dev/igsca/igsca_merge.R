@@ -31,13 +31,6 @@ Numberofjoboffers ~ NetworkingBehavior
 
 data(LeDang2022)
 
-# (mod <- csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "GSCA",
-# .dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion =
-# "sum_diff_absolute")
-# )
-
-
-# Reliabilities ---------------------------------------------------------------
 
 # What I iterate through
 #' devtools::load_all(".")
@@ -56,23 +49,3 @@ debugonce(foreman)
 .dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion =
 "sum_diff_absolute")
 )
-# TODO: Unclear if this is the source of the bug, but currently IGSCA creates non-zero loadings to the latent-variable indicators of OTHER constructs. (OpennesstoExperience).
-# TODO: Should create a test to make sure this doesn't happen again
-# TODO: Compare against GSCA_M behavior
-# TODO: Investigate what might be wrong with my IGSCA implementation
-
-testthat::expect_true(all(mod$Estimates$Reliabilities <= 1))
-
-
-
-# Within updateCBDU -------------------------------------------------------
-
-# M1_R <- kronecker(diag(n_indicators), Gamma)[, c_index]
-# M1_C <- kroneckerC(diag(n_indicators), Gamma, c_index)
-# identical(M1_R, M1_C) # Apparently this is true
-# # M1 <- M1[, c_index]
-
-# # TODO: Run this everytime I need to check it
-# C |> t() |> round(digits = 2)
-# C |> t() |> round(digits = 2) |> subset(select = "OpennesstoExperience")
-

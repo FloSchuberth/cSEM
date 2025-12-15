@@ -36,6 +36,16 @@ igsca_mod <- csem(
   .conv_criterion = "sum_diff_absolute"
 )
 
+igsca_mod_mg <- csem(
+  .data = LeDang2022,
+  .id = "Gender",
+  .model = tutorial_igsca_model,
+  .approach_weights = "GSCA",
+  .dominant_indicators = NULL,
+  .tolerance = 0.0001,
+  .conv_criterion = "sum_diff_absolute"
+)
+
 gsca_model <- "
 # Measurement Model
 NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + Behavior7 + Behavior8 + Behavior9
@@ -99,14 +109,17 @@ test_that("tidy.cSEMResults for GSCA models", {
   # FIXME: conf.int level TRUE/FALSE
   # FIXME: conf.level supported
   tidy_igsca <- tidy(igsca_mod)
+  tidy_igsca_mg <- tidy(igsca_mod_mg)
   tidy_gsca <- tidy(gsca_mod)
   tidy_gsca_m <- tidy(gsca_m_mod)
 
   expect_true(modeltests::check_tidy_output(tidy_igsca))
+  expect_true(modeltests::check_tidy_output(tidy_igsca_mg))
   expect_true(modeltests::check_tidy_output(tidy_gsca))
   expect_true(modeltests::check_tidy_output(tidy_gsca_m))
 
   modeltests::check_dims(tidy_igsca, 238, 6)
+  modeltests::check_dims(tidy_igsca_mg, 476, 7)
   modeltests::check_dims(tidy_gsca, 187, 6)
   modeltests::check_dims(tidy_gsca_m, 249, 6)
 })
