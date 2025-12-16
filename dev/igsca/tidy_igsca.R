@@ -35,6 +35,10 @@ glance(igsca_mod)
 # debugonce(summarize)
 tidy(igsca_mod)
 
+# TODO: Try out what it would look like with construct scores standardized/unstandardized
+# TODO: That thing about whether getConstructScores works with both GSCA-M and IGSCA
+
+
 # Multigroup Things ------------------------------------------------------
 igsca_mod_mg <- csem(
   .data = LeDang2022,
