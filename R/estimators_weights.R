@@ -829,7 +829,7 @@ calculateWeightsGSCAm <- function(
     "W" = t(W),
     "C" = C,
     "B" = B,
-    "Construct_scores" = Z %*% W,
+    "Construct_scores" = (Z - (U %*% D)) %*% W,
     "Unique_loading_estimates" = D_diag,
     "Unique_scores" = Unique_scores,
     "E" = NULL,
