@@ -31,7 +31,6 @@ igsca_mod <- csem(
 # debugonce(glance)
 glance(igsca_mod)
 
-
 # debugonce(tidy.cSEMResults)
 # debugonce(summarize)
 tidy(igsca_mod)
@@ -48,7 +47,9 @@ igsca_mod_mg <- csem(
 )
 
 debugonce(tidy.cSEMResults)
+debugonce(summarize)
 tidy(igsca_mod_mg)
 
 debugonce(glance.cSEMResults)
+# debugonce(assess)
 glance(igsca_mod_mg)

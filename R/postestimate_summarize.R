@@ -201,7 +201,8 @@ summarize.cSEMResults_default <- function(
       stringsAsFactors = FALSE,
       row.names = NULL
     )
-
+    # Regarding `Construct_type` as global variable, 
+    # note: https://github.com/r-lib/devtools/issues/2307
     Unique_loading_estimates <- subset(Unique_loading_estimates, Construct_type == "Common factor")
 
   } else if (is.null(x1$Unique_loading_estimates)) {

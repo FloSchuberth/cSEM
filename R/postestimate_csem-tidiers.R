@@ -56,12 +56,14 @@ tidy.cSEMResults <- function(
 
   # Create Table -----------------------------------------------------------
 
-  if (identical(names(x), c("Estimates", "Information"))) {
+  if (inherits(x, "cSEMResults_default")) {
     # Single Group Summary
     summarized_cSEMResults_list <- list(summarize(x, ...))
-  } else {
+  } else if (inherits(x, "cSEMResults_multi")) {
     # Multi Group Summary
     summarized_cSEMResults_list <- lapply(x, summarize, ...)
+  } else {
+    stop("Unsupported object passed to tidy.cSEMResults()")
   }
 
   out <- lapply(
