@@ -86,7 +86,7 @@ foreman <- function(
   S <- Cor$S
   
   ## Standardize
-  X <- scale(data.matrix(X_cleaned))
+  X <- scale(data.matrix(X_cleaned), center = TRUE, scale = TRUE)
   
   ## Calculate weights
   if (.approach_weights == "PLS-PM") {
@@ -152,7 +152,7 @@ foreman <- function(
       if (isTRUE(.disattenuate)) {
         # IGSCA Algorithm for a mixture of Common factor and Composite constructs
         W <- calculateWeightsIGSCA(
-          .data = X_cleaned,
+          .data = X,
           .csem_model = csem_model,
           .tolerance = .tolerance,
           .iter_max = .iter_max,

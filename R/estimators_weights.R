@@ -825,6 +825,7 @@ calculateWeightsGSCAm <- function(
   colnames(Unique_scores) <- colnames(Z)
 
   # Return
+  stop("I need to consider whether the returned data and construct scores are normalized or standardized. May also need to get standardized unique scores.")
   l <- list(
     "W" = t(W),
     "C" = C,

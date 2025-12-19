@@ -320,8 +320,14 @@ initializeIgscaEstimates <- function(Z0, W0, B0, .S = args_default()$.S) {
   w_index <- which(W0 != 0)
   aindex <- which(A0 != 0)
 
-  # The original algorithm may be doing this to use a biased consistent estimator of the standard deviation instead of unbiased, not sure why.
-  Z <- scale(Z0, center = TRUE, scale = TRUE) * sqrt(N) / sqrt(N - 1)
+  # The original algorithm uses the biased consistent estimator of the standard deviation instead of unbiased. This is unlikely to matter.
+  # Proof: 
+  # Scaling creates: (x - mean(x)) / sqrt(sum(x - mean(x)^2) / sqrt(n-1))
+  # Which is equal to (x - mean(x))*sqrt(n-1) / sqrt(sum(x - mean(x)^2)).
+  # Therefore, scale(Z0, center = TRUE, scale = TRUE) * sqrt(N) / sqrt(N - 1)
+  # is equal to (x - mean(x))*sqrt(n) / sqrt(sum(x - mean(x)^2)).
+  # Z <- scale(Z0, center = TRUE, scale = TRUE) * sqrt(N) / sqrt(N - 1)
+  Z <- Z0
   # Random Values to W and A
   W <- W0
   A <- A0
@@ -450,8 +456,9 @@ initializeAlsEstimates <- function(
 
   # Initialize matrix to hold V
   V <- cbind(diag(n_indicators), W)
-  # Standardize Data Matrix
-  Z <- scale(Z0, center = TRUE, scale = TRUE) / sqrt(n_case - 1)
+  # Normalize data matrix
+  # FIXME: It seems like it is essential that the data be normalized for the GSCA_M portion to work. 
+  Z <- Z0 / sqrt(n_case - 1)
   # Create Initial Construct Scores Matrix
   Gamma <- Z %*% W
   # Initialize Unique Error Matrix
@@ -505,9 +512,11 @@ initializeAlsEstimates <- function(
   # AFAICT, this shouldn't affect the parameter estimates because U only affects the other parameter estimates via U %*% D, and D will
   #  already zero the effects of the initialization
   U[, indicator_type == "Composite"] <- 0
-  D <- diag(diag(t(U) %*% Z)) # TODO: This forces the D matrix to be diagonal-entries only.
+  D <- diag(diag(t(U) %*% Z)) # This forces the D matrix to be diagonal-entries only.
   D[indicator_type == "Composite", indicator_type == "Composite"] <- 0
 
+
+  stop("I need to consider whether the returned data and construct scores are normalized or standardized. May also need to get standardized unique scores.")
   return(list(
     "W" = W,
     "C" = C,
