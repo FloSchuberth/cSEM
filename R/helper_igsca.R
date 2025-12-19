@@ -279,6 +279,7 @@ igsca <-
     Unique_scores <- U
     colnames(Unique_scores) <- colnames(Z)
 
+    stop("I need to consider whether the returned data and construct scores are normalized or standardized. May also need to get standardized unique scores.")
     return(
       list(
         "W" = t(W), # W is J X P, so W^T is P \times J. As shown in the examples ?csem, res$Estimates$Weight_estimates should be P \times J
@@ -516,7 +517,6 @@ initializeAlsEstimates <- function(
   D[indicator_type == "Composite", indicator_type == "Composite"] <- 0
 
 
-  stop("I need to consider whether the returned data and construct scores are normalized or standardized. May also need to get standardized unique scores.")
   return(list(
     "W" = W,
     "C" = C,
