@@ -111,6 +111,7 @@ igsca <-
     n_indicators <- ncol(Z0)
     n_constructs <- ncol(W0)
     n_total_var <- n_indicators + n_constructs
+    normalization_factor <- sqrt(n_case - 1)
 
     w_index <- which(c(W0) == 1)
     c_index <- which(c(C0) == 1)
@@ -137,6 +138,7 @@ igsca <-
       n_case = n_case,
       n_constructs = n_constructs,
       indicator_type = indicator_type,
+      normalization_factor = normalization_factor,
       .S = .S
     )
 
@@ -276,22 +278,22 @@ igsca <-
     # colnames(D_squared) <- colnames(Z)
     # rownames(D_squared) <- colnames(Z)
 
-    Unique_scores <- U
+    Unique_scores <- U * normalization_factor
     colnames(Unique_scores) <- colnames(Z)
 
-    stop("I need to consider whether the returned data and construct scores are normalized or standardized. May also need to get standardized unique scores.")
     return(
       list(
         "W" = t(W), # W is J X P, so W^T is P \times J. As shown in the examples ?csem, res$Estimates$Weight_estimates should be P \times J
         "C" = C, # C is P \times J. As shown in the examples ?csem, res$Estimates$Loading_estimates should be P \times J
         "B" = t(B), # B is From \times To; so t(B) is To \times From. As shown in the examples ?csem, res$Estimates$Path_estimates should be To \times From
-        "Construct_scores" = (Z - (U %*% D)) %*% W,
+        # Recall that Z0 is the original standardized data
+        "Construct_scores" = (Z0 - (Unique_scores %*% D)) %*% W,
         "Unique_loading_estimates" = D_diag,
         "Unique_scores" = Unique_scores,
         "Modes" = "gsca", 
         "Conv_status" = ifelse(it > .iter_max, FALSE, TRUE),
         "Iterations" = it,
-        "Data" = Z # Z is N \times P
+        "Data" = Z0 # Z is N \times P
       )
     )
   }
@@ -421,6 +423,7 @@ initializeIgscaEstimates <- function(Z0, W0, B0, .S = args_default()$.S) {
 #' @param n_indicators Number of indicators
 #' @param n_case Number of measurements
 #' @param n_constructs Number of constructs
+#' @param normalization_factor Factor to normalize the data by
 #'
 #' @returns List of matrices to put through the Alternating Least Squared (ALS) algorithm:
 #' * Estimated Weights matrix (W)
@@ -438,6 +441,7 @@ initializeAlsEstimates <- function(
   n_case,
   n_constructs,
   indicator_type,
+  normalization_factor,
   .S = args_default()$.S
 ) {
   # Initialize Bindpoints for list2env
@@ -457,9 +461,10 @@ initializeAlsEstimates <- function(
 
   # Initialize matrix to hold V
   V <- cbind(diag(n_indicators), W)
-  # Normalize data matrix
-  # FIXME: It seems like it is essential that the data be normalized for the GSCA_M portion to work. 
-  Z <- Z0 / sqrt(n_case - 1)
+  
+  # Normalize data matrix to make Z
+  # normalization_factor <- sqrt(n_case - 1)
+  Z <- Z0 / normalization_factor
   # Create Initial Construct Scores Matrix
   Gamma <- Z %*% W
   # Initialize Unique Error Matrix

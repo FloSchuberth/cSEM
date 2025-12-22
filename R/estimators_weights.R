@@ -666,16 +666,17 @@ calculateWeightsGSCAm <- function(
   Ip <- diag(P)
   A  <- cbind(C, B) # (P x TT)
   # V  <- cbind(Ij, W) # (J x TT)
-  
+
   # Normalize Z
-  Z <- Z/sqrt(N - 1) 
+  normalization_factor <- sqrt(N - 1)
+  Z <- Z / normalization_factor
   
   # if starting values are provided
   if(!is.null(.starting_values)){
     W = setStartingValues(.W = W, .starting_values = .starting_values)
   }
   
-  # Gamma
+  # Normalized Gamma
   Gamma <- Z %*% W
   
   # Calculate initial values for the unique variables in U
@@ -821,16 +822,17 @@ calculateWeightsGSCAm <- function(
   D_diag <- diag(D)
   names(D_diag) <- colnames(Z)
 
-  Unique_scores <- U
+  # Retrieve standardized unique_scores
+  Unique_scores <- U * normalization_factor
   colnames(Unique_scores) <- colnames(Z)
 
   # Return
-  stop("I need to consider whether the returned data and construct scores are normalized or standardized. May also need to get standardized unique scores.")
   l <- list(
     "W" = t(W),
     "C" = C,
     "B" = B,
-    "Construct_scores" = (Z - (U %*% D)) %*% W,
+    # Recall that .X is the (unmodified) standardized data passed to this optimization function
+    "Construct_scores" = (.X - (Unique_scores %*% D)) %*% W,
     "Unique_loading_estimates" = D_diag,
     "Unique_scores" = Unique_scores,
     "E" = NULL,

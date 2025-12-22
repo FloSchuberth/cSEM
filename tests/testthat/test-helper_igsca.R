@@ -178,6 +178,48 @@ test_that("Only indicators of common factors have uniqueness scores and unique l
   expect_true(all(mod$Estimate$Unique_loading_estimates[indicator_cf] != 0))
 })
 
+
+# Standardized Construct, Unique and Data --------------------------------
+
+test_that("Returned data, construct scores and unique scores are standardized, as opposed to normalized", {
+  # This test assumes that the normalization factor is sqrt(n_case - 1)
+  # https://github.com/FloSchuberth/cSEM/issues/581
+
+  normalization_factor <- sqrt(nrow(LeDang2022) - 1)
+
+  normed_sd <- 1 / normalization_factor
+
+  cf_indicator_names <- apply(mod$Estimates$Unique_scores, 2, sum) |>
+    vapply(function(x) x != 0, TRUE)
+
+  cf_indicator_names <- names(cf_indicator_names)[cf_indicator_names == TRUE]
+
+  standardized_data_scores <- Reduce(
+    cbind,
+    list(
+      mod$Information$Data,
+      mod$Estimates$Construct_scores,
+      mod$Estimates$Unique_scores[, cf_indicator_names],
+      gsca_mod$Estimates$Construct_scores,
+      gsca_mod$Information$Data,
+      gsca_m_mod$Estimates$Construct_scores,
+      gsca_m_mod$Estimates$Unique_scores,
+      gsca_m_mod$Information$Data
+    )
+  ) |>
+    apply(2, sd)
+
+  # If everything is standardized then the standard deviation should be closer to 1 than the normed_sd
+  expect_true(
+    all(
+      abs(standardized_data_scores - 1) <
+        abs(standardized_data_scores - normed_sd)
+    )
+  )
+})
+
+
+
 # Valid Reliabilities ----------------------------------------------------
 test_that("Reliabilities are correctly estimated", {
   expect_true(all(mod$Estimates$Reliabilities <= 1))
