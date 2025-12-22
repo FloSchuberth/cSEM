@@ -193,12 +193,31 @@ foreman <- function(
   }
 
   ## Dominant indicators:
-  if(!is.null(.dominant_indicators) & (.approach_weights != "IGSCA")) {
-    # TODO: This might break the GSCA functionality, Xoriginally IGSCA should bypass this
-    W$W <- setDominantIndicator(
-      .W = W$W, 
-      .dominant_indicators = .dominant_indicators,
-      .S = S)
+  browser()
+  # TODO: See what's inside to correctly assign things
+  lobstr::tree(W)
+  if (!is.null(.dominant_indicators)) {
+    if (.approach_weights == "GSCA") {
+      # TODO: The naming of the GSCA related variables needs to be made consistent across the pacakge
+      flipped_Eta_L_B <- setDominantIndicator(
+        .dominant_indicators = .dominant_indicators,
+        .approach_weights = "GSCA",
+        .X = .X,
+        .L = W$C,
+        .B = W$B,
+        Construct_scores = W$Construct_scores
+      )
+
+      W$Construct_scores <- flipped_Eta_L_B$Eta
+      W$C <- flipped_Eta_L_B$L
+      W$B <- flipped_Eta_L_B$B
+    } else {
+      W$W <- setDominantIndicator(
+        .W = W$W,
+        .dominant_indicators = .dominant_indicators,
+        .S = S
+      )
+    }
   }
 
   LambdaQ2W <- calculateReliabilities(

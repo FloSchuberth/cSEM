@@ -37,7 +37,7 @@ data(LeDang2022)
 #' devtools::test_active_file()
 
 # debugonce(csem)
-debugonce(foreman)
+# debugonce(foreman)
 # debugonce(calculateWeightsIGSCA)
 # debugonce(igsca)
 # debugonce(initializeAlsEstimates)
@@ -45,6 +45,7 @@ debugonce(foreman)
 # debugonce(updateCBDU)
 # debugonce(calculateReliabilities)
 # debugonce(scaleWeights)
+debugonce(flipGammaCBSigns)
 (debug_mod <- csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "GSCA",
 .dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion =
 "sum_diff_absolute")

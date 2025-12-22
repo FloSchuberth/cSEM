@@ -6,6 +6,8 @@
 #' 
 #' **Note**: Here, we assume that there is only one unique loading per indicator. 
 #' 
+#' Sign flipping has been consolidated to setDominantIndicator().
+#' 
 #' @param Z0 Data matrix of N cases (measurements) x J indicators with named
 #'   columns, unstandardized.
 #' @param W0 Indicator matrix of weights: J indicators (rows) and their
@@ -254,21 +256,6 @@ igsca <-
       } else {
         est <- C[c_index]
       }
-    }
-
-    ## Flip Signs for Factors and Composites Based on Dominant Indicators --------
-    if (!is.null(.dominant_indicators)) {
-      flipped_signs <-
-        flipGammaCBSigns(
-          Z = Z,
-          C = C,
-          B = B,
-          Gamma = Gamma,
-          n_constructs = n_constructs,
-          .dominant_indicators = .dominant_indicators
-        )
-
-      list2env(flipped_signs[c("Gamma", "C", "B")], envir = environment())
     }
 
     ## Output Formatting -------------------------------------------------------
@@ -774,44 +761,6 @@ updateCBDU <-
       )
     )
   }
-
-#' Flip signs of Gamma, Loadings and Path-Coefficients Cells Based on Dominant Indicator
-#'
-#' @inheritParams igsca
-#' @inheritParams updateXAndWW
-#' @inheritParams updateCBDU
-#'
-#' @return List of matrices:
-#' * Estimated Construct Scores (Gamma)
-#' * Estimated Loadings matrix (C)
-#' * Estimated Path-Coefficients matrix (B)
-#'
-flipGammaCBSigns <- function(
-  Z,
-  Gamma,
-  C,
-  B,
-  n_constructs,
-  .dominant_indicators
-) {
-  for (gamma_idx in seq_len(n_constructs)) {
-    if (.dominant_indicators[gamma_idx] %in% colnames(Z)) {
-      if (
-        (t(Z[, .dominant_indicators[gamma_idx]]) %*% Gamma[, gamma_idx]) < 0
-      ) {
-        Gamma[, gamma_idx] <- (-1 * Gamma[, gamma_idx])
-        C[gamma_idx, ] <- (-1 * C[gamma_idx, ])
-        B[gamma_idx, ] <- (-1 * B[gamma_idx, ])
-        B[, gamma_idx] <- (-1 * B[, gamma_idx])
-      }
-    }
-  }
-  return(list(
-    "Gamma" = Gamma,
-    "C" = C,
-    "B" = B
-  ))
-}
 
 #' Gets the Relevant Inputs for IGSCA
 #'

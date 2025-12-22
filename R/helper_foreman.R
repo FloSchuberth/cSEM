@@ -657,58 +657,102 @@ calculateReliabilities <- function(
 }
 
 #' Internal: Set the dominant indicator
-#' 
-#' Set the dominant indicator for each construct. Since the sign of the weights, 
+#'
+#' Set the dominant indicator for each construct. Since the sign of the weights,
 #' and thus the loadings is often not determined, a dominant indicator can be chosen
-#' per block. The sign of the weights are chosen that the correlation between the 
-#' dominant indicator and the composite is positive. 
+#' per block. For non-GSCA models, the sign of the weights are chosen that the correlation between the
+#' dominant indicator and the composite is positive.
+#'
+#' For GSCA models, the sign of the loadings, path-coefficients and construct scores---and not the weights---are flipped
+#' if the sign of the correlation between the standardized dominant indicator and its standardized construct are negative.
+#'
 #'
 #' @usage setDominantIndicator(
 #'  .W                   = args_default()$.W,
-#'  .dominant_indicators = args_default()$.dominant_indicators, 
+#'  .dominant_indicators = args_default()$.dominant_indicators,
 #'  .S                   = args_default()$.S
 #'  )
 #'
 #' @inheritParams csem_arguments
-#' 
+#'
 #' @return The (J x K) matrix of weights with the dominant indicator set.
 #' @keywords internal
 #'
 setDominantIndicator <- function(
-  .W                   = args_default()$.W,
+  .W = args_default()$.W,
   .dominant_indicators = args_default()$.dominant_indicators,
-  .S                   = args_default()$.S  
+  .S = args_default()$.S,
+  .approach_weights = args_default()$.approach_weights,
+  .X = args_default()$.X,
+  .L = args_default()$L,
+  .B = args_default()$B,
+  Construct_scores = args_default()$Construct_scores
 ) {
   ## Check construct names:
   # Do all construct names in .dominant_indicators match the construct
   # names used in the model?
   tmp <- setdiff(names(.dominant_indicators), rownames(.W))
-  
-  if(length(tmp) != 0) {
-    stop("Construct name(s): ", paste0("`", tmp, "`", collapse = ", "), 
-         " provided to `.dominant_indicators`", 
-         ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
+
+  if (length(tmp) != 0) {
+    stop(
+      "Construct name(s): ",
+      paste0("`", tmp, "`", collapse = ", "),
+      " provided to `.dominant_indicators`",
+      ifelse(length(tmp) == 1, " is", " are"),
+      " unknown.",
+      call. = FALSE
+    )
   }
-  
+
   ## Check indicators
   # Do all indicators names in .dominant_indicators match the indicator
   # names used in the model?
   tmp <- setdiff(.dominant_indicators, colnames(.W))
-  if(length(tmp) != 0) {
-    stop("Indicator name(s): ", paste0("`", tmp, "`", collapse = ", "), 
-         " provided to `.dominant_indicators`", 
-         ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
+  if (length(tmp) != 0) {
+    stop(
+      "Indicator name(s): ",
+      paste0("`", tmp, "`", collapse = ", "),
+      " provided to `.dominant_indicators`",
+      ifelse(length(tmp) == 1, " is", " are"),
+      " unknown.",
+      call. = FALSE
+    )
   }
-  
-  # Calculate the loadings
-  L = .W%*%.S[colnames(.W),colnames(.W)] * abs(sign(.W))
-  
-  for(i in names(.dominant_indicators)) {
-    # ensure that the dominant indicator of a block has positive correlation/loading with the composite
-    .W[i, ] = .W[i, ] * sign(L[i, .dominant_indicators[i]])
-    
-    # Old version which ensures that the weight for this indicator has a positive sign.
-    # .W[i, ] = .W[i, ] * sign(.W[i, .dominant_indicators[i]])
+
+  if (.approach_weights != "GSCA") {
+    # Calculate the loadings
+    L = .W %*% .S[colnames(.W), colnames(.W)] * abs(sign(.W))
+
+    for (i in names(.dominant_indicators)) {
+      # ensure that the dominant indicator of a block has positive correlation/loading with the composite
+      .W[i, ] = .W[i, ] * sign(L[i, .dominant_indicators[i]])
+
+      # Old version which ensures that the weight for this indicator has a positive sign.
+      # .W[i, ] = .W[i, ] * sign(.W[i, .dominant_indicators[i]])
+    }
+    return(.W)
+  } else if (.approach_weights == "GSCA") {
+    # TODO: Check that these arguments and etc are functional
+
+    browser()
+
+    n_constructs <- ncol(Construct_scores)
+
+    for (eta_idx in seq_len(n_constructs)) {
+      J_Eta_cor <- (t(.X[, .dominant_indicators[eta_idx]]) %*%
+        Construct_scores[, eta_idx])
+      if (J_Eta_cor < 0) {
+        # FIXME: Consider also flipping the weights. 
+        Construct_scores[, eta_idx] <- (-1 * Construct_scores[, eta_idx])
+        .L[eta_idx, ] <- (-1 * .L[eta_idx, ])
+        t(.B)[, eta_idx] <- (-1 * t(.B)[, eta_idx])
+        t(.B)[eta_idx, ] <- (-1 * t(.B)[eta_idx, ])
+      }
+    }
+    return(list(
+      "Eta" = Construct_scores,
+      "L" = .L,
+      "B" = .B
+    ))
   }
-  return(.W)
 }
