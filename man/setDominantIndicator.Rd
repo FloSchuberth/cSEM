@@ -6,7 +6,7 @@
 \usage{
 setDominantIndicator(
  .W                   = args_default()$.W,
- .dominant_indicators = args_default()$.dominant_indicators, 
+ .dominant_indicators = args_default()$.dominant_indicators,
  .S                   = args_default()$.S
  )
 }
@@ -20,6 +20,13 @@ Dominant indicators may be specified for a subset of the constructs.
 Default to \code{NULL}.}
 
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
+
+\item{.approach_weights}{Character string. Approach used to
+obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{IGSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
+or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
+
+\item{.X}{A matrix of processed data (scaled, cleaned and ordered).}
 }
 \value{
 The (J x K) matrix of weights with the dominant indicator set.
@@ -27,7 +34,11 @@ The (J x K) matrix of weights with the dominant indicator set.
 \description{
 Set the dominant indicator for each construct. Since the sign of the weights,
 and thus the loadings is often not determined, a dominant indicator can be chosen
-per block. The sign of the weights are chosen that the correlation between the
+per block. For non-GSCA models, the sign of the weights are chosen that the correlation between the
 dominant indicator and the composite is positive.
+}
+\details{
+For GSCA models, the sign of the loadings, path-coefficients and construct scores---and not the weights---are flipped
+if the sign of the correlation between the standardized dominant indicator and its standardized construct are negative.
 }
 \keyword{internal}

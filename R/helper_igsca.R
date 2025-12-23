@@ -279,8 +279,7 @@ igsca <-
         "Unique_scores" = Unique_scores,
         "Modes" = "gsca", 
         "Conv_status" = ifelse(it > .iter_max, FALSE, TRUE),
-        "Iterations" = it,
-        "Data" = Z0 # Z is N \times P
+        "Iterations" = it
       )
     )
   }

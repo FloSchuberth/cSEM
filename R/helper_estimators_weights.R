@@ -312,6 +312,7 @@ scaleWeights <- function(
                          # )) %*% .W
   
   ## Scale the weights to ensure that the proxies have a variance of one  
+  ### For GSCA_M and IGSCA models it multiplies the weights for indicators of common factors by a construct-specific constant
   W_scaled <- diag(1/sqrt(var_proxies)) %*%.W
   
   ## Assign rownames and colnames to the scaled weights and return

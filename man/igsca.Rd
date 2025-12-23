@@ -83,6 +83,8 @@ This R implementation of I-GSCA is based on the Matlab implementation in igsca_s
 In the example section, the specified model is based on the tutorial I-GSCA model associated with GSCA Pro \insertCite{hwangetal2023StructuralEquationModelingAMultidisciplinaryJournal}{cSEM}.
 
 \strong{Note}: Here, we assume that there is only one unique loading per indicator.
+
+Sign flipping has been consolidated to setDominantIndicator().
 }
 \examples{
 \dontrun{

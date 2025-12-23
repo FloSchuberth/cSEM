@@ -516,6 +516,8 @@ calculateWeightsGSCA <- function(
   # Return
   l <- list(
     "W" = W,
+    "C" = t(tLambda), 
+    "B" = t(tB), 
     "E" = NULL,
     "Construct_scores" = .X %*% t(W),
     "Modes" = "gsca",
@@ -830,7 +832,7 @@ calculateWeightsGSCAm <- function(
   l <- list(
     "W" = t(W),
     "C" = C,
-    "B" = B,
+    "B" = t(B), 
     # Recall that .X is the (unmodified) standardized data passed to this optimization function
     "Construct_scores" = (.X - (Unique_scores %*% D)) %*% W,
     "Unique_loading_estimates" = D_diag,

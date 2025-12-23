@@ -394,15 +394,8 @@ calculateReliabilities <- function(
       # Weights need to be scaled s.t. the composite build using .X has
       # variance of one. Note that scaled GSCAm weights are identical
       # to PLS ModeA weights.
-      # TODO: Does calculating reliabilities also apply to GSCA only composites?
-      # TODO: Should I use the scaled weights throughout or only for computing the reliabilities?
       # This applies to both GSCA_m and IGSCA
       W <- scaleWeights(.S, .W$W)
-      # if (interactive()) {
-      #   (effect_of_scaling <- W - .W$W)
-      #   c(effect_of_scaling) |> hist()
-      #   c(effect_of_scaling) |> cut(10) |> table()
-      # }
     }
   }
   names_cf <- names(.csem_model$construct_type[.csem_model$construct_type == "Common factor"])
@@ -419,130 +412,159 @@ calculateReliabilities <- function(
     ## of the true factor loading.
     ## Approaches differ in the way the loadings are calculated but in the end
     ## it is always: Q = w' lambda.
-    
-    if(.approach_weights == "PLS-PM") {
-      
-      if(.disattenuate) {
+
+    if (.approach_weights == "PLS-PM") {
+      if (.disattenuate) {
         ## Consistent loadings are obtained using PLSc, which uses the fact that
         ## lambda = c * w, where c := correction factor
-        
+
         ## 1. Compute correction factor (c)
         correction_factors <- calculateCorrectionFactors(
-          .S               = .S,
-          .W               = W,
-          .modes           = modes,
-          .csem_model      = .csem_model,
+          .S = .S,
+          .W = W,
+          .modes = modes,
+          .csem_model = .csem_model,
           .PLS_approach_cf = .PLS_approach_cf
         )
-          
+
         ## 2. Compute consistent loadings and Q (Composite/proxy-construct correlation)
         ## for constructs modeled as common factors.
-        ## Currently only done for Mode A and Mode B. For unit, modeBNNLS, PCA, it is not clear how the Qs are calculated. 
-        for(j in names_cf) {
-          
-          if(modes[j]=='modeA'){
-          Lambda[j, ] <- correction_factors[j] * W[j, ]
+        ## Currently only done for Mode A and Mode B. For unit, modeBNNLS, PCA, it is not clear how the Qs are calculated.
+        for (j in names_cf) {
+          if (modes[j] == 'modeA') {
+            Lambda[j, ] <- correction_factors[j] * W[j, ]
           }
-          
-          if(modes[j]=='modeB'){
+
+          if (modes[j] == 'modeB') {
             Lambda[j, ] <- correction_factors[j] * Lambda[j, ]
           }
-          
-          Q[j]        <- c(W[j, ] %*% Lambda[j, ])
+
+          Q[j] <- c(W[j, ] %*% Lambda[j, ])
         }
-      } 
+      }
     } else if (.approach_weights == "GSCA") {
-      
-        if (any(.csem_model$construct_type == "Common factor")) {
-          # browser()
-          # Currently, GSCAm only supports pure common factor models. This may change
-          # in the future.
-          
-          # Compute consistent loadings and Q (Composite/proxy-construct correlation)
-          # Consistent factor loadings are obtained from GSCAm and IGSCA
-          
-          for (j in rownames(Lambda[names_cf, ])) {   
-            Lambda[j, ] <- .W$C[j, ]
-            Q[j]        <- c(W[j, ] %*% Lambda[j, ])
-          }
+
+      if (any(.csem_model$construct_type == "Composite")) {
+        Lambda <- .W$C
+      }
+
+      if (any(.csem_model$construct_type == "Common factor")) {
+        # Currently, GSCAm only supports pure common factor models. This may change
+        # in the future.
+
+        # Compute consistent loadings and Q (Composite/proxy-construct correlation)
+        # Consistent factor loadings are obtained from GSCAm and IGSCA
+
+        for (j in rownames(Lambda[names_cf, ])) {
+          Lambda[j, ] <- .W$C[j, ]
+          Q[j] <- c(W[j, ] %*% Lambda[j, ])
         }
-      
-    } else if(.approach_weights %in% c("unit", "bartlett", "regression", "PCA", 
-                "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
-    
-      #  Note: "bartlett" and "regression" weights are obtained AFTER running a CFA. 
+      }
+    } else if (
+      .approach_weights %in%
+        c(
+          "unit",
+          "bartlett",
+          "regression",
+          "PCA",
+          "SUMCORR",
+          "MAXVAR",
+          "SSQCORR",
+          "MINVAR",
+          "GENVAR"
+        )
+    ) {
+      #  Note: "bartlett" and "regression" weights are obtained AFTER running a CFA.
       #  Therefore loadings are consistent and as such "disattenuation"
-      #  has already implicitly happend. Hence, it is impossible to 
+      #  has already implicitly happend. Hence, it is impossible to
       #  specify "bartlett" or "regression" when .disattenuate = FALSE.
-      if(!.disattenuate & .approach_weights %in% c("bartlett", "regression")) {
+      if (!.disattenuate & .approach_weights %in% c("bartlett", "regression")) {
         stop2(
           "The following error occured in the `calculateReliabilities()` function:\n",
-          "Unable to obtain `bartlett` or `regression` weights when `.disattenuate = FALSE`.")
+          "Unable to obtain `bartlett` or `regression` weights when `.disattenuate = FALSE`."
+        )
       }
-      
-      if(any(.csem_model$construct_type == "Composite") & .approach_weights %in% c("bartlett", "regression")) {
+
+      if (
+        any(.csem_model$construct_type == "Composite") &
+          .approach_weights %in% c("bartlett", "regression")
+      ) {
         stop2(
           "The following error occured in the `calculateReliabilities()` function:\n",
           "Unable to obtain `bartlett` or `regression` weights ",
-          " for models containing constructs modeled as composites.")
+          " for models containing constructs modeled as composites."
+        )
       }
-      
+
       # Note: Only necessary if at least one common factor is in the model
-      if(.disattenuate & any(.csem_model$construct_type == "Common factor")) {
+      if (.disattenuate & any(.csem_model$construct_type == "Common factor")) {
         ## "Croon" approach
-        # The Croon reliabilities assume that the scores are built by sum scores 
+        # The Croon reliabilities assume that the scores are built by sum scores
         # (i.e. unit weights).
         # Moreover, all constructs must be modeled as common factors.
-        
-        if(any(.csem_model$construct_type == "Composite")) {
+
+        if (any(.csem_model$construct_type == "Composite")) {
           stop2(
             "The following error occured in the `calculateReliabilities()` function:\n",
-            "Disattenuation only applicable if all constructs are modeled as common factors.")
+            "Disattenuation only applicable if all constructs are modeled as common factors."
+          )
         }
-        
-        for(j in names_cf) {
+
+        for (j in names_cf) {
           indicator_names <- colnames(Lambda[j, Lambda[j, ] != 0, drop = FALSE])
           model <- paste0(j, '=~', paste0(indicator_names, collapse = '+'))
-          
+
           # Run CFA for each construct separately to obtain the consistent loadings
           res_lavaan <- lavaan::cfa(model, .X, std.lv = TRUE, std.ov = TRUE)
-          
-          if(.approach_weights %in% c("bartlett", "regression")) {
-            
-            method <- ifelse(.approach_weights == "bartlett", "Bartlett", "regression")
-            
+
+          if (.approach_weights %in% c("bartlett", "regression")) {
+            method <- ifelse(
+              .approach_weights == "bartlett",
+              "Bartlett",
+              "regression"
+            )
+
             # Compute factor scores using "methode"
-            scores <- lavaan::lavPredict(res_lavaan, fsm = TRUE, method = method)
-            
+            scores <- lavaan::lavPredict(
+              res_lavaan,
+              fsm = TRUE,
+              method = method
+            )
+
             # Get weights and scale
             w <- c(attr(scores, 'fsm')[[1]])
-            
-            
-            # Standardization does not affect the path coefficients, only the weights and the corresponding 
+
+            # Standardization does not affect the path coefficients, only the weights and the corresponding
             # proxy scores are affected. In the manual we should refer to standardized regression weights
             # We decided to use standardized weights as it might be problematic for other function if the scores are not standardized.
-            w <- w /  c(sqrt(w %*% .S[indicator_names, indicator_names, drop = FALSE] %*% w))
+            w <- w /
+              c(sqrt(
+                w %*% .S[indicator_names, indicator_names, drop = FALSE] %*% w
+              ))
             W[j, indicator_names] <- w
           }
-          
+
           # Extract loading estimates
-          lambda           <- res_lavaan@Model@GLIST$lambda
+          lambda <- res_lavaan@Model@GLIST$lambda
           dimnames(lambda) <- res_lavaan@Model@dimNames[[1]]
-          
+
           # Extract weights for construct j
           w <- W[j, indicator_names, drop = FALSE]
-          
+
           # Reorder indicator names to ensure they are identical to the order in cSEM
           lambda <- lambda[colnames(w), ]
           Lambda[j, indicator_names] <- lambda
-          
-          # Compute composite/proxy-construct correlation: Q 
+
+          # Compute composite/proxy-construct correlation: Q
           Q[j] <- w %*% lambda
         }
       }
     } else {
-      stop2("The following error occured in the `calculateReliabilities()` function:\n",
-            .approach_weights, " is an unknown weight scheme.")
+      stop2(
+        "The following error occured in the `calculateReliabilities()` function:\n",
+        .approach_weights,
+        " is an unknown weight scheme."
+      )
     }
   } else {
     
@@ -670,7 +692,12 @@ calculateReliabilities <- function(
 #' @usage setDominantIndicator(
 #'  .W                   = args_default()$.W,
 #'  .dominant_indicators = args_default()$.dominant_indicators,
-#'  .S                   = args_default()$.S
+#'  .S                   = args_default()$.S,
+#'  .approach_weights = NULL,
+#'  .X = NULL,
+#'  .L = NULL,
+#'  .B = NULL,
+#'  Construct_scores = NULL
 #'  )
 #'
 #' @inheritParams csem_arguments
@@ -682,11 +709,11 @@ setDominantIndicator <- function(
   .W = args_default()$.W,
   .dominant_indicators = args_default()$.dominant_indicators,
   .S = args_default()$.S,
-  .approach_weights = args_default()$.approach_weights,
-  .X = args_default()$.X,
-  .L = args_default()$L,
-  .B = args_default()$B,
-  Construct_scores = args_default()$Construct_scores
+  .approach_weights = NULL,
+  .X = NULL,
+  .L = NULL,
+  .B = NULL,
+  Construct_scores = NULL
 ) {
   ## Check construct names:
   # Do all construct names in .dominant_indicators match the construct
@@ -732,27 +759,33 @@ setDominantIndicator <- function(
     }
     return(.W)
   } else if (.approach_weights == "GSCA") {
-    # TODO: Check that these arguments and etc are functional
 
-    browser()
+    if (any(colSums(.L != 0) > 1)) {
+      warning2("Sign flipping has not been vetted for models with cross-loadings")
+    }
 
-    n_constructs <- ncol(Construct_scores)
+    B_transposed <- t(.B)
 
-    for (eta_idx in seq_len(n_constructs)) {
-      J_Eta_cor <- (t(.X[, .dominant_indicators[eta_idx]]) %*%
-        Construct_scores[, eta_idx])
+    for (eta_idx in seq(ncol(Construct_scores))) {
+      J_Eta_cor <- cor(.X[, .dominant_indicators[eta_idx]], Construct_scores[, eta_idx])
       if (J_Eta_cor < 0) {
         # FIXME: Consider also flipping the weights. 
         Construct_scores[, eta_idx] <- (-1 * Construct_scores[, eta_idx])
-        .L[eta_idx, ] <- (-1 * .L[eta_idx, ])
-        t(.B)[, eta_idx] <- (-1 * t(.B)[, eta_idx])
-        t(.B)[eta_idx, ] <- (-1 * t(.B)[eta_idx, ])
+        .L[eta_idx, ] <- (-1 * .L[eta_idx, ]) # .L is Construct X Indicator
+        B_transposed[, eta_idx] <- (-1 * B_transposed[, eta_idx])
+        B_transposed[eta_idx, ] <- (-1 * B_transposed[eta_idx, ])
       }
     }
+
+    apply(sign(.L), 1, function(row) if (all(c(-1,1) %in% row)) {
+      # FIXME: This check might not be necessary...
+      warning2("There are both positive and negative loadings for one of the constructs. Sign flipping assumes that all loadings are the same sign.")
+    })
+
     return(list(
       "Eta" = Construct_scores,
       "L" = .L,
-      "B" = .B
+      "B" = t(B_transposed)
     ))
   }
 }
