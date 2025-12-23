@@ -7,7 +7,12 @@
 setDominantIndicator(
  .W                   = args_default()$.W,
  .dominant_indicators = args_default()$.dominant_indicators,
- .S                   = args_default()$.S
+ .S                   = args_default()$.S,
+ .approach_weights = NULL,
+ .X = NULL,
+ .L = NULL,
+ .B = NULL,
+ Construct_scores = NULL
  )
 }
 \arguments{

@@ -283,10 +283,10 @@ foreman <- function(
       # TODO: Unclear if much of the output estimatePath should apply to GSCA and/or if there might be a simpler solution. 
       # TODO: Should discuss with Flo
       estim_results$Path_estimates <- W$B
-      estim_results$R2 <- NULL
-      estim_results$R2adj <- NULL
-      estim_results$VIF <- NULL
-      estim_results$SE <- NULL
+      # estim_results$R2 <- NULL
+      # estim_results$R2adj <- NULL
+      # estim_results$VIF <- NULL
+      # estim_results$SE <- NULL
     }
   } else {
     estim_results <- NULL
