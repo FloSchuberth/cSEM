@@ -255,6 +255,7 @@ glance.cSEMResults <- function(
   x,
   ...
 ) {
+
   fits <- assess(
     x,
     .quality_criterion = c(
@@ -280,6 +281,10 @@ glance.cSEMResults <- function(
     )
   )
 
+  if(inherits(x, "cSEMResults_default")) {
+    fits <- list(fits)
+  }
+
   tabulatable_fits <- c(
     'DG',
     'DL',
@@ -302,10 +307,21 @@ glance.cSEMResults <- function(
     'GoF'
   )
 
-  out <- as_tibble(t(unlist(fits[names(fits)[
-    names(fits) %in% tabulatable_fits
-  ]])))
+  # FIXME: Single line fit statistics for multigroup: https://github.com/FloSchuberth/cSEM/issues/587
+  out <- lapply(fits, function(.fits, .tabulatable_fits = tabulatable_fits) {
+    as_tibble(t(unlist(.fits[names(.fits)[
+      names(.fits) %in% .tabulatable_fits
+    ]])))
+  })
 
+  if (is.list(out) & (length(out) > 1)) {
+    group_names <- names(out)
+    out <- Reduce(rbind, out)
+    out$group <- group_names
+  } else {
+    out <- out[[1]]
+  }
+    
   # Either rename here or rename throughout package to be compliant with tidymodels glossary https://www.tidymodels.org/learn/develop/broom/#glossaries
   names(out)[names(out) == "Chi_square_df"] <- "chi.square.df"
   names(out)[names(out) == "Chi_square"] <- "chi.square"

@@ -54,6 +54,6 @@ debugonce(tidy.cSEMResults)
 debugonce(summarize)
 tidy(igsca_mod_mg)
 
-debugonce(glance.cSEMResults)
 # debugonce(assess)
+debugonce(glance.cSEMResults)
 glance(igsca_mod_mg)

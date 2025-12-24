@@ -126,14 +126,18 @@ test_that("tidy.cSEMResults for GSCA models", {
 
 
 test_that("glance.cSEMResults for GSCA", {
-
   glance_igsca <- glance(igsca_mod)
+  glance_igsca_mg <- glance(igsca_mod_mg)
   glance_gsca <- glance(gsca_mod)
   glance_gsca_m <- glance(gsca_m_mod)
 
   # Claude wrote the regexp for me
   expect_error(
     check_glance_outputs(glance_igsca),
+    regexp = "Expected `length\\(unacceptable\\) == 0` to be TRUE"
+  )
+  expect_error(
+    check_glance_outputs(glance_igsca_mg),
     regexp = "Expected `length\\(unacceptable\\) == 0` to be TRUE"
   )
   expect_error(
