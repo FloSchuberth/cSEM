@@ -443,7 +443,8 @@ calculateReliabilities <- function(
         }
       }
     } else if (.approach_weights == "GSCA") {
-      Lambda <- .W$C
+      # FIXME: The reason why we can't assign this is because GSCA-proper currently estimates the loadings differentially depending on whether there are composites or loadings specified. That's why we need the loadings manually computed from the weights earlier in this function.
+      # Lambda <- .W$C
       if (any(.csem_model$construct_type == "Common factor")) {
         # Currently, GSCAm only supports pure common factor models. This may change
         # in the future.
@@ -451,7 +452,7 @@ calculateReliabilities <- function(
         # Compute consistent loadings and Q (Composite/proxy-construct correlation)
         # Consistent factor loadings are obtained from GSCAm and IGSCA
         # browser()
-        # Lambda <- .W$C
+        Lambda <- .W$C
         for (j in rownames(Lambda[names_cf, ])) {
           # Lambda[j, ] <- .W$C[j, ]
           Q[j] <- c(W[j, ] %*% Lambda[j, ])

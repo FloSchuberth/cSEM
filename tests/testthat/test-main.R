@@ -40,13 +40,21 @@ comparecSEM <- function(.object, .what, .pop_parameters) {
       x2$Weight_estimates[x2$Weight_estimates$Construct_type == "Composite", 
                           c("Name", "Estimate")])
     
-    if (x$Information$Arguments$.approach_weights == "GSCA") {
-      est <- rbind(est, 
-      x1$Weight_estimates[x1$Weight_estimates$Construct_type == "Common factor", 
-                          c("Name", "Estimate")],
-      x2$Weight_estimates[x2$Weight_estimates$Construct_type == "Common factor", 
-                          c("Name", "Estimate")])
-    }
+    # if (!is.null(x$Information)) {
+    #   if (x$Information$Arguments$.approach_weights == "GSCA") {
+    #     est <- rbind(
+    #       est,
+    #       x1$Weight_estimates[
+    #         x1$Weight_estimates$Construct_type == "Common factor",
+    #         c("Name", "Estimate")
+    #       ],
+    #       x2$Weight_estimates[
+    #         x2$Weight_estimates$Construct_type == "Common factor",
+    #         c("Name", "Estimate")
+    #       ]
+    #     )
+    #   }
+    # }
     
   } else {
     stop("Error") 

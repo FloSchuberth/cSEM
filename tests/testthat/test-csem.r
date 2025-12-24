@@ -128,6 +128,11 @@ for (i in c(
               "sum_diff_absolute"
             } else {
               "diff_absolute"
+            },
+            .iter_max = if (i == "GSCA") {
+              1000
+            } else {
+              100
             }
     )
 
