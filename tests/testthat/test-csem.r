@@ -2,7 +2,7 @@
 source(testthat::test_path("test-main.R"))
 dir.create(testthat::test_path("test_results_exportToExcel"), showWarnings = FALSE)
 
-withr::local_seed(371247)
+withr::local_seed(4423123)
 
 # ==============================================================================
 # General tests 
@@ -153,12 +153,12 @@ for (i in c(
     })
   }
 
-  test_that(paste("tidy method runs without failure with weighting approach", i), {
+  test_that(paste("tidy method fails with weighting approach", i), {
     expect_no_error(tidy(res))
     expect_s3_class(tidy(res), c("tbl", "tbl_df"))
   })
 
-  test_that(paste("glance method runs without failure with weighting approach", i), {
+  test_that(paste("glance method fails with weighting approach", i), {
     expect_no_error(glance(res))
     expect_s3_class(glance(res), c("tbl", "tbl_df"))
   })

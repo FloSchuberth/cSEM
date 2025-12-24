@@ -443,20 +443,17 @@ calculateReliabilities <- function(
         }
       }
     } else if (.approach_weights == "GSCA") {
-
-      if (any(.csem_model$construct_type == "Composite")) {
-        Lambda <- .W$C
-      }
-
+      Lambda <- .W$C
       if (any(.csem_model$construct_type == "Common factor")) {
         # Currently, GSCAm only supports pure common factor models. This may change
         # in the future.
 
         # Compute consistent loadings and Q (Composite/proxy-construct correlation)
         # Consistent factor loadings are obtained from GSCAm and IGSCA
-
+        # browser()
+        # Lambda <- .W$C
         for (j in rownames(Lambda[names_cf, ])) {
-          Lambda[j, ] <- .W$C[j, ]
+          # Lambda[j, ] <- .W$C[j, ]
           Q[j] <- c(W[j, ] %*% Lambda[j, ])
         }
       }
@@ -746,7 +743,7 @@ setDominantIndicator <- function(
     )
   }
 
-  if (.approach_weights != "GSCA") {
+  if (.approach_weights != "GSCA" | is.null(.approach_weights)) {
     # Calculate the loadings
     L = .W %*% .S[colnames(.W), colnames(.W)] * abs(sign(.W))
 

@@ -141,3 +141,6 @@ gsca_mod <- csem(.data = LeDang2022,
     ),
                   .tolerance = 0.0001,
                   .conv_criterion = "sum_diff_absolute")
+
+
+debugonce(calculateWeightsGSCA)

@@ -323,20 +323,23 @@ igsca_r_table <- with(
 ## Load Matlab Results -----------------------------------------------------
 # Loads into igsca_sim_m_table
 load(testthat::test_path("data", "igsca_matlab.RData"))
+# The original matlab code squares the unique loadings
+igsca_sim_m_table$uniqueD <- sqrt(igsca_sim_m_table$uniqueD)
 
 ## Load GSCAPro Results ----------------------------------------------------
 # Loads into igsca_gscapro
 load(testthat::test_path("data", "igsca_gscapro.RData"))
-
+# Presumably, the original GSCA Pro reports the squared unique loadings
+igsca_gscapro$uniqueD <- sqrt(igsca_gscapro$uniqueD)
 
 
 ## Compare Matlab and cSEM::igsca()------------------------------------------
 testthat::expect_failure(testthat::expect_equal(object = igsca_r_table,
                                                 expected = igsca_sim_m_table,
-                                                tolerance= .0341))
+                                                tolerance= .0033))
 
 testthat::expect_equal(object = igsca_r_table,
-                       expected = igsca_sim_m_table, tolerance = .0342)
+                       expected = igsca_sim_m_table, tolerance = .0034)
 
 # If the kronecker bypass for Loadings is done:
 # testthat::expect_success(testthat::expect_equal(object = igsca_r_table,
