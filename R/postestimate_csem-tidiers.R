@@ -8,6 +8,9 @@
 #' 
 #' @param x Fitted `csem` model with class `cSEMResults` as returned from [cSEM::csem()]
 #' @param parameters Character string. Selects the desired parameter estimates as outputted from [cSEM::summarize()]. Defaults to `all`.
+#' @param conf.int Boolean. Controls whether confidence intervals are returned or not. Defaults to `FALSE`.
+#' @param conf.level Controls the size of the confidence interval returned. Passed to the `.alpha` arguments of [cSEM::summarize()] and [cSEM::infer()] as `1 - conf.level`.
+#' @param conf.method Type of confidence interval returned. See  the `.quantity` argument of [cSEM::infer()].
 #' @inheritDotParams summarize
 #' @return A `data.frame` with one row for each estimated parameter. The
 #'   description of the column names are as follows:
@@ -23,6 +26,7 @@
 #'
 #' @author Michael S. Truong
 #'
+#' @seealso [cSEM::summarize()]
 #' @importFrom generics tidy
 #' @importFrom tibble as_tibble
 #' @export
@@ -38,6 +42,9 @@ tidy.cSEMResults <- function(
     "Effect_estimates",
     "Exo_construct_correlation"
   ),
+  conf.int = FALSE,
+  conf.level = 0.95,
+  conf.method = "all",
   ...
 ) {
   parameters <- match.arg(
@@ -249,7 +256,7 @@ return(out)
 #' @importFrom tibble tibble
 #' @export
 #'
-#' @seealso [assess()]
+#' @seealso [cSEM::assess()]
 #' @author Michael S. Truong
 glance.cSEMResults <- function(
   x,

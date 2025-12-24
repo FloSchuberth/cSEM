@@ -8,6 +8,9 @@
   x,
   parameters = c("all", "Path_estimates", "Loadings_estimates", "Weight_estimates",
     "Unique_loading_estimates", "Effect_estimates", "Exo_construct_correlation"),
+  conf.int = FALSE,
+  conf.level = 0.95,
+  conf.method = "all",
   ...
 )
 }
@@ -15,6 +18,12 @@
 \item{x}{Fitted \code{csem} model with class \code{cSEMResults} as returned from \code{\link[=csem]{csem()}}}
 
 \item{parameters}{Character string. Selects the desired parameter estimates as outputted from \code{\link[=summarize]{summarize()}}. Defaults to \code{all}.}
+
+\item{conf.int}{Boolean. Controls whether confidence intervals are returned or not. Defaults to \code{FALSE}.}
+
+\item{conf.level}{Controls the size of the confidence interval returned. Passed to the \code{.alpha} arguments of \code{\link[=summarize]{summarize()}} and \code{\link[=infer]{infer()}} as \code{1 - conf.level}.}
+
+\item{conf.method}{Type of confidence interval returned. See  the \code{.quantity} argument of \code{\link[=infer]{infer()}}.}
 
 \item{...}{
   Arguments passed on to \code{\link[=summarize]{summarize}}
@@ -46,6 +55,9 @@ This method and documentation is based on the \code{tidy} method for \code{lavaa
 \strong{Cautionary Note}: As with all \code{tidy()} methods, mis-specified arguments may be silently ignored.
 
 The attribute \code{verification} shows whether the model is admissible.
+}
+\seealso{
+\code{\link[=summarize]{summarize()}}
 }
 \author{
 Michael S. Truong
