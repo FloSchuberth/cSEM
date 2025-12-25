@@ -103,9 +103,6 @@ gsca_m_mod <- csem(
 )
 
 test_that("tidy.cSEMResults for GSCA models", {
-  # FIXME: Write the tests that I'd like for the method here
-
-  # FIXME: Test multigroup models glancing + tidy
   # FIXME: conf.int level TRUE/FALSE
   # FIXME: conf.level supported
   tidy_igsca <- tidy(igsca_mod)
@@ -118,10 +115,10 @@ test_that("tidy.cSEMResults for GSCA models", {
   expect_true(modeltests::check_tidy_output(tidy_gsca))
   expect_true(modeltests::check_tidy_output(tidy_gsca_m))
 
-  modeltests::check_dims(tidy_igsca, 238, 6)
-  modeltests::check_dims(tidy_igsca_mg, 476, 7)
-  modeltests::check_dims(tidy_gsca, 187, 6)
-  modeltests::check_dims(tidy_gsca_m, 249, 6)
+  modeltests::check_dims(tidy_igsca, 238, 7)
+  modeltests::check_dims(tidy_igsca_mg, 476, 8)
+  modeltests::check_dims(tidy_gsca, 187, 7)
+  modeltests::check_dims(tidy_gsca_m, 249, 7)
 })
 
 

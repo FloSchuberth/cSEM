@@ -10,7 +10,7 @@
 #' @param parameters Character string. Selects the desired parameter estimates as outputted from [cSEM::summarize()]. Defaults to `all`.
 #' @param conf.int Boolean. Controls whether confidence intervals are returned or not. Defaults to `FALSE`.
 #' @param conf.level Controls the size of the confidence interval returned. Passed to the `.alpha` arguments of [cSEM::summarize()] and [cSEM::infer()] as `1 - conf.level`.
-#' @param conf.method Type of confidence interval returned. See  the `.quantity` argument of [cSEM::infer()].
+#' @param conf.method Type of confidence interval returned. See  the `.ci` argument of [cSEM::summarize()].
 #' @inheritDotParams summarize
 #' @return A `data.frame` with one row for each estimated parameter. The
 #'   description of the column names are as follows:
@@ -29,6 +29,9 @@
 #' @seealso [cSEM::summarize()]
 #' @importFrom generics tidy
 #' @importFrom tibble as_tibble
+#' 
+#' @example inst/examples/example_tidy.cSEMResults.R
+#' 
 #' @export
 #'
 tidy.cSEMResults <- function(
@@ -44,7 +47,7 @@ tidy.cSEMResults <- function(
   ),
   conf.int = FALSE,
   conf.level = 0.95,
-  conf.method = "all",
+  conf.method = NULL,
   ...
 ) {
   parameters <- match.arg(
@@ -65,10 +68,21 @@ tidy.cSEMResults <- function(
 
   if (inherits(x, "cSEMResults_default")) {
     # Single Group Summary
-    summarized_cSEMResults_list <- list(summarize(x, ...))
+    summarized_cSEMResults_list <- list(summarize(
+      x,
+      .alpha = 1 - conf.level,
+      .ci = conf.method,
+      ...
+    ))
   } else if (inherits(x, "cSEMResults_multi")) {
     # Multi Group Summary
-    summarized_cSEMResults_list <- lapply(x, summarize, ...)
+    summarized_cSEMResults_list <- lapply(
+      x,
+      summarize,
+      .alpha = 1 - conf.level,
+      .ci = conf.method,
+      ...
+    )
   } else {
     stop("Unsupported object passed to tidy.cSEMResults()")
   }
@@ -185,38 +199,51 @@ tidy.cSEMResults <- function(
       colnames(out)[colnames(out) == "Std_err"] <- 'std.error'
       colnames(out)[colnames(out) == "t_stat"] <- 'statistic'
       colnames(out)[colnames(out) == "p_value"] <- 'p.value'
+      colnames(out)[grepl(".95%L", colnames(out))] <- 'conf.low'
+      colnames(out)[grepl(".95%U", colnames(out))] <- 'conf.high'
 
       # Column reordering
-
-      out <- out[, c(
+      cols <- c(
         "term",
         "op",
+        "type",
         "estimate",
         "std.error",
         "statistic",
         "p.value"
-      )]
+      )
+
+      if (isTRUE(conf.int)) {
+        cols <- c(cols, 'conf.low', 'conf.high')
+      }
+
+      out <- out[, cols[cols %in% colnames(out)]]
 
       return(out)
     },
     parameters = parameters
   )
-
+  
   if (length(out) == 1) {
     out <- out[[1]]
   } else if (length(out) > 1) {
     out <- mapply(
       FUN = function(summary, name) {
         summary$group <- name
-        summary <- summary[, c(
+        cols <- c(
           "term",
           "op",
+          "type",
           "group",
           "estimate",
           "std.error",
           "statistic",
           "p.value"
-        )]
+        )
+        if (isTRUE(conf.int)) {
+          cols <- c(cols, 'conf.low', 'conf.high')
+        }
+        summary <- summary[, cols[cols %in% colnames(summary)]]
         return(summary)
       },
       summary = out,
@@ -228,7 +255,8 @@ tidy.cSEMResults <- function(
   }
 
 # Format output ----------------------------------------------------------
-
+# TODO: This is not so good, because the specified conf.method is different from name of what confidence interval summarize uses.
+out$conf.method <- conf.method 
 out <- as_tibble(out)
 attr(out, "verification") <- verify(x)
 
@@ -254,10 +282,14 @@ return(out)
 #' @importFrom generics glance
 #' @importFrom tibble as_tibble
 #' @importFrom tibble tibble
-#' @export
+#' 
 #'
 #' @seealso [cSEM::assess()]
 #' @author Michael S. Truong
+#' 
+#' @example inst/examples/example_glance.cSEMResults.R
+#' 
+#' @export
 glance.cSEMResults <- function(
   x,
   ...
