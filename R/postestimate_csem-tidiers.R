@@ -31,6 +31,7 @@
 #' @importFrom tibble as_tibble
 #' 
 #' @examples 
+#' \dontrun{
 #'model <- "
 #'# Structural model
 #'eta2 ~ eta1
@@ -62,7 +63,7 @@
 #')
 #'
 #'tidy(res_mg_boot, conf.int = TRUE)
-#' 
+#' }
 #' @export
 #'
 tidy.cSEMResults <- function(
@@ -326,6 +327,7 @@ return(out)
 #' @author Michael S. Truong
 #' 
 #' @examples 
+#' \dontrun{
 #'   model <- "
 #' # Structural model
 #' eta2 ~ eta1
@@ -346,8 +348,7 @@ return(out)
 #'     model
 #'   )
 #'   glance(res_mg)
-#'
-
+#' }
 #' 
 #' @export
 glance.cSEMResults <- function(

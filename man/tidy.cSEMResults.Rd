@@ -57,6 +57,7 @@ This method and documentation is based on the \code{tidy} method for \code{lavaa
 The attribute \code{verification} shows whether the model is admissible.
 }
 \examples{
+\dontrun{
 model <- "
 # Structural model
 eta2 ~ eta1
@@ -71,24 +72,24 @@ eta3 =~ y31 + y32 + y33
 # Single Group Example
 res_boot <- csem(threecommonfactors, model, .resample_method = "bootstrap", .R = 40)
 
-tidy(res, conf.int = TRUE, conf.level = .95, conf.method = "CI_percentile")
-
+tidy(res_boot, conf.int = TRUE, conf.level = .95, conf.method = "CI_percentile")
 
 # Multi-Group Example
 threecommonfactors_id <- cbind(
-  "id" = sample(1:3, nrow(threecommonfactors), replace = TRUE),
-  threecommonfactors
+ "id" = sample(1:3, nrow(threecommonfactors), replace = TRUE),
+ threecommonfactors
 )
 
 res_mg_boot <- csem(
-  threecommonfactors_id,
-  model,
-  .resample_method = "bootstrap",
-  .R = 40,
-  .id = "id"
+ threecommonfactors_id,
+ model,
+ .resample_method = "bootstrap",
+ .R = 40,
+ .id = "id"
 )
 
-tidy(res_mg_boot)
+tidy(res_mg_boot, conf.int = TRUE)
+}
 }
 \seealso{
 \code{\link[=summarize]{summarize()}}
