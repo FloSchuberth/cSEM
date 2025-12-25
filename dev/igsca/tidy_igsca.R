@@ -1,49 +1,4 @@
-
-# Simple Example ---------------------------------------------------------
-
-model <- "
-# Structural model
-eta2 ~ eta1
-eta3 ~ eta1 + eta2
-
-# (Reflective) measurement model
-eta1 =~ y11 + y12 + y13
-eta2 =~ y21 + y22 + y23
-eta3 =~ y31 + y32 + y33
-"
-
-res_boot <- csem(threecommonfactors, model, .resample_method = "bootstrap", .R = 40)
-
-tidy(res, conf.int = TRUE, conf.level = .95, conf.method = "CI_percentile")
-
-threecommonfactors_id <- cbind(
-  "id" = sample(1:3, nrow(threecommonfactors), replace = TRUE),
-  threecommonfactors
-)
-
-res_mg_boot <- csem(
-  threecommonfactors_id,
-  model,
-  .resample_method = "bootstrap",
-  .R = 40,
-  .id = "id"
-)
-
-tidy(res_mg_boot)
-
-## Glance Examples ------------------------------------------------------
-
-res <- csem(threecommonfactors, model)
-
-glance(res)
-
-glance(res_mg)
-
-
 # IGSCA ------------------------------------------------------------------
-
-
-
 tutorial_igsca_model <- "
 # Composite Model
 NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + Behavior7 + Behavior8 + Behavior9
@@ -71,18 +26,16 @@ igsca_mod <- csem(
   .approach_weights = "GSCA",
   .dominant_indicators = NULL,
   .tolerance = 0.0001,
-  .conv_criterion = "sum_diff_absolute"
+  .conv_criterion = "sum_diff_absolute",
+  .resample_method = "bootstrap",
+  .R = 5
 )
 
 
 
-debugonce(tidy.cSEMResults)
-debugonce(summarize)
+# debugonce(tidy.cSEMResults)
+# debugonce(summarize)
 tidy(igsca_mod, conf.int = TRUE, conf.level = .95)
-
-
-
-
 
 
 # Multigroup Things ------------------------------------------------------
@@ -93,13 +46,11 @@ igsca_mod_mg <- csem(
   .approach_weights = "GSCA",
   .dominant_indicators = NULL,
   .tolerance = 0.0001,
-  .conv_criterion = "sum_diff_absolute"
+  .conv_criterion = "sum_diff_absolute",
+  .resample_method = "bootstrap",
+  .R = 5
 )
 
-debugonce(tidy.cSEMResults)
-debugonce(summarize)
-tidy(igsca_mod_mg)
-
-# debugonce(assess)
-debugonce(glance.cSEMResults)
-glance(igsca_mod_mg)
+# debugonce(tidy.cSEMResults)
+# debugonce(summarize)
+tidy(igsca_mod_mg, conf.int = TRUE, conf.level = .95)
