@@ -30,7 +30,38 @@
 #' @importFrom generics tidy
 #' @importFrom tibble as_tibble
 #' 
-#' @example inst/examples/example_tidy.cSEMResults.R
+#' @examples 
+#'model <- "
+#'# Structural model
+#'eta2 ~ eta1
+#'eta3 ~ eta1 + eta2
+#'
+#'# (Reflective) measurement model
+#'eta1 =~ y11 + y12 + y13
+#'eta2 =~ y21 + y22 + y23
+#'eta3 =~ y31 + y32 + y33
+#'"
+#'
+#'# Single Group Example
+#'res_boot <- csem(threecommonfactors, model, .resample_method = "bootstrap", .R = 40)
+#'
+#'tidy(res_boot, conf.int = TRUE, conf.level = .95, conf.method = "CI_percentile")
+#'
+#'# Multi-Group Example
+#'threecommonfactors_id <- cbind(
+#'  "id" = sample(1:3, nrow(threecommonfactors), replace = TRUE),
+#'  threecommonfactors
+#')
+#'
+#'res_mg_boot <- csem(
+#'  threecommonfactors_id,
+#'  model,
+#'  .resample_method = "bootstrap",
+#'  .R = 40,
+#'  .id = "id"
+#')
+#'
+#'tidy(res_mg_boot, conf.int = TRUE)
 #' 
 #' @export
 #'
@@ -193,6 +224,13 @@ tidy.cSEMResults <- function(
 
       # Rename columns to be consistent with tidy glossary standard
       # See Zon Shi Wu Jie from May 5/2014 https://stackoverflow.com/a/23475492
+      
+      if (isTRUE(conf.int)) {
+        # We can't get pass conf.method directly because summarize sets
+        #  the conf.method to a non-NULL string when NULL is passed as an argument
+        # Claude Sonnet 4.5 helped with string extraction
+        out$conf.method <- sub("\\.95%U.*$", "", grep(".95%U", colnames(out), value = TRUE))
+      }
       colnames(out)[colnames(out) == "Name"] <- 'term'
       colnames(out)[colnames(out) == "Construct_type"] <- 'type'
       colnames(out)[colnames(out) == "Estimate"] <- 'estimate'
@@ -214,7 +252,7 @@ tidy.cSEMResults <- function(
       )
 
       if (isTRUE(conf.int)) {
-        cols <- c(cols, 'conf.low', 'conf.high')
+        cols <- c(cols, 'conf.low', 'conf.high', 'conf.method')
       }
 
       out <- out[, cols[cols %in% colnames(out)]]
@@ -241,7 +279,7 @@ tidy.cSEMResults <- function(
           "p.value"
         )
         if (isTRUE(conf.int)) {
-          cols <- c(cols, 'conf.low', 'conf.high')
+          cols <- c(cols, 'conf.low', 'conf.high', 'conf.method')
         }
         summary <- summary[, cols[cols %in% colnames(summary)]]
         return(summary)
@@ -287,7 +325,29 @@ return(out)
 #' @seealso [cSEM::assess()]
 #' @author Michael S. Truong
 #' 
-#' @example inst/examples/example_glance.cSEMResults.R
+#' @examples 
+#'   model <- "
+#' # Structural model
+#' eta2 ~ eta1
+#' eta3 ~ eta1 + eta2
+#' # (Reflective) measurement model
+#' eta1 =~ y11 + y12 + y13
+#' eta2 =~ y21 + y22 + y23
+#' eta3 =~ y31 + y32 + y33
+#' "
+#'   res <- csem(threecommonfactors, model)
+#'   glance(res)
+#'   threecommonfactors_id <- cbind(
+#'     "id" = sample(1:3, nrow(threecommonfactors), replace = TRUE),
+#'     threecommonfactors
+#'   )
+#'   res_mg <- csem(
+#'     threecommonfactors_id,
+#'     model
+#'   )
+#'   glance(res_mg)
+#'
+
 #' 
 #' @export
 glance.cSEMResults <- function(
