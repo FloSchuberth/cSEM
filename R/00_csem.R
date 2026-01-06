@@ -211,13 +211,16 @@
 #' .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
 #'                            "MINVAR", "GENVAR","GSCA", "PCA",
 #'                            "unit", "bartlett", "regression"),
-#' .conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative"),
+#' .conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative",
+#'                            "sum_diff_absolute", "mean_diff_absolute"),
 #' .disattenuate          = TRUE,
 #' .dominant_indicators   = NULL,
 #' .estimate_structural   = TRUE,
 #' .id                    = NULL,
 #' .instruments           = NULL,
 #' .iter_max              = 100,
+#' .GSCA_control          = list(.forceIGSCA = FALSE),
+#' .GSCA_modes            = NULL,
 #' .normality             = FALSE,
 #' .PLS_approach_cf       = c("dist_squared_euclid", "dist_euclid_weighted", 
 #'                            "fisher_transformed", "mean_arithmetic",
@@ -294,7 +297,7 @@
 #' \item{[doRedundancyAnalysis()]}{Perform a redundancy analysis (RA) as proposed by 
 #' \insertCite{Hair2016;textual}{cSEM} with reference to \insertCite{Chin1998;textual}{cSEM}}
 #' }
-#' 
+#' @importFrom Rdpack reprompt
 #' @references
 #'   \insertAllCited{}
 #'
@@ -316,13 +319,16 @@ csem <- function(
   .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
                              "MINVAR", "GENVAR","GSCA", "PCA",
                              "unit", "bartlett", "regression"),
-  .conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative"),
+  .conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative",
+                            "sum_diff_absolute", "mean_diff_absolute"),
   .disattenuate          = TRUE,
   .dominant_indicators   = NULL,
   .estimate_structural   = TRUE,
   .id                    = NULL,
   .instruments           = NULL,
   .iter_max              = 100,
+  .GSCA_control          = list(.forceIGSCA = FALSE),
+  .GSCA_modes            = NULL,
   .normality             = FALSE,
   .PLS_approach_cf       = c("dist_squared_euclid", "dist_euclid_weighted", 
                              "fisher_transformed", "mean_arithmetic",

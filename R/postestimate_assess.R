@@ -84,7 +84,9 @@
 #'   suffer from serious statistical drawbacks. Calculation is done by [calculateChiSquare()],
 #'   [calculateChiSquareDf()], [calculateCFI()], 
 #'   [calculateGFI()], [calculateIFI()], [calculateNFI()], [calculateNNFI()], 
-#'   [calculateRMSEA()], [calculateRMSTheta()] and [calculateSRMR()].}
+#'   [calculateRMSEA()], [calculateRMSTheta()], [calculateSRMR()], [calculateFIT()],
+#'   [calculateFIT_m()] and [calculateFIT_s()].}
+#'
 #' \item{Fornell-Larcker criterion; "fl_criterion"}{A rule suggested by \insertCite{Fornell1981;textual}{cSEM}
 #'   to assess discriminant validity. The Fornell-Larcker
 #'   criterion is a decision rule based on a comparison between the squared
@@ -206,7 +208,7 @@
 #'                            "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
 #'                            "cfi", "cn", "gfi", "ifi", "nfi", "nnfi", 
 #'                            "reliability",
-#'                            "rmsea", "rms_theta", "srmr",
+#'                            "rmsea", "rms_theta", "srmr", "FIT", "FIT_m", "FIT_s",
 #'                            "gof", "htmt", "htmt2", "r2", "r2_adj",
 #'                            "rho_T", "rho_T_weighted", "vif", 
 #'                            "vifmodeB"),
@@ -236,7 +238,7 @@ assess <- function(
                            "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
                            "cfi", "cn", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
-                           "rmsea", "rms_theta", "srmr",
+                           "rmsea", "rms_theta", "srmr", "FIT", "FIT_m", "FIT_s",
                            "gof", "htmt", "htmt2", "r2", "r2_adj",
                            "rho_T", "rho_T_weighted", "vif", 
                            "vifmodeB"),
@@ -480,6 +482,24 @@ assess <- function(
   if(any(.quality_criterion %in% c("all", "srmr"))) {
     out[["SRMR"]] <- calculateSRMR(.object, ...)
   }
+    
+  if(!is.null(.object$Information$Arguments$.approach_weights)) {
+    if (any(.quality_criterion %in% c("all", "FIT")) &
+        (.object$Information$Arguments$.approach_weights == "GSCA")) {
+      out[["FIT"]] <- calculateFIT(.object)
+    }
+    
+    if (any(.quality_criterion %in% c("all", "FIT_m")) &
+        (.object$Information$Arguments$.approach_weights == "GSCA")) {
+      out[["FIT_m"]] <- calculateFIT_m(.object)
+    }
+    
+    if (any(.quality_criterion %in% c("all", "FIT_s")) &
+        (.object$Information$Arguments$.approach_weights == "GSCA")) {
+      out[["FIT_s"]] <- calculateFIT_s(.object)
+    }
+  }
+  
   if(any(.quality_criterion %in% c("all", "fl_criterion"))) {
     if(inherits(.object, "cSEMResults_default")) {
       out[["Fornell-Larcker"]] <- calculateFLCriterion(

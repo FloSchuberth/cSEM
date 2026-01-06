@@ -19,7 +19,7 @@ calculateWeightsGSCAm(
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
-One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
+One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
 to "\emph{diff_absolute}".}
 
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
@@ -66,6 +66,8 @@ if a construct modeled as a composite is present.
 The reason is that the measurement matrix has a zero row for every construct
 which is a pure composite (i.e. all related loadings are zero)
 and, therefore, leads to a non-invertible matrix when multiplying it with its transposed.
+
+\strong{Note}: Here, we assume that there is only one unique loading per indicator.
 }
 \references{
 \insertAllCited{}
