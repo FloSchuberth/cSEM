@@ -103,8 +103,6 @@ gsca_m_mod <- csem(
 )
 
 test_that("tidy.cSEMResults for GSCA models", {
-  # FIXME: conf.int level TRUE/FALSE
-  # FIXME: conf.level supported
   tidy_igsca <- tidy(igsca_mod)
   tidy_igsca_mg <- tidy(igsca_mod_mg)
   tidy_gsca <- tidy(gsca_mod)
@@ -128,21 +126,12 @@ test_that("glance.cSEMResults for GSCA", {
   glance_gsca <- glance(gsca_mod)
   glance_gsca_m <- glance(gsca_m_mod)
 
-  # Claude wrote the regexp for me
-  expect_error(
-    check_glance_outputs(glance_igsca),
-    regexp = "Expected `length\\(unacceptable\\) == 0` to be TRUE"
+  check_glance_outputs(glance_igsca)
+
+  expect_error(check_glance_outputs(glance_igsca_mg),
+  regexp = "Output column names not in the column glossary: group"
   )
-  expect_error(
-    check_glance_outputs(glance_igsca_mg),
-    regexp = "Expected `length\\(unacceptable\\) == 0` to be TRUE"
-  )
-  expect_error(
-    check_glance_outputs(glance_gsca),
-    regexp = "Expected `length\\(unacceptable\\) == 0` to be TRUE"
-  )
-  expect_error(
-    check_glance_outputs(glance_gsca_m),
-    regexp = "Expected `length\\(unacceptable\\) == 0` to be TRUE"
-  )
+  
+  check_glance_outputs(glance_gsca)
+  check_glance_outputs(glance_gsca_m)
 })
