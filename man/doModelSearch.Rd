@@ -4,16 +4,21 @@
 \alias{doModelSearch}
 \title{Do a model specification search}
 \usage{
-dfunction(.object = NULL, 
+doModelSearch(.object = NULL, 
 .n_exogenous = 3,
-.popsize = 20,
-.maxiter=20,
+.popsize = 20, 
+.iter_max= 20,
 .mutation_prob = 0.5,
-.seeds = c(2, 4, 5),
+.cross_prob = 0.8,
 .only_structural = FALSE)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+
+\item{.iter_max}{Integer. The maximum number of iterations allowed.
+If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
+If the algorithm exceeds the specified number, weights of iteration step
+\code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
 
 \item{.only_structural}{Should the the log-likelihood be based on the
 structural model? Ignored if \code{.by_equation == TRUE}. Defaults to \code{TRUE}.}

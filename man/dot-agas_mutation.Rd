@@ -2,30 +2,10 @@
 % Please edit documentation in R/helper_doModelSearch.R
 \name{.agas_mutation}
 \alias{.agas_mutation}
-\title{#' Internal: Function to transform the measurement model into a list
-transform_measurement_model <- function(.mes_mod) {
-measurement_model_list <- list()
-for (i in 1:nrow(.mes_mod)) {
-latent_var <- rownames(.mes_mod)\link{i}
-indicators <- colnames(.mes_mod)[which(.mes_mod\link{i, } == 1)]
-measurement_model_list[\link{latent_var}] <- indicators
-}
-return(measurement_model_list)
-}
-Internal: WHAT IS THIS FUNCTION DOING?}
+\title{Internal: AGAS MUTATION}
 \usage{
-.agas_mutation(.object, .parent, .n_variables, .mutation_prob, .n_exogenous)
+.agas_mutation(.object, .parent, .n_variables, .n_exogenous)
 }
 \description{
-#' Internal: Function to transform the measurement model into a list
-transform_measurement_model <- function(.mes_mod) {
-measurement_model_list <- list()
-for (i in 1:nrow(.mes_mod)) {
-latent_var <- rownames(.mes_mod)\link{i}
-indicators <- colnames(.mes_mod)[which(.mes_mod\link{i, } == 1)]
-measurement_model_list[\link{latent_var}] <- indicators
-}
-return(measurement_model_list)
-}
-Internal: WHAT IS THIS FUNCTION DOING?
+Internal: AGAS MUTATION
 }

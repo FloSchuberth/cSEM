@@ -1,16 +1,5 @@
-#' #' Internal: Function to transform the measurement model into a list
-#' transform_measurement_model <- function(.mes_mod) {
-#'   measurement_model_list <- list()
-#'   for (i in 1:nrow(.mes_mod)) {
-#'     latent_var <- rownames(.mes_mod)[i]
-#'     indicators <- colnames(.mes_mod)[which(.mes_mod[i, ] == 1)]
-#'     measurement_model_list[[latent_var]] <- indicators
-#'   }
-#'   return(measurement_model_list)
-#' }
-
-#' Internal: WHAT IS THIS FUNCTION DOING?
-.agas_mutation <- function(.object, .parent, .n_variables, .mutation_prob, .n_exogenous) {
+#' Internal: AGAS MUTATION
+.agas_mutation <- function(.object, .parent, .n_variables, .n_exogenous) {
   mutate <- .parent <- as.vector(.object@population[.parent,])
   mutate_matrix <- matrix(mutate, nrow = .n_variables, byrow = TRUE)
   
@@ -32,7 +21,7 @@
     vector_indices <- (indices[, 1] - 1) * .n_variables + indices[, 2]
     
     # Select a random index from the sub-diagonal indices 
-    if (length(vector_indices) > 0 && runif(1) <= .mutation_prob) {  # Use mutation_prob here
+    if (length(vector_indices) > 0) {  # Use mutation_prob here
       available_indices <- vector_indices  # Keep track of available indices to flip
       while (length(available_indices) > 1) {
         j <- sample(available_indices, size = 1)
@@ -179,14 +168,7 @@
   
   sem_fitness <- -model_criteria$BIC
   
-  
   if (is.na(sem_fitness)) return(-100000)
-  
-  if (sem_fitness > .pkg_state$best_fitness) {
-    .pkg_state$best_individual      <- adj_matrix
-    .pkg_state$best_fitness         <- sem_fitness
-    .pkg_state$best_individuals_all <- append(.pkg_state$best_individuals_all, list(adj_matrix))
-  }
   
   sem_fitness
 }
