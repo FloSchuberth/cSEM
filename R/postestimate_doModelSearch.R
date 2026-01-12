@@ -45,7 +45,11 @@ doModelSearch <- function(.object = NULL,
   # Retrieve information on the model (number variables, name variables)
   names_c <- rownames(.object$Information$Model$measurement)
   # names_c <- unique(c(.object$Information$Model$cons_exo,.object$Information$Model$cons_endo))
+  cons_exo <- .object$Information$Model$cons_exo
+  cons_endo <- .object$Information$Model$cons_endo
   nr_c <- length(names_c)
+  
+  # .n_exogenous <- .object$Information$Model$cons_exo
   
   outer_model_list <- lapply(seq(1,nrow(.object$Information$Model$measurement)),
                                function(x){colnames(.object$Information$Model$measurement)[.object$Information$Model$measurement[x,]==1]})
@@ -62,7 +66,7 @@ doModelSearch <- function(.object = NULL,
   BIC = model_criteria$BIC
   print(BIC)
   
-  .agas_dataset <- .object$Information$Data
+  data <- .object$Information$Data
   
   ga_control <- GA::ga(
     type = "binary",
@@ -71,10 +75,20 @@ doModelSearch <- function(.object = NULL,
     maxiter = .iter_max,
     pmutation = .mutation_prob,
     pcrossover = .cross_prob,
-    fitness = function(x) .agas_fitness(x, .agas_dataset, .n_exogenous, outer_model_list, names_c, .only_structural),
+    fitness = function(x) .agas_fitness(.matrix_vector = x,
+                                        .dataset_generated = data,
+                                        .n_exogenous = .n_exogenous,
+                                        .measurement_model = outer_model_list,
+                                        .variables = names_c, 
+                                        .only_structural = .only_structural),
     elitism = TRUE,
     parallel = FALSE,
-    mutation = function(object, parent) .agas_mutation(object, parent, nr_c, .n_exogenous),
+    # mutation = function(object, parent) .agas_mutation(object, parent,
+    #                                                    .n_variables = nr_c,
+    #                                                    .n_exogenous = .n_exogenous),
+    mutation = function(object, parent) .agas_mutation1(object, parent,
+                                                       .cons_exo = cons_exo,
+                                                       .cons_endo = cons_endo),
     keepBest = TRUE
   )
   best <- unlist(ga_control@bestSol[.iter_max])

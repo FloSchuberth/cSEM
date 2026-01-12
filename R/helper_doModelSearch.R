@@ -1,5 +1,7 @@
 #' Internal: AGAS MUTATION
 .agas_mutation <- function(.object, .parent, .n_variables, .n_exogenous) {
+  
+#   Would be nice to label the matrix. Perhaps additional argument is needed. 
   mutate <- .parent <- as.vector(.object@population[.parent,])
   mutate_matrix <- matrix(mutate, nrow = .n_variables, byrow = TRUE)
   
@@ -10,6 +12,10 @@
     mutate_matrix[i, ] <- 0
   }
   
+  # Comment in later
+  # mutate_matrix[,.n_exogenous,drop=FALSE] <- 0
+  
+#   Try to work here with matices instead of vectors
   mutate_vector <- as.vector(t(mutate_matrix))
   
   # Create list indices that i want to mutate
@@ -44,6 +50,82 @@
   return(mutate_vector)
 }
 
+
+#' Internal: AGAS MUTATION
+.agas_mutation1 <- function(.object, .parent, .cons_exo, .cons_endo) {
+  
+  n_cons <- length(unique(c(.cons_exo,.cons_endo)))
+  
+  #   Would be nice to label the matrix. Perhaps additional argument is needed. 
+  mutate <- .parent <- as.vector(.object@population[.parent,])
+  mutate_matrix <- matrix(mutate, 
+                          nrow = n_cons, 
+                          byrow = TRUE,
+                          dimnames = list(c(.cons_exo,.cons_endo),c(.cons_exo,.cons_endo)))
+  
+  diag(mutate_matrix) <- 0  
+  
+  # Ensure that the rows of the exogenous constructs are zero
+  mutate_matrix[.cons_exo,] <- 0
+
+#   Create indices of allowed elements to mutate
+ind_matrix <- mutate_matrix  
+ind_matrix[] <- 1
+diag(ind_matrix) <- 0
+ind_matrix[.cons_exo,] <- 0  
+indices <- which(ind_matrix == 1, arr.ind = TRUE)
+
+while(nrow(indices)>0){
+  randn <- sample(seq(nrow(indices)),1)
+
+# Flip element
+mm_temp[indices[randn,,drop=FALSE]] <- abs(mm_temp[indices[randn,,drop=FALSE]] - 1)
+
+has_cycle <- .has_cycle_matrix(adj_matrix)
+
+if(has_cycle){
+  mm_temp[indices[randn,,drop=FALSE]] <- abs(mm_temp[indices[randn,,drop=FALSE]] - 1)
+  indices <- indices[-randn,,drop=FALSE]
+}else{
+  break
+}
+}
+  #   Try to work here with matrices instead of vectors
+#   Flip 
+  
+  mutate_vector <- as.vector(t(mutate_matrix))
+  
+  # Create list indices that i want to mutate
+  indices <- which(!diag(.n_variables), arr.ind = TRUE)
+  indices <- indices[indices[, 1] > .n_exogenous, ]  # Exclude first three rows
+  
+  # Convert row and column indices to vector indices
+  if (length(indices) > 0) {
+    vector_indices <- (indices[, 1] - 1) * .n_variables + indices[, 2]
+    
+    # Select a random index from the sub-diagonal indices 
+    if (length(vector_indices) > 0) {  # Use mutation_prob here
+      available_indices <- vector_indices  # Keep track of available indices to flip
+      while (length(available_indices) > 1) {
+        j <- sample(available_indices, size = 1)
+        mutate_vector[j] <- abs(mutate_vector[j] - 1)
+        
+        # Check if the mutation creates a cycle
+        adj_matrix <- matrix(mutate_vector, nrow = .n_variables, byrow = TRUE)
+        has_cycle <- .has_cycle_matrix(adj_matrix)
+        
+        if (has_cycle) {
+          mutate_vector[j] <- abs(mutate_vector[j] - 1)
+          available_indices <- setdiff(available_indices, j)
+        } else {
+          break  
+        }
+      }
+    }
+  }
+  
+  return(mutate_vector)
+}
 
 #' Internal: DFS cycle routine 
 #' @keywords internal
