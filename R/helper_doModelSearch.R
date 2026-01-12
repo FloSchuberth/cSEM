@@ -90,41 +90,43 @@ if(has_cycle){
   break
 }
 }
-  #   Try to work here with matrices instead of vectors
-#   Flip 
-  
-  mutate_vector <- as.vector(t(mutate_matrix))
-  
-  # Create list indices that i want to mutate
-  indices <- which(!diag(.n_variables), arr.ind = TRUE)
-  indices <- indices[indices[, 1] > .n_exogenous, ]  # Exclude first three rows
-  
-  # Convert row and column indices to vector indices
-  if (length(indices) > 0) {
-    vector_indices <- (indices[, 1] - 1) * .n_variables + indices[, 2]
-    
-    # Select a random index from the sub-diagonal indices 
-    if (length(vector_indices) > 0) {  # Use mutation_prob here
-      available_indices <- vector_indices  # Keep track of available indices to flip
-      while (length(available_indices) > 1) {
-        j <- sample(available_indices, size = 1)
-        mutate_vector[j] <- abs(mutate_vector[j] - 1)
-        
-        # Check if the mutation creates a cycle
-        adj_matrix <- matrix(mutate_vector, nrow = .n_variables, byrow = TRUE)
-        has_cycle <- .has_cycle_matrix(adj_matrix)
-        
-        if (has_cycle) {
-          mutate_vector[j] <- abs(mutate_vector[j] - 1)
-          available_indices <- setdiff(available_indices, j)
-        } else {
-          break  
-        }
-      }
-    }
-  }
-  
-  return(mutate_vector)
+
+return(as.vector(t(mutate_matrix)))
+#   #   Try to work here with matrices instead of vectors
+# #   Flip 
+#   
+#   mutate_vector <- as.vector(t(mutate_matrix))
+#   
+#   # Create list indices that i want to mutate
+#   indices <- which(!diag(.n_variables), arr.ind = TRUE)
+#   indices <- indices[indices[, 1] > .n_exogenous, ]  # Exclude first three rows
+#   
+#   # Convert row and column indices to vector indices
+#   if (length(indices) > 0) {
+#     vector_indices <- (indices[, 1] - 1) * .n_variables + indices[, 2]
+#     
+#     # Select a random index from the sub-diagonal indices 
+#     if (length(vector_indices) > 0) {  # Use mutation_prob here
+#       available_indices <- vector_indices  # Keep track of available indices to flip
+#       while (length(available_indices) > 1) {
+#         j <- sample(available_indices, size = 1)
+#         mutate_vector[j] <- abs(mutate_vector[j] - 1)
+#         
+#         # Check if the mutation creates a cycle
+#         adj_matrix <- matrix(mutate_vector, nrow = .n_variables, byrow = TRUE)
+#         has_cycle <- .has_cycle_matrix(adj_matrix)
+#         
+#         if (has_cycle) {
+#           mutate_vector[j] <- abs(mutate_vector[j] - 1)
+#           available_indices <- setdiff(available_indices, j)
+#         } else {
+#           break  
+#         }
+#       }
+#     }
+#   }
+#   
+#   return(mutate_vector)
 }
 
 #' Internal: DFS cycle routine 
