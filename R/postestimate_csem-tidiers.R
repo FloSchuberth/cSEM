@@ -4,13 +4,13 @@
 #'
 #' **Cautionary Note**: As with all `tidy()` methods, mis-specified arguments may be silently ignored.
 #'
-#' The attribute `verification` shows whether the model is admissible. 
-#' 
+#' The attribute `verification` shows whether the model is admissible.
+#'
 #' @param x Fitted `csem` model with class `cSEMResults` as returned from [cSEM::csem()]
 #' @param parameters Character string. Selects the desired parameter estimates as outputted from [cSEM::summarize()]. Defaults to `all`.
 #' @param conf.int Boolean. Controls whether confidence intervals are returned or not. Defaults to `FALSE`.
 #' @param conf.level Controls the size of the confidence interval returned. Passed to the `.alpha` arguments of [cSEM::summarize()] and [cSEM::infer()] as `1 - conf.level`.
-#' @param conf.method Type of confidence interval returned. See  the `.ci` argument of [cSEM::summarize()].
+#' @param conf.type Type of confidence interval returned. See  the `.ci` argument of [cSEM::summarize()]. Unlike [cSEM::summarize()], only one type of confidence interval at-a-time is supported.
 #' @inheritDotParams summarize
 #' @return A `data.frame` with one row for each estimated parameter. The
 #'   description of the column names are as follows:
@@ -29,8 +29,8 @@
 #' @seealso [cSEM::summarize()]
 #' @importFrom generics tidy
 #' @importFrom tibble as_tibble
-#' 
-#' @examples 
+#'
+#' @examples
 #' \dontrun{
 #'model <- "
 #'# Structural model
@@ -46,8 +46,8 @@
 #'# Single Group Example
 #'res_boot <- csem(threecommonfactors, model, .resample_method = "bootstrap", .R = 40)
 #'
-#'tidy(res_boot, conf.int = TRUE, conf.level = .95, conf.method = "CI_percentile")
-#'
+#'tidy(res_boot, conf.int = TRUE, conf.level = .95, conf.type = "CI_percentile")
+#'tidy(res_boot, conf.int = TRUE, conf.level = .95, conf.type = NULL)
 #'# Multi-Group Example
 #'threecommonfactors_id <- cbind(
 #'  "id" = sample(1:3, nrow(threecommonfactors), replace = TRUE),
@@ -79,7 +79,7 @@ tidy.cSEMResults <- function(
   ),
   conf.int = FALSE,
   conf.level = 0.95,
-  conf.method = NULL,
+  conf.type = NULL,
   ...
 ) {
   parameters <- match.arg(
@@ -95,6 +95,7 @@ tidy.cSEMResults <- function(
     )
   )
 
+  match.arg(conf.type, args_default(.choices = TRUE)$.ci, several.ok = FALSE)
 
   # Create Table -----------------------------------------------------------
 
@@ -103,7 +104,7 @@ tidy.cSEMResults <- function(
     summarized_cSEMResults_list <- list(summarize(
       x,
       .alpha = 1 - conf.level,
-      .ci = conf.method,
+      .ci = conf.type,
       ...
     ))
   } else if (inherits(x, "cSEMResults_multi")) {
@@ -112,7 +113,7 @@ tidy.cSEMResults <- function(
       x,
       summarize,
       .alpha = 1 - conf.level,
-      .ci = conf.method,
+      .ci = conf.type,
       ...
     )
   } else {
@@ -225,12 +226,16 @@ tidy.cSEMResults <- function(
 
       # Rename columns to be consistent with tidy glossary standard
       # See Zon Shi Wu Jie from May 5/2014 https://stackoverflow.com/a/23475492
-      
+
       if (isTRUE(conf.int)) {
-        # We can't get pass conf.method directly because summarize sets
-        #  the conf.method to a non-NULL string when NULL is passed as an argument
+        # We can't pass conf.type directly because summarize sets
+        #  the conf.type to a non-NULL string when NULL is passed as an argument
         # Claude Sonnet 4.5 helped with string extraction
-        out$conf.method <- sub("\\.95%U.*$", "", grep(".95%U", colnames(out), value = TRUE))
+        out$conf.type <- sub(
+          "\\.95%U.*$",
+          "",
+          grep(".95%U", colnames(out), value = TRUE)
+        )
       }
       colnames(out)[colnames(out) == "Name"] <- 'term'
       colnames(out)[colnames(out) == "Construct_type"] <- 'type'
@@ -253,7 +258,7 @@ tidy.cSEMResults <- function(
       )
 
       if (isTRUE(conf.int)) {
-        cols <- c(cols, 'conf.low', 'conf.high', 'conf.method')
+        cols <- c(cols, 'conf.low', 'conf.high', 'conf.type')
       }
 
       out <- out[, cols[cols %in% colnames(out)]]
@@ -262,7 +267,7 @@ tidy.cSEMResults <- function(
     },
     parameters = parameters
   )
-  
+
   if (length(out) == 1) {
     out <- out[[1]]
   } else if (length(out) > 1) {
@@ -280,7 +285,7 @@ tidy.cSEMResults <- function(
           "p.value"
         )
         if (isTRUE(conf.int)) {
-          cols <- c(cols, 'conf.low', 'conf.high', 'conf.method')
+          cols <- c(cols, 'conf.low', 'conf.high', 'conf.type')
         }
         summary <- summary[, cols[cols %in% colnames(summary)]]
         return(summary)
@@ -293,18 +298,19 @@ tidy.cSEMResults <- function(
     out <- Reduce(function(...) merge(..., all = TRUE, sort = FALSE), out)
   }
 
-# Format output ----------------------------------------------------------
-# TODO: This is not so good, because the specified conf.method is different from name of what confidence interval summarize uses.
-out$conf.method <- conf.method 
-out <- as_tibble(out)
-attr(out, "verification") <- verify(x)
+  # Format output ----------------------------------------------------------
+  if (is.null(conf.type)) {
+    conf.type <- attributes(summarized_cSEMResults_list[[1]])$.ci
+  }
+  out$conf.type <- conf.type
+  out <- as_tibble(out)
+  attr(out, "verification") <- verify(x)
 
- if(any(unlist(attr(out, "verification")))) {
-   warning2(attr(x, "verification"))
- }
+  if (any(unlist(attr(out, "verification")))) {
+    warning2(attr(x, "verification"))
+  }
 
-return(out)
-
+  return(out)
 }
 
 #' glance Method for cSEMResults Objects

@@ -292,10 +292,13 @@ summarize.cSEMResults_default <- function(
     ## Check arguments
     match.arg(.ci, args_default(.choices = TRUE)$.ci, several.ok = TRUE)
     
-    ## The 95% percentile CI is returned by default (BCa is actually better 
-    ##  but requires a second resampling run and should therefore not be the 
+    ## The 95% percentile CI is returned by default (BCa is actually better
+    ##  but requires a second resampling run and should therefore not be the
     ##  default).
-    if(is.null(.ci)) .ci <- "CI_percentile"
+    if (is.null(.ci)) {
+      .ci <- "CI_percentile"
+      attr(.object, ".ci") <- "CI_percentile"
+    }
     
     quantity <- c("sd", .ci)
     

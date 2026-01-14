@@ -135,3 +135,64 @@ test_that("glance.cSEMResults for GSCA", {
   check_glance_outputs(glance_gsca)
   check_glance_outputs(glance_gsca_m)
 })
+
+
+test_that("Confidence interval functionality works", {
+  model <- "
+# Structural model
+eta2 ~ eta1
+eta3 ~ eta1 + eta2
+
+# (Reflective) measurement model
+eta1 =~ y11 + y12 + y13
+eta2 =~ y21 + y22 + y23
+eta3 =~ y31 + y32 + y33
+"
+
+  # Single Group Example
+  res_boot <- csem(
+    threecommonfactors,
+    model,
+    .resample_method = "bootstrap",
+    .R = 40
+  )
+
+  expect_identical(
+    tidy(
+      res_boot,
+      conf.int = TRUE,
+      conf.level = .95,
+      conf.type = "CI_percentile"
+    ),
+    tidy(res_boot, conf.int = TRUE, conf.level = .95, conf.type = NULL)
+  )
+
+  tidy_boot <- tidy(res_boot, conf.int = TRUE, conf.level = .95, conf.type = NULL)
+
+  expect_true(modeltests::check_tidy_output(tidy_boot))
+  modeltests::check_dims(tidy_boot, 28, 10)
+
+  
+# Multi-Group Example
+  threecommonfactors_id <- cbind(
+    "id" = sample(1:3, nrow(threecommonfactors), replace = TRUE),
+    threecommonfactors
+  )
+
+  res_mg_boot <- csem(
+    threecommonfactors_id,
+    model,
+    .resample_method = "bootstrap",
+    .R = 40,
+    .id = "id"
+  )
+
+  expect_identical(
+    tidy(res_mg_boot, conf.int = TRUE, conf.type = "CI_percentile"),
+    tidy(res_mg_boot, conf.int = TRUE, conf.type = NULL)
+  )
+  tidy_boot_mg <- tidy(res_mg_boot, conf.int = TRUE, conf.type = "CI_percentile")
+  expect_true(modeltests::check_tidy_output(tidy_boot_mg))
+  modeltests::check_dims(tidy_boot_mg, 84, 11)
+})
+

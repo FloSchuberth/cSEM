@@ -2,7 +2,7 @@
 source(testthat::test_path("test-main.R"))
 dir.create(testthat::test_path("test_results_exportToExcel"), showWarnings = FALSE)
 
-withr::local_seed(4423123)
+withr::local_seed(442363)
 
 # ==============================================================================
 # General tests 
