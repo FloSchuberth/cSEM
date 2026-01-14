@@ -4,7 +4,7 @@
 \alias{.matrix_to_string}
 \title{Internal:  --- Matrix utils ------------------------------}
 \usage{
-.matrix_to_string(.m)
+.matrix_to_string(.matrix)
 }
 \description{
 Internal:  --- Matrix utils ------------------------------
