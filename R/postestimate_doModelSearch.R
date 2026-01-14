@@ -1,6 +1,6 @@
 #' Do a model specification search
 #'
-#' \lifecycle{"experimental"}
+#' \lifecycle{experimental}
 #'
 #' Perform a model search 
 #'

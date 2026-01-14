@@ -31,7 +31,7 @@ Defaults to \code{"all"}.}
 A list ???
 }
 \description{
-\lifecycle{"experimental"}
+\lifecycle{experimental}
 }
 \details{
 Perform a model search
