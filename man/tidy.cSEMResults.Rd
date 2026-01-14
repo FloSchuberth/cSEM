@@ -10,7 +10,7 @@
     "Unique_loading_estimates", "Effect_estimates", "Exo_construct_correlation"),
   conf.int = FALSE,
   conf.level = 0.95,
-  conf.method = NULL,
+  conf.type = NULL,
   ...
 )
 }
@@ -23,7 +23,7 @@
 
 \item{conf.level}{Controls the size of the confidence interval returned. Passed to the \code{.alpha} arguments of \code{\link[=summarize]{summarize()}} and \code{\link[=infer]{infer()}} as \code{1 - conf.level}.}
 
-\item{conf.method}{Type of confidence interval returned. See  the \code{.ci} argument of \code{\link[=summarize]{summarize()}}.}
+\item{conf.type}{Type of confidence interval returned. See  the \code{.ci} argument of \code{\link[=summarize]{summarize()}}. Unlike \code{\link[=summarize]{summarize()}}, only one type of confidence interval at-a-time is supported.}
 
 \item{...}{
   Arguments passed on to \code{\link[=summarize]{summarize}}
@@ -40,7 +40,7 @@ A \code{data.frame} with one row for each estimated parameter. The
 description of the column names are as follows:
 
 \item{term}{The result of \code{paste(lhs, op, rhs)}}
-\item{op}{The operator in the model syntax (e.g., \verb{~~} for correlation, \verb{<~} for weights, \verb{=~} for loadings, and \code{~} for path estimates)}
+\item{op}{The operator in the model syntax (e.g., \verb{~~} for correlation, \verb{<~} for weights, \verb{=~} for loadings, and \code{~} for path estimates). Indicators of common factors that load onto themselves denote the unique loading of the common factor (e.g., cf_ind_1 =~ cf_ind_1).}
 \item{group}{The group as specified by \code{.id} in the \code{\link[=csem]{csem()}}.}
 \item{estimate}{The parameter estimate}
 \item{construct.type}{Whether the modelled construct is a common factor or composite variable}
@@ -72,8 +72,8 @@ eta3 =~ y31 + y32 + y33
 # Single Group Example
 res_boot <- csem(threecommonfactors, model, .resample_method = "bootstrap", .R = 40)
 
-tidy(res_boot, conf.int = TRUE, conf.level = .95, conf.method = "CI_percentile")
-
+tidy(res_boot, conf.int = TRUE, conf.level = .95, conf.type = "CI_percentile")
+tidy(res_boot, conf.int = TRUE, conf.level = .95, conf.type = NULL)
 # Multi-Group Example
 threecommonfactors_id <- cbind(
  "id" = sample(1:3, nrow(threecommonfactors), replace = TRUE),

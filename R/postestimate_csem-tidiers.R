@@ -16,7 +16,7 @@
 #'   description of the column names are as follows:
 #'
 #'   \item{term}{The result of `paste(lhs, op, rhs)`}
-#'   \item{op}{The operator in the model syntax (e.g., `~~` for correlation, `<~` for weights, `=~` for loadings, and `~` for path estimates)}
+#'   \item{op}{The operator in the model syntax (e.g., `~~` for correlation, `<~` for weights, `=~` for loadings, and `~` for path estimates). Indicators of common factors that load onto themselves denote the unique loading of the common factor (e.g., cf_ind_1 =~ cf_ind_1).}
 #'   \item{group}{The group as specified by `.id` in the [cSEM::csem()].}
 #'   \item{estimate}{The parameter estimate}
 #'   \item{construct.type}{Whether the modelled construct is a common factor or composite variable}
@@ -299,6 +299,11 @@ tidy.cSEMResults <- function(
   }
 
   # Format output ----------------------------------------------------------
+  out$type <- ifelse(
+    out$op %in% c("~", "Direct_effect", "Indirect_effect", "Total_effect"),
+    yes = NA,
+    no = out$type
+  )
   if (is.null(conf.type)) {
     conf.type <- attributes(summarized_cSEMResults_list[[1]])$.ci
   }

@@ -20,6 +20,15 @@ Numberofjoboffers ~ NetworkingBehavior
 "
 
 ## Compute and tabulate igsca ----------------------------------------------------
+
+igsca_mod_no_bs <- csem(
+  .data = LeDang2022,
+  .model = tutorial_igsca_model,
+  .approach_weights = "GSCA",
+  .dominant_indicators = NULL,
+  .tolerance = 0.0001,
+  .conv_criterion = "sum_diff_absolute"
+)
 igsca_mod <- csem(
   .data = LeDang2022,
   .model = tutorial_igsca_model,
@@ -35,6 +44,7 @@ igsca_mod <- csem(
 
 # debugonce(tidy.cSEMResults)
 # debugonce(summarize)
+# debugonce(infer)
 tidy(igsca_mod, conf.int = TRUE, conf.level = .95)
 
 
