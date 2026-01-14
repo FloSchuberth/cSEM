@@ -685,7 +685,7 @@ possible by relying on a paper by @Cho2016 who proposed uniform
 formula-generating methods and a systematic naming conventions for all
 common reliability measures. Naturally, some of the conventional terminology 
 is deeply entrenched within the nomenclatura of a particular filed (e.g., coefficient
-alpha alias Cronbach's alpha in pychometrics) such that a new, albeit consistent,
+alpha alias Cronbach's alpha in psychometrics) such that a new, albeit consistent,
 naming scheme seems superfluous at best. However, we belief the merit of a 
 "standardized" naming pattern will eventually be helpful to all users as it
 helps clarify potential misconceptions thus preventing potential misuse, such as

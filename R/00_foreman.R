@@ -18,6 +18,8 @@
 #'   .disattenuate                = args_default()$.disattenuate,
 #'   .dominant_indicators         = args_default()$.dominant_indicators,
 #'   .estimate_structural         = args_default()$.estimate_structural,
+#'   .GSCA_control                = args_default()$.GSCA_control,
+#'   .GSCA_modes                  = args_default()$.GSCA_modes,
 #'   .id                          = args_default()$.id,
 #'   .instruments                 = args_default()$.instruments,
 #'   .iter_max                    = args_default()$.iter_max,
@@ -50,6 +52,8 @@ foreman <- function(
   .disattenuate                = args_default()$.disattenuate,
   .dominant_indicators         = args_default()$.dominant_indicators,
   .estimate_structural         = args_default()$.estimate_structural,
+  .GSCA_control                = args_default()$.GSCA_control,
+  .GSCA_modes                  = args_default()$.GSCA_modes,
   .id                          = args_default()$.id,
   .instruments                 = args_default()$.instruments,
   .iter_max                    = args_default()$.iter_max,
@@ -82,91 +86,135 @@ foreman <- function(
   S <- Cor$S
   
   ## Standardize
-  X <- scale(data.matrix(X_cleaned))
+  X <- scale(data.matrix(X_cleaned), center = TRUE, scale = TRUE)
   
   ## Calculate weights
-  if(.approach_weights == "PLS-PM") {
+  if (.approach_weights == "PLS-PM") {
     W <- calculateWeightsPLS(
-      .S                        = S,
-      .csem_model               = csem_model,
-      .iter_max                 = .iter_max,
-      .PLS_modes                = .PLS_modes,
+      .S = S,
+      .csem_model = csem_model,
+      .iter_max = .iter_max,
+      .PLS_modes = .PLS_modes,
       # Arguments passed on to calculateInnerWeightsPLS
-      .PLS_ignore_structural_model  = .PLS_ignore_structural_model,
-      .PLS_weight_scheme_inner      = .PLS_weight_scheme_inner,
-      # Arguments passed on to calcuateOuterWeightsPLS 
-      .data                     = X,
+      .PLS_ignore_structural_model = .PLS_ignore_structural_model,
+      .PLS_weight_scheme_inner = .PLS_weight_scheme_inner,
+      # Arguments passed on to calcuateOuterWeightsPLS
+      .data = X,
       # Arguments passed to checkConvergence
-      .conv_criterion           = .conv_criterion,
-      .tolerance                = .tolerance,
+      .conv_criterion = .conv_criterion,
+      .tolerance = .tolerance,
       # starting values
-      .starting_values          = .starting_values
+      .starting_values = .starting_values
     )
-  } else if(.approach_weights %in% c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
+  } else if (
+    .approach_weights %in% c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")
+  ) {
     W <- calculateWeightsKettenring(
-      .S                        = S,
-      .csem_model               = csem_model,
-      .approach_gcca            = .approach_weights
+      .S = S,
+      .csem_model = csem_model,
+      .approach_gcca = .approach_weights
     )
-  } else if(.approach_weights == "GSCA") {
-    if(csem_model$model_type == "Nonlinear") {
-      stop2("cSEM currently does not support GSCA and GSCAm for models containing nonlinear terms.")
-    }
-    if(.disattenuate & all(csem_model$construct_type == "Common factor")) {
-      W <- calculateWeightsGSCAm(
-        .X                        = X,
-        .csem_model               = csem_model,
-        .conv_criterion           = .conv_criterion,
-        .iter_max                 = .iter_max,
-        .tolerance                = .tolerance,
-        .starting_values          = .starting_values
+  } else if (.approach_weights == "GSCA") {
+    if (csem_model$model_type == "Nonlinear") {
+      stop2(
+        "cSEM currently does not support GSCA and GSCAm for models containing nonlinear terms."
       )
-      
-      # Weights need to be scaled s.t. the composite build using .X has
-      # variance of one. Note that scaled GSCAm weights are identical
-      # to PLS ModeA weights.
-      W$W <- scaleWeights(S, W$W)
-      
-    } else {
+    }
+    if (all(csem_model$construct_type == "Common factor")) {
+      if (isTRUE(.disattenuate)) {
+        W <- calculateWeightsGSCAm(
+          .X = X,
+          .csem_model = csem_model,
+          .conv_criterion = .conv_criterion,
+          .iter_max = .iter_max,
+          .tolerance = .tolerance,
+          .starting_values = .starting_values
+        )
+      } else {
+        stop2(
+          "The csem argument .disattenuate should be TRUE for GSCA_M to fit with common factors"
+        )
+      }
+    } else if (all(csem_model$construct_type == "Composite")) {
       W <- calculateWeightsGSCA(
-        .X                        = X,
-        .S                        = S,
-        .csem_model               = csem_model,
-        .conv_criterion           = .conv_criterion,
-        .iter_max                 = .iter_max,
-        .tolerance                = .tolerance,
-        .starting_values          = .starting_values
+        .X = X,
+        .S = S,
+        .csem_model = csem_model,
+        .conv_criterion = .conv_criterion,
+        .iter_max = .iter_max,
+        .tolerance = .tolerance,
+        .starting_values = .starting_values
       )
+    } else if (
+      any(csem_model$construct_type == "Composite") &
+        any(csem_model$construct_type == "Common factor")
+    ) {
+      if (isTRUE(.disattenuate)) {
+        # IGSCA Algorithm for a mixture of Common factor and Composite constructs
+        W <- calculateWeightsIGSCA(
+          .data = X,
+          .csem_model = csem_model,
+          .tolerance = .tolerance,
+          .iter_max = .iter_max,
+          .dominant_indicators = .dominant_indicators,
+          .conv_criterion = .conv_criterion,
+          .S = S
+        )
+        
+      } else {
+        stop2(
+          "The csem argument .disattenuate should be TRUE for IGSCA to fit with both common factors and composites."
+        )
+      }
     }
-
-  } else if(.approach_weights == "unit") {
-            
+  } else if (.approach_weights == "unit") {
     W <- calculateWeightsUnit(
-      .S                        = S,
-      .csem_model               = csem_model,
-      .starting_values          = .starting_values
+      .S = S,
+      .csem_model = csem_model,
+      .starting_values = .starting_values
     )
-  } else if(.approach_weights %in% c("bartlett", "regression")) {
-    
-    # Note:  1. "bartlett" and "regression" weights are calculated later in the 
+  } else if (.approach_weights %in% c("bartlett", "regression")) {
+    # Note:  1. "bartlett" and "regression" weights are calculated later in the
     #        calculateReliabilities() function. Here only placeholders for
     #        the weights are set in order to keep the list structure of W.
-    
-    W <- list("W" = csem_model$measurement, "E" = NULL, "Modes" = NULL, 
-              "Conv_status" = NULL, "Iterations" = 0)
-  } else if(.approach_weights == "PCA") {
+
+    W <- list(
+      "W" = csem_model$measurement,
+      "E" = NULL,
+      "Modes" = NULL,
+      "Conv_status" = NULL,
+      "Iterations" = 0
+    )
+  } else if (.approach_weights == "PCA") {
     W <- calculateWeightsPCA(
-      .S                        = S,
-      .csem_model               = csem_model
+      .S = S,
+      .csem_model = csem_model
     )
   }
 
   ## Dominant indicators:
-  if(!is.null(.dominant_indicators)) {
-    W$W <- setDominantIndicator(
-      .W = W$W, 
-      .dominant_indicators = .dominant_indicators,
-      .S = S)
+  if (!is.null(.dominant_indicators)) {
+    if (.approach_weights == "GSCA") {
+      flipped_Eta_L_B <- setDominantIndicator(
+        .W = W$W,
+        .dominant_indicators = .dominant_indicators,
+        .approach_weights = "GSCA",
+        .X = X,
+        .L = W$C,
+        .B = W$B,
+        Construct_scores = W$Construct_scores
+      )
+      W$Construct_scores <- flipped_Eta_L_B$Eta
+      W$C <- flipped_Eta_L_B$L
+      W$B <- flipped_Eta_L_B$B
+    } else {
+      W$W <- setDominantIndicator(
+        .W = W$W,
+        .dominant_indicators = .dominant_indicators,
+        .S = S,
+        .approach_weights = .approach_weights
+      )
+    }
   }
 
   LambdaQ2W <- calculateReliabilities(
@@ -192,16 +240,32 @@ foreman <- function(
   
   ## Calculate measurement error correlation
   # Compute theta
+  # TODO: Perhaps there is a simpler method to do this for GSCA-type methods?
   Theta <- S - t(Lambda) %*% Lambda
   
   ## Calculate proxies/scores
-  H <- X %*% t(Weights)
+  if (.approach_weights == "GSCA") {
+    # It's best to leave the construct score to the respective GSCA internals.
+    # The construct scores for GSCA_M and IGSCA need to have measurement error removed
+    H <- W$Construct_scores
+  } else if (.approach_weights != "GSCA") {
+    H <- X %*% t(Weights)
+  }
   
-  ## Calculate proxy covariance matrix
-  C <- calculateCompositeVCV(.S = S, .W = Weights)
-  
-  ## Calculate construct correlation matrix
-  P <- calculateConstructVCV(.C = C, .Q = Q)
+  if (.approach_weights == "GSCA") {
+    # TODO: It's not obvious to me that calculateCompositeVCV and calculateConstructVCV apply to GSCA_M or IGSCA.
+    # TODO: And even if they do, it's not clear why this added layer of complexity is needed, rather than simply running cor() or cov()
+    ## Calculate proxy covariance matrix
+    C <- cov(H)
+    ## Calculate construct correlation matrix
+    P <- cor(H)
+  } else {
+    ## Calculate proxy covariance matrix
+    C <- calculateCompositeVCV(.S = S, .W = Weights)
+
+    ## Calculate construct correlation matrix
+    P <- calculateConstructVCV(.C = C, .Q = Q)
+  }
   
   ## Estimate structural coef
   if(sum(rowSums(csem_model$structural)) == 0) {.estimate_structural <- FALSE}
@@ -216,60 +280,90 @@ foreman <- function(
       .P              = P,
       .Q              = Q
     ) 
+    if (.approach_weights == "GSCA") {
+      # TODO: Unclear if much of the output estimatePath should apply to GSCA and/or if there might be a simpler solution. 
+      # TODO: Should discuss with Flo
+      estim_results$Path_estimates <- W$B
+      # estim_results$R2 <- NULL
+      # estim_results$R2adj <- NULL
+      # estim_results$VIF <- NULL
+      # estim_results$SE <- NULL
+    }
   } else {
     estim_results <- NULL
   }
 
   ### Output -------------------------------------------------------------------
   out <- list(
-    "Estimates"   = list(
-      "Path_estimates"         = if(.estimate_structural) {
+    "Estimates" = list(
+      "Path_estimates" = if (.estimate_structural) {
         estim_results$Path_estimates
       } else {
         estim_results
       },
-      "Loading_estimates"      = Lambda,
-      "Weight_estimates"       = Weights,
+      "Loading_estimates" = Lambda,
+      "Weight_estimates" = if (.approach_weights == "GSCA") {
+        # calculateReliabilities() returns scaled weights for GSCA_M and IGSCA. 
+        W$W
+      } else {
+        Weights
+      },
       "Inner_weight_estimates" = W$E,
-      "Residual_correlation"   = Theta,
-      "Construct_scores"       = H,
-      "Indicator_VCV"          = S,
-      "Proxy_VCV"              = C,
-      "Construct_VCV"          = P,
-      "Reliabilities"          = Q^2,
-      "R2"                     = if(.estimate_structural) {
+      "Residual_correlation" = Theta,
+      "Construct_scores" = H,
+      "Indicator_VCV" = S,
+      "Proxy_VCV" = C,
+      "Construct_VCV" = P,
+      "Unique_loading_estimates" = if (
+        .approach_weights == "GSCA" &
+          any(csem_model$construct_type == "Common factor")
+      ) {
+        W$Unique_loading_estimates
+      } else {
+        NULL
+      },
+      "Unique_scores" = if (
+        .approach_weights == "GSCA" &
+          any(csem_model$construct_type == "Common factor")
+      ) {
+        W$Unique_scores
+      } else {
+        NULL
+      },
+      "Reliabilities" = Q^2,
+      "R2" = if (.estimate_structural) {
         estim_results$R2
       } else {
         estim_results
-      }, 
-      "R2adj"                  = if(.estimate_structural) {
+      },
+      "R2adj" = if (.estimate_structural) {
         estim_results$R2adj
       } else {
         estim_results
-      }, 
-      "VIF"                    = if(.estimate_structural) {
+      },
+      "VIF" = if (.estimate_structural) {
         estim_results$VIF
       } else {
         estim_results
       },
-      "SE"                    = if(.estimate_structural) {
+      "SE" = if (.estimate_structural) {
         estim_results$SE
       } else {
         estim_results
       }
     ),
     "Information" = list(
-      "Data"          = X,
-      "Model"         = csem_model,
-      "Arguments"     = args_used,
+      "Data" = X,
+      "Model" = csem_model,
+      "Arguments" = args_used,
       "Type_of_indicator_correlation" = Cor$cor_type,
       "Threshold_parameter_estimates" = Cor$thres_est,
-      "Weight_info"   = list(
-        "Modes"              = W$Modes,
-        "Number_iterations"  = W$Iterations,
+      "Weight_info" = list(
+        "Modes" = W$Modes,
+        "Number_iterations" = W$Iterations,
         "Convergence_status" = W$Conv_status
       ),
-      "Approach_2ndorder"  = NA
+      "Approach_2ndorder" = NA
     )
   )
   

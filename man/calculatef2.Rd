@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_assess.R
 \name{calculatef2}
 \alias{calculatef2}
-\title{Calculate Cohen's f^2}
+\title{Calculate Cohens f^2}
 \usage{
 calculatef2(.object = NULL)
 }

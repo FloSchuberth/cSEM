@@ -43,6 +43,11 @@ based on a model containing second-order constructs) both the first and the seco
 Currently, a model-implied indicator VCV matrix for nonlinear model is not
 available. \code{verify()} therefore skips the check for positive definiteness of the
 model-implied indicator VCV matrix for nonlinear models and returns "ok".
+
+The 6th boolean refers to whether there are non-zero parameter
+estimates on parameters that are not part of the model specification.
+For example, with Y ~ X1 + X2, in a dataset with columns, X1, X2, X3 and Y,
+receiving a parameter estimate for X3 would imply very wrong with the model estimation.
 }
 \examples{
 ### Without higher order constructs --------------------------------------------

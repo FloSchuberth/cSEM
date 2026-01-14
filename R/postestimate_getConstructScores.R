@@ -32,10 +32,29 @@ getConstructScores <- function(.object = NULL, .standardized = TRUE){
            "Indicators_used"  = .object$Information$Data)
       
     } else {
+
+      if (
+        .object$Information$Arguments$.approach_weights == "GSCA" &
+          any(.object$Information$Model$construct_type == "Common factor")
+      ) {
+        stop(
+          "getConstructScores() does not currently support returning unstandardized construct scores for GSCA_M or IGSCA models."
+        )
+      }
+
       ## Get scaled indicator scores [E(x) = 0; Var(x) = 1]
       indicators_std <- .object$Information$Data
       
       ## Unscale
+      if (
+        is.null(attr(indicators_std, 'scaled:scale')) |
+          is.null(attr(indicators_std, 'scaled:center'))
+      ) {
+        warning(
+          "Stored data may not be standardized. Unstandardization process may be incorrect."
+        )
+      }
+
       indicators_unstd <- t(t(indicators_std) * attr(indicators_std, 'scaled:scale') + 
                                 attr(indicators_std, 'scaled:center')) 
       
