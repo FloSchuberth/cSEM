@@ -27,7 +27,8 @@ doModelSearch <- function(.object = NULL,
                           .iter_max= 20,
                           .mutation_prob = 0.5,
                           .cross_prob = 0.8,
-                          .only_structural = FALSE) {
+                          .only_structural = FALSE,
+                          .ms_criterion = 'bic') {
   
   if(.object$Information$Model$model_type != 'Linear'){
     stop2('Currently, `doModelSearch()` supports only linear models.')
@@ -43,60 +44,64 @@ doModelSearch <- function(.object = NULL,
   }
   
   # Retrieve information on the model (number variables, name variables)
-  names_c <- rownames(.object$Information$Model$measurement)
+  # names_c <- rownames(.object$Information$Model$measurement)
   # names_c <- unique(c(.object$Information$Model$cons_exo,.object$Information$Model$cons_endo))
-  cons_exo <- .object$Information$Model$cons_exo
-  cons_endo <- .object$Information$Model$cons_endo
-  nr_c <- length(names_c)
+  # cons_exo <- .object$Information$Model$cons_exo
+  # cons_endo <- .object$Information$Model$cons_endo
+  # nr_c <- length(names_c)
   
   # .n_exogenous <- .object$Information$Model$cons_exo
   
-  outer_model_list <- lapply(seq(1,nrow(.object$Information$Model$measurement)),
-                               function(x){colnames(.object$Information$Model$measurement)[.object$Information$Model$measurement[x,]==1]})
-  names(outer_model_list) <- names_c
-  
+  # outer_model_list <- lapply(seq(1,nrow(.object$Information$Model$measurement)),
+                               # function(x){colnames(.object$Information$Model$measurement)[.object$Information$Model$measurement[x,]==1]})
+  # names(outer_model_list) <- names_c
   
   model_criteria <- calculateModelSelectionCriteria(
     .object = .object,
     .by_equation = FALSE,
     .only_structural = .only_structural,
-    .ms_criterion = 'bic'
+    .ms_criterion = .ms_criterion
   )
   
+#   HIER NOCH ABFRAGE EINBAUEN FUER DIE VERSCHIEDNEN MS CRITERIA
   BIC = model_criteria$BIC
   print(BIC)
   
-  data <- .object$Information$Data
-  
   ga_control <- GA::ga(
     type = "binary",
-    nBits = nr_c * nr_c,
+    nBits = length(.object$Information$Model$structural),
     popSize = .popsize,
     maxiter = .iter_max,
     pmutation = .mutation_prob,
     pcrossover = .cross_prob,
-    fitness = function(x) .agas_fitness(.matrix_vector = x,
-                                        .dataset_generated = data,
-                                        .n_exogenous = .n_exogenous,
-                                        .measurement_model = outer_model_list,
-                                        .variables = names_c, 
-                                        .only_structural = .only_structural),
+    fitness = function(x) agas_fitness1(.matrix_vector = x,
+                                        .data = .object$Information$Data,
+                                        .model_org = .object$Information$Model,
+                                        .only_structural = .only_structural,
+                                        .ms_criterion = .ms_criterion),
     elitism = TRUE,
     parallel = FALSE,
     # mutation = function(object, parent) .agas_mutation(object, parent,
     #                                                    .n_variables = nr_c,
     #                                                    .n_exogenous = .n_exogenous),
-    mutation = function(object, parent) .agas_mutation1(object, parent,
-                                                       .cons_exo = cons_exo,
-                                                       .cons_endo = cons_endo),
+
+    mutation = function(object, parent) .agas_mutation1(.object = object,
+                                                        .parent = parent,
+                                                       .model_org = .object$Information$Model),
     keepBest = TRUE
   )
-  best <- unlist(ga_control@bestSol[.iter_max])
-  best_matrix <- matrix(best, nrow = nr_c, ncol = nr_c, byrow = TRUE)
   
-  rownames(best_matrix) <- names_c
-  colnames(best_matrix) <- names_c
+#   HERE IS STILL A PROBLEM. HOW IS THE @bestSol STRUCTURED?
   
+  best <- ga_control@bestSol[[.iter_max]]
+  best_matrix <- matrix(best, nrow = nrow(.object$Information$Model$structural), 
+                        ncol = ncol(.object$Information$Model$structural), 
+                        byrow = TRUE,
+                        dimnames = dimnames(.object$Information$Model$structural))
+  
+  # rownames(best_matrix) <- names_c
+  # colnames(best_matrix) <- names_c
+  # 
   best_fitness <- - ga_control@fitnessValue
   
   return(list(
