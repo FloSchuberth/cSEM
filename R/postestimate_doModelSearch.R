@@ -10,7 +10,9 @@
 #' .mutation_prob = 0.5,
 #' .cross_prob = 0.8,
 #' .only_structural = FALSE,
-#' .ms_criterion = 'bic')
+#' .ms_criterion = 'bic',
+#' .seed = args_default()$.seed,
+#' .fbar = -10000)
 #'
 #' @return A list containing a list of model(s) showing the 'best' value of the model 
 #' selection criterion, the value of the model selection criteria, and a list of cSEM_models  
@@ -29,8 +31,8 @@ doModelSearch <- function(.object = NULL,
                           .cross_prob = 0.8,
                           .only_structural = FALSE,
                           .ms_criterion = 'bic',
-                          .seed = NULL
-                          ) {
+                          .seed = args_default()$.seed,
+                          .fbar = -10000) {
   
   
   
@@ -38,7 +40,7 @@ doModelSearch <- function(.object = NULL,
   
   model_original <- .object$Information$Model
   
-#   ADD ADDITIONAL CHECKs CSEM OBKECT
+  #   ADD ADDITIONAL CHECKs CSEM OBKECT
   
   if(model_original$model_type != 'Linear'){
     stop2('Currently, `doModelSearch()` supports only linear models.')
@@ -61,7 +63,7 @@ doModelSearch <- function(.object = NULL,
   )
   
   
-#   HIER NOCH ABFRAGE EINBAUEN FUER DIE VERSCHIEDNEN MS CRITERIA
+  #   HIER NOCH ABFRAGE EINBAUEN FUER DIE VERSCHIEDNEN MS CRITERIA
   BIC = model_criteria$BIC
   print(BIC)
   
@@ -72,21 +74,22 @@ doModelSearch <- function(.object = NULL,
     maxiter = .iter_max,
     pmutation = .mutation_prob,
     pcrossover = .cross_prob,
-    fitness = function(x) agas_fitness(.matrix_vector = x,
-                                        .data = .object$Information$Data,
-                                        .model_org = model_original,
-                                        .only_structural = .only_structural,
-                                        .ms_criterion = .ms_criterion),
+    fitness = function(x) calculatefitness(.matrix_vector = x,
+                                           .data = .object$Information$Data,
+                                           .model_org = model_original,
+                                           .only_structural = .only_structural,
+                                           .ms_criterion = .ms_criterion,
+                                           .fbar = .fbar),
     elitism = TRUE,
     parallel = FALSE,
-    mutation = function(object, parent) .agas_mutation(.object = object,
-                                                       .parent = parent,
-                                                       .model_org = model_original),
+    mutation = function(object, parent) mutateVector(.object = object,
+                                                      .parent = parent,
+                                                      .model_org = model_original),
     keepBest = TRUE,
     seed = .seed
   )
   
-
+  
   best <- ga_control@bestSol[[.iter_max]]
   
   best_list <- apply(best, 1, function(x) {
@@ -101,7 +104,7 @@ doModelSearch <- function(.object = NULL,
   
   best_fitness <- - ga_control@fitnessValue
   
-#   Convert best_list into models that can be estimated by csem
+  #   Convert best_list into models that can be estimated by csem
   best_model <- lapply(best_list,function(x){
     model <- model_original
     model$structural <- x

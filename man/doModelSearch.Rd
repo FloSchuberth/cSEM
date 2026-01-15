@@ -10,7 +10,9 @@ doModelSearch(.object = NULL,
 .mutation_prob = 0.5,
 .cross_prob = 0.8,
 .only_structural = FALSE,
-.ms_criterion = 'bic')
+.ms_criterion = 'bic',
+.seed = args_default()$.seed,
+.fbar = -10000)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
