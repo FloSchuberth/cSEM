@@ -26,9 +26,15 @@ structural model? Ignored if \code{.by_equation == TRUE}. Defaults to \code{TRUE
 \item{.ms_criterion}{Character string. Either a single character string or a vector
 of character strings naming the model selection criterion to compute.
 Defaults to \code{"all"}.}
+
+\item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
+case an arbitrary seed is chosen. Note that the scope of the seed is limited
+to the body of the function it is used in. Hence, the global seed will
+not be altered!}
 }
 \value{
-A list ???
+A list containing a list of model(s) showing the 'best' value of the model
+selection criterion, the value of the model selection criteria, and a list of cSEM_models
 }
 \description{
 \lifecycle{experimental}

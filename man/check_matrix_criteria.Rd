@@ -2,11 +2,11 @@
 % Please edit documentation in R/helper_doModelSearch.R
 \name{check_matrix_criteria}
 \alias{check_matrix_criteria}
-\title{Internal:}
+\title{Internal:  --- Matrix utils ------------------------------}
 \usage{
-check_matrix_criteria(.adj_matrix, .n_exogenous)
+check_matrix_criteria(.matrix, .model_org)
 }
 \description{
-Internal:
+Internal:  --- Matrix utils ------------------------------
 }
 \keyword{internal}

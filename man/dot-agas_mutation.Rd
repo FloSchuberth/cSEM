@@ -4,7 +4,7 @@
 \alias{.agas_mutation}
 \title{Internal: AGAS MUTATION}
 \usage{
-.agas_mutation(.object, .parent, .n_variables, .n_exogenous)
+.agas_mutation(.object, .parent, .model_org)
 }
 \description{
 Internal: AGAS MUTATION
