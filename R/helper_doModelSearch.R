@@ -113,7 +113,7 @@ calculateFitness <- function(.matrix_vector,
   
   
   #   ADJUST HERE TO ALLOW FOR DIFFEREN MS CRITERIA
-  sem_fitness <- - model_criteria$BIC
+  sem_fitness <- -model_criteria$BIC
 
   sem_fitness
 }

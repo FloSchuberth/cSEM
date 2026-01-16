@@ -7,14 +7,14 @@
 #' In particular, the function implements the approach presented in \insertCite{Trinchera2026}{cSEM}. 
 #'
 #' @usage doModelSearch(.object = NULL, 
-#' .popsize = 20,
-#' .iter_max= 20,
-#' .mutation_prob = 0.5,
-#' .cross_prob = 0.8,
-#' .only_structural = FALSE,
-#' .ms_criterion = 'bic',
-#' .seed = args_default()$.seed,
-#' .fbar = -10000)
+#'                      .pop_size = 20, 
+#'                      .n_generations= 20,
+#'                      .prob_mutation = 0.5,
+#'                      .prob_crossover = 0.8,
+#'                      .fbar = -100000,
+#'                      .ms_criterion = 'bic',
+#'                      .seed = NULL,
+#'                      .only_structural = FALSE)
 #'
 #' @return A list containing a list of model(s) showing the 'best' value of the model 
 #' selection criterion, the value of the model selection criteria, and a list of cSEM_models  
@@ -29,19 +29,48 @@
 #' 
 #' @export
 doModelSearch <- function(.object = NULL, 
-                          .popsize = 20, 
-                          .iter_max= 20,
-                          .mutation_prob = 0.5,
-                          .cross_prob = 0.8,
-                          .only_structural = FALSE,
+                          .pop_size = 20, 
+                          .n_generations= 20,
+                          .prob_mutation = 0.5,
+                          .prob_crossover = 0.8,
+                          .fbar = -100000,
                           .ms_criterion = 'bic',
-                          .seed = args_default()$.seed,
-                          .fbar = -10000) {
+                          .seed = NULL,
+                          .only_structural = FALSE) {
   
   
-  
+# Check argument
   if(!inherits(.object, "cSEMResults")) {
     stop2("`.object` must be a `cSEMResults` object.")
+  }
+  
+  if(inherits(.object, "cSEMVerify_multi")){
+    stop2("Multigroup analysis is currenlty not supported by `doModelSearch()`.")
+  }
+  
+  if(length(.pop_size)!=1 | !is.numeric(.pop_size)){
+    stop2("`.pop_size` must be a scalar.")
+  }
+  
+  if(length(.n_generations)!=1 | !is.numeric(.n_generations)){
+    stop2("`.n_generations` must be a scalar.")
+  }
+  
+  if(!is.numeric(.prob_mutation)|.prob_mutation>1|.prob_mutation<0|length(.prob_mutation)>1){
+    stop2("`.prob_mutation` must be a scalar rangning between 0 and 1.")
+  }
+  
+  if(!is.numeric(.prob_crossover)|.prob_crossover>1|.prob_crossover<0|length(.prob_crossover)>1){
+    stop2("`.prob_crossover` must be a scalar rangning between 0 and 1.")
+  }
+  
+  if(!is.numeric(.fbar)){
+    stop2("`.fbar` must be a scalar.")
+  }
+  
+  .ms_criterion <- match.arg(.ms_criterion) 
+  if(length(.ms_criterion)>1){
+    stop2("`.ms_criterion` must be of length 1. Only one model selection criterion must be provided")
   }
   
   model_original <- .object$Information$Model
@@ -76,10 +105,10 @@ doModelSearch <- function(.object = NULL,
   ga_control <- GA::ga(
     type = "binary",
     nBits = length(model_original$structural),
-    popSize = .popsize,
-    maxiter = .iter_max,
-    pmutation = .mutation_prob,
-    pcrossover = .cross_prob,
+    popSize = .pop_size,
+    maxiter = .n_generations,
+    pmutation = .prob_mutation,
+    pcrossover = .prob_crossover,
     fitness = function(x) calculateFitness(.matrix_vector = x,
                                            .data = .object$Information$Data,
                                            .model_org = model_original,
@@ -96,7 +125,7 @@ doModelSearch <- function(.object = NULL,
   )
   
   
-  best <- ga_control@bestSol[[.iter_max]]
+  best <- ga_control@bestSol[[.n_generations]]
   
   best_list <- apply(best, 1, function(x) {
     matrix(
@@ -122,6 +151,8 @@ doModelSearch <- function(.object = NULL,
     best_fitness = best_fitness,
     best_model = best_model
   )
+  
+  class(out) <- 'cSEMModelSearch'
   
   out
   

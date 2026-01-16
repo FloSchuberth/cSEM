@@ -77,24 +77,24 @@ RdMacros: Rdpack, lifecycle
 RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
 Suggests: 
-    GA,
     DiagrammeR,
     DiagrammeRsvg,
     dplyr,
-    tidyr,
+    ggplot2,
+    GA,
+    graphics,
     knitr,
+    listviewer,
     nnls,
+    openxlsx,
     prettydoc,
     plotly,
     rsvg,
     rmarkdown,
     rootSolve,
-    listviewer,
+    spelling,
     testthat (>= 3.0.0),
-    ggplot2,
-    openxlsx,
-    graphics,
-    spelling
+    tidyr,
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Language: en-US

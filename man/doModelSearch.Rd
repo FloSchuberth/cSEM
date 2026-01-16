@@ -5,25 +5,32 @@
 \title{Automated model specification search}
 \usage{
 doModelSearch(.object = NULL, 
-.popsize = 20,
-.iter_max= 20,
-.mutation_prob = 0.5,
-.cross_prob = 0.8,
-.only_structural = FALSE,
-.ms_criterion = 'bic',
-.seed = args_default()$.seed,
-.fbar = -10000)
+                     .pop_size = 20, 
+                     .n_generations= 20,
+                     .prob_mutation = 0.5,
+                     .prob_crossover = 0.8,
+                     .fbar = -100000,
+                     .ms_criterion = 'bic',
+                     .seed = NULL,
+                     .only_structural = FALSE)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.iter_max}{Integer. The maximum number of iterations allowed.
-If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
-If the algorithm exceeds the specified number, weights of iteration step
-\code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
+\item{.pop_size}{Integer. Value giving the population size used in the genetic algorithm.
+Defaults to \code{20}.}
 
-\item{.only_structural}{Should the the log-likelihood be based on the
-structural model? Ignored if \code{.by_equation == TRUE}. Defaults to \code{TRUE}.}
+\item{.n_generations}{Integer. A value giving the number of generations used in the genetic
+algorithm. Defaults to \code{20}.}
+
+\item{.prob_mutation}{Scalar. Mutation probability used in the genetic algorithm.
+Defaults to \code{0.5}.}
+
+\item{.prob_crossover}{Scalar. Crossover probability used in the genetic algorithm.
+Defaults to \code{0.8}.}
+
+\item{.fbar}{Integer. Low fitness value that is used to penalize inadmissible models.
+Defaults to -100000.}
 
 \item{.ms_criterion}{Character string. Either a single character string or a vector
 of character strings naming the model selection criterion to compute.
@@ -33,6 +40,9 @@ Defaults to \code{"all"}.}
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!}
+
+\item{.only_structural}{Should the the log-likelihood be based on the
+structural model? Ignored if \code{.by_equation == TRUE}. Defaults to \code{TRUE}.}
 }
 \value{
 A list containing a list of model(s) showing the 'best' value of the model

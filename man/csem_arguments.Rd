@@ -170,6 +170,9 @@ be estimated? Defaults to \code{TRUE}.}
 "\emph{sequential}", "\emph{multicore}", or "\emph{multisession}". In the two latter cases
 all available cores will be used. Defaults to "\emph{sequential}".}
 
+\item{.fbar}{Integer. Low fitness value that is used to penalize inadmissible models.
+Defaults to -100000.}
+
 \item{.filename}{Character string. The file name.}
 
 \item{.first_resample}{A list containing the \code{.R} resamples based on the original
@@ -246,6 +249,9 @@ of character strings naming the model selection criterion to compute.
 Defaults to \code{"all"}.}
 
 \item{.n}{Integer. The number of observations of the original data.}
+
+\item{.n_generations}{Integer. A value giving the number of generations used in the genetic
+algorithm. Defaults to \code{20}.}
 
 \item{.n_steps}{Integer. A value giving the number of steps (the spotlights, i.e.,
 values of .moderator in surface analysis or floodlight analysis)
@@ -335,6 +341,15 @@ of construct used is chosen. Ignored if \code{.approach_weight} is not PLS-PM.}
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
 used by PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
 Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
+
+\item{.pop_size}{Integer. Value giving the population size used in the genetic algorithm.
+Defaults to \code{20}.}
+
+\item{.prob_crossover}{Scalar. Crossover probability used in the genetic algorithm.
+Defaults to \code{0.8}.}
+
+\item{.prob_mutation}{Scalar. Mutation probability used in the genetic algorithm.
+Defaults to \code{0.5}.}
 
 \item{.probs}{A vector of probabilities.}
 
