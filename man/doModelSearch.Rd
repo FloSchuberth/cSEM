@@ -2,7 +2,7 @@
 % Please edit documentation in R/postestimate_doModelSearch.R
 \name{doModelSearch}
 \alias{doModelSearch}
-\title{Do a model specification search}
+\title{Automated model specification search}
 \usage{
 doModelSearch(.object = NULL, 
 .popsize = 20,
@@ -42,9 +42,13 @@ selection criterion, the value of the model selection criteria, and a list of cS
 \lifecycle{experimental}
 }
 \details{
-Perform a model search
+Performs an automated model specification search using a genetic algorithm \insertCite{Holland1992}{cSEM} in combination
+with partial least squares path modeling (PLS-PM).
+In particular, the function implements the approach presented in \insertCite{Trinchera2026}{cSEM}.
 }
 \references{
+\insertAllCited{}
+
 \insertAllCited{}
 }
 \seealso{

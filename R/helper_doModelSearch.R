@@ -16,7 +16,7 @@
 #' 
 mutateVector <- function(.object, 
                           .parent, 
-                          .model_org) {
+                          .model_org){
   cons_exo <- .model_org$cons_exo
   
   # REMOVE AS.VECTOR?
@@ -69,7 +69,7 @@ mutateVector <- function(.object,
 #' @return numeric
 #' 
 #' @keywords internal
-calculatefitness <- function(.matrix_vector, 
+calculateFitness <- function(.matrix_vector, 
                              .data, 
                              .model_org,
                              .only_structural,
@@ -89,7 +89,7 @@ calculatefitness <- function(.matrix_vector,
   # 
   # if (.has_cycle_matrix(adj_matrix)) return(-100000)
   
-  if (!checkIsolatedConstruct(.matrix = struc_model)|
+  if(checkIsolatedConstruct(.matrix = struc_model)|
       any(rowSums(struc_model[.model_org$cons_exo, , drop = FALSE]) != 0)|
       any(diag(struc_model)!=0)|
       checkCycles(.matrix = struc_model)) {
@@ -113,7 +113,10 @@ calculatefitness <- function(.matrix_vector,
   
   
   #   ADJUST HERE TO ALLOW FOR DIFFEREN MS CRITERIA
-  sem_fitness <- -model_criteria$BIC
+  sem_fitness <- model_criteria$BIC
+  if(sem_fitness<0){
+    sem_fitness <- - sem_fitness
+  }
   
   sem_fitness
 }
@@ -169,19 +172,29 @@ checkCycles <- function(.matrix) {
 #   TRUE
 # }
 
-#'Internal: Check whether construct in the sturtcural model is isolated
+#'Internal: Check whether constructs in the structural model are isolated
 #'@return logical: `'TRUE'`: Isolated; `'FALSE'`:connected to at least one variable via a path.
-
+#'
 #' @keywords internal
+# checkIsolatedConstruct <- function(.matrix) {
+#   # n <- nrow(.matrix)
+#   
+#   for (i in rownames(.matrix)){
+#     if(all(.matrix[i, ] == 0) && all(.matrix[, i] == 0)){
+#       return(FALSE)
+#     } 
+#   } 
+#   TRUE
+# }
 checkIsolatedConstruct <- function(.matrix) {
-  n <- nrow(.matrix)
-  
-  for (i in seq_len(n)){
-    if(all(.matrix[i, ] == 0) && all(.matrix[, i] == 0)){
-      return(FALSE)
-    } 
-  } 
-  TRUE
-}
 
+  isolated_row <- rowSums(.matrix != 0) == 0
+  isolated_col <- colSums(.matrix != 0) == 0
+  
+  if(any(isolated_row & isolated_col[names(isolated_row)])){
+    return(TRUE)
+  }else{
+    return(FALSE)
+  }
+}
 

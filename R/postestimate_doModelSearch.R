@@ -1,8 +1,10 @@
-#' Do a model specification search
+#' Automated model specification search
 #'
 #' \lifecycle{experimental}
 #'
-#' Perform a model search 
+#' Performs an automated model specification search using a genetic algorithm \insertCite{Holland1992}{cSEM} in combination 
+#' with partial least squares path modeling (PLS-PM).
+#' In particular, the function implements the approach presented in \insertCite{Trinchera2026}{cSEM}. 
 #'
 #' @usage doModelSearch(.object = NULL, 
 #' .popsize = 20,
@@ -16,6 +18,8 @@
 #'
 #' @return A list containing a list of model(s) showing the 'best' value of the model 
 #' selection criterion, the value of the model selection criteria, and a list of cSEM_models  
+#' @references
+#'   \insertAllCited{}
 #' 
 #' @inheritParams csem_arguments
 #' 
@@ -36,7 +40,9 @@ doModelSearch <- function(.object = NULL,
   
   
   
-  # if(any(class(.object) %in% "cSEMResults_default")) {
+  if(!inherits(.object, "cSEMResults")) {
+    stop2("`.object` must be a `cSEMResults` object.")
+  }
   
   model_original <- .object$Information$Model
   
@@ -74,7 +80,7 @@ doModelSearch <- function(.object = NULL,
     maxiter = .iter_max,
     pmutation = .mutation_prob,
     pcrossover = .cross_prob,
-    fitness = function(x) calculatefitness(.matrix_vector = x,
+    fitness = function(x) calculateFitness(.matrix_vector = x,
                                            .data = .object$Information$Data,
                                            .model_org = model_original,
                                            .only_structural = .only_structural,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_doModelSearch.R
 \name{checkIsolatedConstruct}
 \alias{checkIsolatedConstruct}
-\title{Internal: Check whether construct in the sturtcural model is isolated}
+\title{Internal: Check whether constructs in the structural model are isolated}
 \usage{
 checkIsolatedConstruct(.matrix)
 }
@@ -10,6 +10,6 @@ checkIsolatedConstruct(.matrix)
 logical: \code{'TRUE'}: Isolated; \code{'FALSE'}:connected to at least one variable via a path.
 }
 \description{
-Internal: Check whether construct in the sturtcural model is isolated
+Internal: Check whether constructs in the structural model are isolated
 }
 \keyword{internal}
