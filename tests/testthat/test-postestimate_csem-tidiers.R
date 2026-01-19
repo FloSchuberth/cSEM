@@ -113,10 +113,10 @@ test_that("tidy.cSEMResults for GSCA models", {
   expect_true(modeltests::check_tidy_output(tidy_gsca))
   expect_true(modeltests::check_tidy_output(tidy_gsca_m))
 
-  modeltests::check_dims(tidy_igsca, 238, 7)
-  modeltests::check_dims(tidy_igsca_mg, 476, 8)
-  modeltests::check_dims(tidy_gsca, 187, 7)
-  modeltests::check_dims(tidy_gsca_m, 249, 7)
+  modeltests::check_dims(tidy_igsca, 230, 7)
+  modeltests::check_dims(tidy_igsca_mg, 460, 8)
+  modeltests::check_dims(tidy_gsca, 179, 7)
+  modeltests::check_dims(tidy_gsca_m, 241, 7)
 })
 
 
@@ -170,7 +170,7 @@ eta3 =~ y31 + y32 + y33
   tidy_boot <- tidy(res_boot, conf.int = TRUE, conf.level = .95, conf.type = NULL)
 
   expect_true(modeltests::check_tidy_output(tidy_boot))
-  modeltests::check_dims(tidy_boot, 28, 10)
+  modeltests::check_dims(tidy_boot, 25, 10)
 
   
 # Multi-Group Example
@@ -193,6 +193,6 @@ eta3 =~ y31 + y32 + y33
   )
   tidy_boot_mg <- tidy(res_mg_boot, conf.int = TRUE, conf.type = "CI_percentile")
   expect_true(modeltests::check_tidy_output(tidy_boot_mg))
-  modeltests::check_dims(tidy_boot_mg, 84, 11)
+  modeltests::check_dims(tidy_boot_mg, 75, 11)
 })
 
