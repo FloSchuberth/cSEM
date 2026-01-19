@@ -13,6 +13,7 @@ eta3 =~ y31 + y32 + y33
 # debugonce(csem)
 # debugonce(resamplecSEMResults)
 debugonce(selectAndVectorize) # TODO: This has to be updated to include D
+debugonce(summarize) # TODO: I may have to go into summarize in-order to get the unique loadings
 debugonce(resamplecSEMResultsCore) # TODO: The actual resampling
 debugonce(resamplecSEMResults) # TODO: This processes the results after resampling
 gscam <- csem(
