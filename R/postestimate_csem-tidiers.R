@@ -146,7 +146,7 @@ tidy.cSEMResults <- function(
 
         effect_estimates <- summarized_cSEMResults[["Estimates"]][[
           "Effect_estimates"
-        ]][c("Direct_effect", "Indirect_effect", "Total_effect")]
+        ]][c("Indirect_effect", "Total_effect")]
 
         # Add type of effect as column
         # See user1317221_G on April 26/2015 https://stackoverflow.com/a/29878732
@@ -170,7 +170,7 @@ tidy.cSEMResults <- function(
       } else if (parameters == "Effect_estimates") {
         effect_estimates <- summarized_cSEMResults[["Estimates"]][[
           "Effect_estimates"
-        ]][c("Direct_effect", "Indirect_effect", "Total_effect")]
+        ]][c("Indirect_effect", "Total_effect")]
 
         # Add type of effect as column
         # See user1317221_G on April 26/2015 https://stackoverflow.com/a/29878732
@@ -193,7 +193,7 @@ tidy.cSEMResults <- function(
       out <- mapply(
         function(df, df_name) {
           if (
-            (df_name %in% c("Direct_effect", "Indirect_effect", "Total_effect"))
+            (df_name %in% c("Indirect_effect", "Total_effect"))
           ) {
             return(df)
           } else {
@@ -300,7 +300,7 @@ tidy.cSEMResults <- function(
 
   # Format output ----------------------------------------------------------
   out$type <- ifelse(
-    out$op %in% c("~", "Direct_effect", "Indirect_effect", "Total_effect"),
+    out$op %in% c("~", "Indirect_effect", "Total_effect"),
     yes = NA,
     no = out$type
   )
