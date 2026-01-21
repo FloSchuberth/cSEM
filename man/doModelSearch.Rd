@@ -10,7 +10,7 @@ doModelSearch(.object = NULL,
                      .prob_mutation = 0.5,
                      .prob_crossover = 0.8,
                      .fbar = -100000,
-                     .ms_criterion = 'bic',
+                     .ms_criterion = c('bic','aic','hq'),
                      .seed = NULL,
                      .only_structural = FALSE)
 }

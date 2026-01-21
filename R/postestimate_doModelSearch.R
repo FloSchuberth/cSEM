@@ -12,7 +12,7 @@
 #'                      .prob_mutation = 0.5,
 #'                      .prob_crossover = 0.8,
 #'                      .fbar = -100000,
-#'                      .ms_criterion = 'bic',
+#'                      .ms_criterion = c('bic','aic','hq'),
 #'                      .seed = NULL,
 #'                      .only_structural = FALSE)
 #'
@@ -34,7 +34,7 @@ doModelSearch <- function(.object = NULL,
                           .prob_mutation = 0.5,
                           .prob_crossover = 0.8,
                           .fbar = -100000,
-                          .ms_criterion = 'bic',
+                          .ms_criterion = c('bic','aic','hq'),
                           .seed = NULL,
                           .only_structural = FALSE) {
   
@@ -46,11 +46,11 @@ doModelSearch <- function(.object = NULL,
       "Package `GA` required. Use `install.packages(\"GA\")` and rerun.")
   }
   
-  if(any(length(.pop_size)!=1 | !is.numeric(.pop_size))){
+  if(any(length(.pop_size)!=1 | !is.numeric(.pop_size)| .pop_size<0)){
     stop2("`.pop_size` must be a scalar.")
   }
   
-  if(any(length(.n_generations)!=1 | !is.numeric(.n_generations))){
+  if(any(length(.n_generations)!=1 | !is.numeric(.n_generations) | .n_generations<0)){
     stop2("`.n_generations` must be a scalar.")
   }
   
@@ -62,27 +62,25 @@ doModelSearch <- function(.object = NULL,
     stop2("`.prob_crossover` must be a scalar rangning between 0 and 1.")
   }
   
-  if(any(length(.fbar)<1|!is.numeric(.fbar))){
+  if(any(length(.fbar)>1|!is.numeric(.fbar))){
     stop2("`.fbar` must be a scalar.")
   }
   
-  .ms_criterion <- match.arg(.ms_criterion) 
-  if(length(.ms_criterion)>1){
-    stop2("`.ms_criterion` must be of length 1. Only one model selection criterion must be provided")
-  }
-  
-  if(inherits(.object, "cSEMResults_multi")) {
-   stop2("Multigroup objects are currently not supported.") 
-  } else if(inherits(.object, "cSEMResults_2ndorder")) {
-    stop2("Models containing second-order constructs are currently not supported.") 
-  }
-  
-  if(!inherits(.object, "cSEMResults")) {
-    stop2("`.object` must be a `cSEMResults` object.")
-  }else if(inherits(.object, "cSEMResults_default")) {
+  .ms_criterion <- match.arg(.ms_criterion,several.ok = FALSE) 
 
+  if(inherits(.object, "cSEMResults_multi")) {
+    
+    stop2("Multigroup objects are currently not supported.") 
+    
+  }else if(inherits(.object, "cSEMResults_2ndorder")) {
+    
+    stop2("Models containing second-order constructs are currently not supported.") 
+    
+  }else if(inherits(.object, "cSEMResults_default")) {
+    
     model_original <- .object$Information$Model    
   }else{
+    
     stop2(
       "The following error occured in the assess() function:\n",
       "`.object` must be a `cSEMResults` object."
@@ -99,17 +97,14 @@ doModelSearch <- function(.object = NULL,
   }
   
   
-  model_criteria <- calculateModelSelectionCriteria(
+  fitness <- calculateModelSelectionCriteria(
     .object = .object,
     .by_equation = FALSE,
     .only_structural = .only_structural,
     .ms_criterion = .ms_criterion
-  )
+  )[[1]]
   
-  
-  #   HIER NOCH ABFRAGE EINBAUEN FUER DIE VERSCHIEDNEN MS CRITERIA
-  BIC = model_criteria$BIC
-  print(BIC)
+  print(fitness)
   
   ga_control <- GA::ga(
     type = "binary",
@@ -156,6 +151,9 @@ doModelSearch <- function(.object = NULL,
   })
   
   out <- list(
+    model_selection_criterion = .ms_criterion,
+    original_fitness = fitness,
+    fbar = .fbar,
     best_matrix  = best_list,
     best_fitness = best_fitness,
     best_model = best_model

@@ -25,7 +25,37 @@ lapply(probs[4],function(x){
                 .ms_criterion = 'bic')
 })
 
-size=probs = list(1.5,-0.5,c(0.5,0.7),'a')
+size=probs = list(-20,c(20,50),c(-20,50),'a')
+
+lapply(size[4],function(x){
+  doModelSearch(.object= out_str1, 
+                .pop_size = x,
+                .n_generations =  20,
+                .prob_mutation = 0.5,
+                .prob_crossover = 0.8,
+                .fbar = -100000,
+                .ms_criterion = 'bic')
+})
+
+lapply(size[4],function(x){
+  doModelSearch(.object= out_str1, 
+                .pop_size = 20,
+                .n_generations =  x,
+                .prob_mutation = 0.5,
+                .prob_crossover = 0.8,
+                .fbar = -100000,
+                .ms_criterion = 'bic')
+})
+
+lapply(size[2],function(x){
+  doModelSearch(.object= out_str1, 
+                .pop_size = 20,
+                .n_generations =  20,
+                .prob_mutation = 0.5,
+                .prob_crossover = 0.8,
+                .fbar = x,
+                .ms_criterion = 'bic')
+})
 
 
 doModelSearch(.object= out_str1, 

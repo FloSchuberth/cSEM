@@ -106,16 +106,13 @@ calculateFitness <- function(.matrix_vector,
     return(.fbar)
   }
   
-  model_criteria <- calculateModelSelectionCriteria(.object = out,
+  fitness <- -calculateModelSelectionCriteria(.object = out,
                                                     .ms_criterion = .ms_criterion,
                                                     .by_equation = FALSE,
-                                                    .only_structural = .only_structural)
+                                                    .only_structural = .only_structural)[[1]]
   
   
-  #   ADJUST HERE TO ALLOW FOR DIFFEREN MS CRITERIA
-  sem_fitness <- -model_criteria$BIC
-
-  sem_fitness
+  fitness
 }
 
 
