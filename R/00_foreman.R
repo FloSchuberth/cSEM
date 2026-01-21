@@ -316,13 +316,13 @@ foreman <- function(
         .P = P,
         .Q = Q
       )
-      if (.approach_weights == "GSCA") {
-        estim_results$Path_estimates <- W$B
-        estim_results$R2 <- NULL
-        estim_results$R2adj <- NULL
-        estim_results$VIF <- NULL
-        estim_results$SE <- NULL
-      }
+
+      estim_results$Path_estimates <- W$B
+      # TODO: The below seem to need to be returned from estimatePath for some other post-estimate functions to work
+      # estim_results$R2 <- NULL
+      # estim_results$R2adj <- NULL
+      # estim_results$VIF <- NULL
+      # estim_results$SE <- NULL
     } else {
       estim_results <- NULL
     }
