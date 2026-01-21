@@ -260,10 +260,10 @@ foreman <- function(
     ## Calculate construct correlation matrix
     P <- cor(H)
   } else {
-    ## Calculate proxy covariance matrix
+    ## Calculate proxy covariance matrix and assumes that weights are for constructs with measurement error
     C <- calculateCompositeVCV(.S = S, .W = Weights)
 
-    ## Calculate construct correlation matrix
+    ## Calculate construct correlation matrix and corrects for attenuation
     P <- calculateConstructVCV(.C = C, .Q = Q)
   }
   
