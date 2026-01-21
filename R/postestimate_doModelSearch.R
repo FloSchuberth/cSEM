@@ -39,32 +39,30 @@ doModelSearch <- function(.object = NULL,
                           .only_structural = FALSE) {
   
   
-# Check argument
-  if(!inherits(.object, "cSEMResults")) {
-    stop2("`.object` must be a `cSEMResults` object.")
+# Check arguments
+  
+  if (!requireNamespace("GA", quietly = TRUE)) {
+    stop2(
+      "Package `GA` required. Use `install.packages(\"GA\")` and rerun.")
   }
   
-  if(inherits(.object, "cSEMVerify_multi")){
-    stop2("Multigroup analysis is currenlty not supported by `doModelSearch()`.")
-  }
-  
-  if(length(.pop_size)!=1 | !is.numeric(.pop_size)){
+  if(any(length(.pop_size)!=1 | !is.numeric(.pop_size))){
     stop2("`.pop_size` must be a scalar.")
   }
   
-  if(length(.n_generations)!=1 | !is.numeric(.n_generations)){
+  if(any(length(.n_generations)!=1 | !is.numeric(.n_generations))){
     stop2("`.n_generations` must be a scalar.")
   }
   
-  if(!is.numeric(.prob_mutation)|.prob_mutation>1|.prob_mutation<0|length(.prob_mutation)>1){
+  if(any(!is.numeric(.prob_mutation)|.prob_mutation>1|.prob_mutation<0|length(.prob_mutation)>1)){
     stop2("`.prob_mutation` must be a scalar rangning between 0 and 1.")
   }
-  
-  if(!is.numeric(.prob_crossover)|.prob_crossover>1|.prob_crossover<0|length(.prob_crossover)>1){
+
+  if(any(!is.numeric(.prob_crossover)|.prob_crossover>1|.prob_crossover<0|length(.prob_crossover)>1)){
     stop2("`.prob_crossover` must be a scalar rangning between 0 and 1.")
   }
   
-  if(!is.numeric(.fbar)){
+  if(any(length(.fbar)<1|!is.numeric(.fbar))){
     stop2("`.fbar` must be a scalar.")
   }
   
@@ -73,10 +71,25 @@ doModelSearch <- function(.object = NULL,
     stop2("`.ms_criterion` must be of length 1. Only one model selection criterion must be provided")
   }
   
-  model_original <- .object$Information$Model
+  if(inherits(.object, "cSEMResults_multi")) {
+   stop2("Multigroup objects are currently not supported.") 
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    stop2("Models containing second-order constructs are currently not supported.") 
+  }
   
-  #   ADD ADDITIONAL CHECKs CSEM OBKECT
+  if(!inherits(.object, "cSEMResults")) {
+    stop2("`.object` must be a `cSEMResults` object.")
+  }else if(inherits(.object, "cSEMResults_default")) {
+
+    model_original <- .object$Information$Model    
+  }else{
+    stop2(
+      "The following error occured in the assess() function:\n",
+      "`.object` must be a `cSEMResults` object."
+    )
+  }
   
+
   if(model_original$model_type != 'Linear'){
     stop2('Currently, `doModelSearch()` supports only linear models.')
   }
@@ -85,10 +98,6 @@ doModelSearch <- function(.object = NULL,
     stop2("Currently, `doModelSearch()` supports only PLS-PM.")
   }
   
-  if (!requireNamespace("GA", quietly = TRUE)) {
-    stop2(
-      "Package `GA` required. Use `install.packages(\"GA\")` and rerun.")
-  }
   
   model_criteria <- calculateModelSelectionCriteria(
     .object = .object,
