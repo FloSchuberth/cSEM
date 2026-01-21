@@ -30,7 +30,7 @@ Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     email = "",
                     comment = c(ORCID = "0000-0002-9736-3048")), 
             person(given = "Gloria", family="Pietropolli",
-                   role - c("ctb"),
+                   role  = c("ctb"),
                    email="",
                    comment = c(ORCID = "0000-0001-7623-8419")))
 Maintainer: Florian Schuberth <f.schuberth@utwente.nl>
