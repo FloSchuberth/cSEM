@@ -151,9 +151,19 @@ doModelSearch <- function(.object = NULL,
   })
   
   out <- list(
-    model_selection_criterion = .ms_criterion,
+    "Information" = list(
+      model_selection_criterion = .ms_criterion,
+      fbar = .fbar,
+      pop_size = .pop_size,
+      n_generations = .n_generations,
+      prob_mutation = .prob_mutation,
+      prob_crossover= .prob_crossover, 
+      seed = .seed,
+      only_structural=.only_structural
+    ),
+
     original_fitness = fitness,
-    fbar = .fbar,
+
     best_matrix  = best_list,
     best_fitness = best_fitness,
     best_model = best_model

@@ -11,20 +11,23 @@
 print.cSEMModelSearch <- function(x, ...) {
   cat2(
     rule2(type = 2), "\n",
-    rule2("Overview")
+    rule2("Overview AGAS-PLS")
   )
   
   cat2(
-    col_align("\n\n\tModel selection criterion used", width = 36), "= ", 
-    x$model_selection_criterion,
+    col_align("\n\n\tPopulation size", width = 36), "= ", 
+    x$Information$pop_size,
+    col_align("\n\n\tNumber of generations", width = 36), "= ", 
+    x$Information$n_generation,
+    col_align("\n\n\tMutation probability", width = 36), "= ", 
+    x$Information$prob_mutation,
+    col_align("\n\n\tCrossover probability", width = 36), "= ", 
+    x$Information$prob_crossover,
     col_align("\n\tPenalize value (fbar)", width = 36), "= ", 
-    x$fbar,
+    format(x$Information$fbar, scientific = FALSE),
+    col_align("\n\n\tModel selection criterion used", width = 36), "= ", 
+    x$Information$model_selection_criterion,
     col_align("\n\tFitness value of the original model", width = 36), "= ", 
     x$original_fitness
-    # col_align("\n\tPermutation seed", width = 36), "= ", 
-    # info$Information_permutation$Permutation_seed,
-    # col_align("\n\n\tTotal bootstrap runs", width = 37), "= ", 
-    # info$Information_bootstrap$Total_runs[[1]],
-    # "\n\tAdmissible bootstrap results:"
   )
 }
