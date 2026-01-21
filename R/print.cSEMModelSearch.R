@@ -39,12 +39,12 @@ print.cSEMModelSearch <- function(x, ...) {
   
   cat2("\n\tAGAS-PLS results:\n\t","------------------------")
   cat2(
-    col_align("\n\tFitness value", width = 36), "= ", 
+    col_align("\n\tFitness value", width = 36), "= ",
     x$best_fitness,
-    col_align("\n\tNumber of models found", width = 36), "= ", 
+    col_align("\n\tNumber of models found", width = 36), "= ",
     length(x$best_matrix),
-    col_align("\n\tStructure of the model found", width = 36), "=\n ", 
-    x$bext_matrix[[1]]
+    col_align("\n\tStructure of the model found", width = 36), "=\n ",
+    print(x$bext_matrix[[1]])
   )
   
   
