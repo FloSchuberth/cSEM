@@ -520,6 +520,8 @@ calculateWeightsGSCA <- function(
     "B" = t(tB), 
     "E" = NULL,
     "Construct_scores" = .X %*% t(W),
+    "Unique_loading_estimates" = NULL,
+    "Unique_scores"  = NULL,
     "Modes" = "gsca",
     "Conv_status" = conv_status,
     "Iterations" = iter_counter

@@ -23,7 +23,8 @@ gscam <- csem(
   .tolerance = 0.0001,
   .conv_criterion = "sum_diff_absolute",
   .resample_method = "bootstrap",
-  .R = 5
+  .R = 5,
+  .dominant_indicators = c("y11", "y21", "y31")
 )
 
 (tidied_gscam <- tidy(gscam, conf.int = TRUE))
