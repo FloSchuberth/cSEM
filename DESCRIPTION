@@ -29,7 +29,7 @@ Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     role  = c("ctb"),
                     email = "",
                     comment = c(ORCID = "0000-0002-9736-3048")), 
-            person(given = "Gloria", family="Pietropolli".
+            person(given = "Gloria", family="Pietropolli",
                    role - c("ctb"),
                    email="",
                    comment = c(ORCID = "0000-0001-7623-8419")))
