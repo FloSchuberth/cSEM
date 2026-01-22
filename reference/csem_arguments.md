@@ -263,6 +263,11 @@ To list all arguments and their possible choices, use
   "*multicore*", or "*multisession*". In the two latter cases all
   available cores will be used. Defaults to "*sequential*".
 
+- .fbar:
+
+  Integer. Low fitness value that is used to penalize inadmissible
+  models. Defaults to -100000.
+
 - .filename:
 
   Character string. The file name.
@@ -389,6 +394,11 @@ To list all arguments and their possible choices, use
 - .n:
 
   Integer. The number of observations of the original data.
+
+- .n_generations:
+
+  Integer. Number of generations used in the genetic algorithm. Defaults
+  to `20`.
 
 - .n_steps:
 
@@ -546,6 +556,21 @@ To list all arguments and their possible choices, use
   Character string. The inner weighting scheme used by PLS-PM. One of:
   "*centroid*", "*factorial*", or "*path*". Defaults to "*path*".
   Ignored if `.approach_weight` is not PLS-PM.
+
+- .pop_size:
+
+  Integer. Population size used in the genetic algorithm. Defaults to
+  `20`.
+
+- .prob_crossover:
+
+  Scalar. Crossover probability used in the genetic algorithm. Defaults
+  to `0.8`.
+
+- .prob_mutation:
+
+  Scalar. Mutation probability used in the genetic algorithm. Defaults
+  to `0.5`.
 
 - .probs:
 

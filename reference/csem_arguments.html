@@ -306,6 +306,11 @@ be estimated? Defaults to <code>TRUE</code>.</p></dd>
 all available cores will be used. Defaults to "<em>sequential</em>".</p></dd>
 
 
+<dt id="arg--fbar">.fbar<a class="anchor" aria-label="anchor" href="#arg--fbar"></a></dt>
+<dd><p>Integer. Low fitness value that is used to penalize inadmissible models.
+Defaults to -100000.</p></dd>
+
+
 <dt id="arg--filename">.filename<a class="anchor" aria-label="anchor" href="#arg--filename"></a></dt>
 <dd><p>Character string. The file name.</p></dd>
 
@@ -427,6 +432,11 @@ Defaults to <code>"all"</code>.</p></dd>
 
 <dt id="arg--n">.n<a class="anchor" aria-label="anchor" href="#arg--n"></a></dt>
 <dd><p>Integer. The number of observations of the original data.</p></dd>
+
+
+<dt id="arg--n-generations">.n_generations<a class="anchor" aria-label="anchor" href="#arg--n-generations"></a></dt>
+<dd><p>Integer. Number of generations used in the genetic
+algorithm. Defaults to <code>20</code>.</p></dd>
 
 
 <dt id="arg--n-steps">.n_steps<a class="anchor" aria-label="anchor" href="#arg--n-steps"></a></dt>
@@ -567,6 +577,21 @@ of construct used is chosen. Ignored if <code>.approach_weight</code> is not PLS
 <dd><p>Character string. The inner weighting scheme
 used by PLS-PM. One of: "<em>centroid</em>", "<em>factorial</em>", or "<em>path</em>".
 Defaults to "<em>path</em>". Ignored if <code>.approach_weight</code> is not PLS-PM.</p></dd>
+
+
+<dt id="arg--pop-size">.pop_size<a class="anchor" aria-label="anchor" href="#arg--pop-size"></a></dt>
+<dd><p>Integer. Population size used in the genetic algorithm.
+Defaults to <code>20</code>.</p></dd>
+
+
+<dt id="arg--prob-crossover">.prob_crossover<a class="anchor" aria-label="anchor" href="#arg--prob-crossover"></a></dt>
+<dd><p>Scalar. Crossover probability used in the genetic algorithm.
+Defaults to <code>0.8</code>.</p></dd>
+
+
+<dt id="arg--prob-mutation">.prob_mutation<a class="anchor" aria-label="anchor" href="#arg--prob-mutation"></a></dt>
+<dd><p>Scalar. Mutation probability used in the genetic algorithm.
+Defaults to <code>0.5</code>.</p></dd>
 
 
 <dt id="arg--probs">.probs<a class="anchor" aria-label="anchor" href="#arg--probs"></a></dt>

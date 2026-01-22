@@ -22,6 +22,9 @@
 - **Jörg Henseler**. Contributor.
   [](https://orcid.org/0000-0002-9736-3048)
 
+- **Gloria Pietropolli**. Contributor.
+  [](https://orcid.org/0000-0001-7623-8419)
+
 ## Citation
 
 Source:

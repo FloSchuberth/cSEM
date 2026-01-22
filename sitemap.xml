@@ -57,6 +57,8 @@
 <url><loc>https://floschuberth.github.io/cSEM/reference/calculateWeightsUnit.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/calculatef2.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/checkConvergence.html</loc></url>
+<url><loc>https://floschuberth.github.io/cSEM/reference/checkCycles.html</loc></url>
+<url><loc>https://floschuberth.github.io/cSEM/reference/checkIsolatedConstruct.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/check_connection.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/classifyConstructs.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/cleanNode.html</loc></url>
@@ -70,6 +72,7 @@
 <url><loc>https://floschuberth.github.io/cSEM/reference/dgp_2ndorder_cf_of_c.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/distance_measures.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/doIPMA.html</loc></url>
+<url><loc>https://floschuberth.github.io/cSEM/reference/doModelSearch.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/doNonlinearEffectsAnalysis.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/doRedundancyAnalysis.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/estimatePath.html</loc></url>
@@ -88,6 +91,7 @@
 <url><loc>https://floschuberth.github.io/cSEM/reference/infer.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/inference_helper.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/moments.html</loc></url>
+<url><loc>https://floschuberth.github.io/cSEM/reference/mutateVector.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/nonlinear_estimation_utilities.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/parseModel.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/plot.cSEMIPMA.html</loc></url>
@@ -98,6 +102,7 @@
 <url><loc>https://floschuberth.github.io/cSEM/reference/plot.cSEMResults_multi.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/predict.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/print.cSEMAssess.html</loc></url>
+<url><loc>https://floschuberth.github.io/cSEM/reference/print.cSEMModelSearch.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/print.cSEMNonlinearEffects.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/print.cSEMPlotPredict.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/print.cSEMPredict.html</loc></url>

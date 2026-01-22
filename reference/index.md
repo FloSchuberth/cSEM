@@ -100,6 +100,9 @@
 - [`doIPMA()`](https://floschuberth.github.io/cSEM/reference/doIPMA.md)
   : Do an importance-performance matrix analysis
 
+- [`doModelSearch()`](https://floschuberth.github.io/cSEM/reference/doModelSearch.md)
+  : Automated model specification search
+
 - [`doNonlinearEffectsAnalysis()`](https://floschuberth.github.io/cSEM/reference/doNonlinearEffectsAnalysis.md)
   : Do a nonlinear effects analysis
 

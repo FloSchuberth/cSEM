@@ -46,3 +46,6 @@ Other contributors:
 
 - Jörg Henseler ([ORCID](https://orcid.org/0000-0002-9736-3048))
   \[contributor\]
+
+- Gloria Pietropolli ([ORCID](https://orcid.org/0000-0001-7623-8419))
+  \[contributor\]
