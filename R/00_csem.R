@@ -398,6 +398,9 @@ csem <- function(
   
   ## Modify model if model contains second order constructs
   if(any(model_original$construct_order == "Second order")) {
+    if (.approach_weights == "GSCA") {
+      stop2(".approach_weights = 'GSCA' is not supported for 2nd order constructs in cSEM.")
+    }
     model_1stage <- convertModel(
       .csem_model        = model_original, 
       .approach_2ndorder = args$.approach_2ndorder,
