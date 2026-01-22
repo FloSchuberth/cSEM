@@ -242,12 +242,17 @@ calculateConstructVCV <- function(
 
 calculateIndicatorCor <- function(
   .X_cleaned           = NULL,
-  .approach_cor_robust = "none"
+  .approach_cor_robust = "none",
+  .approach_weights = NULL
 ){
   
   is_numeric_indicator <- lapply(.X_cleaned, is.numeric)
   
   only_numeric_cols <- all(unlist(is_numeric_indicator))
+
+  if ((only_numeric_cols == FALSE) & (.approach_weights == "GSCA")) {
+    stop2("GSCA does not support fitting with a correlation matrix or using data with factors or ordered variables.")
+  }
   
   if(.approach_cor_robust != "none" && !only_numeric_cols) {
     stop2("Setting `.approach_cor_robust = ", .approach_cor_robust, "` requires all",
@@ -649,6 +654,8 @@ calculateReliabilities <- function(
 #'  .X = NULL,
 #'  .L = NULL,
 #'  .B = NULL,
+#'  .U = NULL,
+#'  .D = NULL,
 #'  Construct_scores = NULL,
 #'  .csem_model = NULL
 #'  )
@@ -666,6 +673,8 @@ setDominantIndicator <- function(
   .X = NULL,
   .L = NULL,
   .B = NULL,
+  .U = NULL,
+  .D = NULL,
   Construct_scores = NULL,
   .csem_model = NULL
 ) {
@@ -717,14 +726,17 @@ setDominantIndicator <- function(
       J_Eta_cor <- cor(.X[, .dominant_indicators[eta_idx]], Construct_scores[, eta_idx])
       if (J_Eta_cor < 0) {
         .W[eta_idx, ] <- (-1 * .W[eta_idx, ])
-        # Construct_scores[, eta_idx] <- (-1 * Construct_scores[, eta_idx])
-        # TODO: Think about whether I can bypass that
         .L[eta_idx, ] <- (-1 * .L[eta_idx, ]) # .L is Construct X Indicator
       }
     }
+    
+    if (any(.csem_model$construct_type == "Common factor")) {
+      # all.equal((.X  - (.U %*% .D)) %*% t(.W), Construct_scores)
+      Construct_scores <- (.X  - (.U %*% .D)) %*% t(.W)
+    } else {
+      Construct_scores <- .X %*% t(.W)
+    }
 
-    # FIXME: Compute the construct scores again 
-    stop("Remember to compute the construct scores again")
     # Compute the path coefficients again to ensure sign flipping is carried through
     B_transposed <- t(.B)
     csemify <- parseModel(.model = .csem_model)
