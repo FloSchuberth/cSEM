@@ -132,6 +132,8 @@
 #' @param .eval_plan Character string. The evaluation plan to use. One of 
 #'   "*sequential*", "*multicore*", or "*multisession*". In the two latter cases 
 #'   all available cores will be used. Defaults to "*sequential*".
+#' @param .fbar Integer. Low fitness value that is used to penalize inadmissible models. 
+#' Defaults to -100000.
 #' @param .filename Character string. The file name. 
 #' @param .first_resample A list containing the `.R` resamples based on the original
 #'   data obtained by resamplecSEMResults().
@@ -186,6 +188,8 @@
 #'   of character strings naming the model selection criterion to compute.
 #'   Defaults to `"all"`.
 #' @param .n Integer. The number of observations of the original data.
+#' @param .n_generations Integer. Number of generations used in the genetic 
+#' algorithm. Defaults to `20`.
 #' @param .n_steps Integer. A value giving the number of steps (the spotlights, i.e.,
 #' values of .moderator in surface analysis or floodlight analysis) 
 #' between the minimum and maximum value of the moderator. Defaults to `100`.
@@ -250,6 +254,12 @@
 #' @param .PLS_weight_scheme_inner Character string. The inner weighting scheme
 #'   used by PLS-PM. One of: "*centroid*", "*factorial*", or "*path*".
 #'   Defaults to "*path*". Ignored if `.approach_weight` is not PLS-PM.
+#' @param .pop_size Integer. Population size used in the genetic algorithm. 
+#' Defaults to `20`.
+#' @param .prob_crossover Scalar. Crossover probability used in the genetic algorithm. 
+#' Defaults to `0.8`.
+#' @param .prob_mutation Scalar. Mutation probability used in the genetic algorithm.
+#' Defaults to `0.5`.
 #' @param .probs A vector of probabilities.
 #' @param .postestimation_object An object resulting from a call to one of cSEM's
 #'   postestimation functions (e.g. [summarize()]).
@@ -486,6 +496,7 @@ args_default <- function(.choices = FALSE) {
     .effect                  = NULL,
     .estimate_structural     = TRUE,
     .eval_plan               = c("sequential", "multicore","multisession"),
+    .fbar                    = -100000,
     .filename                = NULL,
     .fit_measures            = FALSE,
     .first_resample          = NULL,
@@ -511,6 +522,7 @@ args_default <- function(.choices = FALSE) {
     .modes                   = NULL,
     .ms_criterion            = c("all", "aic", "aicc", "aicu", "bic", "fpe", "gm", "hq",
                                  "hqc", "mallows_cp"),
+    .n_generations           = 20,  
     .n_steps                 = 100,
     .normality               = FALSE,
     .nr_comparisons          = NULL,
@@ -528,6 +540,9 @@ args_default <- function(.choices = FALSE) {
     .plot_significances      = TRUE,
     .plot_structural_model_only = FALSE,
     .plot_type               = NULL,
+    .pop_size                = 20,
+    .prob_crossover          = 0.8,
+    .prob_mutation           = 0.5,
     .probs                   = NULL,
     .PLS_approach_cf         = c("dist_squared_euclid", "dist_euclid_weighted", 
                                  "fisher_transformed", "mean_arithmetic",

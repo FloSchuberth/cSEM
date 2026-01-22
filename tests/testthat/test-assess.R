@@ -1,4 +1,3 @@
-context("assess")
 
 ## Linear
 model_linear <- "
