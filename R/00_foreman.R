@@ -214,6 +214,11 @@ foreman <- function(
         "cSEM currently does not support GSCA and GSCAm for models containing nonlinear terms."
       )
     }
+
+    if (.approach_paths != "OLS") {
+      stop2("cSEM does not support using an .approach_paths other than OLS for GSCA.")
+    }
+
     if (all(csem_model$construct_type == "Common factor")) {
       if (isTRUE(.disattenuate)) {
         W <- calculateWeightsGSCAm(
@@ -278,18 +283,23 @@ foreman <- function(
       W$B <- flipped_W_Eta_L_B$B
     }
 
-    LambdaQ2W <- calculateReliabilities(
-      .X = X,
-      .S = S,
-      .W = W,
-      .approach_weights = .approach_weights,
-      .csem_model = csem_model,
-      .disattenuate = .disattenuate,
-      .PLS_approach_cf = .PLS_approach_cf,
-      .reliabilities = .reliabilities
-    )
-
-    Q <- sqrt(LambdaQ2W$Q2)
+    # LambdaQ2W <- calculateReliabilities(
+    #   .X = X,
+    #   .S = S,
+    #   .W = W,
+    #   .approach_weights = .approach_weights,
+    #   .csem_model = csem_model,
+    #   .disattenuate = .disattenuate,
+    #   .PLS_approach_cf = .PLS_approach_cf,
+    #   .reliabilities = .reliabilities
+    # )
+    stop("Restore the master branch for calculateReliabilities and set the below to a named vector of 1")
+    stop("When csem does the 2nd order constructs, check for .approach_weights = 'GSCA', and throw a stop that it's not supported")
+    stop("When the data has factors or ordinal, then stop and say GSCA does not support this")
+    # TODO: Comment out calculateReliabilities, restore it to the master branch version. Then, Set Q manually here to be equal to a named vector of 1 for the constructs
+    
+    Q        <- rep(1, times = nrow(W$W))
+    names(Q) <- rownames(W$W)
 
     Theta <- NULL
     # Calculate Construct Scores
@@ -314,12 +324,12 @@ foreman <- function(
         .P = P,
         .Q = Q
       )
-      # TODO: Discuss this section with Flo
       estim_results$Path_estimates <- W$B
       
-      # estim_results$R2 <- NULL # FIXME: Required by calculateGoF() and calculatef2
-      estim_results$R2adj <- NULL
-      estim_results$VIF <- NULL
+      # R2 is needed for `calculateGoF()` and `calculatef2()``
+      # estim_results$R2 <- NULL 
+      # estim_results$R2adj <- NA
+      # estim_results$VIF <- NA
       estim_results$SE <- NA
     } else {
       estim_results <- NULL
