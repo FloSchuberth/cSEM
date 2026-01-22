@@ -81,7 +81,8 @@ foreman <- function(
   ## Calculate empirical indicator covariance/correlation matrix
   Cor <- calculateIndicatorCor(
     .X_cleaned = X_cleaned,
-    .approach_cor_robust = .approach_cor_robust
+    .approach_cor_robust = .approach_cor_robust,
+    .approach_weights = .approach_weights
   )
 
   # Extract the correlation matrix
@@ -274,6 +275,8 @@ foreman <- function(
         .X = X,
         .L = W$C,
         .B = W$B,
+        .U = W$Unique_scores,
+        .D = diag(W$Unique_loading_estimates),
         Construct_scores = W$Construct_scores,
         .csem_model = csem_model
       )
@@ -293,8 +296,6 @@ foreman <- function(
     #   .PLS_approach_cf = .PLS_approach_cf,
     #   .reliabilities = .reliabilities
     # )
-    stop("When csem does the 2nd order constructs, check for .approach_weights = 'GSCA', and throw a stop that it's not supported")
-    stop("When the data has factors or ordinal, then stop and say GSCA does not support this")
     
     Q        <- rep(1, times = nrow(W$W))
     names(Q) <- rownames(W$W)
