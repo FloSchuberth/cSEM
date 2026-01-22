@@ -437,6 +437,7 @@ calculateWeightsGSCA <- function(
     tB[tB != 0] <- unlist(B)
     
     # Step 1b: Estimate Lambda (the loadings for a given W)
+    # TODO: In the future, this code should be updated to use the loadings in the ALS algorithm
     if(length(vars_cf) > 0) {
       Lambda_tilde <- W_iter %*% .S
       dep_vars <- names(which(colSums(Lambda0[vars_cf, , drop = FALSE]) !=0))
@@ -512,11 +513,13 @@ calculateWeightsGSCA <- function(
       W_iter <- W
     }
   }
+
+  Lambda   <- W %*% .S * .csem_model$measurement
   
   # Return
   l <- list(
     "W" = W,
-    "C" = t(tLambda), 
+    "C" = Lambda, 
     "B" = t(tB), 
     "E" = NULL,
     "Construct_scores" = .X %*% t(W),

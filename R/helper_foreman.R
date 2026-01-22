@@ -387,6 +387,8 @@ calculateReliabilities <- function(
   if (.approach_weights != "GSCA") {
     W <- .W$W
   } else if (.approach_weights == "GSCA") {
+    # FIXME: This might be wrong. I'm not sure.
+    # FIXME: This uses the weights for indicators with measurement error removed, (X-UD)W
     
     W <- .W$W
     
