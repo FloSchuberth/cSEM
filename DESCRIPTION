@@ -95,6 +95,7 @@ Suggests:
     listviewer,
     testthat (>= 3.0.0),
     ggplot2,
+    GA,
     openxlsx,
     graphics,
     spelling

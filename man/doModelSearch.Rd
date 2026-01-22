@@ -51,7 +51,7 @@ A list of class \code{cSEMModelSearch}. The list contains the follwing elements:
 \item{\verb{$Information}}{A list of input parameters to \code{doModelSearch}}
 \item{\verb{$Results}}{A list with elements, \code{original_fitness}, \code{best_fitness}, and \code{best_matrix}}
 \item{\verb{$Inputcsem}}{A list with elements, \code{data}, and \code{model}, where \code{data}
-comprises the dataset used to estimate the original model and \code{model} is a \link{cSEMModel} list.}
+comprises the dataset used to estimate the original model and \code{model} is a list of \link{cSEMModel} lists.}
 }
 }
 \description{
@@ -71,6 +71,7 @@ The fitness of the model is determined by the criterion provided to \code{.ms_cr
 To estimate the found model \code{Inputcsem} results can be used, see the example.
 }
 \examples{
+\dontrun{
 # Perform model search for a linear model without second-order constructs 
 model_Bergami_Bagozzi_Henseler="
  # Measurement models
@@ -108,7 +109,7 @@ model_Bergami_Bagozzi_Henseler="
                 .model = outSearch$Inputcsem$model[[1]])
 
  # summarize(outNew) 
- 
+}
 }
 \references{
 \insertAllCited{}
