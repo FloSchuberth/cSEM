@@ -22,7 +22,6 @@ csem(
 .id                    = NULL,
 .instruments           = NULL,
 .iter_max              = 100,
-.GSCA_control          = list(.forceIGSCA = FALSE),
 .GSCA_modes            = NULL,
 .normality             = FALSE,
 .PLS_approach_cf       = c("dist_squared_euclid", "dist_euclid_weighted", 
@@ -82,7 +81,7 @@ need to be supplied to \code{.instruments}. Defaults to "\emph{OLS}".}
 
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
-"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{IGSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
 or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
@@ -117,9 +116,6 @@ instruments for themselves. Defaults to \code{NULL}.}
 If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
 If the algorithm exceeds the specified number, weights of iteration step
 \code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
-
-\item{.GSCA_control}{Named list specifying various computational options for
-GSCA-type models.}
 
 \item{.GSCA_modes}{Either a named list specifying the mode that should be
 used for each composite in the form \code{"composite_name" = mode}, a single

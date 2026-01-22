@@ -12,6 +12,8 @@ setDominantIndicator(
  .X = NULL,
  .L = NULL,
  .B = NULL,
+ .U = NULL,
+ .D = NULL,
  Construct_scores = NULL,
  .csem_model = NULL
  )
@@ -29,7 +31,7 @@ Default to \code{NULL}.}
 
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
-"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{IGSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
 or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
 
 \item{.X}{A matrix of processed data (scaled, cleaned and ordered).}

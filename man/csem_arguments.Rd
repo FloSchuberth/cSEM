@@ -80,7 +80,7 @@ is used. Defaults to "\emph{mean}".}
 
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
-"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{IGSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
 or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
 
 \item{.args_used}{A list of function argument names whose value was modified
@@ -186,9 +186,6 @@ Defaults to \code{TRUE}.}
 
 \item{.graph_attrs}{Character string. Additional attributes that should be passed
 to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emph{c("rankdir=LR")}.}
-
-\item{.GSCA_control}{Named list specifying various computational options for
-GSCA-type models.}
 
 \item{.GSCA_modes}{Either a named list specifying the mode that should be
 used for each composite in the form \code{"composite_name" = mode}, a single

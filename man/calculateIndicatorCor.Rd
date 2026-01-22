@@ -22,6 +22,11 @@ Defaults to "\emph{none}". Note that many postestimation procedures (such as
 \code{\link[=testOMF]{testOMF()}} or \code{\link[=fit]{fit()}} implicitly assume a continuous
 indicator correlation matrix (e.g. Bravais-Pearson correlation matrix).
 Only use if you know what you are doing.}
+
+\item{.approach_weights}{Character string. Approach used to
+obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
+or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
 }
 \value{
 A list with elements:

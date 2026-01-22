@@ -1,3 +1,11 @@
+#' @importFrom generics tidy
+#' @export
+generics::tidy
+
+#' @importFrom generics glance
+#' @export
+generics::glance
+
 #' tidy Method for cSEMResults Objects
 #'
 #' This method and documentation is based on the `tidy` method for `lavaan`, as found in `broom:::tidy.lavaan()`.
