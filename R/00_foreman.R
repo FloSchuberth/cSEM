@@ -293,10 +293,8 @@ foreman <- function(
     #   .PLS_approach_cf = .PLS_approach_cf,
     #   .reliabilities = .reliabilities
     # )
-    stop("Restore the master branch for calculateReliabilities and set the below to a named vector of 1")
     stop("When csem does the 2nd order constructs, check for .approach_weights = 'GSCA', and throw a stop that it's not supported")
     stop("When the data has factors or ordinal, then stop and say GSCA does not support this")
-    # TODO: Comment out calculateReliabilities, restore it to the master branch version. Then, Set Q manually here to be equal to a named vector of 1 for the constructs
     
     Q        <- rep(1, times = nrow(W$W))
     names(Q) <- rownames(W$W)
