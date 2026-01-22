@@ -250,7 +250,7 @@ Defaults to \code{"all"}.}
 
 \item{.n}{Integer. The number of observations of the original data.}
 
-\item{.n_generations}{Integer. A value giving the number of generations used in the genetic
+\item{.n_generations}{Integer. Number of generations used in the genetic
 algorithm. Defaults to \code{20}.}
 
 \item{.n_steps}{Integer. A value giving the number of steps (the spotlights, i.e.,
@@ -342,7 +342,7 @@ of construct used is chosen. Ignored if \code{.approach_weight} is not PLS-PM.}
 used by PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
 Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
-\item{.pop_size}{Integer. Value giving the population size used in the genetic algorithm.
+\item{.pop_size}{Integer. Population size used in the genetic algorithm.
 Defaults to \code{20}.}
 
 \item{.prob_crossover}{Scalar. Crossover probability used in the genetic algorithm.

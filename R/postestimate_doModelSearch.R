@@ -4,28 +4,48 @@
 #'
 #' Performs an automated model specification search using a genetic algorithm \insertCite{Holland1992}{cSEM} in combination 
 #' with partial least squares path modeling (PLS-PM).
-#' In particular, the function implements the approach presented in \insertCite{Trinchera2026}{cSEM}. 
+#' Specifically, the function implements the approach presented in \insertCite{Trinchera2026;textual}{cSEM}. 
+#' The model search is limited to the structural model.
+#' Thereby it is ensured that the resulting structural model is recursive, i.e., feedback loops and non-recursive structures are prohibited.  
+#' Moreover, the set of exogenous constructs is taken from the original model provided to `doModelSearch()` and remains exogenous during the search.
+#' If a model violates the restrictions or does not pass [verify()] during the model search, a penalty fitness value `.fbar` is assigned to the model.
+#' Therefore, ensure that `.fbar` is sufficiently small. 
+#' The fitness of the model is determined by the criterion provided to `.ms_criterion`.
+#' 
+#' To estimate the found model `Inputcsem` results can be used, see the example.
+#' 
+#'  
 #'
-#' @usage doModelSearch(.object = NULL, 
-#'                      .pop_size = 20, 
-#'                      .n_generations= 20,
-#'                      .prob_mutation = 0.5,
-#'                      .prob_crossover = 0.8,
-#'                      .fbar = -100000,
-#'                      .ms_criterion = c('bic','aic','hq'),
-#'                      .seed = NULL,
-#'                      .only_structural = FALSE)
+#' @usage doModelSearch(
+#'  .object          = NULL, 
+#'  .pop_size        = 20,
+#'  .n_generations   = 20,
+#'  .prob_mutation   = 0.5,
+#'  .prob_crossover  = 0.8,
+#'  .fbar            = -100000,
+#'  .ms_criterion    = c('bic','aic','hq'),
+#'  .seed            = NULL,
+#'  .only_structural = FALSE
+#' )
 #'
-#' @return A list containing a list of model(s) showing the 'best' value of the model 
-#' selection criterion, the value of the model selection criteria, and a list of cSEM_models  
-#' @references
-#'   \insertAllCited{}
+#' @return A list of class `cSEMModelSearch`. The list contains the follwing elements:
+#' \describe{
+#'   \item{`$Information`}{A list of input parameters to `doModelSearch`}
+#'   \item{`$Results`}{A list with elements, `original_fitness`, `best_fitness`, and `best_matrix`}
+#'   \item{`$Inputcsem`}{A list with elements, `data`, and `model`, where `data` 
+#'   comprises the dataset used to estimate the original model and `model` is a list of [cSEMModel] lists.}
+#' }
+#' 
 #' 
 #' @inheritParams csem_arguments
-#' 
-#' @seealso [cSEMResults]
+#' @param .ms_criterion Character string. A single character string naming the model selection criterion to compute. 
+#' One of `"bic"`, `"aic"`, or `"hq"`. Defaults to `"bic"`
 #' 
 #' @references \insertAllCited{}
+#' 
+#' @seealso [cSEMResults] [calculateModelSelectionCriteria]
+#' 
+#' @example inst/examples/example_doModelSearch.R
 #' 
 #' @export
 doModelSearch <- function(.object = NULL, 
@@ -104,8 +124,6 @@ doModelSearch <- function(.object = NULL,
     .ms_criterion = .ms_criterion
   )[[1]]
   
-  print(fitness)
-  
   ga_control <- GA::ga(
     type = "binary",
     nBits = length(model_original$structural),
@@ -161,12 +179,15 @@ doModelSearch <- function(.object = NULL,
       seed = .seed,
       only_structural=.only_structural
     ),
-
-    original_fitness = fitness,
-
-    best_matrix  = best_list,
+    "Results" = list(
+    original_fitness = fitness,  
     best_fitness = best_fitness,
-    best_model = best_model
+    best_matrix  = best_list
+    ),
+    "Inputcsem"=list(
+    data = .object$Information$Data,
+    model = best_model
+    )
   )
   
   class(out) <- 'cSEMModelSearch'

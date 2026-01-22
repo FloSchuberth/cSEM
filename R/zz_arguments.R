@@ -188,7 +188,7 @@
 #'   of character strings naming the model selection criterion to compute.
 #'   Defaults to `"all"`.
 #' @param .n Integer. The number of observations of the original data.
-#' @param .n_generations Integer. A value giving the number of generations used in the genetic 
+#' @param .n_generations Integer. Number of generations used in the genetic 
 #' algorithm. Defaults to `20`.
 #' @param .n_steps Integer. A value giving the number of steps (the spotlights, i.e.,
 #' values of .moderator in surface analysis or floodlight analysis) 
@@ -254,7 +254,7 @@
 #' @param .PLS_weight_scheme_inner Character string. The inner weighting scheme
 #'   used by PLS-PM. One of: "*centroid*", "*factorial*", or "*path*".
 #'   Defaults to "*path*". Ignored if `.approach_weight` is not PLS-PM.
-#' @param .pop_size Integer. Value giving the population size used in the genetic algorithm. 
+#' @param .pop_size Integer. Population size used in the genetic algorithm. 
 #' Defaults to `20`.
 #' @param .prob_crossover Scalar. Crossover probability used in the genetic algorithm. 
 #' Defaults to `0.8`.

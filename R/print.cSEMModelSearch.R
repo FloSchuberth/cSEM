@@ -26,26 +26,41 @@ print.cSEMModelSearch <- function(x, ...) {
     col_align("\n\tPenalize value (fbar)", width = 36), "= ", 
     format(x$Information$fbar, scientific = FALSE),
     col_align("\n\tModel selection criterion used", width = 36), "= ", 
-    x$Information$model_selection_criterion
+    x$Information$model_selection_criterion,
+    col_align("\n\tSeed", width = 36), "= ", 
+    if(is.null(x$Information$seed)){
+      'none'
+    }else{
+      x$Information$seed
+    }
   )
-  
-  cat2('\n')
-  
-  cat2("\n\tOriginal model:\n\t","------------------------")
-  cat2(col_align("\n\tFitness value", width = 36), "= ", 
-       x$original_fitness)
   
   cat2('\n')
   
   cat2("\n\tAGAS-PLS results:\n\t","------------------------")
   cat2(
-    col_align("\n\tFitness value", width = 36), "= ",
-    x$best_fitness,
-    col_align("\n\tNumber of models found", width = 36), "= ",
-    length(x$best_matrix),
-    col_align("\n\tStructure of the model found", width = 36), "=\n ",
-    print(x$bext_matrix[[1]])
+    col_align("\n\tFitness value original model", width = 36), "= ", 
+    x$Results$original_fitness,
+    col_align("\n\tBest fitness value", width = 36), "= ",
+    x$Results$best_fitness,
+    col_align("\n\tNumber of best fitting models", width = 36), "= ",
+    length(x$Results$best_matrix),
+    col_align("\n\n\tStructural model structure:")
   )
+
+  mat_output <- capture.output(print(x$Results$best_matrix[[1]]))
+  indented_mat <- paste0("\t", mat_output, collapse = "\n")
+  cat2("\n", indented_mat, "\n")
   
+  if(length(x$Results$best_matrix)>1){
+    cat2("\n\tNote: ", length(x$Results$best_matrix), " models with the same fitness value found.\n")
+  }
   
-}
+    if(x$Results$original_fitness < x$Results$best_fitness){
+    cat2(col_align(red("\n The best fitting model shows a worse fit than the original one.")),
+         red("\n Try to increase `.pop_size` and/or `.n_generations`.\n"))
+  }
+  
+
+  cat(rule2(type = 2), "\n")
+  }

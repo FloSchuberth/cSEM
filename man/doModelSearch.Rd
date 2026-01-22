@@ -4,23 +4,25 @@
 \alias{doModelSearch}
 \title{Automated model specification search}
 \usage{
-doModelSearch(.object = NULL, 
-                     .pop_size = 20, 
-                     .n_generations= 20,
-                     .prob_mutation = 0.5,
-                     .prob_crossover = 0.8,
-                     .fbar = -100000,
-                     .ms_criterion = c('bic','aic','hq'),
-                     .seed = NULL,
-                     .only_structural = FALSE)
+doModelSearch(
+ .object          = NULL, 
+ .pop_size        = 20,
+ .n_generations   = 20,
+ .prob_mutation   = 0.5,
+ .prob_crossover  = 0.8,
+ .fbar            = -100000,
+ .ms_criterion    = c('bic','aic','hq'),
+ .seed            = NULL,
+ .only_structural = FALSE
+)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.pop_size}{Integer. Value giving the population size used in the genetic algorithm.
+\item{.pop_size}{Integer. Population size used in the genetic algorithm.
 Defaults to \code{20}.}
 
-\item{.n_generations}{Integer. A value giving the number of generations used in the genetic
+\item{.n_generations}{Integer. Number of generations used in the genetic
 algorithm. Defaults to \code{20}.}
 
 \item{.prob_mutation}{Scalar. Mutation probability used in the genetic algorithm.
@@ -32,9 +34,8 @@ Defaults to \code{0.8}.}
 \item{.fbar}{Integer. Low fitness value that is used to penalize inadmissible models.
 Defaults to -100000.}
 
-\item{.ms_criterion}{Character string. Either a single character string or a vector
-of character strings naming the model selection criterion to compute.
-Defaults to \code{"all"}.}
+\item{.ms_criterion}{Character string. A single character string naming the model selection criterion to compute.
+One of \code{"bic"}, \code{"aic"}, or \code{"hq"}. Defaults to \code{"bic"}}
 
 \item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
@@ -45,8 +46,13 @@ not be altered!}
 structural model? Ignored if \code{.by_equation == TRUE}. Defaults to \code{TRUE}.}
 }
 \value{
-A list containing a list of model(s) showing the 'best' value of the model
-selection criterion, the value of the model selection criteria, and a list of cSEM_models
+A list of class \code{cSEMModelSearch}. The list contains the follwing elements:
+\describe{
+\item{\verb{$Information}}{A list of input parameters to \code{doModelSearch}}
+\item{\verb{$Results}}{A list with elements, \code{original_fitness}, \code{best_fitness}, and \code{best_matrix}}
+\item{\verb{$Inputcsem}}{A list with elements, \code{data}, and \code{model}, where \code{data}
+comprises the dataset used to estimate the original model and \code{model} is a \link{cSEMModel} list.}
+}
 }
 \description{
 \lifecycle{experimental}
@@ -54,13 +60,59 @@ selection criterion, the value of the model selection criteria, and a list of cS
 \details{
 Performs an automated model specification search using a genetic algorithm \insertCite{Holland1992}{cSEM} in combination
 with partial least squares path modeling (PLS-PM).
-In particular, the function implements the approach presented in \insertCite{Trinchera2026}{cSEM}.
+Specifically, the function implements the approach presented in \insertCite{Trinchera2026;textual}{cSEM}.
+The model search is limited to the structural model.
+Thereby it is ensured that the resulting structural model is recursive, i.e., feedback loops and non-recursive structures are prohibited.
+Moreover, the set of exogenous constructs is taken from the original model provided to \code{doModelSearch()} and remains exogenous during the search.
+If a model violates the restrictions or does not pass \code{\link[=verify]{verify()}} during the model search, a penalty fitness value \code{.fbar} is assigned to the model.
+Therefore, ensure that \code{.fbar} is sufficiently small.
+The fitness of the model is determined by the criterion provided to \code{.ms_criterion}.
+
+To estimate the found model \code{Inputcsem} results can be used, see the example.
+}
+\examples{
+# Perform model search for a linear model without second-order constructs 
+model_Bergami_Bagozzi_Henseler="
+ # Measurement models
+ OrgPres =~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 
+ OrgIden =~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6
+ AffLove =~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7
+ AffJoy  =~ orgcmt5 + orgcmt8
+ Gender  <~ gender
+ 
+ # Structural model 
+ OrgIden ~ OrgPres
+ AffLove ~ OrgPres + OrgIden + Gender 
+ AffJoy  ~ OrgPres + OrgIden + Gender 
+ "
+ 
+ out <- csem(.data = BergamiBagozzi2000, 
+             .model = model_Bergami_Bagozzi_Henseler,
+             .PLS_weight_scheme_inner = 'factorial',
+             .tolerance = 1e-06
+ )
+
+ 
+ outSearch <- doModelSearch(.object = out,
+               .pop_size = 20,
+               .n_generations = 20,
+               .prob_mutation = 0.5,
+               .prob_crossover = 0.8,
+               .fbar = -100000,
+               .ms_criterion = 'bic',
+               .seed = 1234) 
+ outSearch
+ 
+#  Estimate the found model
+ outNew <- csem(.data = outSearch$Inputcsem$data,
+                .model = outSearch$Inputcsem$model[[1]])
+
+ # summarize(outNew) 
+ 
 }
 \references{
 \insertAllCited{}
-
-\insertAllCited{}
 }
 \seealso{
-\link{cSEMResults}
+\link{cSEMResults} \link{calculateModelSelectionCriteria}
 }
