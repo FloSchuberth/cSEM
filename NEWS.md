@@ -1,5 +1,9 @@
 # <Development version: cSEM 0.6.1.9999 
 
+#  cSEM 0.6.2
+
+- Update R dependency (R>= 4.1.0)
+
 # cSEM 0.6.1
 - fix issue in the `fit()` function to avoid partial matching. Thanks to Kss2k for this contribution (#558) 
 
