@@ -223,7 +223,8 @@ calculateConstructVCV <- function(
 #'
 #' @usage calculateIndicatorCor(
 #'   .X_cleaned           = NULL, 
-#'   .approach_cor_robust = "none"
+#'   .approach_cor_robust = "none",
+#'   .approach_weights = NULL
 #'  )
 #'
 #' @inheritParams csem_arguments
