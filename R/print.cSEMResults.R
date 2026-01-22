@@ -93,5 +93,4 @@ print.cSEMResults <- function(x, ...) {
       "- ", magenta("summarize"), "(", cyan("<object-name>"), ")\n\t",
       "- ", magenta("verify"), "(", cyan("<object-name>"), ")\n")
   cat(rule2(type = 2), "\n")
-  
 }
