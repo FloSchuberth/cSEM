@@ -1,4 +1,8 @@
 # Perform model search for a linear model without second-order constructs 
+if (!requireNamespace("GA", quietly = TRUE)) {
+ install.packages("GA")
+}
+
 model_Bergami_Bagozzi_Henseler="
  # Measurement models
  OrgPres =~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 
@@ -21,8 +25,8 @@ model_Bergami_Bagozzi_Henseler="
 
  
  outSearch <- doModelSearch(.object = out,
-               .pop_size = 20,
-               .n_generations = 20,
+               .pop_size = 10,
+               .n_generations = 5,
                .prob_mutation = 0.5,
                .prob_crossover = 0.8,
                .fbar = -100000,
