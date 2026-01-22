@@ -75,10 +75,28 @@ for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR", "PCA",
            "unit", "bartlett", "regression")) {
   ## - "SSQCOR" is excluded as it is rather unstable, regularly producing differences
   ##   between estimate and population value larger than 0.01.
-
+  
   if(i == "PLS-PM"){
     for(j in c("modeA","modeB")){
-    res <-  csem(dat, model_Sigma, .approach_weights = i,.PLS_modes = j, 
+      res <-  csem(dat, model_Sigma, .approach_weights = i,.PLS_modes = j, 
+                   .dominant_indicators = c("eta1" = "y11", "eta2" = "y21", "eta3" = "y31"))
+      
+      ## Comparison
+      path     <- comparecSEM(res, .what = "Path_estimates", pop_params_Sigma$Path_coefficients)
+      loadings <- comparecSEM(res, .what = "Loading_estimates", pop_params_Sigma$Loadings)
+      
+      ## Test
+      # Note: the tolerance is necessary since Croon correction requires a CFA (i.e. ML estimation)
+      # which is only consistent (i.e. will not exactly reproduce the population values for a finite sample size)
+      # Similarly for GSCAm.
+      test_that(paste("Weighting approach", i, "yields correct results"), {
+        expect_equal(path$Estimate, path$Pop_value, tolerance = 0.01)
+        expect_equal(loadings$Estimate, loadings$Pop_value, tolerance = 0.01)
+      })
+    }
+  }else{
+    
+    res <-  csem(dat, model_Sigma, .approach_weights = i, 
                  .dominant_indicators = c("eta1" = "y11", "eta2" = "y21", "eta3" = "y31"))
     
     ## Comparison
@@ -93,24 +111,6 @@ for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR", "PCA",
       expect_equal(path$Estimate, path$Pop_value, tolerance = 0.01)
       expect_equal(loadings$Estimate, loadings$Pop_value, tolerance = 0.01)
     })
-    }
-  }else{
-  
-  res <-  csem(dat, model_Sigma, .approach_weights = i, 
-               .dominant_indicators = c("eta1" = "y11", "eta2" = "y21", "eta3" = "y31"))
-  
-  ## Comparison
-  path     <- comparecSEM(res, .what = "Path_estimates", pop_params_Sigma$Path_coefficients)
-  loadings <- comparecSEM(res, .what = "Loading_estimates", pop_params_Sigma$Loadings)
-  
-  ## Test
-  # Note: the tolerance is necessary since Croon correction requires a CFA (i.e. ML estimation)
-  # which is only consistent (i.e. will not exactly reproduce the population values for a finite sample size)
-  # Similarly for GSCAm.
-  test_that(paste("Weighting approach", i, "yields correct results"), {
-    expect_equal(path$Estimate, path$Pop_value, tolerance = 0.01)
-    expect_equal(loadings$Estimate, loadings$Pop_value, tolerance = 0.01)
-  })
   }
   # Export to Excel test
   exportToExcel(assess(res), .filename = paste0("test_assess_", i, ".xlsx"),
@@ -186,8 +186,6 @@ test_that("DPG_2ndorder_cf_of_cfs is correctly estimated", {
 exportToExcel(summarize(res), .filename = "test_summarize", .path = "../test_results_exportToExcel")
 exportToExcel(assess(res), .filename = "test_assess", .path = "../test_results_exportToExcel")
 exportToExcel(testOMF(res, .R = 20), .filename = "test_testOMF", .path = "../test_results_exportToExcel")
-exportToExcel(assess(res), .filename = "test_assess", .path = "../test_results_exportToExcel")
-exportToExcel(assess(res), .filename = "test_assess", .path = "../test_results_exportToExcel")
 
 
 
