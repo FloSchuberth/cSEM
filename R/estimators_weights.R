@@ -843,7 +843,7 @@ calculateWeightsGSCAm <- function(
     "Unique_loading_estimates" = D_diag,
     "Unique_scores" = Unique_scores,
     "E" = NULL,
-    "Modes" = "gsca",
+    "Modes" = "gsca (gsca_m)",
     "Conv_status" = ifelse(iter_counter > .iter_max, FALSE, TRUE),
     "Iterations" = iter_counter
   )

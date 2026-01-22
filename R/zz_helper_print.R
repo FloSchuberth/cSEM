@@ -15,12 +15,15 @@ printSummarizeOverview <- function(.summarize_object) {
     col_align("\n\tEstimation status", 35), "= ", ifelse(sum(x$Estimation_status) == 0, green("Ok"), 
                                                          c(red("Not ok!"), "Use: verify()."))
   )
+  
   cat2(
     col_align("\n\tNumber of observations", 35), "= ", nrow(x$Arguments$.data),
     col_align("\n\tWeight estimator", 35), "= ", 
-    ifelse(x$Arguments$.approach_weights == "PLS-PM" && 
+    if(x$Arguments$.approach_weights == "GSCA") {x$Weight_info$Modes} else {
+      ifelse(x$Arguments$.approach_weights == "PLS-PM" && 
              !all(x$Type_of_indicator_correlation == 'Pearson'), 
            "PLS-PM (OrdPLS)", x$Arguments$.approach_weights)
+    }
   )
   
   if(x$Arguments$.approach_weights == "PLS-PM") {

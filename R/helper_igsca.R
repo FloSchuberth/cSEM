@@ -277,7 +277,7 @@ igsca <-
         "Construct_scores" = (Z0 - (Unique_scores %*% D)) %*% W,
         "Unique_loading_estimates" = D_diag,
         "Unique_scores" = Unique_scores,
-        "Modes" = "gsca", 
+        "Modes" = "gsca (igsca)", 
         "Conv_status" = ifelse(it > .iter_max, FALSE, TRUE),
         "Iterations" = it
       )
