@@ -1,7 +1,7 @@
 Package: cSEM
 Title: Composite-Based Structural Equation Modeling
-Version: 0.6.1.9000
-Date: 2025-05-15
+Version: 0.6.2.0
+Date: 2026-01-22
 Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     role  = c("aut"),
                     email = "manuel-rademaker@outlook.de",
@@ -10,10 +10,6 @@ Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     role  = c("aut", "cre"),
                     email = "f.schuberth@utwente.nl",
                     comment = c(ORCID = "0000-0002-2110-9086")),
-             person(given = "Michael S.", family = "Truong",
-                    role = c("ctb"),
-                    email = "emstruonger@gmail.com",
-                    comment = c(ORCID = "0009-0006-4521-6528")),
              person(given = "Tamara", family = "Schamberger",
                     role  = c("ctb"),
                     email = "tamara.schamberger@uni-wuerzburg.de",
@@ -32,7 +28,15 @@ Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
              person(given = "Jörg", family = "Henseler",
                     role  = c("ctb"),
                     email = "",
-                    comment = c(ORCID = "0000-0002-9736-3048")))
+                    comment = c(ORCID = "0000-0002-9736-3048")),
+              person(given = "Gloria", family="Pietropolli",
+                   role  = c("ctb"),
+                   email="",
+                   comment = c(ORCID = "0000-0001-7623-8419")),
+              person(given = "Michael S.", family = "Truong",
+                    role = c("ctb"),
+                    email = "emstruonger@gmail.com",
+                    comment = c(ORCID = "0009-0006-4521-6528", "IGSCA", "tidy.cSEMResults", "glance.cSEMResults", "doTrees", "testthat 3.0.0")))
 Maintainer: Florian Schuberth <f.schuberth@utwente.nl>
 Depends: R (>= 4.1.0)
 Description: Estimate, assess, test, and study linear, nonlinear, hierarchical 
@@ -103,6 +107,7 @@ Suggests:
     listviewer,
     testthat (>= 3.0.0),
     ggplot2,
+    GA,
     openxlsx,
     graphics,
     spelling,
