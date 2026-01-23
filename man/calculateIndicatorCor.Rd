@@ -6,7 +6,8 @@
 \usage{
 calculateIndicatorCor(
   .X_cleaned           = NULL, 
-  .approach_cor_robust = "none"
+  .approach_cor_robust = "none",
+  .approach_weights = NULL
  )
 }
 \arguments{
