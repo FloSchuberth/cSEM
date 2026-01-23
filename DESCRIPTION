@@ -36,7 +36,7 @@ Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
               person(given = "Michael S.", family = "Truong",
                     role = c("ctb"),
                     email = "emstruonger@gmail.com",
-                    comment = c(ORCID = "0009-0006-4521-6528", "IGSCA", "tidy.cSEMResults", "glance.cSEMResults", "doTrees", "testthat 3.0.0")))
+                    comment = c(ORCID = "0009-0006-4521-6528")))
 Maintainer: Florian Schuberth <f.schuberth@utwente.nl>
 Depends: R (>= 4.1.0)
 Description: Estimate, assess, test, and study linear, nonlinear, hierarchical 

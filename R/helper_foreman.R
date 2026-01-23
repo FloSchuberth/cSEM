@@ -760,3 +760,4 @@ setDominantIndicator <- function(
       "B" = t(B_transposed)
     ))
   }
+}
