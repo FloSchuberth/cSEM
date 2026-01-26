@@ -30,6 +30,7 @@ model fit, test the model fit, compute confidence intervals, compare
 groups, etc.).
 
 ## News (2025-05-15):
+- Implementation of doModelSearch to perform AGAS-PLS. Thanks to Gloria.
 
 - Release of cSEM version 0.6.1
 
@@ -48,7 +49,7 @@ install.packages("cSEM")
 To install the development version, which is recommended, use:
 ```{r, eval = FALSE}
 # install.packages("devtools")
-devtools::install_github("M-E-Rademaker/cSEM")
+devtools::install_github("FloSchuberth/cSEM")
 ```
 
 ## Getting started
