@@ -223,7 +223,8 @@ calculateConstructVCV <- function(
 #'
 #' @usage calculateIndicatorCor(
 #'   .X_cleaned           = NULL, 
-#'   .approach_cor_robust = "none"
+#'   .approach_cor_robust = "none",
+#'   .approach_weights = NULL
 #'  )
 #'
 #' @inheritParams csem_arguments
@@ -242,12 +243,17 @@ calculateConstructVCV <- function(
 
 calculateIndicatorCor <- function(
   .X_cleaned           = NULL,
-  .approach_cor_robust = "none"
+  .approach_cor_robust = "none",
+  .approach_weights = NULL
 ){
   
   is_numeric_indicator <- lapply(.X_cleaned, is.numeric)
   
   only_numeric_cols <- all(unlist(is_numeric_indicator))
+
+  if ((only_numeric_cols == FALSE) & (.approach_weights == "GSCA")) {
+    stop2("GSCA does not support fitting with a correlation matrix or using data with factors or ordered variables.")
+  }
   
   if(.approach_cor_robust != "none" && !only_numeric_cols) {
     stop2("Setting `.approach_cor_robust = ", .approach_cor_robust, "` requires all",
@@ -383,9 +389,9 @@ calculateReliabilities <- function(
   .reliabilities    = args_default()$.reliabilities
 ){
   modes   <- .W$Modes
-  W        <- .W$W
+  W <- .W$W
   names_cf <- names(.csem_model$construct_type[.csem_model$construct_type == "Common factor"])
-  names_c  <- setdiff(names(.csem_model$construct_type), names_cf)
+  names_c  <- names(.csem_model$construct_type[.csem_model$construct_type == "Composite"])
   Q        <- rep(1, times = nrow(W))
   names(Q) <- rownames(W)
   
@@ -398,38 +404,38 @@ calculateReliabilities <- function(
     ## of the true factor loading.
     ## Approaches differ in the way the loadings are calculated but in the end
     ## it is always: Q = w' lambda.
-    
-    if(.approach_weights == "PLS-PM") {
-      
-      if(.disattenuate) {
+
+    if (.approach_weights == "PLS-PM") {
+
+      if (.disattenuate) {
         ## Consistent loadings are obtained using PLSc, which uses the fact that
         ## lambda = c * w, where c := correction factor
-        
+
         ## 1. Compute correction factor (c)
         correction_factors <- calculateCorrectionFactors(
-          .S               = .S,
-          .W               = W,
-          .modes           = modes,
-          .csem_model      = .csem_model,
+          .S = .S,
+          .W = W,
+          .modes = modes,
+          .csem_model = .csem_model,
           .PLS_approach_cf = .PLS_approach_cf
         )
-          
+
         ## 2. Compute consistent loadings and Q (Composite/proxy-construct correlation)
         ## for constructs modeled as common factors.
-        ## Currently only done for Mode A and Mode B. For unit, modeBNNLS, PCA, it is not clear how the Qs are calculated. 
-        for(j in names_cf) {
-          
-          if(modes[j]=='modeA'){
-          Lambda[j, ] <- correction_factors[j] * W[j, ]
+        ## Currently only done for Mode A and Mode B. For unit, modeBNNLS, PCA, it is not clear how the Qs are calculated.
+        for (j in names_cf) {
+
+          if (modes[j] == 'modeA') {
+            Lambda[j, ] <- correction_factors[j] * W[j, ]
           }
-          
-          if(modes[j]=='modeB'){
+
+          if (modes[j] == 'modeB') {
             Lambda[j, ] <- correction_factors[j] * Lambda[j, ]
           }
-          
-          Q[j]        <- c(W[j, ] %*% Lambda[j, ])
+
+          Q[j] <- c(W[j, ] %*% Lambda[j, ])
         }
-      } 
+      }
     } else if(.approach_weights == "GSCA") {
       
       if(.disattenuate & all(.csem_model$construct_type == "Common factor")) {
@@ -634,58 +640,124 @@ calculateReliabilities <- function(
 }
 
 #' Internal: Set the dominant indicator
-#' 
-#' Set the dominant indicator for each construct. Since the sign of the weights, 
+#'
+#' Set the dominant indicator for each construct. Since the sign of the weights,
 #' and thus the loadings is often not determined, a dominant indicator can be chosen
-#' per block. The sign of the weights are chosen that the correlation between the 
-#' dominant indicator and the composite is positive. 
+#' per block. The sign of the weights are chosen that the correlation between the
+#' dominant indicator and the composite is positive.
+#'
 #'
 #' @usage setDominantIndicator(
 #'  .W                   = args_default()$.W,
-#'  .dominant_indicators = args_default()$.dominant_indicators, 
-#'  .S                   = args_default()$.S
+#'  .dominant_indicators = args_default()$.dominant_indicators,
+#'  .S                   = args_default()$.S,
+#'  .approach_weights = NULL,
+#'  .X = NULL,
+#'  .L = NULL,
+#'  .B = NULL,
+#'  .U = NULL,
+#'  .D = NULL,
+#'  Construct_scores = NULL,
+#'  .csem_model = NULL
 #'  )
 #'
 #' @inheritParams csem_arguments
-#' 
+#'
 #' @return The (J x K) matrix of weights with the dominant indicator set.
 #' @keywords internal
 #'
 setDominantIndicator <- function(
-  .W                   = args_default()$.W,
+  .W = args_default()$.W,
   .dominant_indicators = args_default()$.dominant_indicators,
-  .S                   = args_default()$.S  
+  .S = args_default()$.S,
+  .approach_weights = NULL,
+  .X = NULL,
+  .L = NULL,
+  .B = NULL,
+  .U = NULL,
+  .D = NULL,
+  Construct_scores = NULL,
+  .csem_model = NULL
 ) {
   ## Check construct names:
   # Do all construct names in .dominant_indicators match the construct
   # names used in the model?
   tmp <- setdiff(names(.dominant_indicators), rownames(.W))
-  
-  if(length(tmp) != 0) {
-    stop("Construct name(s): ", paste0("`", tmp, "`", collapse = ", "), 
-         " provided to `.dominant_indicators`", 
-         ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
+
+  if (length(tmp) != 0) {
+    stop(
+      "Construct name(s): ",
+      paste0("`", tmp, "`", collapse = ", "),
+      " provided to `.dominant_indicators`",
+      ifelse(length(tmp) == 1, " is", " are"),
+      " unknown.",
+      call. = FALSE
+    )
   }
-  
+
   ## Check indicators
   # Do all indicators names in .dominant_indicators match the indicator
   # names used in the model?
   tmp <- setdiff(.dominant_indicators, colnames(.W))
-  if(length(tmp) != 0) {
-    stop("Indicator name(s): ", paste0("`", tmp, "`", collapse = ", "), 
-         " provided to `.dominant_indicators`", 
-         ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
+  if (length(tmp) != 0) {
+    stop(
+      "Indicator name(s): ",
+      paste0("`", tmp, "`", collapse = ", "),
+      " provided to `.dominant_indicators`",
+      ifelse(length(tmp) == 1, " is", " are"),
+      " unknown.",
+      call. = FALSE
+    )
   }
-  
-  # Calculate the loadings
-  L = .W%*%.S[colnames(.W),colnames(.W)] * abs(sign(.W))
-  
-  for(i in names(.dominant_indicators)) {
-    # ensure that the dominant indicator of a block has positive correlation/loading with the composite
-    .W[i, ] = .W[i, ] * sign(L[i, .dominant_indicators[i]])
+
+  if (.approach_weights != "GSCA" | is.null(.approach_weights)) {
+    # Calculate the loadings
+    L = .W %*% .S[colnames(.W), colnames(.W)] * abs(sign(.W))
+
+    for (i in names(.dominant_indicators)) {
+      # ensure that the dominant indicator of a block has positive correlation/loading with the composite
+      .W[i, ] = .W[i, ] * sign(L[i, .dominant_indicators[i]])
+
+      # Old version which ensures that the weight for this indicator has a positive sign.
+      # .W[i, ] = .W[i, ] * sign(.W[i, .dominant_indicators[i]])
+    }
+    return(.W)
+  } else if (.approach_weights == "GSCA") {
+    for (eta_idx in seq(ncol(Construct_scores))) {
+      J_Eta_cor <- cor(.X[, .dominant_indicators[eta_idx]], Construct_scores[, eta_idx])
+      if (J_Eta_cor < 0) {
+        .W[eta_idx, ] <- (-1 * .W[eta_idx, ])
+        .L[eta_idx, ] <- (-1 * .L[eta_idx, ]) # .L is Construct X Indicator
+      }
+    }
     
-    # Old version which ensures that the weight for this indicator has a positive sign.
-    # .W[i, ] = .W[i, ] * sign(.W[i, .dominant_indicators[i]])
+    if (any(.csem_model$construct_type == "Common factor")) {
+      # all.equal((.X  - (.U %*% .D)) %*% t(.W), Construct_scores)
+      Construct_scores <- (.X  - (.U %*% .D)) %*% t(.W)
+    } else {
+      Construct_scores <- .X %*% t(.W)
+    }
+
+    # Compute the path coefficients again to ensure sign flipping is carried through
+    B_transposed <- t(.B)
+    csemify <- parseModel(.model = .csem_model)
+    b_index <- which(t(csemify$structural) == 1)
+
+    vcv_gamma <- t(Construct_scores) %*% Construct_scores
+    vars_endo <- which(colSums(B_transposed) != 0)
+
+    beta <- lapply(vars_endo, function(y) {
+      x <- which(B_transposed[, y, drop = FALSE] != 0)
+      coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*%
+        vcv_gamma[x, y, drop = FALSE]
+    })
+    B_transposed[b_index] <- unlist(beta, use.names = FALSE)
+
+    return(list(
+      "W"    = .W,
+      "Eta" = Construct_scores,
+      "L" = .L,
+      "B" = t(B_transposed)
+    ))
   }
-  return(.W)
 }

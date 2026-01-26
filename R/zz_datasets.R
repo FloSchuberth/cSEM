@@ -596,10 +596,10 @@
 #' 
 #' model_Bergami_Bagozzi_Hwang="
 #' # Measurement models
-#' OrgPres =~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 
-#' OrgIden =~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6
-#' AffJoy =~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7
-#' AffLove  =~ orgcmt5 + orgcmt6 + orgcmt8
+#' OrgPres <~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 
+#' OrgIden <~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6
+#' AffJoy <~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7
+#' AffLove  <~ orgcmt5 + orgcmt6 + orgcmt8
 #' 
 #' # Structural model 
 #' OrgIden ~ OrgPres 
@@ -688,3 +688,24 @@
 #'     
 #' @source The dataset is provided by Jörg Henseler.  
 "SQ"
+
+
+#' Data: LeDang2022
+#'
+#' This data is based on self-report surveys collected from graduates of universities in Northern Vietnam \insertCite{ledang2022DataBrief}{cSEM}. The data has been used to analyze the relationship between measures of HEXACO personality traits and two job-search outcomes: (1) number of job interviews; and (2) job offers through job search networking behavior \insertCite{ledang2022DataBrief}{cSEM}.
+#' 
+#' The data were also analyzed using an Integrated-Generalised Structued Component Analysis (I-GSCA) approach in GSCAPro \insertCite{hwangetal2023StructuralEquationModelingAMultidisciplinaryJournal}{cSEM}.
+#' 
+#' @docType data
+#'
+#' @description A data frame of 107 variables and 773 participants. Labelled
+#'   factors were converted from numerical to character representation through
+#'   `haven::as_factor()`. The provided data frame is a fusion of the converted
+#'   labelled factors for the demographic data and the unconverted Likert scale
+#'   data for the psychometric data.
+#' 
+#' @references
+#'   \insertAllCited{}
+#'     
+#' @source The data were made available in \insertCite{ledang2022DataBrief;textual}{cSEM}
+"LeDang2022"

@@ -3,6 +3,9 @@
 #   Purpose: central file to be sourced to several test-xxx.R files
 #
 ################################################################################
+
+withr::local_seed(6193230)
+
 ## Function to compare path and/or loading and/or weight estimates from a cSEM object
 ## to a vector of population parameters
 comparecSEM <- function(.object, .what, .pop_parameters) {
@@ -36,6 +39,22 @@ comparecSEM <- function(.object, .what, .pop_parameters) {
                           c("Name", "Estimate")],
       x2$Weight_estimates[x2$Weight_estimates$Construct_type == "Composite", 
                           c("Name", "Estimate")])
+    
+    # if (!is.null(x$Information)) {
+    #   if (x$Information$Arguments$.approach_weights == "GSCA") {
+    #     est <- rbind(
+    #       est,
+    #       x1$Weight_estimates[
+    #         x1$Weight_estimates$Construct_type == "Common factor",
+    #         c("Name", "Estimate")
+    #       ],
+    #       x2$Weight_estimates[
+    #         x2$Weight_estimates$Construct_type == "Common factor",
+    #         c("Name", "Estimate")
+    #       ]
+    #     )
+    #   }
+    # }
     
   } else {
     stop("Error") 
@@ -89,12 +108,9 @@ ETA3 =~ y7 + y8 + y9
 "
 
 ## Model and Sigma matrix for 2nd order DGP
-load("../data/DGP_2ndorder_cf_of_composites.RData")
-load("../data/Data_nonlinear_2ndorder.RData")
-# load("tests/data/DGP_2ndorder_cf_of_composites.RData") # uncomment to source
-# on local machine
-# load("tests/data/Data_nonlinear_2ndorder.RData") # uncomment to source
-# on local machine
+load(testthat::test_path("data/DGP_2ndorder_cf_of_composites.RData"))
+load(testthat::test_path("data/Data_nonlinear_2ndorder.RData"))
+
 model_2ndorder <- model_Sigma
 
 ### Data -----------------------------------------------------------------------

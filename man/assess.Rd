@@ -13,7 +13,7 @@ assess(
                            "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
                            "cfi", "cn", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
-                           "rmsea", "rms_theta", "srmr",
+                           "rmsea", "rms_theta", "srmr", "FIT", "FIT_m", "FIT_s",
                            "gof", "htmt", "htmt2", "r2", "r2_adj",
                            "rho_T", "rho_T_weighted", "vif", 
                            "vifmodeB"),
@@ -127,7 +127,9 @@ decisions based on common one-size-fits-all cut-offs proposed in the literature
 suffer from serious statistical drawbacks. Calculation is done by \code{\link[=calculateChiSquare]{calculateChiSquare()}},
 \code{\link[=calculateChiSquareDf]{calculateChiSquareDf()}}, \code{\link[=calculateCFI]{calculateCFI()}},
 \code{\link[=calculateGFI]{calculateGFI()}}, \code{\link[=calculateIFI]{calculateIFI()}}, \code{\link[=calculateNFI]{calculateNFI()}}, \code{\link[=calculateNNFI]{calculateNNFI()}},
-\code{\link[=calculateRMSEA]{calculateRMSEA()}}, \code{\link[=calculateRMSTheta]{calculateRMSTheta()}} and \code{\link[=calculateSRMR]{calculateSRMR()}}.}
+\code{\link[=calculateRMSEA]{calculateRMSEA()}}, \code{\link[=calculateRMSTheta]{calculateRMSTheta()}}, \code{\link[=calculateSRMR]{calculateSRMR()}}, \code{\link[=calculateFIT]{calculateFIT()}},
+\code{\link[=calculateFIT_m]{calculateFIT_m()}} and \code{\link[=calculateFIT_s]{calculateFIT_s()}}.}
+
 \item{Fornell-Larcker criterion; "fl_criterion"}{A rule suggested by \insertCite{Fornell1981;textual}{cSEM}
 to assess discriminant validity. The Fornell-Larcker
 criterion is a decision rule based on a comparison between the squared

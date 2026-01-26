@@ -15,6 +15,7 @@ foreman(
   .disattenuate                = args_default()$.disattenuate,
   .dominant_indicators         = args_default()$.dominant_indicators,
   .estimate_structural         = args_default()$.estimate_structural,
+  .GSCA_modes                  = args_default()$.GSCA_modes,
   .id                          = args_default()$.id,
   .instruments                 = args_default()$.instruments,
   .iter_max                    = args_default()$.iter_max,
@@ -62,7 +63,7 @@ obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXV
 or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
-One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
+One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
 to "\emph{diff_absolute}".}
 
 \item{.disattenuate}{Logical. Should composite/proxy correlations
@@ -77,6 +78,15 @@ Default to \code{NULL}.}
 
 \item{.estimate_structural}{Logical. Should the structural coefficients
 be estimated? Defaults to \code{TRUE}.}
+
+\item{.GSCA_modes}{Either a named list specifying the mode that should be
+used for each composite in the form \code{"composite_name" = mode}, a single
+character string giving the mode that should be used for all composites.
+Possible single character string choices for \code{mode} are: "\emph{canon}" for
+canonical composites, or "\emph{nomo}" for nomological composites, or \code{NULL} for
+default behavior. Default behavior is to estimate nomological composites.
+Passed to (I-)GSCA estimating functions in \code{\link[=calculateWeightsGSCA]{calculateWeightsGSCA()}}
+or \code{\link[=calculateWeightsIGSCA]{calculateWeightsIGSCA()}}. Defaults to \code{NULL}.}
 
 \item{.id}{Character string or integer. A character string giving the name or
 an integer of the position of the column of \code{.data} whose levels are used

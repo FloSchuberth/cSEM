@@ -6,8 +6,16 @@
 \usage{
 setDominantIndicator(
  .W                   = args_default()$.W,
- .dominant_indicators = args_default()$.dominant_indicators, 
- .S                   = args_default()$.S
+ .dominant_indicators = args_default()$.dominant_indicators,
+ .S                   = args_default()$.S,
+ .approach_weights = NULL,
+ .X = NULL,
+ .L = NULL,
+ .B = NULL,
+ .U = NULL,
+ .D = NULL,
+ Construct_scores = NULL,
+ .csem_model = NULL
  )
 }
 \arguments{
@@ -20,6 +28,15 @@ Dominant indicators may be specified for a subset of the constructs.
 Default to \code{NULL}.}
 
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
+
+\item{.approach_weights}{Character string. Approach used to
+obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
+or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
+
+\item{.X}{A matrix of processed data (scaled, cleaned and ordered).}
+
+\item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 }
 \value{
 The (J x K) matrix of weights with the dominant indicator set.

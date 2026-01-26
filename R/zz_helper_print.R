@@ -15,12 +15,15 @@ printSummarizeOverview <- function(.summarize_object) {
     col_align("\n\tEstimation status", 35), "= ", ifelse(sum(x$Estimation_status) == 0, green("Ok"), 
                                                          c(red("Not ok!"), "Use: verify()."))
   )
+  
   cat2(
     col_align("\n\tNumber of observations", 35), "= ", nrow(x$Arguments$.data),
     col_align("\n\tWeight estimator", 35), "= ", 
-    ifelse(x$Arguments$.approach_weights == "PLS-PM" && 
+    if(x$Arguments$.approach_weights == "GSCA") {x$Weight_info$Modes} else {
+      ifelse(x$Arguments$.approach_weights == "PLS-PM" && 
              !all(x$Type_of_indicator_correlation == 'Pearson'), 
            "PLS-PM (OrdPLS)", x$Arguments$.approach_weights)
+    }
   )
   
   if(x$Arguments$.approach_weights == "PLS-PM") {
@@ -402,7 +405,8 @@ printVerifyDetails <- function(.x) {
             "2" = "All absolute standardized loading estimates <= 1", 
             "3" = "Construct VCV is positive semi-definite", 
             "4" = "All reliability estimates <= 1",
-            "5" = "Model-implied indicator VCV is positive semi-definite")
+            "5" = "Model-implied indicator VCV is positive semi-definite",
+            "6" = "Unspecified parameter estimates are equal to 0, in agreement with model specification")
   
   if(inherits(.x, "cSEMVerify_2ndorder")) {
     cat2(

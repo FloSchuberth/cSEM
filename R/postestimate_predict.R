@@ -133,7 +133,8 @@ predict <- function(
                   .cv_folds = .cv_folds,
                   .handle_inadmissibles = .handle_inadmissibles,
                   .r = .r,
-                  .test_data = .test_data
+                  .test_data = .test_data,
+                  .disattenuate = .disattenuate
                   )
     
     class(out) <- c("cSEMPredict", "cSEMPredict_multi")

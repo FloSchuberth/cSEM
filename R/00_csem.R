@@ -211,13 +211,15 @@
 #' .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
 #'                            "MINVAR", "GENVAR","GSCA", "PCA",
 #'                            "unit", "bartlett", "regression"),
-#' .conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative"),
+#' .conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative",
+#'                            "sum_diff_absolute", "mean_diff_absolute"),
 #' .disattenuate          = TRUE,
 #' .dominant_indicators   = NULL,
 #' .estimate_structural   = TRUE,
 #' .id                    = NULL,
 #' .instruments           = NULL,
 #' .iter_max              = 100,
+#' .GSCA_modes            = NULL,
 #' .normality             = FALSE,
 #' .PLS_approach_cf       = c("dist_squared_euclid", "dist_euclid_weighted", 
 #'                            "fisher_transformed", "mean_arithmetic",
@@ -294,7 +296,7 @@
 #' \item{[doRedundancyAnalysis()]}{Perform a redundancy analysis (RA) as proposed by 
 #' \insertCite{Hair2016;textual}{cSEM} with reference to \insertCite{Chin1998;textual}{cSEM}}
 #' }
-#' 
+#' @importFrom Rdpack reprompt
 #' @references
 #'   \insertAllCited{}
 #'
@@ -316,13 +318,15 @@ csem <- function(
   .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
                              "MINVAR", "GENVAR","GSCA", "PCA",
                              "unit", "bartlett", "regression"),
-  .conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative"),
+  .conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative",
+                            "sum_diff_absolute", "mean_diff_absolute"),
   .disattenuate          = TRUE,
   .dominant_indicators   = NULL,
   .estimate_structural   = TRUE,
   .id                    = NULL,
   .instruments           = NULL,
   .iter_max              = 100,
+  .GSCA_modes            = NULL,
   .normality             = FALSE,
   .PLS_approach_cf       = c("dist_squared_euclid", "dist_euclid_weighted", 
                              "fisher_transformed", "mean_arithmetic",
@@ -394,6 +398,9 @@ csem <- function(
   
   ## Modify model if model contains second order constructs
   if(any(model_original$construct_order == "Second order")) {
+    if (.approach_weights == "GSCA") {
+      stop2(".approach_weights = 'GSCA' is not supported for 2nd order constructs in cSEM.")
+    }
     model_1stage <- convertModel(
       .csem_model        = model_original, 
       .approach_2ndorder = args$.approach_2ndorder,
