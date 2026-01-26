@@ -16,7 +16,7 @@ print.cSEMModelSearch <- function(x, ...) {
   
   if(inherits(x, "cSEMModelSearch_multi")) {
     for(j in seq_along(x)){
-      cat2("\nGroup:", names(x)[j], "\n\n")
+      cat2("\nGroup:", names(x)[j], "\n")
       printModelSearchDetails(.x = x[[j]])
     }
     
@@ -47,6 +47,8 @@ printModelSearchDetails <- function(.x) {
     format(.x$Information$fbar, scientific = FALSE),
     col_align("\n\tModel selection criterion used", width = 36), "= ", 
     .x$Information$model_selection_criterion,
+    col_align("\n\tChosen exogenous construct(s)", width = 36), "= ", 
+    paste(.x$Information$cons_exo, collapse = " "),
     col_align("\n\tSeed", width = 36), "= ", 
     if(is.null(.x$Information$seed)){
       'none'
