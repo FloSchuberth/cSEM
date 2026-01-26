@@ -234,19 +234,19 @@ R package version 1.0.1, <a href="https://CRAN.R-project.org/package=future.appl
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">res_boot1</span>, max.level <span class="op">=</span> <span class="fl">3</span>, list.len <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 499</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ :'data.frame':	250 obs. of  27 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ imag1: int [1:250] 10 8 8 6 9 5 10 4 7 9 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ imag2: int [1:250] 10 7 8 6 10 3 10 5 7 9 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ imag3: int [1:250] 10 8 8 4 10 4 10 5 7 9 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ imag1: int [1:250] 0 8 7 9 10 7 10 5 10 9 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ imag2: int [1:250] 4 8 8 9 10 7 10 5 10 10 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ imag3: int [1:250] 7 8 8 7 10 7 10 7 10 10 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. [list output truncated]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ :'data.frame':	250 obs. of  27 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ imag1: int [1:250] 9 4 6 9 4 8 7 9 7 4 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ imag2: int [1:250] 8 1 6 9 5 8 7 9 7 6 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ imag3: int [1:250] 8 4 5 9 5 8 8 9 6 8 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ imag1: int [1:250] 8 8 7 9 5 6 7 5 8 9 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ imag2: int [1:250] 6 7 7 10 5 8 8 4 8 9 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ imag3: int [1:250] 6 8 7 7 6 8 8 4 8 9 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. [list output truncated]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ :'data.frame':	250 obs. of  27 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ imag1: int [1:250] 6 8 9 7 7 5 8 7 8 10 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ imag2: int [1:250] 6 7 9 7 8 5 9 8 9 10 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ imag3: int [1:250] 6 7 10 7 9 5 9 8 9 10 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ imag1: int [1:250] 6 9 9 9 10 6 10 7 8 8 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ imag2: int [1:250] 6 9 9 9 10 8 9 7 9 8 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ imag3: int [1:250] 4 6 9 9 10 8 9 7 9 8 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. [list output truncated]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [list output truncated]</span>
 <span class="r-in"><span></span></span>
@@ -294,44 +294,44 @@ R package version 1.0.1, <a href="https://CRAN.R-project.org/package=future.appl
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 100</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ :List of 10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ 1 :'data.frame':	10 obs. of  3 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x1   : num [1:10] -0.628 -1.428 -0.766 -1.093 0.603 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x2   : num [1:10] 0.736 -0.284 -0.386 0.892 0.449 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ group: chr [1:10] "female" "male" "male" "female" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ 2 :'data.frame':	10 obs. of  3 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x1   : num [1:10] -0.319 -0.279 1.646 -0.783 1.377 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x2   : num [1:10] -0.501 2.196 -0.973 -0.205 1.092 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ group: chr [1:10] "female" "female" "male" "male" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ 3 :'data.frame':	10 obs. of  3 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x1   : num [1:10] -0.0062 0.9618 0.6344 1.3974 1.1772 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x2   : num [1:10] 1.8448 -0.0325 0.9703 -1.9112 0.529 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ group: chr [1:10] "female" "male" "male" "female" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. [list output truncated]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ :List of 10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ 1 :'data.frame':	10 obs. of  3 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x1   : num [1:10] -1.428 -0.977 0.34 -0.393 1.066 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x2   : num [1:10] -0.284 0.693 -0.972 0.499 0.897 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x1   : num [1:10] -2.495 1.234 -0.783 1.292 0.412 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x2   : num [1:10] 0.9231 -0.5643 -0.2047 -0.8047 -0.0186 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ group: chr [1:10] "male" "male" "male" "male" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ 2 :'data.frame':	10 obs. of  3 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x1   : num [1:10] -1.334 -0.735 -0.084 -0.946 0.596 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x2   : num [1:10] -1.814 -0.331 -0.708 0.47 0.549 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ group: chr [1:10] "male" "male" "female" "female" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x1   : num [1:10] -0.626 -0.752 -0.264 -0.628 0.163 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x2   : num [1:10] -0.0422 0.4627 -1.1964 0.7362 -0.5763 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ group: chr [1:10] "male" "male" "male" "female" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ 3 :'data.frame':	10 obs. of  3 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x1   : num [1:10] 1.397 0.3 0.629 -0.714 0.452 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x2   : num [1:10] -1.91115 1.79714 -0.1395 0.73952 -0.00514 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ group: chr [1:10] "female" "female" "female" "female" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x1   : num [1:10] -0.084 -0.946 -0.266 -1.595 -0.261 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x2   : num [1:10] -0.708 0.47 0.322 -0.265 0.286 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ group: chr [1:10] "female" "female" "male" "male" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. [list output truncated]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ :List of 10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ 1 :'data.frame':	10 obs. of  3 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x1   : num [1:10] -0.0469 -1.2613 0.4188 -0.779 -0.735 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x2   : num [1:10] 1.366 -1.649 0.212 0.975 -0.331 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x1   : num [1:10] -0.0193 -0.6203 -0.0469 -1.5955 0.5269 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x2   : num [1:10] -0.409 -1.57 1.366 -0.265 -0.87 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ group: chr [1:10] "female" "female" "female" "male" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ 2 :'data.frame':	10 obs. of  3 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x1   : num [1:10] 0.903 -0.628 0.79 -0.62 -0.665 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x2   : num [1:10] 2.454 0.736 1.227 -1.57 0.96 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ group: chr [1:10] "male" "female" "female" "female" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x1   : num [1:10] -1.334 -0.264 0.794 -0.901 0.441 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x2   : num [1:10] -1.814 -1.196 0.362 -0.405 0.972 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ group: chr [1:10] "male" "male" "male" "male" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ 3 :'data.frame':	10 obs. of  3 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x1   : num [1:10] 0.0749 -0.2793 0.8539 1.7637 1.3766 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x2   : num [1:10] -0.81 2.2 -0.99 0.37 1.09 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x1   : num [1:10] -0.084 -0.559 -1.261 0.903 -0.768 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x2   : num [1:10] -0.708 -1.388 -1.649 2.454 -2.102 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ group: chr [1:10] "female" "female" "female" "male" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. [list output truncated]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ :List of 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ 1 :'data.frame':	10 obs. of  3 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x1   : num [1:10] -0.242 -0.686 0.441 1.185 -0.766 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x2   : num [1:10] 0.667 -0.982 0.972 -0.161 -0.386 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ group: chr [1:10] "male" "female" "male" "female" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ 2 :'data.frame':	10 obs. of  3 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x1   : num [1:10] -0.393 -0.229 1.292 -1.428 1.177 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x2   : num [1:10] 0.499 -1.178 -0.805 -0.284 0.529 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ group: chr [1:10] "male" "female" "male" "male" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ 3 :'data.frame':	10 obs. of  3 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x1   : num [1:10] -0.264 -0.2793 0.0749 -2.3483 2.1499 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ x2   : num [1:10] -1.196 2.196 -0.81 -0.341 -1.829 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ group: chr [1:10] "male" "female" "male" "male" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. [list output truncated]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [list output truncated]</span>
@@ -539,7 +539,7 @@ R package version 1.0.1, <a href="https://CRAN.R-project.org/package=future.appl
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>data length is not a multiple of split variable</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>data length is not a multiple of split variable</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>data length is not a multiple of split variable</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>UNRELIABLE VALUE: One of the ‘future.apply’ iterations (‘future_lapply-1’) unexpectedly generated random numbers without declaring so. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify 'future.seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via a parallel RNG method. To disable this check, use 'future.seed = NULL', or set option 'future.rng.onMisuse' to "ignore". [future ‘future_lapply-1’ (ed95bf0e586744f88cd3ef4c1d268cd1-25); on ed95bf0e586744f88cd3ef4c1d268cd1@runnervmymu0l&lt;7743&gt;]</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>UNRELIABLE VALUE: One of the ‘future.apply’ iterations (‘future_lapply-1’) unexpectedly generated random numbers without declaring so. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify 'future.seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via a parallel RNG method. To disable this check, use 'future.seed = NULL', or set option 'future.rng.onMisuse' to "ignore". [future ‘future_lapply-1’ (b5ae8544f604e7294cf73d7919b82eeb-15); on b5ae8544f604e7294cf73d7919b82eeb@runnervmymu0l&lt;7661&gt;]</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Leave-one-out-cross-validation (repeated 50 times)</span></span></span>
 <span class="r-in"><span><span class="va">cv_loocv</span>  <span class="op">&lt;-</span> <span class="fu">resampleData</span><span class="op">(</span>.data <span class="op">=</span> <span class="va">dat</span><span class="op">[</span>, <span class="op">-</span><span class="fl">3</span><span class="op">]</span>, </span></span>
@@ -574,15 +574,15 @@ R package version 1.0.1, <a href="https://CRAN.R-project.org/package=future.appl
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ :'data.frame':	100 obs. of  3 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ x1: num [1:100] -0.468 -0.773 2.15 -1.334 0.496 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ x2: num [1:100] -0.536 0.536 -1.829 -1.814 1.373 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ id: chr [1:100] "female" "female" "male" "male" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ id: chr [1:100] "female" "male" "female" "female" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ :'data.frame':	100 obs. of  3 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ x1: num [1:100] -0.468 -0.773 2.15 -1.334 0.496 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ x2: num [1:100] -0.536 0.536 -1.829 -1.814 1.373 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ id: chr [1:100] "male" "male" "male" "female" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ id: chr [1:100] "male" "female" "female" "female" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ :'data.frame':	100 obs. of  3 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ x1: num [1:100] -0.468 -0.773 2.15 -1.334 0.496 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ x2: num [1:100] -0.536 0.536 -1.829 -1.814 1.373 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ id: chr [1:100] "male" "female" "male" "female" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ id: chr [1:100] "female" "male" "male" "male" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [list output truncated]</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Forgetting to set .id causes an error</span></span></span>
