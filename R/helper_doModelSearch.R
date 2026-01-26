@@ -81,13 +81,7 @@ calculateFitness <- function(.matrix_vector,
                          ncol = ncol(.model_org$structural),
                          byrow = TRUE,
                          dimnames=dimnames(.model_org$structural))
-  
-  
-  # if (!.check_matrix(adj_matrix)) return(-100000)
-  # 
-  # if (!.check_matrix_criteria(adj_matrix, .n_exogenous)) return(-100000)
-  # 
-  # if (.has_cycle_matrix(adj_matrix)) return(-100000)
+
   
   if(checkIsolatedConstruct(.matrix = struc_model)|
       any(rowSums(struc_model[.model_org$cons_exo, , drop = FALSE]) != 0)|
@@ -100,7 +94,6 @@ calculateFitness <- function(.matrix_vector,
   model <- .model_org
   model$structural <- struc_model
   
-  #   MUST STRUCTURAL MODEL ALWAYS BE LOWER TRIANGUALR MATRIX (FLO CHECK THIS)
   out <- csem(.data = .data, .model = model)
   if (sum(verify(out)) != 0){
     return(.fbar)

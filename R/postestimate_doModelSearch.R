@@ -90,7 +90,18 @@ doModelSearch <- function(.object = NULL,
 
   if(inherits(.object, "cSEMResults_multi")) {
     
-    stop2("Multigroup objects are currently not supported.") 
+    out <- lapply(.object, doModelSearch, 
+                  .pop_size = .pop_size,
+                  .n_generations= .n_generations,
+                  .prob_mutation = .prob_mutation,
+                  .prob_crossover = .prob_crossover,
+                  .fbar = .fbar,
+                  .ms_criterion = .ms_criterion,
+                  .seed = .seed,
+                  .only_structural = .only_structural)
+    
+    class(out) <- c("cSEMModelSearch", "cSEMModelSearch_multi")
+    return(out)
     
   }else if(inherits(.object, "cSEMResults_2ndorder")) {
     
@@ -98,7 +109,8 @@ doModelSearch <- function(.object = NULL,
     
   }else if(inherits(.object, "cSEMResults_default")) {
     
-    model_original <- .object$Information$Model    
+    model_original <- .object$Information$Model 
+    cons_exo <- model_original$cons_exo
   }else{
     
     stop2(
@@ -117,6 +129,7 @@ doModelSearch <- function(.object = NULL,
   }
   
   
+#   Model selection criterion value of the original model
   fitness <- calculateModelSelectionCriteria(
     .object = .object,
     .by_equation = FALSE,
@@ -177,7 +190,8 @@ doModelSearch <- function(.object = NULL,
       prob_mutation = .prob_mutation,
       prob_crossover= .prob_crossover, 
       seed = .seed,
-      only_structural=.only_structural
+      only_structural=.only_structural,
+      cons_exo = cons_exo
     ),
     "Results" = list(
     original_fitness = fitness,  
