@@ -139,6 +139,10 @@ testthat::expect_failure(testthat::expect_equal(object = igsca_r_table,
 testthat::expect_success(testthat::expect_equal(object = igsca_r_table,
                        expected = igsca_sim_m_table, tolerance = .0026))
 
+# If the kronecker bypass for Loadings is done:
+# testthat::expect_success(testthat::expect_equal(object = igsca_r_table,
+#                                                 expected = igsca_sim_m_table, tolerance = .037))
+
 testthat::expect_failure(
   testthat::expect_identical(object = igsca_r_table, expected = igsca_sim_m_table),
   info = "Matlab and R versions should be very similar, but not identical"
