@@ -1074,6 +1074,18 @@ calculateReliabilities <- function(
   .PLS_approach_cf  = args_default()$.PLS_approach_cf,
   .reliabilities    = args_default()$.reliabilities
 ){
+  
+  
+  if (isTRUE(.disattenuate) &.approach_weights == "GSCA"){
+    # Weights need to be scaled s.t. the composite build using .X has
+    # variance of one. Note that scaled GSCAm weights are identical
+    # to PLS ModeA weights.
+    # 
+    # This applies to both GSCA_m and IGSCA
+    .W$W <- scaleWeights(.S, .W$W)
+  }
+  
+  
   modes   <- .W$Modes
   W        <- .W$W
   names_cf <- names(.csem_model$construct_type[.csem_model$construct_type == "Common factor"])
@@ -1124,16 +1136,17 @@ calculateReliabilities <- function(
       } 
     } else if (.approach_weights == "GSCA") {
       
-        if ((.disattenuate &
+        if ((isTRUE(.disattenuate) &
             all(.csem_model$construct_type == "Common factor")) | any(.csem_model$construct_type == "Common factor")) {
-          
+          browser()
           # Currently, GSCAm only supports pure common factor models. This may change
           # in the future.
           
           # Compute consistent loadings and Q (Composite/proxy-construct correlation)
           # Consistent factor loadings are obtained from GSCAm.
+                  
           
-          for (j in rownames(Lambda)) {
+          for (j in rownames(Lambda[names_cf, ])) {
             Lambda[j, ] <- .W$C[j, ]
             Q[j]        <- c(W[j, ] %*% Lambda[j, ])
           }
