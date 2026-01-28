@@ -878,6 +878,12 @@ diagonalizeMultiGroupIgscaEstimates <- function(x) {
     extraction$Data <- lapply(x, function(onegroup_output) {
       return(onegroup_output[["Information"]][["Data"]])
     })
+    
+    # Remove Null Matrices
+    extracts_to_remove <- lapply(extraction, \(x) lapply(x, is.null) |> unlist() |> all())
+    
+    extraction <- extraction[which(!unlist(lapply(extraction, \(x) lapply(x, is.null) |> unlist() |> all())))]
+    
     extraction <- mapply(function(extract, extract_name){
       # We don't keep it as a sparse matrix because that might break
       # functionality with other functions unless much more of Matrix is
