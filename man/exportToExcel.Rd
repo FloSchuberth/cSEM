@@ -14,10 +14,10 @@ exportToExcel(
 \item{.postestimation_object}{An object resulting from a call to one of cSEM's
 postestimation functions (e.g. \code{\link[=summarize]{summarize()}}).}
 
-\item{.filename}{Character string. The file name.}
+\item{.filename}{Character string. The file name. Defaults to "results.xlsx".}
 
 \item{.path}{Character string. Path of the directory to save the file to. Defaults
-to \code{NULL}.}
+to the current working directory.}
 }
 \description{
 \lifecycle{experimental}

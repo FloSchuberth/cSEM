@@ -111,7 +111,6 @@ Suggests:
     waldo
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-Language: en-US
 LinkingTo: 
     Rcpp, RcppArmadillo
-    
+Language: en-US

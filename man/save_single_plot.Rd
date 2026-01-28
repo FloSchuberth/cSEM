@@ -12,7 +12,7 @@ out_file,
 }
 \arguments{
 \item{.path}{Character string. Path of the directory to save the file to. Defaults
-to \code{NULL}.}
+to the current working directory.}
 }
 \value{
 NULL.
