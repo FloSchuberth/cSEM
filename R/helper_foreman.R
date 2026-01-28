@@ -31,11 +31,11 @@
 #' @keywords internal
 
 calculateCorrectionFactors <- function(
-  .S               = args_default()$.S,
-  .W               = args_default()$.W,
-  .modes           = args_default()$.modes,
-  .csem_model      = args_default()$.csem_model,
-  .PLS_approach_cf = args_default()$.PLS_approach_cf
+    .S               = args_default()$.S,
+    .W               = args_default()$.W,
+    .modes           = args_default()$.modes,
+    .csem_model      = args_default()$.csem_model,
+    .PLS_approach_cf = args_default()$.PLS_approach_cf
 ) {
   
   ### Compute correction factors  ----------------------------------------------
@@ -87,7 +87,7 @@ calculateCorrectionFactors <- function(
         stop2(
           "The following error occured while calculating the correction factor:\n",
           "At least one pair of indicators with uncorrelated measurement errors",
-          " required in each measurement equation.\n", 
+          " required in each measurment equation.\n", 
           "Measurement equation: `", j, "` has none.")
       }
       
@@ -150,18 +150,18 @@ calculateCorrectionFactors <- function(
 #' @keywords internal
 
 calculateCompositeVCV <- function(
-  .S = args_default()$.S, 
-  .W = args_default()$.W
-  ){
-
+    .S = args_default()$.S, 
+    .W = args_default()$.W
+){
+  
   x <- .W %*% .S %*% t(.W)
-
+  
   # Due to floting point errors may not be symmetric anymore. In order
   # prevent that replace the lower triangular elements by the upper
   # triangular elements
-
+  
   x[lower.tri(x)] <- t(x)[lower.tri(x)]
-
+  
   ## Return
   x
 }
@@ -182,16 +182,16 @@ calculateCompositeVCV <- function(
 #' @keywords internal
 
 calculateConstructVCV <- function(
-  .C          = args_default()$.C, 
-  .Q          = args_default()$.Q
-  ) {
-
+    .C          = args_default()$.C, 
+    .Q          = args_default()$.Q
+) {
+  
   f <- function(.i, .j) { .C[.i, .j] / (.Q[.i] * .Q[.j]) }
   m <- rownames(.C)
   x <- outer(m, m, FUN = Vectorize(f))
   diag(x) <- 1
   rownames(x) <- colnames(x) <- m
-
+  
   ## Return
   return(x)
 }
@@ -241,8 +241,8 @@ calculateConstructVCV <- function(
 #' @keywords internal
 
 calculateIndicatorCor <- function(
-  .X_cleaned           = NULL,
-  .approach_cor_robust = "none"
+    .X_cleaned           = NULL,
+    .approach_cor_robust = "none"
 ){
   
   is_numeric_indicator <- lapply(.X_cleaned, is.numeric)
@@ -266,7 +266,7 @@ calculateIndicatorCor <- function(
               
               # Indicator's correlation matrix
               S <- matrix(0, ncol = ncol(.X_cleaned), nrow = ncol(.X_cleaned),
-                             dimnames = list(colnames(.X_cleaned), colnames(.X_cleaned)))
+                          dimnames = list(colnames(.X_cleaned), colnames(.X_cleaned)))
               # matrix containing the type of correlation 
               cor_type <- S
               
@@ -322,7 +322,7 @@ calculateIndicatorCor <- function(
               cor_type <- unique(c(cor_type))
               cor_type <- cor_type[cor_type != "0"]
               
-            
+              
               
               # The lavCor function does no smoothing in case of empty cells, which creates problems during bootstrap
               # # Use lavCor function from the lavaan package for the calculation of the polychoric and polyserial correlation 
@@ -341,21 +341,21 @@ calculateIndicatorCor <- function(
               # } else { #only if all variables are categorical the type of correlation is set to polychoric
               #   cor_type = "Polychoric"
               # }
-
+              
             }
           },
-
+          
           "mcd" = {
             S <- MASS::cov.rob(.X_cleaned, cor = TRUE, method = "mcd")$cor
             S[upper.tri(S) == TRUE] = t(S)[upper.tri(S) == TRUE]
-
+            
             cor_type <-  "Robust (MCD)"
             
             thres_est = NULL
           },
           "spearman" = {
             S <- cor(.X_cleaned, method = "spearman")
-
+            
             cor_type <-  "Robust (Spearman)"
             
             thres_est = NULL
@@ -373,17 +373,32 @@ calculateIndicatorCor <- function(
 #' @keywords internal
 
 calculateReliabilities <- function(
-  .X                = args_default()$.X,
-  .S                = args_default()$.S,
-  .W                = args_default()$.W,
-  .approach_weights = args_default()$.approach_weights,
-  .csem_model       = args_default()$.csem_model,
-  .disattenuate     = args_default()$.disattenuate,
-  .PLS_approach_cf  = args_default()$.PLS_approach_cf,
-  .reliabilities    = args_default()$.reliabilities
+    .X                = args_default()$.X,
+    .S                = args_default()$.S,
+    .W                = args_default()$.W,
+    .approach_weights = args_default()$.approach_weights,
+    .csem_model       = args_default()$.csem_model,
+    .disattenuate     = args_default()$.disattenuate,
+    .PLS_approach_cf  = args_default()$.PLS_approach_cf,
+    .reliabilities    = args_default()$.reliabilities
 ){
+  
   modes   <- .W$Modes
-  W        <- .W$W
+  if (.approach_weights != "GSCA") {
+    W <- .W$W
+  } else if (.approach_weights == "GSCA") {
+    
+    W <- .W$W
+    
+    if (isTRUE(.disattenuate)) {
+      # Weights need to be scaled s.t. the composite build using .X has
+      # variance of one. Note that scaled GSCAm weights are identical
+      # to PLS ModeA weights.
+      #
+      # This applies to both GSCA_m and IGSCA
+      W <- scaleWeights(.S, .W$W)
+    }
+  }
   names_cf <- names(.csem_model$construct_type[.csem_model$construct_type == "Common factor"])
   names_c  <- setdiff(names(.csem_model$construct_type), names_cf)
   Q        <- rep(1, times = nrow(W))
@@ -413,14 +428,14 @@ calculateReliabilities <- function(
           .csem_model      = .csem_model,
           .PLS_approach_cf = .PLS_approach_cf
         )
-          
+        
         ## 2. Compute consistent loadings and Q (Composite/proxy-construct correlation)
         ## for constructs modeled as common factors.
         ## Currently only done for Mode A and Mode B. For unit, modeBNNLS, PCA, it is not clear how the Qs are calculated. 
         for(j in names_cf) {
           
           if(modes[j]=='modeA'){
-          Lambda[j, ] <- correction_factors[j] * W[j, ]
+            Lambda[j, ] <- correction_factors[j] * W[j, ]
           }
           
           if(modes[j]=='modeB'){
@@ -430,23 +445,27 @@ calculateReliabilities <- function(
           Q[j]        <- c(W[j, ] %*% Lambda[j, ])
         }
       } 
-    } else if(.approach_weights == "GSCA") {
+    } else if (.approach_weights == "GSCA") {
       
-      if(.disattenuate & all(.csem_model$construct_type == "Common factor")) {
+      if ((isTRUE(.disattenuate) &
+           all(.csem_model$construct_type == "Common factor")) | any(.csem_model$construct_type == "Common factor")) {
+        browser()
         # Currently, GSCAm only supports pure common factor models. This may change
         # in the future.
         
         # Compute consistent loadings and Q (Composite/proxy-construct correlation)
         # Consistent factor loadings are obtained from GSCAm.
         
-        for(j in rownames(Lambda)) {
+        
+        for (j in rownames(Lambda[names_cf, ])) {
           Lambda[j, ] <- .W$C[j, ]
-          Q[j]        <- c(W[j, ] %*% Lambda[j, ]) 
+          Q[j]        <- c(W[j, ] %*% Lambda[j, ])
         }
       }
+      
     } else if(.approach_weights %in% c("unit", "bartlett", "regression", "PCA", 
-                "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
-    
+                                       "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
+      
       #  Note: "bartlett" and "regression" weights are obtained AFTER running a CFA. 
       #  Therefore loadings are consistent and as such "disattenuation"
       #  has already implicitly happend. Hence, it is impossible to 
@@ -553,8 +572,8 @@ calculateReliabilities <- function(
     
     if(length(tmp1) != 0) {
       stop2("Construct name(s): ", paste0("`", tmp1, "`", collapse = ", "), 
-           " provided to `.reliabilities`", 
-           ifelse(length(tmp1) == 1, " is", " are"), " unknown.")
+            " provided to `.reliabilities`", 
+            ifelse(length(tmp1) == 1, " is", " are"), " unknown.")
     }
     
     ## Compute reliabilities not supplied by the user 
@@ -590,7 +609,7 @@ calculateReliabilities <- function(
         Q[names_modeB] <- Q_modeB
       }
     }
-
+    
     ## Compute Loadings based on reliabilities
     # Loadings are calculated for common factors and for those composites
     # that a reliability is give.
@@ -652,9 +671,9 @@ calculateReliabilities <- function(
 #' @keywords internal
 #'
 setDominantIndicator <- function(
-  .W                   = args_default()$.W,
-  .dominant_indicators = args_default()$.dominant_indicators,
-  .S                   = args_default()$.S  
+    .W                   = args_default()$.W,
+    .dominant_indicators = args_default()$.dominant_indicators,
+    .S                   = args_default()$.S  
 ) {
   ## Check construct names:
   # Do all construct names in .dominant_indicators match the construct

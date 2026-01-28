@@ -14,13 +14,16 @@ csem(
 .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
                            "MINVAR", "GENVAR","GSCA", "PCA",
                            "unit", "bartlett", "regression"),
-.conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative"),
+.conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative",
+                           "sum_diff_absolute", "mean_diff_absolute"),
 .disattenuate          = TRUE,
 .dominant_indicators   = NULL,
 .estimate_structural   = TRUE,
 .id                    = NULL,
 .instruments           = NULL,
 .iter_max              = 100,
+.GSCA_control          = list(.forceIGSCA = FALSE),
+.GSCA_modes            = NULL,
 .normality             = FALSE,
 .PLS_approach_cf       = c("dist_squared_euclid", "dist_euclid_weighted", 
                            "fisher_transformed", "mean_arithmetic",
@@ -79,11 +82,11 @@ need to be supplied to \code{.instruments}. Defaults to "\emph{OLS}".}
 
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
-"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{IGSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
 or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
-One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
+One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
 to "\emph{diff_absolute}".}
 
 \item{.disattenuate}{Logical. Should composite/proxy correlations
@@ -101,7 +104,9 @@ be estimated? Defaults to \code{TRUE}.}
 
 \item{.id}{Character string or integer. A character string giving the name or
 an integer of the position of the column of \code{.data} whose levels are used
-to split \code{.data} into groups. Defaults to \code{NULL}.}
+to split \code{.data} into groups. Values of the column referred to by \code{.id}
+cannot be solely comprised of \code{Estimates} or \code{Information} as these are
+internal identifiers for \code{\link[=csem]{csem()}} functionality. Defaults to \code{NULL}.}
 
 \item{.instruments}{A named list of vectors of instruments. The names
 of the list elements are the names of the dependent (LHS) constructs of the structural
@@ -114,6 +119,18 @@ instruments for themselves. Defaults to \code{NULL}.}
 If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
 If the algorithm exceeds the specified number, weights of iteration step
 \code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
+
+\item{.GSCA_control}{Named list specifying various computational options for
+GSCA-type models.}
+
+\item{.GSCA_modes}{Either a named list specifying the mode that should be
+used for each composite in the form \code{"composite_name" = mode}, a single
+character string giving the mode that should be used for all composites.
+Possible single character string choices for \code{mode} are: "\emph{canon}" for
+canonical composites, or "\emph{nomo}" for nomological composites, or \code{NULL} for
+default behavior. Default behavior is to estimate nomological composites.
+Passed to (I-)GSCA estimating functions in \code{\link[=calculateWeightsGSCA]{calculateWeightsGSCA()}}
+or \code{\link[=calculateWeightsIGSCA]{calculateWeightsIGSCA()}}. Defaults to \code{NULL}.}
 
 \item{.normality}{Logical. Should joint normality of
 \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
@@ -219,7 +236,7 @@ For a details see the \link[=cSEMResults]{cSEMResults helpfile }.
 \lifecycle{stable}
 }
 \details{
-Estimate linear, nonlinear, hierarchical and multigroup structural equation
+Estimate linear, nonlinear, hierarchical or multigroup structural equation
 models using a composite-based approach. In \pkg{cSEM}
 any method or approach that involves linear compounds (scores/proxies/composites)
 of observables (indicators/items/manifest variables) is defined as composite-based.
@@ -410,9 +427,7 @@ identifiers. \code{csem()} will split the data by levels of that column and run
 the estimation for each level separately. Note, the more levels
 the group-identifier-column has, the more estimation runs are required.
 This can considerably slow down estimation, especially if resampling is
-requested. For the latter it will generally be faster to use
-\code{.eval_plan = "multisession"} or \code{.eval_plan = "multicore"}.
-}
+requested. For the latter it will generally be faster to use \code{.eval_plan = "multisession"} or \code{.eval_plan = "multicore"}.}
 \subsection{Inference:}{
 Inference is done via resampling. See \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} and \code{\link[=infer]{infer()}} for details.
 }
@@ -433,7 +448,7 @@ confidence intervals.}
 Tests are performed using the test-family of functions. Currently the following
 tests are implemented:
 \describe{
-\item{\code{\link[=testCVPAT]{testCVPAT()}}}{Cross-validated predictive ability test proposed by \insertCite{Liengaard2021;textual}{cSEM}}
+\item{\code{\link[=testCVPAT]{testCVPAT()}}}{Cross-validated predictive ability test proposed by \insertCite{Liengaard2021;textual}{cSEM}.}
 \item{\code{\link[=testOMF]{testOMF()}}}{Bootstrap-based test for overall model fit based on
 \insertCite{Beran1985;textual}{cSEM}.}
 \item{\code{\link[=testMICOM]{testMICOM()}}}{Permutation-based test for measurement invariance of composites

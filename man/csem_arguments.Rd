@@ -80,7 +80,7 @@ is used. Defaults to "\emph{mean}".}
 
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
-"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{IGSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
 or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
 
 \item{.args_used}{A list of function argument names whose value was modified
@@ -120,7 +120,7 @@ For possible choices see \code{\link[=infer]{infer()}}.}
 Defaults to \code{FALSE}.}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
-One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
+One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
 to "\emph{diff_absolute}".}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
@@ -173,7 +173,7 @@ all available cores will be used. Defaults to "\emph{sequential}".}
 \item{.fbar}{Integer. Low fitness value that is used to penalize inadmissible models.
 Defaults to -100000.}
 
-\item{.filename}{Character string. The file name.}
+\item{.filename}{Character string. The file name. Defaults to "results.xlsx".}
 
 \item{.first_resample}{A list containing the \code{.R} resamples based on the original
 data obtained by resamplecSEMResults().}
@@ -190,6 +190,18 @@ Defaults to \code{TRUE}.}
 \item{.graph_attrs}{Character string. Additional attributes that should be passed
 to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emph{c("rankdir=LR")}.}
 
+\item{.GSCA_control}{Named list specifying various computational options for
+GSCA-type models.}
+
+\item{.GSCA_modes}{Either a named list specifying the mode that should be
+used for each composite in the form \code{"composite_name" = mode}, a single
+character string giving the mode that should be used for all composites.
+Possible single character string choices for \code{mode} are: "\emph{canon}" for
+canonical composites, or "\emph{nomo}" for nomological composites, or \code{NULL} for
+default behavior. Default behavior is to estimate nomological composites.
+Passed to (I-)GSCA estimating functions in \code{\link[=calculateWeightsGSCA]{calculateWeightsGSCA()}}
+or \code{\link[=calculateWeightsIGSCA]{calculateWeightsIGSCA()}}. Defaults to \code{NULL}.}
+
 \item{.H}{The (N x J) matrix of construct scores.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
@@ -204,9 +216,12 @@ computing time. Defaults to "\emph{drop}".}
 
 \item{.id}{Character string or integer. A character string giving the name or
 an integer of the position of the column of \code{.data} whose levels are used
-to split \code{.data} into groups. Defaults to \code{NULL}.}
+to split \code{.data} into groups. Values of the column referred to by \code{.id}
+cannot be solely comprised of \code{Estimates} or \code{Information} as these are
+internal identifiers for \code{\link[=csem]{csem()}} functionality. Defaults to \code{NULL}.}
 
-\item{.inference}{Logical. Should critical values be computed? Defaults to \code{FALSE}.}
+\item{.inference}{Logical. Should critical values be computed? Defaults to
+\code{FALSE}.}
 
 \item{.independent}{Character string. The name of the independent variable.}
 
@@ -235,6 +250,12 @@ for constructs or indicators.}
 Which prediction metrics should be displayed? One of: "\emph{MAE}", "\emph{RMSE}", "\emph{Q2}",
 "\emph{MER}", "\emph{MAPE}, "\emph{MSE2}", "\emph{U1}", "\emph{U2}", "\emph{UM}", "\emph{UR}", or "\emph{UD}".
 Default to c("\emph{MAE}", "\emph{RMSE}", "\emph{Q2}").}
+
+\item{.maxdepth}{Maximum number of levels in the tree. See \code{\link[=doTrees]{doTrees()}}
+and \link[partykit:mob_control]{partykit::mob_control}.}
+
+\item{.minsize}{Minimum number of cases per node. See \code{\link[=doTrees]{doTrees()}} and
+\link[partykit:mob_control]{partykit::mob_control}.}
 
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
 or a \link{cSEMModel} list.}
@@ -295,7 +316,7 @@ compared across groups. Defaults to \code{NULL} in which case all weights, loadi
 path coefficients of the originally specified model are compared.}
 
 \item{.path}{Character string. Path of the directory to save the file to. Defaults
-to \code{NULL}.}
+to the current working directory.}
 
 \item{.path_coefficients}{List. A list that contains the resampled and the original
 path coefficient estimates. Typically a part of a \code{cSEMResults_resampled} object.
@@ -426,6 +447,9 @@ be used to handle flipping signs when resampling? One of "\emph{none}","\emph{in
 
 \item{.sim_points}{Integer. How many samples from the truncated normal distribution should
 be simulated to estimate the exogenous construct scores? Defaults to "\emph{100}".}
+
+\item{.splitvars}{Character vector. List of variables for \code{\link[=doTrees]{doTrees()}}
+to consider splitting on. See \link[partykit:mob]{partykit::mob}}
 
 \item{.stage}{Character string. The stage the model is needed for.
 One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}

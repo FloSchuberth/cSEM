@@ -2,7 +2,7 @@
 #'
 #'\lifecycle{stable}
 #'
-#' Estimate linear, nonlinear, hierarchical and multigroup structural equation
+#' Estimate linear, nonlinear, hierarchical or multigroup structural equation
 #' models using a composite-based approach. In \pkg{cSEM} 
 #' any method or approach that involves linear compounds (scores/proxies/composites)
 #' of observables (indicators/items/manifest variables) is defined as composite-based.
@@ -194,9 +194,8 @@
 #' the estimation for each level separately. Note, the more levels
 #' the group-identifier-column has, the more estimation runs are required.
 #' This can considerably slow down estimation, especially if resampling is
-#' requested. For the latter it will generally be faster to use 
-#' `.eval_plan = "multisession"` or `.eval_plan = "multicore"`.
-#' } 
+#' requested. For the latter it will generally be faster to use `.eval_plan =
+#' "multisession"` or `.eval_plan = "multicore"`.}
 #' \subsection{Inference:}{
 #' Inference is done via resampling. See [resamplecSEMResults()] and [infer()] for details.
 #' }
@@ -211,13 +210,16 @@
 #' .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
 #'                            "MINVAR", "GENVAR","GSCA", "PCA",
 #'                            "unit", "bartlett", "regression"),
-#' .conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative"),
+#' .conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative",
+#'                            "sum_diff_absolute", "mean_diff_absolute"),
 #' .disattenuate          = TRUE,
 #' .dominant_indicators   = NULL,
 #' .estimate_structural   = TRUE,
 #' .id                    = NULL,
 #' .instruments           = NULL,
 #' .iter_max              = 100,
+#' .GSCA_control          = list(.forceIGSCA = FALSE),
+#' .GSCA_modes            = NULL,
 #' .normality             = FALSE,
 #' .PLS_approach_cf       = c("dist_squared_euclid", "dist_euclid_weighted", 
 #'                            "fisher_transformed", "mean_arithmetic",
@@ -266,7 +268,7 @@
 #'   fit measures, HTMT, R2 etc.}
 #' \item{[infer()]}{Calculate common inferential quantities, e.g., standard errors, 
 #'   confidence intervals.}
-#' \item{[plot()]}{Creates a plot of the model. For the help file see [plot.cSEMResults_default()].}  
+#' \item{[plot()]}{Creates a plot of the model. For the help file see [plot.cSEMResults_default()].}
 #' \item{[predict()]}{Predict endogenous indicator scores and compute common prediction metrics.}
 #' \item{[summarize()]}{Summarize the results. Mainly called for its side-effect the print method.}
 #' \item{[verify()]}{Verify/Check admissibility of the estimates.}
@@ -275,7 +277,7 @@
 #' Tests are performed using the test-family of functions. Currently the following
 #' tests are implemented:
 #' \describe{
-#' \item{[testCVPAT()]}{Cross-validated predictive ability test proposed by \insertCite{Liengaard2021;textual}{cSEM}}
+#' \item{[testCVPAT()]}{Cross-validated predictive ability test proposed by \insertCite{Liengaard2021;textual}{cSEM}.}
 #' \item{[testOMF()]}{Bootstrap-based test for overall model fit based on 
 #'   \insertCite{Beran1985;textual}{cSEM}.}
 #' \item{[testMICOM()]}{Permutation-based test for measurement invariance of composites
@@ -316,13 +318,15 @@ csem <- function(
   .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
                              "MINVAR", "GENVAR","GSCA", "PCA",
                              "unit", "bartlett", "regression"),
-  .conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative"),
+  .conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative", "sum_diff_absolute", "mean_diff_absolute"),
   .disattenuate          = TRUE,
   .dominant_indicators   = NULL,
   .estimate_structural   = TRUE,
   .id                    = NULL,
   .instruments           = NULL,
   .iter_max              = 100,
+  .GSCA_control          = list(.forceIGSCA = FALSE),
+  .GSCA_modes            = NULL,
   .normality             = FALSE,
   .PLS_approach_cf       = c("dist_squared_euclid", "dist_euclid_weighted", 
                              "fisher_transformed", "mean_arithmetic",
@@ -416,6 +420,12 @@ csem <- function(
         )
     }
     
+    if(identical(unique(.data[,.id]), c("Estimates", "Information"))) {
+      stop(
+        'csem does not support group levels called "Estimates" and "Information", as this conflicts with internal functionality.'
+      )
+    }
+    
     if(is.matrix(.data)) {
       .data <- as.data.frame(.data)
     }
@@ -457,7 +467,7 @@ csem <- function(
     out <- do.call(foreman, args_needed)
     
   }
-
+  
   ## Set class for output
   # See the details section of ?UseMethod() to learn how method dispatch works
   # for objects with multiple classes

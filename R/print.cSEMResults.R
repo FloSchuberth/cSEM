@@ -82,7 +82,7 @@ print.cSEMResults <- function(x, ...) {
   cat2("To get an overview or help type:\n\n\t",
       "- ", yellow("?"), cyan("cSEMResults"),"\n\t",
       "- ", magenta("str"), "(", cyan("<object-name>"), ")\n\t",
-      "- ", magenta("listviewer"), yellow("::"), magenta("jsondedit"),
+      "- ", magenta("listviewer"), yellow("::"), magenta("jsonedit"),
       "(", cyan("<object-name>"), ", ", red("mode"), " = ", cyan("'view'"), ")\n\n")
   cat2("If you wish to access the list elements directly type e.g. \n\n\t",
       "- ", cyan("<object-name>"), yellow("$"), green("Estimates"), "\n\n")
@@ -93,4 +93,16 @@ print.cSEMResults <- function(x, ...) {
       "- ", magenta("summarize"), "(", cyan("<object-name>"), ")\n\t",
       "- ", magenta("verify"), "(", cyan("<object-name>"), ")\n")
   cat(rule2(type = 2), "\n")
+  
+  if(inherits(x, "cSEMResults_multi")) {
+    if (x[[1]]$Information$Arguments$.approach_weights == "IGSCA") {
+      warnIgscaFeatures()
+    }
+  } else {
+    if (x$Information$Arguments$.approach_weights == "IGSCA") {
+      warnIgscaFeatures()
+    }   
+  }
+  
+
 }

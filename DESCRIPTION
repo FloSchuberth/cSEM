@@ -10,6 +10,10 @@ Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     role  = c("aut", "cre"),
                     email = "f.schuberth@utwente.nl",
                     comment = c(ORCID = "0000-0002-2110-9086")),
+             person(given = "Michael S.", family = "Truong",
+                    role = c("ctb"),
+                    email = "emstruonger@gmail.com",
+                    comment = c(ORCID = "0009-0006-4521-6528")),
              person(given = "Tamara", family = "Schamberger",
                     role  = c("ctb"),
                     email = "tamara.schamberger@uni-wuerzburg.de",
@@ -21,14 +25,14 @@ Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
              person(given = "Huu Phuc", family = "Nguyen",
                     role  = c("ctb"),
                     email = "",
-                    comment = c(ORCID = "0009-0000-9344-7132")),       
+                    comment = c(ORCID = "0009-0000-9344-7132")),              
              person(given = "Theo K.", family = "Dijkstra",
                     role  = c("ctb"),
                     email = ""),
              person(given = "Jörg", family = "Henseler",
                     role  = c("ctb"),
                     email = "",
-                    comment = c(ORCID = "0000-0002-9736-3048")), 
+                    comment = c(ORCID = "0000-0002-9736-3048")),
             person(given = "Gloria", family="Pietropolli",
                    role  = c("ctb"),
                    email="",
@@ -76,7 +80,12 @@ Imports:
     stats,
     symmoments,
     TruncatedNormal,
-    utils
+    utils,
+    Rcpp,
+    generics,
+    partykit,
+    Formula,
+    boot
 RdMacros: Rdpack, lifecycle
 RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
@@ -98,7 +107,10 @@ Suggests:
     GA,
     openxlsx,
     graphics,
-    spelling
+    spelling,
+    waldo
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+LinkingTo: 
+    Rcpp, RcppArmadillo
 Language: en-US
