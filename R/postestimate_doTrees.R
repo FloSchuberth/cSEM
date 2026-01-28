@@ -224,7 +224,7 @@ doTreesBeta <- function(.object,
                         # .minsize = nrow(tidy.cSEMResults(.object)[!(tidy.cSEMResults(.object)$op %in% c("Indirect_effect", "Direct_effect", "Total_effect")),])
                         ) {
                         
-  browser()
+  
 ## Load Arguments ----------------------------------------------------------
 
   
@@ -247,14 +247,11 @@ doTreesBeta <- function(.object,
            "daughter.model" = NA))
   }
   
-## Figure out what splits to try -----------------------------------------
+## Figure out what splits to try and pre-process split variables------------
   
-  # TODO: Test for whether .id is binary or not
+  # TODO: Test for whether every column referred to by .splitvars is binary or not
   # Checks through .splitvars
   #.splitvars 
-  # TODO: Give a list and pass it to the boot eval, internal
-  # calculateFITForSplit should be adjusted to run a list of models using the
-  # same idx. Then return a vector whose length 
   
 ## Evaluate Split ----------------------------------------------------------
   
@@ -302,7 +299,7 @@ doTreesBeta <- function(.object,
     } else if (paired_bootstrap_t_test$p.value > 0.05 | (paired_bootstrap_t_test$statistic <= 0)) {
       return(
         list(
-          "split" = NA,
+          "split" = .splitvars, # An attempted split in this case
           "p.value" = paired_bootstrap_t_test$p.value,
           "FIT" = bootFIT$t0[1],
           "t.test" = paired_bootstrap_t_test,
@@ -342,7 +339,7 @@ doTreesBeta <- function(.object,
     
     for (i in length(Ps)) {
       if (Ts[which.min(Ps)] >= 0 && Ps[which.min(Ps)] <= 0.05) {
-        browser()
+        
         fitted.model <-csem(
           .data = .data,
           .id = names(which.min(Ps)),
@@ -351,6 +348,16 @@ doTreesBeta <- function(.object,
           .tolerance = .tolerance,
           .conv_criterion = .conv_criterion
         )
+        
+        daughter.model <- lapply(fitted.model, function(.obj_it)
+          return(
+            doTreesBeta(
+              .object = .obj_it,
+              .splitvars = .splitvars[!(.splitvars %in% names(which.min(Ps)))],
+              .model = .model,
+              .R = .R
+            )
+          ))
         return(
           list(
             "split" = names(which.min(Ps)),
@@ -358,11 +365,7 @@ doTreesBeta <- function(.object,
             "FIT" = bootFIT$t0[names(which.min(Ps))],
             "t.test" = paired_bootstrap_t_tests[[names(which.min(Ps))]],
             "fitted.model" = fitted.model,
-            "daughter.model" = doTreesBeta(.object = fitted.model,
-                                           .splitvars = .splitvars[!(.splitvars %in% names(which.min(Ps)))],
-                                           .model = .model,
-                                           .R = .R)
-          )
+            "daughter.model" = daughter.model)
         )
       } else if (length(Ts) > 0 && length(Ps) > 0) {
         Ts <- Ts[!(names(Ts) %in% names(which.min(Ps)))]
