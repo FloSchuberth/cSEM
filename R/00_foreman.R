@@ -41,36 +41,35 @@
 #' @keywords internal
 
 foreman <- function(
-    .data                        = args_default()$.data,
-    .model                       = args_default()$.model,
-    .approach_cor_robust         = args_default()$.approach_cor_robust,
-    .approach_nl                 = args_default()$.approach_nl,
-    .approach_paths              = args_default()$.approach_paths,
-    .approach_weights            = args_default()$.approach_weights,
-    .conv_criterion              = args_default()$.conv_criterion,
-    .disattenuate                = args_default()$.disattenuate,
-    .dominant_indicators         = args_default()$.dominant_indicators,
-    .estimate_structural         = args_default()$.estimate_structural,
-    .GSCA_control                = args_default()$.GSCA_control,
-    .GSCA_modes                  = args_default()$.GSCA_modes,
-    .id                          = args_default()$.id,
-    .instruments                 = args_default()$.instruments,
-    .iter_max                    = args_default()$.iter_max,
-    .normality                   = args_default()$.normality,
-    .PLS_approach_cf             = args_default()$.PLS_approach_cf,
-    .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model,
-    .PLS_modes                   = args_default()$.PLS_modes,
-    .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
-    .reliabilities               = args_default()$.reliabilities,
-    .starting_values             = args_default()$.starting_values,
-    .tolerance                   = args_default()$.tolerance
-) {
+  .data                        = args_default()$.data,
+  .model                       = args_default()$.model,
+  .approach_cor_robust         = args_default()$.approach_cor_robust,
+  .approach_nl                 = args_default()$.approach_nl,
+  .approach_paths              = args_default()$.approach_paths,
+  .approach_weights            = args_default()$.approach_weights,
+  .conv_criterion              = args_default()$.conv_criterion,
+  .disattenuate                = args_default()$.disattenuate,
+  .dominant_indicators         = args_default()$.dominant_indicators,
+  .estimate_structural         = args_default()$.estimate_structural,
+  .GSCA_modes                  = args_default()$.GSCA_modes,
+  .id                          = args_default()$.id,
+  .instruments                 = args_default()$.instruments,
+  .iter_max                    = args_default()$.iter_max,
+  .normality                   = args_default()$.normality,
+  .PLS_approach_cf             = args_default()$.PLS_approach_cf,
+  .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model,
+  .PLS_modes                   = args_default()$.PLS_modes,
+  .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
+  .reliabilities               = args_default()$.reliabilities,
+  .starting_values             = args_default()$.starting_values,
+  .tolerance                   = args_default()$.tolerance
+  ) {
   args_used <- c(as.list(environment(), all.names = TRUE))
   
   ### Preprocessing ============================================================
   ## Parse and order model to "cSEMModel" list
   csem_model <- parseModel(.model, .instruments = .instruments)
-  
+
   ## Prepare, check, and clean data (a data.frame)
   X_cleaned <- processData(.data = .data, 
                            .model = csem_model,
@@ -80,7 +79,7 @@ foreman <- function(
   ## Calculate empirical indicator covariance/correlation matrix
   Cor <- calculateIndicatorCor(.X_cleaned = X_cleaned,
                                .approach_cor_robust = .approach_cor_robust)
-  
+
   # Extract the correlation matrix
   S <- Cor$S
   
@@ -124,6 +123,12 @@ foreman <- function(
         .tolerance                = .tolerance,
         .starting_values          = .starting_values
       )
+      
+      # Weights need to be scaled s.t. the composite build using .X has
+      # variance of one. Note that scaled GSCAm weights are identical
+      # to PLS ModeA weights.
+      W$W <- scaleWeights(S, W$W)
+      
     } else if (all(csem_model$construct_type == "Composite")) {
       W <- calculateWeightsGSCA(
         .X                        = X,
@@ -172,7 +177,7 @@ foreman <- function(
       .csem_model               = csem_model
     )
   }
-  
+
   ## Dominant indicators:
   if(!is.null(.dominant_indicators) && (.approach_weights != "IGSCA")) {
     # TODO: This might break the GSCA functionality -- originally IGSCA should bypass this
@@ -192,7 +197,7 @@ foreman <- function(
     .PLS_approach_cf  = .PLS_approach_cf,
     .reliabilities    = .reliabilities
   )
-  
+
   Weights <- LambdaQ2W$W 
   Lambda  <- LambdaQ2W$Lambda
   Q       <- sqrt(LambdaQ2W$Q2)
@@ -240,7 +245,7 @@ foreman <- function(
   } else {
     estim_results <- NULL
   }
-  
+
   ### Output -------------------------------------------------------------------
   out <- list(
     "Estimates"   = list(
