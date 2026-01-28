@@ -195,7 +195,7 @@
 #' the group-identifier-column has, the more estimation runs are required.
 #' This can considerably slow down estimation, especially if resampling is
 #' requested. For the latter it will generally be faster to use `.eval_plan =
-#' "multisession"` or `.eval_plan = "multicore"`.
+#' "multisession"` or `.eval_plan = "multicore"`.}
 #' \subsection{Inference:}{
 #' Inference is done via resampling. See [resamplecSEMResults()] and [infer()] for details.
 #' }
@@ -218,6 +218,7 @@
 #' .id                    = NULL,
 #' .instruments           = NULL,
 #' .iter_max              = 100,
+#' .GSCA_control          = list(.forceIGSCA = FALSE),
 #' .GSCA_modes            = NULL,
 #' .normality             = FALSE,
 #' .PLS_approach_cf       = c("dist_squared_euclid", "dist_euclid_weighted", 
@@ -300,8 +301,8 @@
 #'   \insertAllCited{}
 #'
 #' @seealso [args_default()], [cSEMArguments], [cSEMResults], [foreman()], [resamplecSEMResults()],
-#'   [assess()], [infer()], [plot.cSEMResults_default()], [predict()], 
-#'   [summarize()], [verify()], [testCVPAT()], [testOMF()], [testMGD()], [testMICOM()], [testHausman()]
+#'   [assess()], [infer()], [plot.cSEMResults_default()], [predict()], [summarize()], [verify()], [testCVPAT()], [testOMF()],
+#'   [testMGD()], [testMICOM()], [testHausman()]
 #' 
 #' @example inst/examples/example_csem.R
 #' 
@@ -324,6 +325,7 @@ csem <- function(
   .id                    = NULL,
   .instruments           = NULL,
   .iter_max              = 100,
+  .GSCA_control          = list(.forceIGSCA = FALSE),
   .GSCA_modes            = NULL,
   .normality             = FALSE,
   .PLS_approach_cf       = c("dist_squared_euclid", "dist_euclid_weighted", 
@@ -416,6 +418,12 @@ csem <- function(
         "The following error occured in the `csem()` function:\n",
         "`.id` must be a character string or an integer identifying one single column."
         )
+    }
+    
+    if(identical(unique(.data[,.id]), c("Estimates", "Information"))) {
+      stop(
+        'csem does not support group levels called "Estimates" and "Information", as this conflicts with internal functionality.'
+      )
     }
     
     if(is.matrix(.data)) {
