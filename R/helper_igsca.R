@@ -225,7 +225,8 @@ igsca <-
         n_constructs = n_constructs,
         n_case = n_case,
         c_index = c_index,
-        b_index = b_index
+        b_index = b_index,
+        con_type = con_type
       )
       
       list2env(updated_C_B_D_U[c("D", "U", "C", "B")], envir = environment())
@@ -562,6 +563,7 @@ updateCompositeTheta <-
 #' 
 #' @inheritParams initializeAlsEstimates
 #' @inheritParams updateXAndWW
+#' @inheritParams igsca
 #' @param X Pseudo-weights for composites
 #' @param Gamma Construct Scores
 #' @param c_index Index of loadings
@@ -587,7 +589,8 @@ updateCBDU <-
            c_index,
            n_constructs,
            b_index,
-           n_case) {
+           n_case,
+           con_type) {
 
 ## Loading Update ----------------------------------------------------------
 
@@ -597,16 +600,48 @@ updateCBDU <-
     # M1 <- M1[, c_index]
     M1 <- kroneckerC(diag(n_indicators), Gamma, c_index)
     C[c_index] <- MASS::ginv(t(M1) %*% M1) %*% (t(M1) %*% t1)
+    # 
+    # Kronecker bypass as shown in calculateWeightsGSCAm
+    # vcv_gamma <- t(Gamma) %*% Gamma # Came from path coefficients update in calculateWeightsGSCAm
+    # TODO: This will have to be adjusted to differentiate between canonical and
+    # nomological composites for IGSCA. Right now, it assumes that all the
+    # constructs need loadings. If there are only canonical composites, then
+    # there needs to be a bypass
+    # vars_cf_nomocomp <- which(con_type %in% c("Common factor", "Composite"))
+    # cov_gamma_indicators <- t(Gamma) %*% Z
+    # Y <- which(colSums(C[vars_cf_nomocomp, ]) != 0)
+    # loadings <- lapply(Y, function(y) {
+    #   x    <-  which(C[vars_cf_nomocomp, y] != 0)
+      # FIXME: The difference between inverse via solve and pseudo-inverse does
+      # not account for differences between this approach and kronecker
+      # coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*% cov_gamma_indicators[x, y, drop = FALSE]
+    #   coef <- solve(vcv_gamma[x, x, drop = FALSE]) %*% cov_gamma_indicators[x, y, drop = FALSE]
+    # })
+    # 
+    # Ct<-t(C)
+    # Ct[c_index] <- unlist(loadings, use.names = FALSE)
+    # C<-t(Ct)
 
 # Path Coefficients Update ------------------------------------------------
 
     
-    t2 <- c(Gamma)
+    # t2 <- c(Gamma)
     # M2 <- kronecker(diag(n_constructs), Gamma)
     # M2 <- M2[, b_index]
-    M2 <- kroneckerC(diag(n_constructs), Gamma, b_index)
-    B[b_index] <- MASS::ginv(t(M2) %*% M2) %*% (t(M2) %*% t2)
-
+    # 
+    # M2 <- kroneckerC(diag(n_constructs), Gamma, b_index)
+    # B[b_index] <- MASS::ginv(t(M2) %*% M2) %*% (t(M2) %*% t2)
+    # 
+    # Kronecker bypass as shown in calculateWeightsGSCAm
+    # TODO: Remember to comment vcv_gamma assignment out if I restore kronecker by-pass to loadings
+    vcv_gamma <- t(Gamma) %*% Gamma
+    vars_endo <- which(colSums(B) != 0)
+    
+    beta <- lapply(vars_endo, function(y) {
+      x    <- which(B[, y, drop = FALSE] != 0)
+      coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*% vcv_gamma[x, y, drop = FALSE]
+    })
+    B[b_index] <- unlist(beta, use.names = FALSE)
 
 ## Uniqueness Component Update ---------------------------------------------
 
