@@ -55,7 +55,7 @@
 #'   `"SUMCORR"`, `"MAXVAR"`, `"SSQCORR"`, `"MINVAR"`, `"GENVAR"`.}
 #' \item{Principal component analysis (`"PCA"`)}
 #' \item{Factor score regression using sum scores (`"unit"`), 
-#'    regression (`"regression"`) or bartlett scores (`"bartlett"`)}
+#'    regression (`"regression"`) or Bartlett scores (`"bartlett"`)}
 #' }
 #' 
 #' It is possible to supply starting values for the weighting algorithm 
@@ -268,7 +268,7 @@
 #'   fit measures, HTMT, R2 etc.}
 #' \item{[infer()]}{Calculate common inferential quantities, e.g., standard errors, 
 #'   confidence intervals.}
-#' \item{[plot()]}{Creates a plot of the model. For the help file see [plot.cSEMResults_default()].}  
+#' \item{[plot()]}{Creates a plot of the model. For the help file see [plot.cSEMResults_default()].}
 #' \item{[predict()]}{Predict endogenous indicator scores and compute common prediction metrics.}
 #' \item{[summarize()]}{Summarize the results. Mainly called for its side-effect the print method.}
 #' \item{[verify()]}{Verify/Check admissibility of the estimates.}
