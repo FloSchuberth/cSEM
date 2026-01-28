@@ -144,7 +144,9 @@
 #' @param .full_output Logical. Should the full output of summarize be printed.
 #'   Defaults to `TRUE`.
 #' @param .graph_attrs Character string. Additional attributes that should be passed 
-#' to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to *c("rankdir=LR")*.   
+#' to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to *c("rankdir=LR")*. 
+#' @param .GSCA_control Named list specifying various computational options for
+#'   GSCA-type models.  
 #' @param .GSCA_modes Either a named list specifying the mode that should be
 #'   used for each composite in the form `"composite_name" = mode`, a single
 #'   character string giving the mode that should be used for all composites.
@@ -519,7 +521,8 @@ args_default <- function(.choices = FALSE) {
     .first_resample          = NULL,
     .force                   = FALSE,
     .full_output             = TRUE,
-    .graph_attrs             = c("rankdir=LR"),    
+    .graph_attrs             = c("rankdir=LR"),   
+    .GSCA_control            = list(.force_IGSCA = FALSE),
     .GSCA_modes              = NULL,
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
@@ -701,4 +704,3 @@ handleArgs <- function(.args_used) {
   
   return(args_default)
 }
->>>>>>> f642253c (IGSCA Trees may or may not be operational)
