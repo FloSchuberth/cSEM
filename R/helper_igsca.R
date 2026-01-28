@@ -538,7 +538,7 @@ updateXAndWW <- function(Z, U, D, C, B, n_constructs) {
 #' 
 #'
 updateCommonFactorTheta <- function(WW, windex_gamma_idx, gamma_idx) {
-  Theta <- WW[windex_gamma_idx, gamma_idx]
+  Theta <- WW[windex_gamma_idx, gamma_idx, drop = FALSE]
   return(Theta)
 }
 
@@ -571,7 +571,7 @@ updateCompositeTheta <-
     
     
     # vecZDelta <- c(X %*% Delta) # Commented out because no longer computing kronecker product
-    beta <- e - A[gamma_idx, ]
+    beta <- e - A[gamma_idx, ,drop = FALSE]
     # XI <- kronecker(t(beta), X)
     # XI <- XI[, windex_gamma_idx]
     
@@ -583,8 +583,8 @@ updateCompositeTheta <-
     # Kronecker bypass -- as shown in calculateWeightsGSCA.R
     # TODO: Bypassing the kronecker product this way leads to minor differences in results,
     # but the original matlab solution may already have been inaccurate due to matrix inversion.
-    Theta <- MASS::ginv(as.numeric(beta %*% t(beta)) * .S[windex_gamma_idx, windex_gamma_idx]) %*%
-      t(beta %*% t(Delta) %*% .S[, windex_gamma_idx])
+    Theta <- MASS::ginv(as.numeric(beta %*% t(beta)) * .S[windex_gamma_idx, windex_gamma_idx, drop = FALSE]) %*%
+      t(beta %*% t(Delta) %*% .S[, windex_gamma_idx,drop = FALSE])
     
     return(Theta)
   }
