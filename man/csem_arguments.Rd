@@ -717,6 +717,9 @@ already?. Defaults to \code{FALSE}.}
 \item{.full_output}{Logical. Should the full output of summarize be printed.
 Defaults to \code{TRUE}.}
 
+\item{.GSCA_control}{Named list specifying various computational options for
+GSCA-type models.}
+
 \item{.GSCA_modes}{Either a named list specifying the mode that should be
 used for each composite in the form \code{"composite_name" = mode}, a single
 character string giving the mode that should be used for all composites.
