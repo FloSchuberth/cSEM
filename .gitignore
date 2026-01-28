@@ -11,3 +11,6 @@ inst/REFERENCES.bib.sav
 Temp
 docs
 dev/Notes
+tests/comparisons/igsca_translation/matlab_out
+.idea
+SimDesign-results*
