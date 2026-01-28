@@ -18,10 +18,10 @@ Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     role  = c("ctb"),
                     email = "",
                     comment = c(ORCID = "0000-0002-2884-1819")),
-            person(given = "Huu Phuc", family = "Nguyen",
+             person(given = "Huu Phuc", family = "Nguyen",
                     role  = c("ctb"),
                     email = "",
-                    comment = c(ORCID = "0009-0000-9344-7132")),  
+                    comment = c(ORCID = "0009-0000-9344-7132")),              
              person(given = "Theo K.", family = "Dijkstra",
                     role  = c("ctb"),
                     email = ""),
@@ -30,10 +30,9 @@ Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     email = "",
                     comment = c(ORCID = "0000-0002-9736-3048")),
             person(given = "Gloria", family="Pietropolli",
-                    role  = c("ctb"),
-                    email="",
-                    comment = c(ORCID = "0000-0001-7623-8419")))
-
+                   role  = c("ctb"),
+                   email="",
+                   comment = c(ORCID = "0000-0001-7623-8419")))
 Maintainer: Florian Schuberth <f.schuberth@utwente.nl>
 Depends: R (>= 4.1.0)
 Description: Estimate, assess, test, and study linear, nonlinear, hierarchical 
@@ -81,7 +80,8 @@ Imports:
     Rcpp,
     generics,
     partykit,
-    Formula
+    Formula,
+    boot
 RdMacros: Rdpack, lifecycle
 RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
@@ -110,4 +110,4 @@ VignetteBuilder: knitr
 Language: en-US
 LinkingTo: 
     Rcpp, RcppArmadillo
-
+    
