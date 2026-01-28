@@ -110,4 +110,3 @@ VignetteBuilder: knitr
 Language: en-US
 LinkingTo: 
     Rcpp, RcppArmadillo
-    
