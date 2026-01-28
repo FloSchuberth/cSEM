@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #' Internal: Calculate PLSc correction factors
 #'
 #' Calculates the correction factor used by PLSc.
@@ -1399,5 +1398,4 @@ setDominantIndicator <- function(
     # .W[i, ] = .W[i, ] * sign(.W[i, .dominant_indicators[i]])
   }
   return(.W)
->>>>>>> 503f2dec (Pre Kronecker work)
 }
