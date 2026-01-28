@@ -68,7 +68,7 @@
 #'   is used. Defaults to "*mean*".
 #' @param .approach_weights Character string. Approach used to
 #'   obtain composite weights. One of: "*PLS-PM*", "*SUMCORR*", "*MAXVAR*",
-#'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*PCA*", "*unit*", "*bartlett*", 
+#'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*IGSCA*", "*PCA*", "*unit*", "*bartlett*", 
 #'   or "*regression*". Defaults to "*PLS-PM*".
 #' @param .args_used A list of function argument names whose value was modified 
 #'   by the user.
@@ -97,7 +97,7 @@
 #' @param .closed_form_ci Logical. Should a closed-form confidence interval be computed?
 #'   Defaults to `FALSE`.
 #' @param .conv_criterion Character string. The criterion to use for the convergence check.
-#'   One of: "*diff_absolute*", "*diff_squared*", or "*diff_relative*". Defaults
+#'   One of: "*diff_absolute*", "*diff_squared*", "*diff_relative*", or "*sum_diff_absolute*". Defaults
 #'   to "*diff_absolute*".
 #' @param .csem_model A (possibly incomplete) [cSEMModel]-list.
 #' @param .csem_resample A list resulting from a call to [resamplecSEMResults()].
@@ -134,7 +134,7 @@
 #'   all available cores will be used. Defaults to "*sequential*".
 #' @param .fbar Integer. Low fitness value that is used to penalize inadmissible models. 
 #' Defaults to -100000.
-#' @param .filename Character string. The file name. 
+#' @param .filename Character string. The file name. Defaults to "results.xlsx".
 #' @param .first_resample A list containing the `.R` resamples based on the original
 #'   data obtained by resamplecSEMResults().
 #' @param .fit_measures Logical. (EXPERIMENTAL) Should additional fit measures 
@@ -144,7 +144,15 @@
 #' @param .full_output Logical. Should the full output of summarize be printed.
 #'   Defaults to `TRUE`.
 #' @param .graph_attrs Character string. Additional attributes that should be passed 
-#' to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to *c("rankdir=LR")*.
+#' to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to *c("rankdir=LR")*.   
+#' @param .GSCA_modes Either a named list specifying the mode that should be
+#'   used for each composite in the form `"composite_name" = mode`, a single
+#'   character string giving the mode that should be used for all composites.
+#'   Possible single character string choices for `mode` are: "*canon*" for
+#'   canonical composites, or "*nomo*" for nomological composites, or `NULL` for
+#'   default behavior. Default behavior is to estimate nomological composites.
+#'   Passed to (I-)GSCA estimating functions in [cSEM::calculateWeightsGSCA()]
+#'   or [cSEM::calculateWeightsIGSCA()]. Defaults to `NULL`.
 #' @param .H The (N x J) matrix of construct scores.
 #' @param .handle_inadmissibles Character string. How should inadmissible results 
 #'   be treated? One of "*drop*", "*ignore*", or "*replace*". If "*drop*", all
@@ -155,10 +163,13 @@
 #'   For "*replace*" resampling continues until there are exactly `.R` admissible solutions.
 #'   Depending on the frequency of inadmissible solutions this may significantly increase
 #'   computing time. Defaults to "*drop*".
-#' @param .id Character string or integer. A character string giving the name or 
+#' @param .id Character string or integer. A character string giving the name or
 #'   an integer of the position of the column of `.data` whose levels are used
-#'   to split `.data` into groups. Defaults to `NULL`.
-#' @param .inference Logical. Should critical values be computed? Defaults to `FALSE`.
+#'   to split `.data` into groups. Values of the column referred to by `.id`
+#'   cannot be solely comprised of `Estimates` or `Information` as these are
+#'   internal identifiers for [cSEM::csem()] functionality. Defaults to `NULL`.
+#' @param .inference Logical. Should critical values be computed? Defaults to
+#'   `FALSE`.
 #' @param .independent Character string. The name of the independent variable.
 #' @param .instruments A named list of vectors of instruments. The names
 #'   of the list elements are the names of the dependent (LHS) constructs of the structural
@@ -179,7 +190,11 @@
 #'   Which prediction metrics should be displayed? One of: "*MAE*", "*RMSE*", "*Q2*", 
 #'   "*MER*", "*MAPE*, "*MSE2*", "*U1*", "*U2*", "*UM*", "*UR*", or "*UD*". 
 #'   Default to c("*MAE*", "*RMSE*", "*Q2*").
-#' @param .model A model in [lavaan model syntax][lavaan::model.syntax] 
+#' @param .maxdepth Maximum number of levels in the tree. See [cSEM::doTrees()]
+#'   and [partykit::mob_control].
+#' @param .minsize Minimum number of cases per node. See [cSEM::doTrees()] and
+#'   [partykit::mob_control].
+#' @param .model A model in [lavaan model syntax][lavaan::model.syntax]
 #'   or a [cSEMModel] list.
 #' @param .moderator Character string. The name of the moderator variable.
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
@@ -219,7 +234,7 @@
 #'   compared across groups. Defaults to `NULL` in which case all weights, loadings and 
 #'   path coefficients of the originally specified model are compared.
 #' @param .path Character string. Path of the directory to save the file to. Defaults
-#'   to `NULL`.
+#'   to the current working directory.
 #' @param .path_coefficients List. A list that contains the resampled and the original 
 #' path coefficient estimates. Typically a part of a `cSEMResults_resampled` object.
 #' Defaults to `NULL`. 
@@ -231,7 +246,7 @@
 #' @param .plot_correlations Character string. Specify which correlations should be plotted, i.e., 
 #'   between the exogenous constructs (`exo`), between the exogenous constructs and the indicators (`all`),
 #'   or not at all (`none`). Defaults to `exo`.
-#' @param .plot_labels Logical. Whether to display edge labels. Defaults to TRUE.
+#' @param .plot_labels Logical. Whether to display edge labels. Defaults to TRUE.   
 #' @param .plot_package Character string. Indicates which packages should be used for plotting.
 #' @param .plot_significances Logical. Should p-values in the form of stars be plotted? Defaults to `TRUE`.
 #' @param .plot_structural_model_only Logical. Should only the structural model, 
@@ -315,6 +330,8 @@
 #' "*individual_reestimate*", "*construct_reestimate*". Defaults to "*none*".
 #' @param .sim_points Integer. How many samples from the truncated normal distribution should
 #'   be simulated to estimate the exogenous construct scores? Defaults to "*100*".
+#' @param .splitvars Character vector. List of variables for [cSEM::doTrees()]
+#'   to consider splitting on. See [partykit::mob]
 #' @param .stage Character string. The stage the model is needed for.
 #'   One of "*first*" or "*second*". Defaults to "*first*".
 #' @param .standardized Logical. Should standardized scores be returned? Defaults
@@ -331,8 +348,8 @@
 #'   training data.
 #' @param .testtype Character string. One of "*twosided*" (H1: The models do not 
 #'  perform equally in predicting indicators belonging to endogenous constructs)"
-#'  and *onesided*" (H1: Model 1 performs better in predicting indicators belonging 
-#' @param .title Character string. Title of an object. Defaults to *""*.
+#'  and *onesided*" (H1: Model 1 performs better in predicting indicators belonging
+#' @param .title Character string. Title of an object. Defaults to *""*.   
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
 #' @param .treat_as_continuous Logical. Should the indicators for the benchmark predictions
@@ -417,21 +434,21 @@ NULL
 #' @keywords internal
 
 args_assess_dotdotdot <- function(
-    .absolute            = TRUE,
-    .alpha               = 0.05,
-    .ci                  = c("CI_standard_z", "CI_standard_t", "CI_percentile", 
-                             "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
-    .closed_form_ci      = FALSE,
-    .handle_inadmissibles= c("drop", "ignore", "replace"),
-    .inference           = FALSE,
-    .null_model          = FALSE,
-    .R                   = 499,
-    .saturated           = FALSE,
-    .seed                = NULL,
-    .type_gfi            = c("ML", "GLS", "ULS"),
-    .type_vcv            = "indicator"
+  .absolute            = TRUE,
+  .alpha               = 0.05,
+  .ci                  = c("CI_standard_z", "CI_standard_t", "CI_percentile", 
+                           "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
+  .closed_form_ci      = FALSE,
+  .handle_inadmissibles= c("drop", "ignore", "replace"),
+  .inference           = FALSE,
+  .null_model          = FALSE,
+  .R                   = 499,
+  .saturated           = FALSE,
+  .seed                = NULL,
+  .type_gfi            = c("ML", "GLS", "ULS"),
+  .type_vcv            = "indicator"
 ) {NULL}
-
+  
 #' Show argument defaults or candidates
 #'
 #' Show all arguments used by package functions including default or candidate
@@ -468,7 +485,7 @@ args_default <- function(.choices = FALSE) {
     .approach_score_benchmark= c("mean", "median", "mode", "round"),
     .approach_score_target   = c("mean", "median", "mode"),
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
-                                 "GSCA", "PCA", "unit", "bartlett", "regression"), 
+                                 "GSCA", "IGSCA", "PCA", "unit", "bartlett", "regression"), 
     .arguments               = NULL,
     .attributes              = NULL,
     .benchmark               = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR","NA"),
@@ -481,7 +498,7 @@ args_default <- function(.choices = FALSE) {
                                  "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
     .ci_colnames             = NULL,
     .closed_form_ci          = FALSE, 
-    .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative"),
+    .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative", "sum_diff_absolute", "mean_diff_absolute"),
     .csem_model              = NULL,
     .csem_resample           = NULL,
     .cv_folds                = 10,
@@ -496,13 +513,14 @@ args_default <- function(.choices = FALSE) {
     .effect                  = NULL,
     .estimate_structural     = TRUE,
     .eval_plan               = c("sequential", "multicore","multisession"),
-    .fbar                    = -100000,
-    .filename                = NULL,
+    .fbar                    = -100000,    
+    .filename                = "results.xlsx",
     .fit_measures            = FALSE,
     .first_resample          = NULL,
     .force                   = FALSE,
     .full_output             = TRUE,
-    .graph_attrs             = c("rankdir=LR"),
+    .graph_attrs             = c("rankdir=LR"),    
+    .GSCA_modes              = NULL,
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
@@ -559,7 +577,7 @@ args_default <- function(.choices = FALSE) {
                                  "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
                                  "cfi", "cn", "gfi", "ifi", "nfi", "nnfi", 
                                  "reliability",
-                                 "rmsea", "rms_theta", "srmr",
+                                 "rmsea", "rms_theta", "srmr", "FIT", "FIT_m", "FIT_s",
                                  "gof", "htmt", "htmt2", "r2", "r2_adj",
                                  "rho_T", "rho_T_weighted", "vif", 
                                  "vifmodeB"),
@@ -612,11 +630,11 @@ args_default <- function(.choices = FALSE) {
     .y                       = NULL,
     .z                       = NULL
   )
-  
+
   if(!.choices) {
     args <- lapply(args, function(x) eval(x)[1])
   }
-  
+    
   args_sorted <- args[sort(names(args))]
   
   return(args_sorted)
@@ -656,13 +674,13 @@ handleArgs <- function(.args_used) {
   # choices_logical <- Filter(function(x) any(is.logical(x)), args_default(.choices = TRUE))
   # choices_numeric <- Filter(function(x) any(is.numeric(x)), args_default(.choices = TRUE))
   choices_character <- Filter(function(x) any(is.character(x)), args_default(.choices = TRUE))
-  
+
   character_args <- intersect(names(choices_character), args_used_names)
   x <- Map(function(x, y) x %in% y, 
-           x = .args_used[character_args], 
-           y = choices_character[character_args]
-  )
-  
+      x = .args_used[character_args], 
+      y = choices_character[character_args]
+      )
+
   lapply(seq_along(x), function(i) {
     if(isFALSE(x[[i]])) {
       n <- names(x[i])
@@ -672,7 +690,7 @@ handleArgs <- function(.args_used) {
            "Choices are: ", paste0("`", a[-length(a)],"`", collapse = ", "), 
            " or " , paste0("`", a[length(a)], "`"), call. = FALSE)
     }
-    
+
   })
   ## Replace all arguments that were changed or explicitly given and keep
   #  the default values for the others
@@ -683,3 +701,4 @@ handleArgs <- function(.args_used) {
   
   return(args_default)
 }
+>>>>>>> f642253c (IGSCA Trees may or may not be operational)
