@@ -36,6 +36,13 @@ doTrees <- function(.object,
   )
   
 
+  ## Install rootSolve if not already installed
+  if (!requireNamespace("partykit", quietly = TRUE)) {
+    stop2(
+      "Package `partykit` required. Use `install.packages(\"partykit\")` and rerun.")
+  }
+  
+  
 ## Prepare for MOB ---------------------------------------------------------
 ## Formula as it is done in networktree:::networktree.default(), by Payton J.
 ## Jones and Achim Zeileis
