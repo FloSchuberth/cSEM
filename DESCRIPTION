@@ -10,6 +10,10 @@ Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     role  = c("aut", "cre"),
                     email = "f.schuberth@utwente.nl",
                     comment = c(ORCID = "0000-0002-2110-9086")),
+             person(given = "Michael S.", family = "Truong",
+                    role = c("ctb"),
+                    email = "emstruonger@gmail.com",
+                    comment = c(ORCID = "0009-0006-4521-6528")),
              person(given = "Tamara", family = "Schamberger",
                     role  = c("ctb"),
                     email = "tamara.schamberger@uni-wuerzburg.de",
@@ -110,3 +114,4 @@ VignetteBuilder: knitr
 Language: en-US
 LinkingTo: 
     Rcpp, RcppArmadillo
+    
