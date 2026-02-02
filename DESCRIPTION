@@ -78,7 +78,7 @@ Imports:
     Formula,
     boot
 RdMacros: Rdpack, lifecycle
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
 Suggests: 
     dplyr,
