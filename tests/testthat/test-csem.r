@@ -72,43 +72,20 @@ dat <- MASS::mvrnorm(300, rep(0, nrow(Sigma$Sigma)),
                      Sigma = Sigma$Sigma, empirical = TRUE)
 
 ## Estimate
-for (i in c(
-  "PLS-PM",
-  "GSCA",
-  "SUMCORR",
-  "MAXVAR",
-  "MINVAR",
-  "GENVAR",
-  "PCA",
-  "unit",
-  "bartlett",
-  "regression"
-)) {
+for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR", "PCA",
+           "unit", "bartlett", "regression")) {
   ## - "SSQCOR" is excluded as it is rather unstable, regularly producing differences
   ##   between estimate and population value larger than 0.01.
-
-  if (i == "PLS-PM") {
-    for (j in c("modeA", "modeB")) {
-      res <- csem(
-        dat,
-        model_Sigma,
-        .approach_weights = i,
-        .PLS_modes = j,
-        .dominant_indicators = c("eta1" = "y11", "eta2" = "y21", "eta3" = "y31")
-      )
-
+  
+  if(i == "PLS-PM"){
+    for(j in c("modeA","modeB")){
+      res <-  csem(dat, model_Sigma, .approach_weights = i,.PLS_modes = j, 
+                   .dominant_indicators = c("eta1" = "y11", "eta2" = "y21", "eta3" = "y31"))
+      
       ## Comparison
-      path <- comparecSEM(
-        res,
-        .what = "Path_estimates",
-        pop_params_Sigma$Path_coefficients
-      )
-      loadings <- comparecSEM(
-        res,
-        .what = "Loading_estimates",
-        pop_params_Sigma$Loadings
-      )
-
+      path     <- comparecSEM(res, .what = "Path_estimates", pop_params_Sigma$Path_coefficients)
+      loadings <- comparecSEM(res, .what = "Loading_estimates", pop_params_Sigma$Loadings)
+      
       ## Test
       # Note: the tolerance is necessary since Croon correction requires a CFA (i.e. ML estimation)
       # which is only consistent (i.e. will not exactly reproduce the population values for a finite sample size)
@@ -169,26 +146,16 @@ for (i in c(
   })
 
   # Export to Excel test
-  exportToExcel(
-    assess(res),
-    .filename = paste0("test_assess_", i, ".xlsx"),
-    .path = testthat::test_path("test_results_exportToExcel")
-  )
-  exportToExcel(
-    summarize(res),
-    .filename = paste0("test_summarize_", i, ".xlsx"),
-    .path = testthat::test_path("test_results_exportToExcel")
-  )
-  exportToExcel(
-    predict(res, .handle_inadmissibles = if (i == "GSCA") "ignore" else "stop", .benchmark = "lm", .disattenuate = FALSE),
-    .filename = paste0("test_predict_", i, ".xlsx"),
-    .path = testthat::test_path("test_results_exportToExcel")
-  )
-  exportToExcel(
-    testOMF(res, .R = 10, .handle_inadmissibles = if (i == "GSCA") "ignore" else "drop"),
-    .filename = paste0("test_testOMF_", i, ".xlsx"),
-    .path = testthat::test_path("test_results_exportToExcel")
-  )
+  exportToExcel(assess(res), .filename = paste0("test_assess_", i, ".xlsx"),
+                .path = testthat::test_path("test_results_exportToExcel"))
+  exportToExcel(summarize(res), .filename = paste0("test_summarize_", i, ".xlsx"),
+                .path = testthat::test_path("test_results_exportToExcel"))
+  exportToExcel(predict(res, .handle_inadmissibles = if (i == "GSCA") "ignore" else "stop", .benchmark = "lm", .disattenuate = FALSE),
+                .filename = paste0("test_predict_", i, ".xlsx"),
+                .path = testthat::test_path("test_results_exportToExcel"))
+  exportToExcel(testOMF(res, .R = 10, .handle_inadmissibles = if (i == "GSCA") "ignore" else "drop"),
+                        .filename = paste0("test_testOMF_", i, ".xlsx"),
+                        .path = testthat::test_path("test_results_exportToExcel"))
 }
 
 ### DGP_linear_3compostites ====================================================
@@ -334,9 +301,7 @@ test_that("DPG_2ndorder_composites_of_cfs is correctly estimated", {
 })
 ### DGP_2ndorder - Composite of composites =====================================
 # Loads Sigma, models and population values
-load(
-  file = testthat::test_path("data/DGP_2ndorder_composite_of_composites.RData")
-)
+load(file = testthat::test_path("data/DGP_2ndorder_composite_of_composites.RData"))
 
 ## Draw data
 dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma$Sigma)), Sigma = Sigma$Sigma, empirical = TRUE)

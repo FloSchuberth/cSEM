@@ -15,7 +15,6 @@ printSummarizeOverview <- function(.summarize_object) {
     col_align("\n\tEstimation status", 35), "= ", ifelse(sum(x$Estimation_status) == 0, green("Ok"), 
                                                          c(red("Not ok!"), "Use: verify()."))
   )
-  
   cat2(
     col_align("\n\tNumber of observations", 35), "= ", nrow(x$Arguments$.data),
     col_align("\n\tWeight estimator", 35), "= ", 

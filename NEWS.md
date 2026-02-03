@@ -2,6 +2,8 @@
 
 #  cSEM 0.6.2
 
+- Implement AGAS-PLS. Thanks to Gloria Pietropolli
+
 - Update R dependency (R>= 4.1.0)
 
 # cSEM 0.6.1

@@ -71,19 +71,15 @@ foreman <- function(
   csem_model <- parseModel(.model, .instruments = .instruments)
 
   ## Prepare, check, and clean data (a data.frame)
-  X_cleaned <- processData(
-    .data = .data,
-    .model = csem_model,
-    .instruments = NULL
-  )
+  X_cleaned <- processData(.data = .data,
+                           .model = csem_model,
+                           .instruments = NULL)
 
   ### Computation ==============================================================
   ## Calculate empirical indicator covariance/correlation matrix
-  Cor <- calculateIndicatorCor(
-    .X_cleaned = X_cleaned,
-    .approach_cor_robust = .approach_cor_robust,
-    .approach_weights = .approach_weights
-  )
+  Cor <- calculateIndicatorCor(.X_cleaned = X_cleaned,
+                               .approach_cor_robust = .approach_cor_robust,
+                               .approach_weights = .approach_weights)
 
   # Extract the correlation matrix
   S <- Cor$S
@@ -110,10 +106,7 @@ foreman <- function(
         # starting values
         .starting_values = .starting_values
       )
-    } else if (
-      .approach_weights %in%
-        c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")
-    ) {
+    } else if (.approach_weights %in% c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
       W <- calculateWeightsKettenring(
         .S = S,
         .csem_model = csem_model,
@@ -130,13 +123,8 @@ foreman <- function(
       #        calculateReliabilities() function. Here only placeholders for
       #        the weights are set in order to keep the list structure of W.
 
-      W <- list(
-        "W" = csem_model$measurement,
-        "E" = NULL,
-        "Modes" = NULL,
-        "Conv_status" = NULL,
-        "Iterations" = 0
-      )
+      W <- list("W" = csem_model$measurement, "E" = NULL, "Modes" = NULL,
+                "Conv_status" = NULL, "Iterations" = 0)
     } else if (.approach_weights == "PCA") {
       W <- calculateWeightsPCA(
         .S = S,
@@ -189,9 +177,7 @@ foreman <- function(
     P <- calculateConstructVCV(.C = C, .Q = Q)
 
     ## Estimate structural coef
-    if (sum(rowSums(csem_model$structural)) == 0) {
-      .estimate_structural <- FALSE
-    }
+    if (sum(rowSums(csem_model$structural)) == 0) {.estimate_structural <- FALSE}
 
     if (.estimate_structural) {
       estim_results <- estimatePath(

@@ -1,5 +1,5 @@
 \dontrun{
-# NOTE: to run the example. Download and load the newst version of cSEM.DGP
+# NOTE: to run the example. Download and load the newest version of cSEM.DGP
 # from GitHub using devtools::install_github("M-E-Rademaker/cSEM.DGP").
 
 # Create two data generating processes (DGPs) that only differ in how the composite

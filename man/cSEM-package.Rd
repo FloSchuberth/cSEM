@@ -40,6 +40,7 @@ Other contributors:
   \item Huu Phuc Nguyen (\href{https://orcid.org/0009-0000-9344-7132}{ORCID}) [contributor]
   \item Theo K. Dijkstra [contributor]
   \item Jörg Henseler (\href{https://orcid.org/0000-0002-9736-3048}{ORCID}) [contributor]
+  \item Gloria Pietropolli (\href{https://orcid.org/0000-0001-7623-8419}{ORCID}) [contributor]
 }
 
 }

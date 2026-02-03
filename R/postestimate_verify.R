@@ -96,14 +96,10 @@ verify <- function(.object){
     if (!is.null(Stage) && Stage == "First_stage") {
       # do nothing
     } else {
-      if (
-        x1$Model$model_type == "Linear" &&
-          !matrixcalc::is.positive.semi.definite(fit(
-            .object,
-            .saturated = FALSE,
-            .type_vcv = 'indicator'
-          ))
-      ) {
+      if (x1$Model$model_type == "Linear" &&
+          !matrixcalc::is.positive.semi.definite(fit(.object,
+                                                     .saturated = FALSE,
+                                                     .type_vcv = 'indicator'))) {
         stat["5"] <- TRUE
       }
     }
