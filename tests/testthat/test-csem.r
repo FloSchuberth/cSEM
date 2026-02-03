@@ -150,10 +150,10 @@ for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR", "PCA",
                 .path = testthat::test_path("test_results_exportToExcel"))
   exportToExcel(summarize(res), .filename = paste0("test_summarize_", i, ".xlsx"),
                 .path = testthat::test_path("test_results_exportToExcel"))
-  exportToExcel(predict(res, .handle_inadmissibles = if (i == "GSCA") "ignore" else "stop", .benchmark = "lm", .disattenuate = FALSE),
+  exportToExcel(predict(res, .handle_inadmissibles = 'set_NA', .benchmark = "lm", .disattenuate = FALSE),
                 .filename = paste0("test_predict_", i, ".xlsx"),
                 .path = testthat::test_path("test_results_exportToExcel"))
-  exportToExcel(testOMF(res, .R = 10, .handle_inadmissibles = if (i == "GSCA") "ignore" else "drop"),
+  exportToExcel(testOMF(res, .R = 10, .handle_inadmissibles = 'drop'),
                         .filename = paste0("test_testOMF_", i, ".xlsx"),
                         .path = testthat::test_path("test_results_exportToExcel"))
 }
