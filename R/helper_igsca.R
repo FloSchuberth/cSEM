@@ -196,8 +196,8 @@ igsca <-
       # After each cycle, the Gamma, W and V matrices are updated
       for (gamma_idx in seq_len(n_constructs)) {
         tot <- n_indicators + gamma_idx
-        windex_gamma_idx <- (W0[, gamma_idx] == 1)
-        X_gamma_idx <- X[, windex_gamma_idx]
+        windex_gamma_idx <- (W0[, gamma_idx, drop = FALSE] == 1)
+        X_gamma_idx <- X[, windex_gamma_idx, drop = FALSE]
 
         if (con_type[gamma_idx] == "Composite") {
           Theta <-
@@ -351,10 +351,10 @@ initializeIgscaEstimates <- function(Z0, W0, B0, .S = args_default()$.S) {
 
     for (p in seq_len(P)) {
       t_lil <- J + p
-      windex_p <- which(W0[, p] != 0)
+      windex_p <- which(W0[, p, drop = FALSE] != 0)
       m <- matrix(0, nrow = 1, ncol = TRep)
       m[t_lil] <- 1
-      a <- A[p, ]
+      a <- A[p, , drop = FALSE]
       beta <- m - a
       H1 <- diag(P)
       H2 <- diag(TRep)
@@ -371,11 +371,11 @@ initializeIgscaEstimates <- function(Z0, W0, B0, .S = args_default()$.S) {
 
       # Kronecker bypass -- as shown in calculateWeightsGSCA.R
       Theta <- MASS::ginv(
-        as.numeric(beta %*% t(beta)) * .S[windex_p, windex_p]
+        as.numeric(beta %*% t(beta)) * .S[windex_p, windex_p, drop = FALSE]
       ) %*%
-        t(beta %*% t(Delta) %*% .S[, windex_p])
+        t(beta %*% t(Delta) %*% .S[, windex_p, drop = FALSE])
 
-      zw <- Z[, windex_p] %*% Theta
+      zw <- Z[, windex_p, drop = FALSE] %*% Theta
 
       Theta <- sqrt(N) * Theta / norm(zw, "2")
       W[windex_p, p] <- Theta
@@ -389,8 +389,8 @@ initializeIgscaEstimates <- function(Z0, W0, B0, .S = args_default()$.S) {
     f0 <- f
     vecPsi <- c(Psi)
   }
-  C <- A[, 1:J]
-  B <- A[, (J + 1):ncol(A)]
+  C <- A[, 1:J, drop = FALSE]
+  B <- A[, (J + 1):ncol(A), drop = FALSE]
   return(list(
     "W" = W,
     "C" = C,
@@ -489,7 +489,7 @@ initializeAlsEstimates <- function(
         u <- svd_out$u
         v <- svd_out$v
         # Utilde deviates from Matlab because of the SVD
-        Utilde <- v[, 1:n_indicators] %*% t(u)
+        Utilde <- v[, 1:n_indicators, drop = FALSE] %*% t(u)
         U <- F_o %*% Utilde
       },
       error = function(e) {
@@ -559,7 +559,7 @@ updateXAndWW <- function(Z, U, D, C, B, n_constructs) {
 #'
 #'
 updateCommonFactorTheta <- function(WW, windex_gamma_idx, gamma_idx) {
-  Theta <- WW[windex_gamma_idx, gamma_idx]
+  Theta <- WW[windex_gamma_idx, gamma_idx, drop = FALSE]
   return(Theta)
 }
 
@@ -604,7 +604,7 @@ updateCompositeTheta <-
     Delta <- (W %*% H2 %*% A) - (V %*% H1)
 
     # vecZDelta <- c(X %*% Delta) # Commented out because no longer computing kronecker product
-    beta <- e - A[gamma_idx, ]
+    beta <- e - A[gamma_idx, , drop = FALSE]
     # XI <- kronecker(t(beta), X)
     # XI <- XI[, windex_gamma_idx]
 
@@ -620,7 +620,7 @@ updateCompositeTheta <-
     Theta <- MASS::ginv(
       as.numeric(beta %*% t(beta)) * .S[windex_gamma_idx, windex_gamma_idx]
     ) %*%
-      t(beta %*% t(Delta) %*% .S[, windex_gamma_idx])
+      t(beta %*% t(Delta) %*% .S[, windex_gamma_idx, drop = FALSE])
 
     return(Theta)
   }
@@ -714,7 +714,7 @@ updateCBDU <-
     # TODO: The following procedure creates non-zero columns of U, even for composite indicators. It would be better if this could be avoided.
     # Solution for Q is copied from estimators_weights.R
     Q <- qr.Q(qr(Gamma), complete = TRUE)
-    F_o <- Q[, (n_constructs + 1):n_case]
+    F_o <- Q[, (n_constructs + 1):n_case, drop = FALSE]
 
     if (n_case <= n_indicators) {
       # From estimator_weights.R, which is from one of the older GSCA_m implementations
@@ -735,7 +735,7 @@ updateCBDU <-
           u <- svd_out$u
           v <- svd_out$v
           # Utilde deviates from Matlab because of the SVD
-          Utilde <- v[, 1:n_indicators] %*% t(u)
+          Utilde <- v[, 1:n_indicators, drop = FALSE] %*% t(u)
           U <- F_o %*% Utilde
         },
         error = function(e) {
@@ -785,7 +785,7 @@ getIgscaInputs <-
 
     csemify <- parseModel(.model = .model)
 
-    Z0 <- .data[, csemify$indicators]
+    Z0 <- .data[, csemify$indicators, drop = FALSE]
 
     # Igsca assumes \eta \times B, so the rows should be from
     # and the columns should be to. This is in contrast to 
