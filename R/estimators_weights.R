@@ -734,7 +734,7 @@ calculateWeightsGSCAm <- function(
       .tolerance = .tolerance,
       .conv_criterion = .conv_criterion
     )) &
-      (iter_counter <= .iter_max)
+      (iter_counter < .iter_max)
   ) {
     iter_counter <- iter_counter + 1
     est0 <- est
