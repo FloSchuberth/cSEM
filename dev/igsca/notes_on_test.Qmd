@@ -1,0 +1,23 @@
+---
+title: "Untitled"
+format: html
+---
+
+Various questions:
+
+
+
+# Nomological components vs canonical components
+
+Nomological component definition:
+
+
+Canonical component definition:
+
+
+What parts of the algorithm show whether nomological or canonical components are assumed?
+
+
+- I suspect that the current IGSCA implementation uses nomological components and not canonical, but it doesn't explain why the current IGSCA implementation differs from both the current GSCA/GSCA_M implementations
+
+
