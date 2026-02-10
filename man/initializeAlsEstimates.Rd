@@ -5,6 +5,14 @@
 \title{Prepare for ALS Algorithm}
 \usage{
 initializeAlsEstimates(
+  .X = args_default()$.X,
+  .S = args_default()$.S,
+  .csem_model = args_default()$.csem_model,
+  .conv_criterion = args_default()$.conv_criterion,
+  .GSCA_modes = args_default()$.GSCA_modes,
+  .iter_max = args_default()$.iter_max,
+  .starting_values = args_default()$.starting_values,
+  .tolerance = args_default()$.tolerance,
   Z0,
   W0,
   B0,
@@ -12,11 +20,42 @@ initializeAlsEstimates(
   n_case,
   n_constructs,
   indicator_type,
-  normalization_factor,
-  .S = args_default()$.S
+  normalization_factor
 )
 }
 \arguments{
+\item{.X}{A matrix of processed data (scaled, cleaned and ordered).}
+
+\item{.S}{The (K x K) empirical indicator correlation matrix.}
+
+\item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
+
+\item{.conv_criterion}{Character string. The criterion to use for the convergence check.
+One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
+to "\emph{diff_absolute}".}
+
+\item{.GSCA_modes}{Either a named list specifying the mode that should be
+used for each composite in the form \code{"composite_name" = mode}, a single
+character string giving the mode that should be used for all composites.
+Possible single character string choices for \code{mode} are: "\emph{canon}" for
+canonical composites, or "\emph{nomo}" for nomological composites, or \code{NULL} for
+default behavior. Default behavior is to estimate nomological composites.
+Passed to (I-)GSCA estimating functions in \code{\link[=calculateWeightsGSCA]{calculateWeightsGSCA()}}
+or \code{\link[=calculateWeightsIGSCA]{calculateWeightsIGSCA()}}. Defaults to \code{NULL}.}
+
+\item{.iter_max}{Integer. The maximum number of iterations allowed.
+If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
+If the algorithm exceeds the specified number, weights of iteration step
+\code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
+
+\item{.starting_values}{A named list of vectors where the
+list names are the construct names whose indicator weights the user
+wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}
+pairs, where \code{value} is the (scaled or unscaled) starting weight. Defaults to \code{NULL}.}
+
+\item{.tolerance}{Double. The tolerance criterion for convergence.
+Defaults to \code{1e-05}.}
+
 \item{Z0}{Data matrix of N cases (measurements) x J indicators with named
 columns, unstandardized.}
 
@@ -39,8 +78,6 @@ composite variable (0). This vector is important for computing the
 uniqueness terms (D) because it zeros the entries for composite indicators.}
 
 \item{normalization_factor}{Factor to normalize the data by}
-
-\item{.S}{The (K x K) empirical indicator correlation matrix.}
 }
 \value{
 List of matrices to put through the Alternating Least Squared (ALS) algorithm:

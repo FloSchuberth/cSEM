@@ -227,6 +227,7 @@ foreman <- function(
         .S = S,
         .csem_model = csem_model,
         .conv_criterion = .conv_criterion,
+        .GSCA_modes = .GSCA_modes,
         .iter_max = .iter_max,
         .tolerance = .tolerance,
         .starting_values = .starting_values
@@ -239,13 +240,13 @@ foreman <- function(
         # IGSCA Algorithm for a mixture of Common factor and Composite constructs
         W <- calculateWeightsIGSCA(
           .data = X,
-          .csem_model = csem_model,
-          .tolerance = .tolerance,
-          .iter_max = .iter_max,
-          .dominant_indicators = .dominant_indicators,
-          .conv_criterion = .conv_criterion,
           .S = S,
-          .starting_values = .starting_values
+          .csem_model = csem_model,
+          .conv_criterion = .conv_criterion,
+          .iter_max = .iter_max,
+          .tolerance = .tolerance,
+          .starting_values = .starting_values,
+          .GSCA_modes = .GSCA_modes
         )
       } else {
         stop2(

@@ -852,49 +852,49 @@ calculateWeightsGSCAm <- function(
 } # END calculateWeightsGSCAm
 
 #' Calculate weights using Integrated Generalised Structured Component Analysis (I-GSCA)
-#' 
+#'
 #' @inheritParams igsca
 #' @inheritParams getIgscaInputs
 #' @inheritParams csem_arguments
-#' 
+#'
 #' @return List of matrices of the fitted I-GSCA Model
 #'
-#' 
-calculateWeightsIGSCA <- function(.data,
-                                  .csem_model = args_default()$.csem_model, 
-                                  .conv_criterion = args_default()$.conv_criterion,
-                                  .dominant_indicators = args_default()$.dominant_indicators,
-                                  .GSCA_modes = args_default()$.GSCA_modes,
-                                  .iter_max = args_default()$.iter_max,
-                                  .tolerance = args_default()$.tolerance,
-                                  .S = args_default()$.S,
-                                  .starting_values = args_default()$.starting_values
-                                  ) {
-  
+#'
+calculateWeightsIGSCA <- function(
+  .data,
+  .S = args_default()$.S,
+  .csem_model = args_default()$.csem_model,
+  .conv_criterion = args_default()$.conv_criterion,
+  .GSCA_modes = args_default()$.GSCA_modes,
+  .iter_max = args_default()$.iter_max,
+  .tolerance = args_default()$.tolerance,
+  .starting_values = args_default()$.starting_values
+) {
   if (is.null(.GSCA_modes)) {
-    # TODO: This function needs to be deprecated. 
+    # TODO: This function needs to be deprecated.
     igsca_in <- getIgscaInputs(.model = .csem_model, .data = .data)
   } else {
     stop(".GSCA_modes is currently a non-functional argument")
   }
-  
+
   igsca_out <- igsca(
+    .X  = .data,
+    .S = .S,
+    .csem_model = .csem_model,
+    .conv_criterion = .conv_criterion,
+    .GSCA_modes  = .GSCA_modes,
+    .iter_max = .iter_max,
+    .starting_values = .starting_values,
+    .tolerance = .tolerance,
     Z0 = igsca_in$Z0,
     W0 = igsca_in$W0,
     C0 = igsca_in$C0,
     B0 = igsca_in$B0,
     con_type = igsca_in$con_type,
-    indicator_type = igsca_in$indicator_type,
-    .dominant_indicators = .dominant_indicators,
-    .iter_max = .iter_max,
-    .tolerance = .tolerance,
-    .conv_criterion = .conv_criterion,
-    .S = .S,
-    .starting_values = .starting_values
+    indicator_type = igsca_in$indicator_type
   )
-  
+
   return(igsca_out)
-  
 }
 
 

@@ -465,3 +465,11 @@ test_that("getIgscaInputs output is of the correct dimensions", {
   # Every indicator should only have weights to one construct
   expect_equal(unique(rowSums(W0)), 1)
 })
+
+
+
+# Starting Values --------------------------------------------------------
+test_that("Starting Values work for igsca", {
+  # TODO: Fill this out
+  expect_true(TRUE)
+})

@@ -6,7 +6,6 @@
 #'
 #' **Note**: Here, we assume that there is only one unique loading per indicator.
 #'
-#' Sign flipping has been consolidated to setDominantIndicator().
 #'
 #' @param Z0 Data matrix of N cases (measurements) x J indicators with named
 #'   columns, unstandardized.
@@ -24,22 +23,6 @@
 #'   (rows of W0 and C0) corresponds to a common factor variable (1) or a
 #'   composite variable (0). This vector is important for computing the
 #'   uniqueness terms (D) because it zeros the entries for composite indicators.
-#' @param .dominant_indicators A named vector that indices the dominant
-#'   indicator for each construct variable. *It is to be clarified whether this
-#'   should only apply to factor latent variables or also composite latent
-#'   variables.* This is important for ensuring that the signs of the
-#'   path-coefficients and loadings are consistent. It is sometimes the case in
-#'   composite-based structural equation modelling methods that
-#'   loadings/path-coefficients may have the opposite sign. The length of this
-#'   vector should be equal to the number of construct variables and each value
-#'   should represent the row number of the dominant indicator for that
-#'   construct variable.
-#' @param .iter_max Maximum number of iterations of the Alternating Least Squares
-#'   (ALS) algorithm.
-#' @param .tolerance Minimum amount of absolute change in the estimates of the
-#'   path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero,
-#'   meaning there are no path-coefficients) between ALS iterations before ending
-#'   the optimization.
 #' @inheritParams csem
 #' @inheritParams csem_arguments
 #'
@@ -96,18 +79,20 @@
 #' }
 igsca <-
   function(
+    .X = args_default()$.X,
+    .S = args_default()$.S,
+    .csem_model = args_default()$.csem_model,
+    .conv_criterion = args_default()$.conv_criterion,
+    .GSCA_modes = args_default()$.GSCA_modes,
+    .iter_max = args_default()$.iter_max,
+    .starting_values = args_default()$.starting_values,
+    .tolerance = args_default()$.tolerance,
     Z0,
     W0,
     C0,
     B0,
     con_type,
-    indicator_type,
-    .dominant_indicators,
-    .iter_max = 100,
-    .tolerance = 0.0001,
-    .conv_criterion,
-    .S = args_default()$.S,
-    .starting_values = args_default()$.starting_values
+    indicator_type
   ) {
     ## Initialize Computational Variables -----------------------------------------------------
     n_case <- nrow(Z0)
@@ -137,6 +122,14 @@ igsca <-
     # TODO: Refactor initializeAlsEstimates and add starting values both before and after
 
     prepared_for_ALS <- initializeAlsEstimates(
+      .X = .X,
+      .S = .S,
+      .csem_model = .csem_model,
+      .conv_criterion = .conv_criterion,
+      .GSCA_modes = .GSCA_modes,
+      .iter_max = .iter_max,
+      .starting_values = .starting_values,
+      .tolerance = .tolerance,
       Z0 = Z0,
       W0 = W0,
       B0 = B0,
@@ -144,8 +137,7 @@ igsca <-
       n_case = n_case,
       n_constructs = n_constructs,
       indicator_type = indicator_type,
-      normalization_factor = normalization_factor,
-      .S = .S
+      normalization_factor = normalization_factor
     )
 
     list2env(
@@ -429,6 +421,14 @@ initializeIgscaEstimates <- function(Z0, W0, B0, .S = args_default()$.S) {
 #' * Estimated Related to Uniqueness Errors vector (U)
 #' * Estimated Construct Scores matrix (Gamma)
 initializeAlsEstimates <- function(
+  .X                           = args_default()$.X,
+  .S                           = args_default()$.S,
+  .csem_model                  = args_default()$.csem_model,
+  .conv_criterion              = args_default()$.conv_criterion,
+  .GSCA_modes                  = args_default()$.GSCA_modes,
+  .iter_max                    = args_default()$.iter_max,
+  .starting_values             = args_default()$.starting_values,
+  .tolerance                   = args_default()$.tolerance,
   Z0,
   W0,
   B0,
@@ -436,27 +436,44 @@ initializeAlsEstimates <- function(
   n_case,
   n_constructs,
   indicator_type,
-  normalization_factor,
-  .S = args_default()$.S
+  normalization_factor
 ) {
   # Initialize Bindpoints for list2env
   W <- matrix()
+  C <- matrix()
   B <- matrix()
 
   # Initial estimates using GSCA
-  initial_est <-
-    initializeIgscaEstimates(
-      Z0 = Z0,
-      W0 = W0,
-      B0 = B0,
-      .S = .S
-    )
+  
+  # browser()
+  # initial_est <-
+  #   initializeIgscaEstimates(
+  #     Z0 = Z0,
+  #     W0 = W0,
+  #     B0 = B0,
+  #     .S = .S
+  #   )
 
-  list2env(initial_est[c("W", "C", "B")], envir = environment())
+  GSCA_starting_values <- calculateWeightsGSCA(
+    .X = .X,
+    .S = .S,
+    .csem_model = .csem_model,
+    .conv_criterion = .conv_criterion,
+    .GSCA_modes = .GSCA_modes,
+    .iter_max = .iter_max,
+    .tolerance = .tolerance,
+    .starting_values = .starting_values
+  )
+
+  GSCA_starting_values$B <- t(GSCA_starting_values$B)
+  GSCA_starting_values$W <- t(GSCA_starting_values$W)
+
+  list2env(GSCA_starting_values[c("W", "C", "B")], envir = environment())
 
   # Initialize matrix to hold V
   V <- cbind(diag(n_indicators), W)
   
+  # Use internal GSCA_M Instead alongside its starting values
   # Normalize data matrix to make Z
   # normalization_factor <- sqrt(n_case - 1)
   Z <- Z0 / normalization_factor

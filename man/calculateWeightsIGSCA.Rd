@@ -6,13 +6,13 @@
 \usage{
 calculateWeightsIGSCA(
   .data,
+  .S = args_default()$.S,
   .csem_model = args_default()$.csem_model,
   .conv_criterion = args_default()$.conv_criterion,
-  .dominant_indicators = args_default()$.dominant_indicators,
   .GSCA_modes = args_default()$.GSCA_modes,
   .iter_max = args_default()$.iter_max,
   .tolerance = args_default()$.tolerance,
-  .S = args_default()$.S
+  .starting_values = args_default()$.starting_values
 )
 }
 \arguments{
@@ -24,22 +24,13 @@ of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or
 "\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (will be converted to factor),
 or a mix of several types.}
 
+\item{.S}{The (K x K) empirical indicator correlation matrix.}
+
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
 One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
 to "\emph{diff_absolute}".}
-
-\item{.dominant_indicators}{A named vector that indices the dominant
-indicator for each construct variable. \emph{It is to be clarified whether this
-should only apply to factor latent variables or also composite latent
-variables.} This is important for ensuring that the signs of the
-path-coefficients and loadings are consistent. It is sometimes the case in
-composite-based structural equation modelling methods that
-loadings/path-coefficients may have the opposite sign. The length of this
-vector should be equal to the number of construct variables and each value
-should represent the row number of the dominant indicator for that
-construct variable.}
 
 \item{.GSCA_modes}{Either a named list specifying the mode that should be
 used for each composite in the form \code{"composite_name" = mode}, a single
@@ -50,15 +41,18 @@ default behavior. Default behavior is to estimate nomological composites.
 Passed to (I-)GSCA estimating functions in \code{\link[=calculateWeightsGSCA]{calculateWeightsGSCA()}}
 or \code{\link[=calculateWeightsIGSCA]{calculateWeightsIGSCA()}}. Defaults to \code{NULL}.}
 
-\item{.iter_max}{Maximum number of iterations of the Alternating Least Squares
-(ALS) algorithm.}
+\item{.iter_max}{Integer. The maximum number of iterations allowed.
+If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
+If the algorithm exceeds the specified number, weights of iteration step
+\code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
 
-\item{.tolerance}{Minimum amount of absolute change in the estimates of the
-path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero,
-meaning there are no path-coefficients) between ALS iterations before ending
-the optimization.}
+\item{.tolerance}{Double. The tolerance criterion for convergence.
+Defaults to \code{1e-05}.}
 
-\item{.S}{The (K x K) empirical indicator correlation matrix.}
+\item{.starting_values}{A named list of vectors where the
+list names are the construct names whose indicator weights the user
+wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}
+pairs, where \code{value} is the (scaled or unscaled) starting weight. Defaults to \code{NULL}.}
 }
 \value{
 List of matrices of the fitted I-GSCA Model

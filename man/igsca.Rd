@@ -5,20 +5,55 @@
 \title{R Implementation of igsca_sim.m}
 \usage{
 igsca(
+  .X = args_default()$.X,
+  .S = args_default()$.S,
+  .csem_model = args_default()$.csem_model,
+  .conv_criterion = args_default()$.conv_criterion,
+  .GSCA_modes = args_default()$.GSCA_modes,
+  .iter_max = args_default()$.iter_max,
+  .starting_values = args_default()$.starting_values,
+  .tolerance = args_default()$.tolerance,
   Z0,
   W0,
   C0,
   B0,
   con_type,
-  indicator_type,
-  .dominant_indicators,
-  .iter_max = 100,
-  .tolerance = 1e-04,
-  .conv_criterion,
-  .S = args_default()$.S
+  indicator_type
 )
 }
 \arguments{
+\item{.X}{A matrix of processed data (scaled, cleaned and ordered).}
+
+\item{.S}{The (K x K) empirical indicator correlation matrix.}
+
+\item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
+
+\item{.conv_criterion}{Character string. The criterion to use for the convergence check.
+One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
+to "\emph{diff_absolute}".}
+
+\item{.GSCA_modes}{Either a named list specifying the mode that should be
+used for each composite in the form \code{"composite_name" = mode}, a single
+character string giving the mode that should be used for all composites.
+Possible single character string choices for \code{mode} are: "\emph{canon}" for
+canonical composites, or "\emph{nomo}" for nomological composites, or \code{NULL} for
+default behavior. Default behavior is to estimate nomological composites.
+Passed to (I-)GSCA estimating functions in \code{\link[=calculateWeightsGSCA]{calculateWeightsGSCA()}}
+or \code{\link[=calculateWeightsIGSCA]{calculateWeightsIGSCA()}}. Defaults to \code{NULL}.}
+
+\item{.iter_max}{Integer. The maximum number of iterations allowed.
+If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
+If the algorithm exceeds the specified number, weights of iteration step
+\code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
+
+\item{.starting_values}{A named list of vectors where the
+list names are the construct names whose indicator weights the user
+wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}
+pairs, where \code{value} is the (scaled or unscaled) starting weight. Defaults to \code{NULL}.}
+
+\item{.tolerance}{Double. The tolerance criterion for convergence.
+Defaults to \code{1e-05}.}
+
 \item{Z0}{Data matrix of N cases (measurements) x J indicators with named
 columns, unstandardized.}
 
@@ -40,31 +75,6 @@ be equal to the number of columns of W0 and C0.}
 (rows of W0 and C0) corresponds to a common factor variable (1) or a
 composite variable (0). This vector is important for computing the
 uniqueness terms (D) because it zeros the entries for composite indicators.}
-
-\item{.dominant_indicators}{A named vector that indices the dominant
-indicator for each construct variable. \emph{It is to be clarified whether this
-should only apply to factor latent variables or also composite latent
-variables.} This is important for ensuring that the signs of the
-path-coefficients and loadings are consistent. It is sometimes the case in
-composite-based structural equation modelling methods that
-loadings/path-coefficients may have the opposite sign. The length of this
-vector should be equal to the number of construct variables and each value
-should represent the row number of the dominant indicator for that
-construct variable.}
-
-\item{.iter_max}{Maximum number of iterations of the Alternating Least Squares
-(ALS) algorithm.}
-
-\item{.tolerance}{Minimum amount of absolute change in the estimates of the
-path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero,
-meaning there are no path-coefficients) between ALS iterations before ending
-the optimization.}
-
-\item{.conv_criterion}{Character string. The criterion to use for the convergence check.
-One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
-to "\emph{diff_absolute}".}
-
-\item{.S}{The (K x K) empirical indicator correlation matrix.}
 }
 \value{
 List of 4 matrices that make up a fitted I-GSCA Model:
@@ -83,8 +93,6 @@ This R implementation of I-GSCA is based on the Matlab implementation in igsca_s
 In the example section, the specified model is based on the tutorial I-GSCA model associated with GSCA Pro \insertCite{hwangetal2023StructuralEquationModelingAMultidisciplinaryJournal}{cSEM}.
 
 \strong{Note}: Here, we assume that there is only one unique loading per indicator.
-
-Sign flipping has been consolidated to setDominantIndicator().
 }
 \examples{
 \dontrun{
