@@ -1,9 +1,8 @@
 # General Pre-Test -------------------------------------------------------------
 
 test_that("Replicate IGSCA Primer Results", {
-  # TODO: Add the data to the package ourselves, with  citation
-  library(seminr)
-  data(corp_rep_data, package = "seminr")
+  
+  data(corp_rep_data, package = "cSEM")
 
   # Code from https://osf.io/9tm2y/files/wk5vz?view_only=59d9792bab994892a735e4efc763b511
   # Schamberger et al. (2025)

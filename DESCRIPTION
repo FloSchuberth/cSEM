@@ -112,8 +112,7 @@ Suggests:
     graphics,
     spelling,
     withr,
-    modeltests (>= 0.1.7),
-    seminr
+    modeltests (>= 0.1.7)
 Config/testthat/edition: 3
 Config/testthat/parallel: true
 VignetteBuilder: knitr
