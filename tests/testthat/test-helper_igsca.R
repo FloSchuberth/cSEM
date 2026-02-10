@@ -1,6 +1,7 @@
 # General Pre-Test -------------------------------------------------------------
 
 test_that("Replicate IGSCA Primer Results", {
+  # TODO: Add the data to the package ourselves, with  citation
   library(seminr)
   data(corp_rep_data, package = "seminr")
 
@@ -36,6 +37,19 @@ CustomerLoyality ~ CustomerSatisfaction + Competence + Likeability'
     .conv_criterion = "sum_diff_absolute"
   )
   tidied_igsca <- tidy(igsca)
+
+  igscaPrimer <- read.csv(testthat::test_path("data", "corp_rep_igscaPrimer.csv")) |> 
+    subset(select = c(term, estimate))
+
+  tidied_igsca <- subset(tidied_igsca, term %in% igscaPrimer$term & (op %in% c("~", "=~", "<~")), select = c(term, estimate))
+  
+  tidied_igsca <- tidied_igsca[order(tidied_igsca$term),]
+
+  igscaPrimer <-igscaPrimer[order(igscaPrimer$term),]
+
+  testthat::expect_equal(object = tidied_igsca,
+                       expected = igscaPrimer, tolerance = .012, ignore_attr = TRUE)
+
 })
 
 ## Model Specification and Load Data ---------------------------------------
