@@ -244,7 +244,8 @@ foreman <- function(
           .iter_max = .iter_max,
           .dominant_indicators = .dominant_indicators,
           .conv_criterion = .conv_criterion,
-          .S = S
+          .S = S,
+          .starting_values = .starting_values
         )
       } else {
         stop2(

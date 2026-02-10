@@ -3,11 +3,11 @@
 #' This R implementation of I-GSCA is based on the Matlab implementation in igsca_sim.m by Dr. Heungsun Hwang.
 #'
 #' In the example section, the specified model is based on the tutorial I-GSCA model associated with GSCA Pro \insertCite{hwangetal2023StructuralEquationModelingAMultidisciplinaryJournal}{cSEM}.
-#' 
-#' **Note**: Here, we assume that there is only one unique loading per indicator. 
-#' 
+#'
+#' **Note**: Here, we assume that there is only one unique loading per indicator.
+#'
 #' Sign flipping has been consolidated to setDominantIndicator().
-#' 
+#'
 #' @param Z0 Data matrix of N cases (measurements) x J indicators with named
 #'   columns, unstandardized.
 #' @param W0 Indicator matrix of weights: J indicators (rows) and their
@@ -106,7 +106,8 @@ igsca <-
     .iter_max = 100,
     .tolerance = 0.0001,
     .conv_criterion,
-    .S = args_default()$.S
+    .S = args_default()$.S,
+    .starting_values = args_default()$.starting_values
   ) {
     ## Initialize Computational Variables -----------------------------------------------------
     n_case <- nrow(Z0)
@@ -131,7 +132,10 @@ igsca <-
     X <- matrix()
     WW <- matrix()
 
-    ### Initial Estimates and Preparation -------------------------------------
+    ### Starting Values -------------------------------------
+
+    # TODO: Refactor initializeAlsEstimates and add starting values both before and after
+
     prepared_for_ALS <- initializeAlsEstimates(
       Z0 = Z0,
       W0 = W0,
@@ -148,6 +152,11 @@ igsca <-
       prepared_for_ALS[c("W", "C", "B", "V", "Z", "D", "U", "Gamma")],
       envir = environment()
     )
+
+    # if starting values are provided
+    if (!is.null(.starting_values)) {
+      W <- setStartingValues(.W = W, .starting_values = .starting_values)
+    }
 
     ## Alternating Least Squares Algorithm -------------------------------------
 
@@ -277,7 +286,7 @@ igsca <-
         "Construct_scores" = (Z0 - (Unique_scores %*% D)) %*% W,
         "Unique_loading_estimates" = D_diag,
         "Unique_scores" = Unique_scores,
-        "Modes" = "gsca (igsca)", 
+        "Modes" = "gsca (igsca)",
         "Conv_status" = ifelse(it > .iter_max, FALSE, TRUE),
         "Iterations" = it
       )

@@ -867,7 +867,8 @@ calculateWeightsIGSCA <- function(.data,
                                   .GSCA_modes = args_default()$.GSCA_modes,
                                   .iter_max = args_default()$.iter_max,
                                   .tolerance = args_default()$.tolerance,
-                                  .S = args_default()$.S
+                                  .S = args_default()$.S,
+                                  .starting_values = args_default()$.starting_values
                                   ) {
   
   if (is.null(.GSCA_modes)) {
@@ -888,7 +889,8 @@ calculateWeightsIGSCA <- function(.data,
     .iter_max = .iter_max,
     .tolerance = .tolerance,
     .conv_criterion = .conv_criterion,
-    .S = .S
+    .S = .S,
+    .starting_values = .starting_values
   )
   
   return(igsca_out)
