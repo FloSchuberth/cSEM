@@ -1,5 +1,43 @@
 # General Pre-Test -------------------------------------------------------------
 
+test_that("Replicate IGSCA Primer Results", {
+  library(seminr)
+  data(corp_rep_data, package = "seminr")
+
+  # Code from https://osf.io/9tm2y/files/wk5vz?view_only=59d9792bab994892a735e4efc763b511
+  # Schamberger et al. (2025)
+  x_clean <- corp_rep_data |>
+    dplyr::mutate(across(everything(), ~ ifelse(.x == -99, NA, .x))) |>
+    na.omit()
+
+  model <- '
+Quality <~ qual_1 + qual_2 + qual_3 + qual_4 + qual_5 + qual_6 + qual_7 + qual_8
+Performance <~ perf_1 + perf_2 + perf_3 + perf_4 + perf_5
+CorpSocResp <~ csor_1 + csor_2 + csor_3 + csor_4 + csor_5
+Attractiveness <~ attr_1 + attr_2 + attr_3
+
+Competence =~ comp_1 + comp_2 + comp_3
+CustomerLoyality =~ cusl_1 + cusl_2 + cusl_3
+Likeability =~ like_1 + like_2 + like_3
+CustomerSatisfaction =~ cusa
+
+Competence ~ Quality + Performance + CorpSocResp + Attractiveness
+Likeability ~ Quality + Performance + CorpSocResp + Attractiveness
+CustomerSatisfaction ~ Competence + Likeability
+CustomerLoyality ~ CustomerSatisfaction + Competence + Likeability'
+
+  igsca <- csem(
+    x_clean,
+    model,
+    .approach_weights = "GSCA",
+    .disattenuate = TRUE,
+    .dominant_indicators = NULL,
+    .tolerance = 0.0001,
+    .conv_criterion = "sum_diff_absolute"
+  )
+  tidied_igsca <- tidy(igsca)
+})
+
 ## Model Specification and Load Data ---------------------------------------
 tutorial_igsca_model <- "
 # Composite Model

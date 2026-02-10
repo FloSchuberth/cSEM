@@ -1,10 +1,13 @@
 # TODO: See if I can replicate the analysis
 # Some of this code is directly from https://osf.io/9tm2y/files/wk5vz?view_only=59d9792bab994892a735e4efc763b511
+library(seminr)
 library(naniar)
-x <- read.csv2("dev/igsca/corporate_reputation_data.csv")
 
-x_clean <- naniar::replace_with_na_all(x, ~.x  == -99) |> 
+data(corp_rep_data, package = "seminr")
+
+x_clean <-  naniar::replace_with_na_all(corp_rep_data, ~.x  == -99) |> 
   na.omit()
+
 model <- '
 Quality <~ qual_1 + qual_2 + qual_3 + qual_4 + qual_5 + qual_6 + qual_7 + qual_8
 Performance <~ perf_1 + perf_2 + perf_3 + perf_4 + perf_5
