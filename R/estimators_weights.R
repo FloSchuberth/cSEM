@@ -389,24 +389,53 @@ calculateWeightsGSCA <- function(
   .starting_values             = args_default()$.starting_values,
   .tolerance                   = args_default()$.tolerance
 ) {
-  # FIXME: Consider renaming .X to something else. Either to be package consistent or consistent with the new mathematical formulation
+  
   ### Calculation (ALS algorithm) ==============================================
-  if (!is.null(.GSCA_modes)) {
-    stop(".GSCA_modes is currently a non-functional argument")
-  }
   W0 <- Lambda0 <- .csem_model$measurement # Weight relation model
-  Lambda0[which(.csem_model$construct_type == "Composite"), ]  <- 0
   B0 <- .csem_model$structural # Structural model
   vars_endo    <- rownames(B0)[rowSums(B0) != 0]
-  vars_cf      <- names(which(.csem_model$construct_type == "Common factor"))
+  # vars_cf      <- names(which(.csem_model$construct_type == "Common factor"))
   
   J <- nrow(W0)
   K <- ncol(W0)
   JK <- J + K
+
+
+  # Composite Type ---------------------------------------------------------
+  modes <- ifelse(.csem_model$construct_type == "Composite", yes = "CCMP", no = .csem_model$construct_type)
+    if (!is.null(.GSCA_modes)) {
+      stopifnot(
+        "Invalid .GSCA_modes selected. Only NCMP or CCMP are supported" = all(sapply(
+          .GSCA_modes,
+          function(x) x %in% c('NCMP', 'CCMP')
+        ))
+      )
+
+      if (length(names(.GSCA_modes)) != 0) {
+        stopifnot(
+          "Invalid construct name listed in .GSCA_modes" = length(setdiff(
+            names(.GSCA_modes),
+            names(.csem_model$construct_type)
+          )) ==
+            0
+        )
+        modes[names(.GSCA_modes)] <- .GSCA_modes
+      } else if (length(names(.GSCA_modes)) == 0) {
+        stopifnot("When passing a global setting to .GSCA_modes, only one choice may be passed" = length(.GSCA_modes) == 1)
+
+        # If only an unnamed element is given (NCMP or CCMP), then set all composites to .GSCA_modes
+        if (length(.GSCA_modes) == 1) {
+          modes <- ifelse(modes == "CCMP", yes = .GSCA_modes, no = modes)
+        }
+      }
+    }
+  Lambda0[which(modes == "CCMP"), ]  <- 0
+  vars_NCMP <- names(modes)[modes == "NCMP"]
+
   
   
-  # if starting values are provided
-  if(!is.null(.starting_values)){
+  # Starting Values --------------------------------------------------------
+  if(!is.null(.starting_values)){;
     W0 = setStartingValues(.W = W0, .starting_values = .starting_values)
   }
   
@@ -435,14 +464,13 @@ calculateWeightsGSCA <- function(
     # Transform
     tB <- t(B0)
     tB[tB != 0] <- unlist(B)
-    
+
     # Step 1b: Estimate Lambda (the loadings for a given W)
-    # TODO: In the future, this code should be updated to use the loadings in the ALS algorithm
-    if(length(vars_cf) > 0) {
+    if(any(modes %in% "NCMP")) {
       Lambda_tilde <- W_iter %*% .S
-      dep_vars <- names(which(colSums(Lambda0[vars_cf, , drop = FALSE]) !=0))
+      dep_vars <- names(which(colSums(Lambda0[vars_NCMP, , drop = FALSE]) != 0))
       Lambda <- lapply(dep_vars, function(y) {
-        x <-  which(Lambda0[vars_cf, y] != 0)
+        x <-  which(Lambda0[vars_NCMP, y] != 0)
         coef <- solve(C[x, x, drop = FALSE]) %*% Lambda_tilde[x, y, drop = FALSE]
       })
       # Transform
@@ -450,7 +478,7 @@ calculateWeightsGSCA <- function(
       tLambda[tLambda != 0] <- unlist(Lambda)
     } else {
       tLambda <- t(Lambda0)
-    }
+    } 
     
     # Build matrices A and V used in GSCA
     
@@ -514,7 +542,17 @@ calculateWeightsGSCA <- function(
     }
   }
 
-  Lambda   <- W %*% .S * .csem_model$measurement
+  if (all(modes %in% "CCMP")) {
+    Lambda <- W %*% .S * .csem_model$measurement
+  } else if (any(modes %in% "CCMP")) {
+    CCMP_Lambda <- W %*% .S * .csem_model$measurement
+    Lambda <- t(tLambda)
+    Lambda[names(modes)[modes == "CCMP"], ] <- CCMP_Lambda[
+      names(modes)[modes == "CCMP"],
+    ]
+  } else {
+    Lambda <- t(tLambda)
+  }
   
   # Return
   l <- list(
@@ -872,12 +910,8 @@ calculateWeightsIGSCA <- function(
   .tolerance = args_default()$.tolerance,
   .starting_values = args_default()$.starting_values
 ) {
-  if (is.null(.GSCA_modes)) {
-    # TODO: This function needs to be deprecated.
-    igsca_in <- getIgscaInputs(.model = .csem_model, .data = .data)
-  } else {
-    stop(".GSCA_modes is currently a non-functional argument")
-  }
+  
+  igsca_in <- getIgscaInputs(.model = .csem_model, .data = .data)
 
   igsca_out <- igsca(
     .X  = .data,

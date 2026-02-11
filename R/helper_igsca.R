@@ -102,7 +102,6 @@ igsca <-
     normalization_factor <- sqrt(n_case - 1)
 
     w_index <- which(c(W0) == 1)
-    c_index <- which(c(C0) == 1)
     b_index <- which(c(B0) == 1)
 
     # Initialize Bindpoints for list2env
@@ -117,10 +116,7 @@ igsca <-
     X <- matrix()
     WW <- matrix()
 
-    ### Starting Values -------------------------------------
-
-    # TODO: Refactor initializeAlsEstimates and add starting values both before and after
-
+    ### Starting Values ------------------------------------
     prepared_for_ALS <- initializeAlsEstimates(
       .X = .X,
       .S = .S,
@@ -151,6 +147,40 @@ igsca <-
         t()
     }
 
+    # Define and Check Modes: 'Common factor', 'NCMP', and 'CCMP'
+    modes <- ifelse(.csem_model$construct_type == "Composite", yes = "CCMP", no = .csem_model$construct_type)
+    if (!is.null(.GSCA_modes)) {
+      stopifnot(
+        "Invalid .GSCA_modes selected. Only NCMP or CCMP are supported" = all(sapply(
+          .GSCA_modes,
+          function(x) x %in% c('NCMP', 'CCMP')
+        ))
+      )
+
+      if (length(names(.GSCA_modes)) != 0) {
+        stopifnot(
+          "Invalid construct name listed in .GSCA_modes" = length(setdiff(
+            names(.GSCA_modes),
+            names(.csem_model$construct_type)
+          )) ==
+            0
+        )
+        modes[names(.GSCA_modes)] <- .GSCA_modes
+      } else if (length(names(.GSCA_modes)) == 0) {
+        stopifnot("When passing a global setting to .GSCA_modes, only one choice may be passed" = length(.GSCA_modes) == 1)
+
+        # If only an unnamed element is given (NCMP or CCMP), then set all composites to .GSCA_modes
+        if (length(.GSCA_modes) == 1) {
+          modes <- ifelse(modes == "CCMP", yes = .GSCA_modes, no = modes)
+        }
+      }
+    }
+    # Set Loadings of canonical composites to 0 just in case it wasn't handled properly in the initial values
+    C[which(modes == "CCMP"), ] <- 0
+    # Create c_index which should only exist for nomological composites and common factors
+    C0[which(modes == "CCMP"), ] <- 0
+    c_index <- which(c(C0) == 1)
+    
     ## Alternating Least Squares Algorithm -------------------------------------
 
     ### Optimization Preparation -----------------------------------------------
@@ -247,7 +277,8 @@ igsca <-
         n_case = n_case,
         c_index = c_index,
         b_index = b_index,
-        con_type = con_type
+        con_type = con_type,
+        modes = modes
       )
 
       list2env(updated_C_B_D_U[c("D", "U", "C", "B")], envir = environment())
@@ -261,6 +292,9 @@ igsca <-
     }
 
     ## Output Formatting -------------------------------------------------------
+
+    # Loadings for Canonical Composites
+
     # identical(diag(D^2), diag(D)^2)
     D_diag <- diag(D)
     names(D_diag) <- colnames(Z)
@@ -670,6 +704,7 @@ updateCompositeTheta <-
 #' @param b_index Index of Path Coefficients
 #' @param n_case Number of Cases
 #' @param indicator_type Vector of whether each indicator corresponds to a common factor or composite
+#' @param modes Named vector of whether the construct is a Common factor, nomological composite or canonical composite.
 #' @importFrom MASS ginv
 #' @return List of matrices:
 #'
@@ -691,49 +726,33 @@ updateCBDU <-
     n_constructs,
     b_index,
     n_case,
-    con_type
+    con_type,
+    modes
   ) {
     ## Loading Update ----------------------------------------------------------
 
-    t1 <- c(X)
-    # M1 <- kronecker(diag(n_indicators), Gamma)
-    # M1 <- M1[, c_index]
-    M1 <- kroneckerC(diag(n_indicators), Gamma, c_index)
-    C[c_index] <- MASS::ginv(t(M1) %*% M1) %*% (t(M1) %*% t1)
-    #
-    # Kronecker bypass as shown in calculateWeightsGSCAm
-    # vcv_gamma <- t(Gamma) %*% Gamma # Came from path coefficients update in calculateWeightsGSCAm
-    # TODO: This will have to be adjusted to differentiate between canonical and
-    # nomological composites for IGSCA. Right now, it assumes that all the
-    # constructs need loadings. If there are only canonical composites, then
-    # there needs to be a bypass
-    # vars_cf_nomocomp <- which(con_type %in% c("Common factor", "Composite"))
-    # cov_gamma_indicators <- t(Gamma) %*% Z
-    # Y <- which(colSums(C[vars_cf_nomocomp, ]) != 0)
-    # loadings <- lapply(Y, function(y) {
-    #   x    <-  which(C[vars_cf_nomocomp, y] != 0)
-    # FIXME: The difference between inverse via solve and pseudo-inverse does
-    # not account for differences between this approach and kronecker
-    # coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*% cov_gamma_indicators[x, y, drop = FALSE]
-    #   coef <- solve(vcv_gamma[x, x, drop = FALSE]) %*% cov_gamma_indicators[x, y, drop = FALSE]
-    # })
-    #
-    # Ct<-t(C)
-    # Ct[c_index] <- unlist(loadings, use.names = FALSE)
-    # C<-t(Ct)
+    # Kronecker Approach and Assumes All Composites are Nomological
+    # t1 <- c(X)
+    # M1 <- kroneckerC(diag(n_indicators), Gamma, c_index)
+    # C[c_index] <- MASS::ginv(t(M1) %*% M1) %*% (t(M1) %*% t1)
+    
+    # Kronecker bypass
+    # browser()
+    vars_cf_ncmp <- names(modes)[modes %in% c("Common factor", "NCMP")]
+    cov_gamma_indicators <- t(Gamma) %*% Z
+    vcv_gamma <- t(Gamma) %*% Gamma
+    Y <- which(colSums(C[vars_cf_ncmp, ]) != 0)
+    # This approach assumes that every factor/NCMP loads onto one indicator: no cross-loadings
+    loadings <- lapply(Y, function(y) {
+      x    <-  which(C[vars_cf_ncmp, y] != 0)
+      # FIXME: The pseudo-inverse approach is slightly different from the solve() approach. But both approaches differ from the Kronecker product. 
+      coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*% cov_gamma_indicators[x, y, drop = FALSE]
+      # coef <- solve(vcv_gamma[x, x, drop = FALSE]) %*% cov_gamma_indicators[x, y, drop = FALSE]
+    })
+    # A future approach should consider avoiding c_index and using explicit names, for safety.
+    C[c_index] <- unlist(loadings, use.names =  FALSE)
 
     # Path Coefficients Update ------------------------------------------------
-
-    # t2 <- c(Gamma)
-    # M2 <- kronecker(diag(n_constructs), Gamma)
-    # M2 <- M2[, b_index]
-    #
-    # M2 <- kroneckerC(diag(n_constructs), Gamma, b_index)
-    # B[b_index] <- MASS::ginv(t(M2) %*% M2) %*% (t(M2) %*% t2)
-    #
-    # Kronecker bypass as shown in calculateWeightsGSCAm
-    # TODO: Remember to comment vcv_gamma assignment out if I restore kronecker by-pass to loadings
-    vcv_gamma <- t(Gamma) %*% Gamma
     vars_endo <- which(colSums(B) != 0)
 
     beta <- lapply(vars_endo, function(y) {

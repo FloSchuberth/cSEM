@@ -49,8 +49,23 @@ xi2<~x21 + x22 + x23
 xi2~ xi1
 '
 
-out=csem(.data = datapop,.model = modelest,.approach_weights = 'GSCA', .disattenuate = FALSE)
-tidy(out)
+out_ccmp = csem(
+    .data = datapop,
+    .model = modelest,
+    .approach_weights = 'GSCA',
+    .disattenuate = FALSE,
+    .GSCA_modes = "CCMP"
+)
+tidy(out_ccmp)
+
+out_ncmp = csem(
+    .data = datapop,
+    .model = modelest,
+    .approach_weights = 'GSCA',
+    .disattenuate = FALSE,
+    .GSCA_modes = "NCMP"
+)
+tidy(out_ncmp)
 
 
 # GSCA M -----------------------------------------------------------------

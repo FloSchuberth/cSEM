@@ -148,9 +148,9 @@
 #' @param .GSCA_modes Either a named list specifying the mode that should be
 #'   used for each composite in the form `"composite_name" = mode`, a single
 #'   character string giving the mode that should be used for all composites.
-#'   Possible single character string choices for `mode` are: "*canon*" for
-#'   canonical composites, or "*nomo*" for nomological composites, or `NULL` for
-#'   default behavior. Default behavior is to estimate nomological composites.
+#'   Possible single character string choices for `mode` are: "*CCMP*" for
+#'   canonical composites, or "*NCMP*" for nomological composites, or `NULL` for
+#'   default behavior. Default behavior is to estimate canonical composites.
 #'   Passed to (I-)GSCA estimating functions in [cSEM::calculateWeightsGSCA()]
 #'   or [cSEM::calculateWeightsIGSCA()]. Defaults to `NULL`.
 #' @param .H The (N x J) matrix of construct scores.
