@@ -599,14 +599,15 @@ functions. Currently three do functions are implemented:
 
 - [`doRedundancyAnalysis()`](https://floschuberth.github.io/cSEM/reference/doRedundancyAnalysis.md):
 
-  Perform a redundancy analysis (RA) as proposed by Hair et al. (2016)
+  Perform a redundancy analysis (RA) as proposed by Hair et al. (2017)
   with reference to Chin (1998)
 
 ## References
 
 Agarwal R, Karahanna E (2000). “Time Flies When You're Having Fun:
 Cognitive Absorption and Beliefs about Information Technology Usage.”
-*MIS Quarterly*, **24**(4), 665.  
+*MIS Quarterly*, **24**(4), 665.
+[doi:10.2307/3250951](https://doi.org/10.2307/3250951) .  
   
 Becker J, Klein K, Wetzels M (2012). “Hierarchical Latent Variable
 Models in PLS-SEM: Guidelines for Using Reflective-Formative Type
@@ -630,15 +631,19 @@ Erlbaum. ISBN 080584046X, Pagination: 288.
   
 Dijkstra TK, Henseler J (2015). “Consistent and Asymptotically Normal
 PLS Estimators for Linear Structural Equations.” *Computational
-Statistics & Data Analysis*, **81**, 10–23.  
+Statistics & Data Analysis*, **81**, 10–23.
+[doi:10.1016/j.csda.2014.07.008](https://doi.org/10.1016/j.csda.2014.07.008)
+.  
   
 Dijkstra TK, Schermelleh-Engel K (2014). “Consistent Partial Least
 Squares For Nonlinear Structural Equation Models.” *Psychometrika*,
-**79**(4), 585–604.  
+**79**(4), 585–604.
+[doi:10.1007/s11336-013-9370-0](https://doi.org/10.1007/s11336-013-9370-0)
+.  
   
-Hair JF, Hult GTM, Ringle C, Sarstedt M (2016). *A Primer on Partial
-Least Squares Structural Equation Modeling (PLS-SEM)*. Sage
-publications.  
+Hair JF, Hult GTM, Ringle CM, Sarstedt M (2017). *A Primer on Partial
+Least Squares Structural Equation Modeling (PLS-SEM)*, 2nd edition.
+Sage, London.  
   
 Henseler J, Ringle CM, Sarstedt M (2016). “Testing Measurement
 Invariance of Composites Using Partial Least Squares.” *International
@@ -648,7 +653,9 @@ Marketing Review*, **33**(3), 405–431.
   
 Hwang H, Takane Y, Jung K (2017). “Generalized structured component
 analysis with uniqueness terms for accommodating measurement error.”
-*Frontiers in Psychology*, **8**(2137), 1–12.  
+*Frontiers in Psychology*, **8**(2137), 1–12.
+[doi:10.3389/fpsyg.2017.02137](https://doi.org/10.3389/fpsyg.2017.02137)
+.  
   
 Joereskog KG, Wold HO (1982). *Systems under Indirect Observation:
 Causality, Structure, Prediction - Part II*, volume 139. North
@@ -657,10 +664,12 @@ Holland.
 Liengaard BD, Sharma PN, Hult GTM, Jensen MB, Sarstedt M, Hair JF,
 Ringle CM (2021). “Prediction: Coveted, Yet Forsaken? Introducing a
 Cross-Validated Predictive Ability Test in Partial Least Squares Path
-Modeling.” *Decision Sciences*, **52**(2), 362–392.  
+Modeling.” *Decision Sciences*, **52**(2), 362–392.
+[doi:10.1111/deci.12445](https://doi.org/10.1111/deci.12445) .  
   
 Ringle CM, Sarstedt M, Straub D (2012). “A Critical Look at the Use of
-PLS-SEM in MIS Quarterly.” *MIS Quarterly*, **36**(1), iii–xiv.  
+PLS-SEM in MIS Quarterly.” *MIS Quarterly*, **36**(1), iii–xiv.
+[doi:10.2307/41410402](https://doi.org/10.2307/41410402) .  
   
 Schuberth F, Rademaker ME, Henseler J (2020). “Estimating and assessing
 second-order constructs using PLS-PM: the case of composites of

@@ -680,7 +680,7 @@ summarize(b1)
     ##  Number of admissible results       = 499
     ##  Approach to handle inadmissibles   = "drop"
     ##  Sign change option                 = "none"
-    ##  Random seed                        = 349975547
+    ##  Random seed                        = -1475935749
     ## 
     ##  Construct details:
     ##  ------------------
@@ -696,37 +696,37 @@ summarize(b1)
     ## ============================
     ##                                                              CI_percentile   
     ##   Path           Estimate  Std. error   t-stat.   p-value         95%        
-    ##   eta2 ~ eta1      0.6713      0.0415   16.1746    0.0000 [ 0.5878; 0.7527 ] 
-    ##   eta3 ~ eta1      0.4585      0.0821    5.5814    0.0000 [ 0.3068; 0.6165 ] 
-    ##   eta3 ~ eta2      0.3052      0.0843    3.6216    0.0003 [ 0.1264; 0.4737 ] 
+    ##   eta2 ~ eta1      0.6713      0.0442   15.1825    0.0000 [ 0.5859; 0.7538 ] 
+    ##   eta3 ~ eta1      0.4585      0.0832    5.5105    0.0000 [ 0.3031; 0.6326 ] 
+    ##   eta3 ~ eta2      0.3052      0.0883    3.4545    0.0006 [ 0.1229; 0.4673 ] 
     ## 
     ## Estimated loadings:
     ## ===================
     ##                                                              CI_percentile   
     ##   Loading        Estimate  Std. error   t-stat.   p-value         95%        
-    ##   eta1 =~ y11      0.6631      0.0395   16.7670    0.0000 [ 0.5810; 0.7377 ] 
-    ##   eta1 =~ y12      0.6493      0.0385   16.8803    0.0000 [ 0.5784; 0.7208 ] 
-    ##   eta1 =~ y13      0.7613      0.0325   23.4230    0.0000 [ 0.6957; 0.8183 ] 
-    ##   eta2 =~ y21      0.5165      0.0522    9.8849    0.0000 [ 0.4090; 0.6131 ] 
-    ##   eta2 =~ y22      0.7554      0.0367   20.5605    0.0000 [ 0.6790; 0.8249 ] 
-    ##   eta2 =~ y23      0.7997      0.0378   21.1658    0.0000 [ 0.7301; 0.8660 ] 
-    ##   eta3 =~ y31      0.8223      0.0342   24.0404    0.0000 [ 0.7594; 0.8901 ] 
-    ##   eta3 =~ y32      0.6581      0.0389   16.9073    0.0000 [ 0.5791; 0.7289 ] 
-    ##   eta3 =~ y33      0.7474      0.0390   19.1771    0.0000 [ 0.6730; 0.8269 ] 
+    ##   eta1 =~ y11      0.6631      0.0406   16.3426    0.0000 [ 0.5756; 0.7344 ] 
+    ##   eta1 =~ y12      0.6493      0.0397   16.3747    0.0000 [ 0.5755; 0.7248 ] 
+    ##   eta1 =~ y13      0.7613      0.0321   23.7353    0.0000 [ 0.7000; 0.8204 ] 
+    ##   eta2 =~ y21      0.5165      0.0514   10.0538    0.0000 [ 0.4175; 0.6124 ] 
+    ##   eta2 =~ y22      0.7554      0.0357   21.1708    0.0000 [ 0.6825; 0.8185 ] 
+    ##   eta2 =~ y23      0.7997      0.0383   20.8754    0.0000 [ 0.7197; 0.8690 ] 
+    ##   eta3 =~ y31      0.8223      0.0328   25.0906    0.0000 [ 0.7546; 0.8793 ] 
+    ##   eta3 =~ y32      0.6581      0.0405   16.2289    0.0000 [ 0.5768; 0.7297 ] 
+    ##   eta3 =~ y33      0.7474      0.0378   19.7921    0.0000 [ 0.6786; 0.8177 ] 
     ## 
     ## Estimated weights:
     ## ==================
     ##                                                              CI_percentile   
     ##   Weight         Estimate  Std. error   t-stat.   p-value         95%        
-    ##   eta1 <~ y11      0.3956      0.0206   19.1756    0.0000 [ 0.3557; 0.4366 ] 
-    ##   eta1 <~ y12      0.3873      0.0188   20.5651    0.0000 [ 0.3522; 0.4233 ] 
-    ##   eta1 <~ y13      0.4542      0.0206   22.1000    0.0000 [ 0.4173; 0.4959 ] 
-    ##   eta2 <~ y21      0.3058      0.0277   11.0500    0.0000 [ 0.2488; 0.3579 ] 
-    ##   eta2 <~ y22      0.4473      0.0222   20.1367    0.0000 [ 0.4079; 0.4930 ] 
-    ##   eta2 <~ y23      0.4735      0.0209   22.7020    0.0000 [ 0.4317; 0.5139 ] 
-    ##   eta3 <~ y31      0.4400      0.0187   23.4824    0.0000 [ 0.4045; 0.4761 ] 
-    ##   eta3 <~ y32      0.3521      0.0183   19.2739    0.0000 [ 0.3172; 0.3864 ] 
-    ##   eta3 <~ y33      0.3999      0.0191   20.8844    0.0000 [ 0.3661; 0.4395 ] 
+    ##   eta1 <~ y11      0.3956      0.0222   17.8291    0.0000 [ 0.3502; 0.4365 ] 
+    ##   eta1 <~ y12      0.3873      0.0206   18.8330    0.0000 [ 0.3500; 0.4297 ] 
+    ##   eta1 <~ y13      0.4542      0.0192   23.6723    0.0000 [ 0.4202; 0.4971 ] 
+    ##   eta2 <~ y21      0.3058      0.0274   11.1770    0.0000 [ 0.2501; 0.3557 ] 
+    ##   eta2 <~ y22      0.4473      0.0220   20.3493    0.0000 [ 0.4061; 0.4963 ] 
+    ##   eta2 <~ y23      0.4735      0.0208   22.8156    0.0000 [ 0.4305; 0.5128 ] 
+    ##   eta3 <~ y31      0.4400      0.0187   23.4734    0.0000 [ 0.4027; 0.4770 ] 
+    ##   eta3 <~ y32      0.3521      0.0188   18.7144    0.0000 [ 0.3146; 0.3859 ] 
+    ##   eta3 <~ y33      0.3999      0.0185   21.6422    0.0000 [ 0.3652; 0.4401 ] 
     ## 
     ## ------------------------------------ Effects -----------------------------------
     ## 
@@ -734,15 +734,15 @@ summarize(b1)
     ## ========================
     ##                                                               CI_percentile   
     ##   Total effect    Estimate  Std. error   t-stat.   p-value         95%        
-    ##   eta2 ~ eta1       0.6713      0.0415   16.1746    0.0000 [ 0.5878; 0.7527 ] 
-    ##   eta3 ~ eta1       0.6634      0.0390   17.0089    0.0000 [ 0.5844; 0.7391 ] 
-    ##   eta3 ~ eta2       0.3052      0.0843    3.6216    0.0003 [ 0.1264; 0.4737 ] 
+    ##   eta2 ~ eta1       0.6713      0.0442   15.1825    0.0000 [ 0.5859; 0.7538 ] 
+    ##   eta3 ~ eta1       0.6634      0.0389   17.0497    0.0000 [ 0.5874; 0.7341 ] 
+    ##   eta3 ~ eta2       0.3052      0.0883    3.4545    0.0006 [ 0.1229; 0.4673 ] 
     ## 
     ## Estimated indirect effects:
     ## ===========================
     ##                                                                  CI_percentile   
     ##   Indirect effect    Estimate  Std. error   t-stat.   p-value         95%        
-    ##   eta3 ~ eta1          0.2049      0.0577    3.5516    0.0004 [ 0.0901; 0.3210 ] 
+    ##   eta3 ~ eta1          0.2049      0.0599    3.4213    0.0006 [ 0.0824; 0.3192 ] 
     ## ________________________________________________________________________________
 
 Or directly via
@@ -755,17 +755,17 @@ ii$Path_estimates
 
     ## $CI_standard_z
     ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-    ## 99%L   0.5638940   0.2454129  0.08765233
-    ## 99%U   0.7777153   0.6686155  0.52171959
-    ## 95%L   0.5894557   0.2960055  0.13954377
-    ## 95%U   0.7521536   0.6180229  0.46982815
+    ## 99%L   0.5587771   0.2366826  0.08358686
+    ## 99%U   0.7865710   0.6653311  0.53865572
+    ## 95%L   0.5860091   0.2879262  0.13798898
+    ## 95%U   0.7593389   0.6140874  0.48425361
     ## 
     ## $CI_percentile
     ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-    ## 99%L   0.5703242   0.2710390  0.07632952
-    ## 99%U   0.7679436   0.6963619  0.49902290
-    ## 95%L   0.5877805   0.3067510  0.12641406
-    ## 95%U   0.7527220   0.6165157  0.47371465
+    ## 99%L   0.5630996   0.2491401  0.06470249
+    ## 99%U   0.7708577   0.6693434  0.52899681
+    ## 95%L   0.5858913   0.3031316  0.12288944
+    ## 95%U   0.7538135   0.6326256  0.46726241
 
 Both bootstrap and jackknife resampling support platform-independent
 multiprocessing as well as random seeds via the [future
@@ -868,7 +868,7 @@ There are 5 major postestimation function and 4 test-family functions:
 
 - [`doRedundancyAnalysis()`](https://floschuberth.github.io/cSEM/reference/doRedundancyAnalysis.md):
 
-  Performs a redundancy analysis (RA) as proposed by Hair et al. (2016)
+  Performs a redundancy analysis (RA) as proposed by (**Hair2016?**)
   with reference to Chin (1998).
 
 Technically, postestimation functions are generic function with methods
@@ -1024,10 +1024,7 @@ G. A. Marcoulides, 295–358. Mahwah, NJ: Lawrence Erlbaum.
 Dijkstra, Theo K., and Jörg Henseler. 2015. “Consistent and
 Asymptotically Normal PLS Estimators for Linear Structural Equations.”
 *Computational Statistics & Data Analysis* 81: 10–23.
-
-Hair, Joseph F, G Tomas M Hult, Christian Ringle, and Marko Sarstedt.
-2016. *A Primer on Partial Least Squares Structural Equation Modeling
-(PLS-SEM)*. Sage publications.
+<https://doi.org/10.1016/j.csda.2014.07.008>.
 
 Henseler, Jörg. 2017. “Bridging Design and Behavioral Research with
 Variance-Based Structural Equation Modeling.” *Journal of Advertising*

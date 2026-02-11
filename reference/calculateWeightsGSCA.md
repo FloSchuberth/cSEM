@@ -89,7 +89,8 @@ of indicators.
 ## References
 
 Hwang H, Takane Y (2004). “Generalized Structured Component Analysis.”
-*Psychometrika*, **69**(1), 81–99.  
+*Psychometrika*, **69**(1), 81–99.
+[doi:10.1007/BF02295841](https://doi.org/10.1007/BF02295841) .  
   
 Hwang H, Takane Y (2014). *Generalized Structured Component Analysis: A
 Component-Based Approach to Structural Equation Modeling*, Chapman &

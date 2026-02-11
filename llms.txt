@@ -1010,6 +1010,9 @@ b <- csem(
 - [`LancelotMiltgenetal2016`](https://floschuberth.github.io/cSEM/reference/LancelotMiltgenetal2016.md)
   : Data: LancelotMiltgenetal2016
 
+- [`LeDang2022`](https://floschuberth.github.io/cSEM/reference/LeDang2022.md)
+  : Data: LeDang2022
+
 - [`PoliticalDemocracy`](https://floschuberth.github.io/cSEM/reference/PoliticalDemocracy.md)
   : Data: political democracy
 
@@ -1078,6 +1081,9 @@ b <- csem(
 
 - [`calculatef2()`](https://floschuberth.github.io/cSEM/reference/calculatef2.md)
   : Calculate Cohen's f^2
+
+- [`corp_rep_data`](https://floschuberth.github.io/cSEM/reference/corp_rep_data.md)
+  : Data: corp_rep_data
 
 - [`csem()`](https://floschuberth.github.io/cSEM/reference/csem.md) :
   Composite-based SEM

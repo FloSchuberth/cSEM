@@ -81,7 +81,9 @@ for demonstration purposes, see the corresponding tutorial.</p>
 <em>Composite-Based Structural Equation Modeling: Analyzing Latent and Emergent Variables</em>.
 Guilford Press, New York.<br><br> Hwang H, Takane Y (2004).
 “Generalized Structured Component Analysis.”
-<em>Psychometrika</em>, <b>69</b>(1), 81–99.</p>
+<em>Psychometrika</em>, <b>69</b>(1), 81–99.
+<a href="https://doi.org/10.1007/BF02295841" class="external-link">doi:10.1007/BF02295841</a>
+.</p>
     </div>
 
     <div class="section level2">
@@ -115,10 +117,10 @@ Guilford Press, New York.<br><br> Hwang H, Takane Y (2004).
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">model_Bergami_Bagozzi_Hwang</span><span class="op">=</span><span class="st">"</span></span></span>
 <span class="r-in"><span><span class="st"># Measurement models</span></span></span>
-<span class="r-in"><span><span class="st">OrgPres =~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 </span></span></span>
-<span class="r-in"><span><span class="st">OrgIden =~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6</span></span></span>
-<span class="r-in"><span><span class="st">AffJoy =~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7</span></span></span>
-<span class="r-in"><span><span class="st">AffLove  =~ orgcmt5 + orgcmt6 + orgcmt8</span></span></span>
+<span class="r-in"><span><span class="st">OrgPres &lt;~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 </span></span></span>
+<span class="r-in"><span><span class="st">OrgIden &lt;~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6</span></span></span>
+<span class="r-in"><span><span class="st">AffJoy &lt;~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7</span></span></span>
+<span class="r-in"><span><span class="st">AffLove  &lt;~ orgcmt5 + orgcmt6 + orgcmt8</span></span></span>
 <span class="r-in"><span><span class="st"></span></span></span>
 <span class="r-in"><span><span class="st"># Structural model </span></span></span>
 <span class="r-in"><span><span class="st">OrgIden ~ OrgPres </span></span></span>

@@ -84,6 +84,8 @@ Tenure to Politics.” *World Politics*, **16**(3), 442–454.
   
 Tenenhaus A, Tenenhaus M (2011). “Regularized generalized canonical
 correlation analysis.” *Psychometrika*, **76**(2), 257–284.
+[doi:10.1007/s11336-011-9206-8](https://doi.org/10.1007/s11336-011-9206-8)
+.
 
 ## Examples
 

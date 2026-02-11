@@ -26,7 +26,9 @@ The indicator correlation matrix for a modified version of Summers
 
 Dijkstra TK, Henseler J (2015). “Consistent and Asymptotically Normal
 PLS Estimators for Linear Structural Equations.” *Computational
-Statistics & Data Analysis*, **81**, 10–23.  
+Statistics & Data Analysis*, **81**, 10–23.
+[doi:10.1016/j.csda.2014.07.008](https://doi.org/10.1016/j.csda.2014.07.008)
+.  
   
 Summers R (1965). “A Capital Intensive Approach to the Small Sample
 Properties of Various Simultaneous Equation Estimators.” *Econometrica*,

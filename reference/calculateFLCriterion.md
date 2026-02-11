@@ -54,6 +54,8 @@ context of a model that contains constructs modeled as composites.
 Fornell C, Larcker DF (1981). “Evaluating structural equation models
 with unobservable variables and measurement error.” *Journal of
 Marketing Research*, **XVIII**, 39–50.
+[doi:10.1177/002224378101800104](https://doi.org/10.1177/002224378101800104)
+.
 
 ## See also
 

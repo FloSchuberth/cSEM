@@ -832,12 +832,14 @@ Encino, CA: Multivariate Software, Inc.
 Bentler, Peter M., and Douglas G. Bonett. 1980. “Significance Tests and
 Goodness of Fit in the Analysis of Covariance Structures.”
 *Psychological Bulletin* 88 (3): 588–606.
+<https://doi.org/10.1037/0033-2909.88.3.588>.
 
 Bollen, Kenneth A. 1989. *Structural Equations with Latent Variables*.
 Wiley-Interscience.
 
 Browne, Michael W., and Robert Cudeck. 1992. “Alternative Ways of
 Assessing Model Fit.” *Sociological Methods & Research* 21 (2): 230–58.
+<https://doi.org/10.1177/0049124192021002005>.
 
 Cho, Eunseong. 2016. “Making Reliability Reliable.” *Organizational
 Research Methods* 19 (4): 651–82.
@@ -846,6 +848,7 @@ Research Methods* 19 (4): 651–82.
 Fornell, C., and D. F. Larcker. 1981. “Evaluating Structural Equation
 Models with Unobservable Variables and Measurement Error.” *Journal of
 Marketing Research* XVIII: 39–50.
+<https://doi.org/10.1177/002224378101800104>.
 
 Henseler, Jörg, Christian M. Ringle, and Marko Sarstedt. 2015. “A New
 Criterion for Assessing Discriminant Validity in Variance-Based
@@ -859,6 +862,7 @@ Partial Least Squares Path Modeling.” *Computational Statistics* 28 (2):
 Hu, Li-tze, and Peter M. Bentler. 1999. “Cutoff Criteria for Fit Indexes
 in Covariance Structure Analysis: Conventional Criteria Versus New
 Alternatives.” *Structural Equation Modeling* 6 (1): 1–55.
+<https://doi.org/10.1080/10705519909540118>.
 
 Jöreskog, K. G. 1969. “A General Approach to Confirmatory Maximum
 Likelihood Factor Analysis.” *Psychometrika* 34 (2): 183–202.
@@ -866,7 +870,7 @@ Likelihood Factor Analysis.” *Psychometrika* 34 (2): 183–202.
 
 Jöreskog, Karl G., and Dag Sörbom. 1982. “Recent Developments in
 Structural Equation Modeling.” *Journal of Marketing Research* 19 (4):
-404–16.
+404–16. <https://doi.org/10.1177/002224378201900402>.
 
 Lohmöller, Jan-Bernd. 1989. *Latent Variable Path Modeling with Partial
 Least Squares*. Physica, Heidelberg.
@@ -886,6 +890,7 @@ Sharma, Pratyush, Marko Sarstedt, Galit Shmueli, Kevin H. Kim, and Kai
 O. Thiele. 2019. “PLS-Based Model Selection: The Role of Alternative
 Explanations in Information Systems Research.” *Journal of the
 Association for Information Systems* 20 (4).
+<https://doi.org/10.17005/1jais.00538>.
 
 Tanaka, J. S., and G. J. Huba. 1985. “A Fit Index for Covariance
 Structure Models Under Arbitrary GLS Estimation.” *British Journal of

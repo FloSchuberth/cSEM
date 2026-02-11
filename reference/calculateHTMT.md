@@ -131,6 +131,8 @@ Discriminant Validity in Variance-based Structural Equation Modeling.”
 Roemer E, Schuberth F, Henseler J (2021). “HTMT2 – an improved criterion
 for assessing discriminant validity in structural equation modeling.”
 *Industrial Management & Data Systems*, **121**(12), 2637–2650.
+[doi:10.1108/IMDS-02-2021-0082](https://doi.org/10.1108/IMDS-02-2021-0082)
+.
 
 ## See also
 

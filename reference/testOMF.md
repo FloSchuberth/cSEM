@@ -133,6 +133,8 @@ for Functions of a Covariance Matrix.” *The Annals of Statistics*,
 Dijkstra TK, Henseler J (2015). “Consistent and Asymptotically Normal
 PLS Estimators for Linear Structural Equations.” *Computational
 Statistics & Data Analysis*, **81**, 10–23.
+[doi:10.1016/j.csda.2014.07.008](https://doi.org/10.1016/j.csda.2014.07.008)
+.
 
 ## See also
 

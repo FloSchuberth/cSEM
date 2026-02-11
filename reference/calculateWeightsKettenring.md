@@ -64,3 +64,4 @@ of indicators.
 
 Kettenring JR (1971). “Canonical Analysis of Several Sets of Variables.”
 *Biometrika*, **58**(3), 433–451.
+[doi:10.1093/biomet/58.3.433](https://doi.org/10.1093/biomet/58.3.433) .

@@ -82,8 +82,12 @@ factor scores.
 
 Dijkstra TK, Schermelleh-Engel K (2014). “Consistent Partial Least
 Squares For Nonlinear Structural Equation Models.” *Psychometrika*,
-**79**(4), 585–604.  
+**79**(4), 585–604.
+[doi:10.1007/s11336-013-9370-0](https://doi.org/10.1007/s11336-013-9370-0)
+.  
   
 Wall MM, Amemiya Y (2000). “Estimation for polynomial structural
 equation models.” *Journal of the American Statistical Association*,
 **95**(451), 929–940.
+[doi:10.1080/01621459.2000.10474283](https://doi.org/10.1080/01621459.2000.10474283)
+.

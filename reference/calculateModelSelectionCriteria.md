@@ -73,11 +73,15 @@ only. The argument is ignored if `.by_equation == TRUE`.
 ## References
 
 Akaike H (1974). “A New Look at the Statistical Model Identification.”
-*IEEE Transactions on Automatic Control*, **19**(6), 716–723.  
+*IEEE Transactions on Automatic Control*, **19**(6), 716–723.
+[doi:10.1109/tac.1974.1100705](https://doi.org/10.1109/tac.1974.1100705)
+.  
   
 Hannan EJ, Quinn BG (1979). “The Determination of the order of an
 autoregression.” *Journal of the Royal Statistical Society: Series B
-(Methodological)*, **41**(2), 190–195.  
+(Methodological)*, **41**(2), 190–195.
+[doi:10.1111/j.2517-6161.1979.tb01072.x](https://doi.org/10.1111/j.2517-6161.1979.tb01072.x)
+.  
   
 Schwarz G (1978). “Estimating the Dimension of a Model.” *The Annals of
 Statistics*, **6**(2), 461–464.
@@ -87,6 +91,7 @@ Sharma P, Sarstedt M, Shmueli G, Kim KH, Thiele KO (2019). “PLS-Based
 Model Selection: The Role of Alternative Explanations in Information
 Systems Research.” *Journal of the Association for Information Systems*,
 **20**(4).
+[doi:10.17005/1jais.00538](https://doi.org/10.17005/1jais.00538) .
 
 ## See also
 

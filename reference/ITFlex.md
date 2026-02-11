@@ -105,7 +105,9 @@ questionnaire items are measured on a 5-point scale.
 
 Benitez J, Ray G, Henseler J (2018). “Impact of Information Technology
 Infrastructure Flexibility on Mergers and Acquisitions.” *MIS
-Quarterly*, **42**(1), 25–43.  
+Quarterly*, **42**(1), 25–43.
+[doi:10.25300/MISQ/2018/13245](https://doi.org/10.25300/MISQ/2018/13245)
+.  
   
 Henseler J (2021). *Composite-Based Structural Equation Modeling:
 Analyzing Latent and Emergent Variables*. Guilford Press, New York.

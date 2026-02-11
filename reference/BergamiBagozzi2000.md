@@ -38,6 +38,7 @@ Analyzing Latent and Emergent Variables*. Guilford Press, New York.
   
 Hwang H, Takane Y (2004). “Generalized Structured Component Analysis.”
 *Psychometrika*, **69**(1), 81–99.
+[doi:10.1007/BF02295841](https://doi.org/10.1007/BF02295841) .
 
 ## Examples
 
@@ -71,10 +72,10 @@ out <- csem(.data = BergamiBagozzi2000,
 
 model_Bergami_Bagozzi_Hwang="
 # Measurement models
-OrgPres =~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 
-OrgIden =~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6
-AffJoy =~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7
-AffLove  =~ orgcmt5 + orgcmt6 + orgcmt8
+OrgPres <~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 
+OrgIden <~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6
+AffJoy <~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7
+AffLove  <~ orgcmt5 + orgcmt6 + orgcmt8
 
 # Structural model 
 OrgIden ~ OrgPres 

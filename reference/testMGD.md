@@ -396,7 +396,8 @@ International Marketing*, **20**, 277–320.
   
 Keil M, Tan BC, Wei K, Saarinen T, Tuunainen V, Wassenaar A (2000). “A
 cross-cultural study on escalation of commitment behavior in software
-projects.” *MIS Quarterly*, **24**(2), 299–325.  
+projects.” *MIS Quarterly*, **24**(2), 299–325.
+[doi:10.2307/3250940](https://doi.org/10.2307/3250940) .  
   
 Klesel M, Schuberth F, Henseler J, Niehaves B (2019). “A Test for
 Multigroup Comparison Using Partial Least Squares Path Modeling.”

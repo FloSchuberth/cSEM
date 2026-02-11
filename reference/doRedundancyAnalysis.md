@@ -25,7 +25,7 @@ mode B, the function silently returns `NA`.
 
 ## Details
 
-Perform a redundancy analysis (RA) as proposed by Hair et al. (2016)
+Perform a redundancy analysis (RA) as proposed by Hair et al. (2017)
 with reference to Chin (1998) .
 
 RA is confined to PLS-PM, specifically PLS-PM with at least one
@@ -55,9 +55,9 @@ Chin WW (1998). “Modern Methods for Business Research.” In Marcoulides
 GA (ed.), chapter The Partial Least Squares Approach to Structural
 Equation Modeling, 295–358. Mahwah, NJ: Lawrence Erlbaum.  
   
-Hair JF, Hult GTM, Ringle C, Sarstedt M (2016). *A Primer on Partial
-Least Squares Structural Equation Modeling (PLS-SEM)*. Sage
-publications.
+Hair JF, Hult GTM, Ringle CM, Sarstedt M (2017). *A Primer on Partial
+Least Squares Structural Equation Modeling (PLS-SEM)*, 2nd edition.
+Sage, London.
 
 ## See also
 

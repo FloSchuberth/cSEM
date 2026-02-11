@@ -107,3 +107,5 @@ it with its transposed.
 Hwang H, Takane Y, Jung K (2017). “Generalized structured component
 analysis with uniqueness terms for accommodating measurement error.”
 *Frontiers in Psychology*, **8**(2137), 1–12.
+[doi:10.3389/fpsyg.2017.02137](https://doi.org/10.3389/fpsyg.2017.02137)
+.
