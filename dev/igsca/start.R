@@ -10,3 +10,12 @@ eta3 =~ y31 + y32 + y33
 "
 
 igsca <- csem(threecommonfactors, model, .approach_weights = "GSCA")
+
+
+
+# igsca <- csem(
+#   threecommonfactors,
+#   model,
+#   .approach_weights = "GSCA",
+#   .starting_values = list("eta1" = c(), "eta2" = c(), "eta3" = c())
+# )

@@ -145,6 +145,12 @@ igsca <-
       envir = environment()
     )
 
+    # if starting values are provided
+    if (!is.null(.starting_values)) {
+      W <- setStartingValues(.W = t(W), .starting_values = .starting_values) |>
+        t()
+    }
+
     ## Alternating Least Squares Algorithm -------------------------------------
 
     ### Optimization Preparation -----------------------------------------------

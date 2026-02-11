@@ -1,56 +1,5 @@
 # General Pre-Test -------------------------------------------------------------
 
-test_that("Replicate IGSCA Primer Results", {
-  
-  data(corp_rep_data, package = "cSEM")
-
-  # Code from https://osf.io/9tm2y/files/wk5vz?view_only=59d9792bab994892a735e4efc763b511
-  # Schamberger et al. (2025)
-  x_clean <- corp_rep_data |>
-    dplyr::mutate(across(everything(), ~ ifelse(.x == -99, NA, .x))) |>
-    na.omit()
-
-  model <- '
-Quality <~ qual_1 + qual_2 + qual_3 + qual_4 + qual_5 + qual_6 + qual_7 + qual_8
-Performance <~ perf_1 + perf_2 + perf_3 + perf_4 + perf_5
-CorpSocResp <~ csor_1 + csor_2 + csor_3 + csor_4 + csor_5
-Attractiveness <~ attr_1 + attr_2 + attr_3
-
-Competence =~ comp_1 + comp_2 + comp_3
-CustomerLoyality =~ cusl_1 + cusl_2 + cusl_3
-Likeability =~ like_1 + like_2 + like_3
-CustomerSatisfaction =~ cusa
-
-Competence ~ Quality + Performance + CorpSocResp + Attractiveness
-Likeability ~ Quality + Performance + CorpSocResp + Attractiveness
-CustomerSatisfaction ~ Competence + Likeability
-CustomerLoyality ~ CustomerSatisfaction + Competence + Likeability'
-
-  igsca <- csem(
-    x_clean,
-    model,
-    .approach_weights = "GSCA",
-    .disattenuate = TRUE,
-    .dominant_indicators = NULL,
-    .tolerance = 0.0001,
-    .conv_criterion = "sum_diff_absolute"
-  )
-  tidied_igsca <- tidy(igsca)
-
-  igscaPrimer <- read.csv(testthat::test_path("data", "corp_rep_igscaPrimer.csv")) |> 
-    subset(select = c(term, estimate))
-
-  tidied_igsca <- subset(tidied_igsca, term %in% igscaPrimer$term & (op %in% c("~", "=~", "<~")), select = c(term, estimate))
-  
-  tidied_igsca <- tidied_igsca[order(tidied_igsca$term),]
-
-  igscaPrimer <-igscaPrimer[order(igscaPrimer$term),]
-
-  testthat::expect_equal(object = tidied_igsca,
-                       expected = igscaPrimer, tolerance = .012, ignore_attr = TRUE)
-
-})
-
 ## Model Specification and Load Data ---------------------------------------
 tutorial_igsca_model <- "
 # Composite Model
@@ -73,13 +22,14 @@ Numberofjoboffers ~ NetworkingBehavior
 "
 
 ## Compute and tabulate igsca ----------------------------------------------------
-mod <- csem(.data = LeDang2022,
-                  .model = tutorial_igsca_model,
-                  .approach_weights = "GSCA",
-                  .dominant_indicators = NULL,
-                  .tolerance = 0.0001,
-                  .conv_criterion = "sum_diff_absolute")
-
+mod <- csem(
+  .data = LeDang2022,
+  .model = tutorial_igsca_model,
+  .approach_weights = "GSCA",
+  .dominant_indicators = NULL,
+  .tolerance = 0.0001,
+  .conv_criterion = "sum_diff_absolute"
+)
 
 
 ### Compute GSCA_M and GSCA for Reference ----------------------------------
@@ -101,12 +51,14 @@ Numberofjobinterviews ~ NetworkingBehavior
 Numberofjoboffers ~ NetworkingBehavior
 "
 
-gsca_mod <- csem(.data = LeDang2022,
-                  gsca_model,
-                  .approach_weights = "GSCA",
-                  .dominant_indicators = NULL,
-                  .tolerance = 0.0001,
-                  .conv_criterion = "sum_diff_absolute")
+gsca_mod <- csem(
+  .data = LeDang2022,
+  gsca_model,
+  .approach_weights = "GSCA",
+  .dominant_indicators = NULL,
+  .tolerance = 0.0001,
+  .conv_criterion = "sum_diff_absolute"
+)
 
 test_that("GSCA estimates are nominal", {
   expect_true(all(verify(gsca_mod) == FALSE))
@@ -133,12 +85,14 @@ Numberofjobinterviews ~ NetworkingBehavior
 Numberofjoboffers ~ NetworkingBehavior
 "
 
-gsca_m_mod <- csem(.data = LeDang2022,
-                  gsca_m_model,
-                  .approach_weights = "GSCA",
-                  .dominant_indicators = NULL,
-                  .tolerance = 0.0001,
-                  .conv_criterion = "sum_diff_absolute")
+gsca_m_mod <- csem(
+  .data = LeDang2022,
+  gsca_m_model,
+  .approach_weights = "GSCA",
+  .dominant_indicators = NULL,
+  .tolerance = 0.0001,
+  .conv_criterion = "sum_diff_absolute"
+)
 
 test_that("GSCA-M estimates are nominal", {
   expect_true(all(verify(gsca_m_mod) == FALSE))
@@ -146,7 +100,6 @@ test_that("GSCA-M estimates are nominal", {
 })
 
 # gsca_m_mod$Estimates$Loading_estimates |> View()
-
 
 # Parameter Estimates Only on Allowed Parameters -------------------------
 test_that("Only specified path-coefficients are non-zero", {
@@ -165,12 +118,16 @@ test_that("Only specified path-coefficients are non-zero", {
 test_that("Only specified loadings are non-zero", {
   # Zero loadings where expected
   expect_true(all(
-    c(mod$Estimate$Loading_estimates)[c(mod$Information$Model$measurement == 0)] ==
+    c(mod$Estimate$Loading_estimates)[c(
+      mod$Information$Model$measurement == 0
+    )] ==
       0
   ))
   # Non-zero loadings where expected
   expect_true(all(
-    c(mod$Estimate$Loading_estimates)[c(mod$Information$Model$measurement == 1)] !=
+    c(mod$Estimate$Loading_estimates)[c(
+      mod$Information$Model$measurement == 1
+    )] !=
       0
   ))
 })
@@ -270,7 +227,6 @@ test_that("Returned data, construct scores and unique scores are standardized, a
 })
 
 
-
 # Valid Reliabilities ----------------------------------------------------
 test_that("Reliabilities are correctly estimated", {
   expect_true(all(mod$Estimates$Reliabilities <= 1))
@@ -278,18 +234,18 @@ test_that("Reliabilities are correctly estimated", {
 
 test_that("Model estimation passes standards", {
   # Counter-intuitively, FALSE means that convergence was OK
-  expect_true(all(!verify(mod))) 
+  expect_true(all(!verify(mod)))
 })
 
 ### Custom Function for Organizing IGSCA Results ----------------------------
 
 #' Converts Output of igsca functions into a table to facilitate comparisons
-#' 
+#'
 #' Assumes that indicators only load onto one factor and that there are no cross-factor loadings
-#' 
+#'
 #' I chose not to use the tidy method for the tests because it would be a lot of
 #' work to make the GSCAPro results fit in the tidy format.
-#' 
+#'
 #' @param weights Weights matrix
 #' @param loadings Loadings matrix
 #' @param uniqueD Vector of Uniqueness for each indicator of a common factor
@@ -298,62 +254,82 @@ test_that("Model estimation passes standards", {
 #' @author Michael S. Truong
 #' @return Table of Weights, Loadings, Path-Coefficients and Uniqueness terms from i-gsca algorithms in Matlab or R.
 #'
-get_lavaan_table_igsca_matrix <- function(model, weights, loadings, uniqueD, paths) {
+get_lavaan_table_igsca_matrix <- function(
+  model,
+  weights,
+  loadings,
+  uniqueD,
+  paths
+) {
   table <- lavaan::lavaanify(model = model)[, c("lhs", "op", "rhs")]
   # Remove unnecessary rows
-  table <- table[table$op %in% c("=~", "<~", "~"),]
+  table <- table[table$op %in% c("=~", "<~", "~"), ]
   # Pre-allocate Columns
   table <-
-    cbind(table, list(
-      "weights" = 0,
-      "loadings" = 0,
-      "uniqueD" = 0,
-      "paths" = 0
-    ))
-  
+    cbind(
+      table,
+      list(
+        "weights" = 0,
+        "loadings" = 0,
+        "uniqueD" = 0,
+        "paths" = 0
+      )
+    )
+
   # Slide in weights
   for (indicator in rownames(weights)) {
     for (lv in colnames(weights)) {
-      table[((table$lhs == lv &
-                table$rhs == indicator) &
-               table$op %in% c("<~", "=~")), "weights"] <- weights[indicator, lv]
+      table[
+        ((table$lhs == lv &
+          table$rhs == indicator) &
+          table$op %in% c("<~", "=~")),
+        "weights"
+      ] <- weights[indicator, lv]
     }
   }
-  
+
   # Slide in loadings
   for (indicator in rownames(loadings)) {
     for (lv in colnames(loadings)) {
-      table[((table$lhs == lv &
-                table$rhs == indicator) &
-               table$op %in% c("<~", "=~")), "loadings"] <- loadings[indicator, lv]
+      table[
+        ((table$lhs == lv &
+          table$rhs == indicator) &
+          table$op %in% c("<~", "=~")),
+        "loadings"
+      ] <- loadings[indicator, lv]
     }
   }
-  
+
   # Slide in uniqueD
   for (indicator in names(uniqueD)) {
     # This assumes that every indicator only loads onto one factor
     # Cross-factor loadings will not work with this
-    table[((table$rhs == indicator) &
-             (table$op == "=~")), "uniqueD"] <- uniqueD[indicator]
+    table[
+      ((table$rhs == indicator) &
+        (table$op == "=~")),
+      "uniqueD"
+    ] <- uniqueD[indicator]
   }
-  
+
   # Slide in Paths
   for (lv_from in rownames(paths)) {
     for (lv_to in colnames(paths)) {
-      table[((table$rhs == lv_from &
-                table$lhs == lv_to) &
-               table$op == "~"), "paths"] <- paths[lv_from, lv_to]
+      table[
+        ((table$rhs == lv_from &
+          table$lhs == lv_to) &
+          table$op == "~"),
+        "paths"
+      ] <- paths[lv_from, lv_to]
     }
   }
-  
+
   # Remove zeros for cells that shouldn't have values
   table[!(table$op %in% c("<~", "=~")), "weights"] <- NA
   table[!(table$op %in% c("<~", "=~")), "loadings"] <- NA
   table[!(table$op %in% c("=~")), "uniqueD"] <- NA
   table[!(table$op %in% c("~")), "paths"] <- NA
-  
+
   return(table)
-  
 }
 
 
@@ -385,19 +361,27 @@ igsca_gscapro$uniqueD <- sqrt(igsca_gscapro$uniqueD)
 
 
 ## Compare Matlab and cSEM::igsca()------------------------------------------
-testthat::expect_failure(testthat::expect_equal(object = igsca_r_table,
-                                                expected = igsca_sim_m_table,
-                                                tolerance= .0033))
+testthat::expect_failure(testthat::expect_equal(
+  object = igsca_r_table,
+  expected = igsca_sim_m_table,
+  tolerance = .0033
+))
 
-testthat::expect_equal(object = igsca_r_table,
-                       expected = igsca_sim_m_table, tolerance = .0034)
+testthat::expect_equal(
+  object = igsca_r_table,
+  expected = igsca_sim_m_table,
+  tolerance = .0034
+)
 
 # If the kronecker bypass for Loadings is done:
 # testthat::expect_success(testthat::expect_equal(object = igsca_r_table,
 #                                                 expected = igsca_sim_m_table, tolerance = .037))
 
 testthat::expect_failure(
-  testthat::expect_identical(object = igsca_r_table, expected = igsca_sim_m_table),
+  testthat::expect_identical(
+    object = igsca_r_table,
+    expected = igsca_sim_m_table
+  ),
   info = "Matlab and R versions should be very similar, but not identical"
 )
 
@@ -467,9 +451,91 @@ test_that("getIgscaInputs output is of the correct dimensions", {
 })
 
 
-
 # Starting Values --------------------------------------------------------
-test_that("Starting Values work for igsca", {
-  # TODO: Fill this out
-  expect_true(TRUE)
+test_that("Starting Values run with IGSCA", {
+  # Using IGSCA  Primer results
+  data(corp_rep_data, package = "cSEM")
+
+  # Code from https://osf.io/9tm2y/files/wk5vz?view_only=59d9792bab994892a735e4efc763b511
+  # Schamberger et al. (2025)
+  x_clean <- corp_rep_data |>
+    dplyr::mutate(across(everything(), ~ ifelse(.x == -99, NA, .x))) |>
+    na.omit()
+
+  model <- '
+Quality <~ qual_1 + qual_2 + qual_3 + qual_4 + qual_5 + qual_6 + qual_7 + qual_8
+Performance <~ perf_1 + perf_2 + perf_3 + perf_4 + perf_5
+CorpSocResp <~ csor_1 + csor_2 + csor_3 + csor_4 + csor_5
+Attractiveness <~ attr_1 + attr_2 + attr_3
+
+Competence =~ comp_1 + comp_2 + comp_3
+CustomerLoyality =~ cusl_1 + cusl_2 + cusl_3
+Likeability =~ like_1 + like_2 + like_3
+CustomerSatisfaction =~ cusa
+
+Competence ~ Quality + Performance + CorpSocResp + Attractiveness
+Likeability ~ Quality + Performance + CorpSocResp + Attractiveness
+CustomerSatisfaction ~ Competence + Likeability
+CustomerLoyality ~ CustomerSatisfaction + Competence + Likeability'
+
+  igsca <- csem(
+    x_clean,
+    model,
+    .approach_weights = "GSCA",
+    .disattenuate = TRUE,
+    .dominant_indicators = NULL,
+    .tolerance = 0.0001,
+    .conv_criterion = "sum_diff_absolute",
+    .starting_values = list(
+      "Quality" = c(
+        "qual_1" = 0.173,
+        "qual_2" = 0.143,
+        "qual_3" = 0.184,
+        "qual_4" = 0.161,
+        "qual_5" = 0.179,
+        "qual_6" = 0.193,
+        "qual_7" = 0.177,
+        "qual_8" = 0.142
+      ),
+      "Performance" = c(
+        "perf_1" = 0.301,
+        "perf_2" = 0.313,
+        "perf_3" = 0.243,
+        "perf_4" = 0.285,
+        "perf_5" = 0.268
+      ),
+      "CorpSocResp" = c(
+        "csor_1" = 0.252,
+        "csor_2" = 0.252,
+        "csor_3" = 0.282,
+        "csor_4" = 0.258,
+        "csor_5" = 0.27
+      ),
+      "Attractiveness" = c("attr_1" = 0.469, "attr_2" = 0.404, "attr_3" = 0.463)
+    )
+  )
+  tidied_igsca <- tidy(igsca)
+
+  igscaPrimer <- read.csv(testthat::test_path(
+    "data",
+    "corp_rep_igscaPrimer.csv"
+  )) |>
+    subset(select = c(term, estimate))
+
+  tidied_igsca <- subset(
+    tidied_igsca,
+    term %in% igscaPrimer$term & (op %in% c("~", "=~", "<~")),
+    select = c(term, estimate)
+  )
+
+  tidied_igsca <- tidied_igsca[order(tidied_igsca$term), ]
+
+  igscaPrimer <- igscaPrimer[order(igscaPrimer$term), ]
+
+  testthat::expect_equal(
+    object = tidied_igsca,
+    expected = igscaPrimer,
+    tolerance = .012,
+    ignore_attr = TRUE
+  )
 })
