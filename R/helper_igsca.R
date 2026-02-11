@@ -1,4 +1,4 @@
-#' R Implementation of igsca_sim.m
+#' Integrated Generalized Structured Component Analysis
 #'
 #' This R implementation of I-GSCA is based on the Matlab implementation in igsca_sim.m by Dr. Heungsun Hwang.
 #'
@@ -144,11 +144,6 @@ igsca <-
       prepared_for_ALS[c("W", "C", "B", "V", "Z", "D", "U", "Gamma")],
       envir = environment()
     )
-
-    # if starting values are provided
-    if (!is.null(.starting_values)) {
-      W <- setStartingValues(.W = W, .starting_values = .starting_values)
-    }
 
     ## Alternating Least Squares Algorithm -------------------------------------
 
@@ -469,39 +464,49 @@ initializeAlsEstimates <- function(
   GSCA_starting_values$W <- t(GSCA_starting_values$W)
 
   list2env(GSCA_starting_values[c("W", "C", "B")], envir = environment())
-
-  # Initialize matrix to hold V
-  V <- cbind(diag(n_indicators), W)
   
-  # Use internal GSCA_M Instead alongside its starting values
+  # 
+  # Getting starting values of U and D by running internal GSCAm--------------------------------
+  # This doesn't seem like it's worth it because GSCAm is doing much more internally than just obtaining U and D
+  # W_NA <- W
+  # W_NA[c(!as.logical(t(.csem_model$measurement)))] <- NA
+
+  # W_starting_values <- W_NA |>
+  #   asplit(2, drop = FALSE) |>
+  #   lapply(\(x) x |> c() |> na.omit() |> c())
+
+  # GSCAM_starting_values <- calculateWeightsGSCAm(
+  #         .X = .X,
+  #         .csem_model = .csem_model,
+  #         .conv_criterion = .conv_criterion,
+  #         .iter_max = 1,
+  #         .tolerance = .tolerance,
+  #         .starting_values = W_starting_values
+  #       )
+  # GSCAM_starting_values$U <- GSCAM_starting_values$Unique_scores
+  # GSCAM_starting_values$D <- GSCAM_starting_values$D_diag
+
+  # list2env(GSCAM_starting_values[c("U", "D")])
+
+
+  # Create initial values for U and D, using normalized data (Z) and construct scores (Gamma) --------------
+
   # Normalize data matrix to make Z
   # normalization_factor <- sqrt(n_case - 1)
   Z <- Z0 / normalization_factor
   # Create Initial Construct Scores Matrix
   Gamma <- Z %*% W
-  # Initialize Unique Error Matrix
+
   D <- diag(n_indicators)
 
-  #
-  # Solution for Q is copied from estimators_weights.R
-  Q <- qr.Q(qr(Gamma), complete = TRUE)
-  F_o <- Q[, (n_constructs + 1):n_case, drop = FALSE]
-
+  # Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, (n_constructs+1):n_case, drop = FALSE]
+  # Gamma_orth is F_o
+  F_o <- qr.Q(qr(Gamma), complete = TRUE)[, (n_constructs + 1):n_case, drop = FALSE]
+  
   if (n_case <= n_indicators) {
-    # I don't know if the following warning is necessary given that it should
-    # still work -- this is said to come from the old gsca_m implementation in
-    # estimators_weights.R
-    #
-    # This also comes from the Supplementary Material to GSCA_m, so I think it
-    # should work
-    #
-    # warning("Model may not be correctly estimated because the number of cases is less than the number of indicators and the handling is experimental.")
-
-    # From estimator_weights.R, which is from one of the older GSCA_m implementations
-    # Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, (n_constructs+1):n_case, drop = FALSE]
     s <- svd(D %*% t(Z) %*% F_o)
     Utilde <- s$v %*% t(s$u)
-    U <- F_o %*% Utilde # Gamma_orth = F_o
+    U <- F_o %*% Utilde 
   } else if (n_case > n_indicators) {
     # svd between R and Matlab by Ahmed Fasih on February 1/2017
     # https://stackoverflow.com/a/41972818
@@ -526,19 +531,16 @@ initializeAlsEstimates <- function(
       }
     )
   }
-  # Zeroing the initialized Unique_scores of composites is unique to our R implementation and not found in the original Matlab version
-  # AFAICT, this shouldn't affect the parameter estimates because U only affects the other parameter estimates via U %*% D, and D will
-  #  already zero the effects of the initialization
+  
   U[, indicator_type == "Composite"] <- 0
-  D <- diag(diag(t(U) %*% Z)) # This forces the D matrix to be diagonal-entries only.
+  D <- diag(diag(t(U) %*% Z)) 
   D[indicator_type == "Composite", indicator_type == "Composite"] <- 0
-
 
   return(list(
     "W" = W,
     "C" = C,
     "B" = B,
-    "V" = V,
+    "V" = cbind(diag(n_indicators), W),
     "Z" = Z,
     "D" = D,
     "U" = U,

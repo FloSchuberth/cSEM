@@ -653,15 +653,15 @@ calculateWeightsGSCAm <- function(
   ## Define matrices
   
   # Currently only pure common factor models are supported
-  if(any(.csem_model$construct_type == "Composite")) {
-    stop2("The following error occured in the `calculateWeightsGSCAm()` function:\n",
-          "GSCAm only applicable to pure common factor models.")
-  }
+  # if(any(.csem_model$construct_type == "Composite")) {
+  #   stop2("The following error occured in the `calculateWeightsGSCAm()` function:\n",
+  #         "GSCAm only applicable to pure common factor models.")
+  # }
   
   Z  <- .X # Z is the data matrix in GSCA, data are already standardized
   W  <- t(.csem_model$measurement) # Matrix of the weighted relation model
   C  <- .csem_model$measurement # Matrix of the measurement model (non-zero only for common factors)
-  C[which(.csem_model$construct_type == "Composite"), ]  <- 0
+  # C[which(.csem_model$construct_type == "Composite"), ]  <- 0
   B  <- t(.csem_model$structural) # Matrix of the structural model
   
   N  <- nrow(Z) # number of observations
@@ -680,9 +680,10 @@ calculateWeightsGSCAm <- function(
   
   # if starting values are provided
   if(!is.null(.starting_values)){
-    W = setStartingValues(.W = W, .starting_values = .starting_values)
+    W <- setStartingValues(.W = t(W), .starting_values = .starting_values) |> 
+      t()
   }
-  
+
   # Normalized Gamma
   Gamma <- Z %*% W
   
@@ -770,12 +771,13 @@ calculateWeightsGSCAm <- function(
     B[B != 0] <- unlist(beta)
 
     # Step 2b: Update C (the loadings for a given W)
-    vars_cf <- which(.csem_model$construct_type == "Common factor")
-    if (length(vars_cf) > 0) {
+    # vars_cf <- which(.csem_model$construct_type == "Common factor")
+    # if (length(vars_cf) > 0) {
       cov_gamma_indicators <- t(Gamma) %*% X
-      Y <- which(colSums(C[vars_cf, ]) != 0)
+      # Y <- which(colSums(C[vars_cf, ]) != 0)
+      Y <- which(colSums(C) != 0)
       loadings <- lapply(Y, function(y) {
-        x <- which(C[vars_cf, y] != 0)
+        x <- which(C[, y] != 0)
         coef <- solve(vcv_gamma[x, x, drop = FALSE]) %*%
           cov_gamma_indicators[x, y, drop = FALSE]
       })
@@ -784,7 +786,7 @@ calculateWeightsGSCAm <- function(
       tC <- t(C)
       tC[tC != 0] <- unlist(loadings)
       C <- t(tC)
-    }
+    # }
 
     # Implementation based on the updated MATLAB code provided by Heungsun in
     # private communication to deal with big dataset (20.10.2021)
