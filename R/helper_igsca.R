@@ -294,7 +294,14 @@ igsca <-
     ## Output Formatting -------------------------------------------------------
 
     # Loadings for Canonical Composites
-
+    if (any(modes %in% "CCMP")) {
+      CCMP_C <- t(W) %*% .S * .csem_model$measurement
+      C[names(modes)[modes == "CCMP"], ] <- CCMP_C[
+        names(modes)[modes == "CCMP"],
+        ,
+        drop = FALSE
+      ]
+    } 
     # identical(diag(D^2), diag(D)^2)
     D_diag <- diag(D)
     names(D_diag) <- colnames(Z)
@@ -741,7 +748,7 @@ updateCBDU <-
     vars_cf_ncmp <- names(modes)[modes %in% c("Common factor", "NCMP")]
     cov_gamma_indicators <- t(Gamma) %*% Z
     vcv_gamma <- t(Gamma) %*% Gamma
-    Y <- which(colSums(C[vars_cf_ncmp, ]) != 0)
+    Y <- which(colSums(C[vars_cf_ncmp, , drop = FALSE]) != 0)
     # This approach assumes that every factor/NCMP loads onto one indicator: no cross-loadings
     loadings <- lapply(Y, function(y) {
       x    <-  which(C[vars_cf_ncmp, y] != 0)

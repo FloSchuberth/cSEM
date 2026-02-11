@@ -133,7 +133,8 @@ out = csem(
     .model = modelest,
     .approach_weights = 'GSCA',
     .disattenuate = TRUE,
-    .conv_criterion = "sum_diff_absolute"
+    .conv_criterion = "sum_diff_absolute",
+    .GSCA_modes = "CCMP"
 )
 tidy(out)
 
@@ -188,7 +189,8 @@ out = csem(
     .approach_weights = 'GSCA',
     .disattenuate = TRUE,
     .tolerance = 0.00001,
-    .conv_criterion = "sum_diff_absolute"
+    .conv_criterion = "sum_diff_absolute",
+    .GSCA_modes = "CCMP"
 )
 summarize(out)
 
