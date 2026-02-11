@@ -193,9 +193,9 @@ to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emp
 \item{.GSCA_modes}{Either a named list specifying the mode that should be
 used for each composite in the form \code{"composite_name" = mode}, a single
 character string giving the mode that should be used for all composites.
-Possible single character string choices for \code{mode} are: "\emph{canon}" for
-canonical composites, or "\emph{nomo}" for nomological composites, or \code{NULL} for
-default behavior. Default behavior is to estimate nomological composites.
+Possible single character string choices for \code{mode} are: "\emph{CCMP}" for
+canonical composites, or "\emph{NCMP}" for nomological composites, or \code{NULL} for
+default behavior. Default behavior is to estimate canonical composites.
 Passed to (I-)GSCA estimating functions in \code{\link[=calculateWeightsGSCA]{calculateWeightsGSCA()}}
 or \code{\link[=calculateWeightsIGSCA]{calculateWeightsIGSCA()}}. Defaults to \code{NULL}.}
 

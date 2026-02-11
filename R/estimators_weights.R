@@ -431,6 +431,7 @@ calculateWeightsGSCA <- function(
     }
   Lambda0[which(modes == "CCMP"), ]  <- 0
   vars_NCMP <- names(modes)[modes == "NCMP"]
+  vars_cf_ncmp <- names(modes)[modes %in% c("Common factor", "NCMP")]
 
   
   
@@ -468,9 +469,9 @@ calculateWeightsGSCA <- function(
     # Step 1b: Estimate Lambda (the loadings for a given W)
     if(any(modes %in% "NCMP")) {
       Lambda_tilde <- W_iter %*% .S
-      dep_vars <- names(which(colSums(Lambda0[vars_NCMP, , drop = FALSE]) != 0))
+      dep_vars <- names(which(colSums(Lambda0[vars_cf_ncmp, , drop = FALSE]) != 0))
       Lambda <- lapply(dep_vars, function(y) {
-        x <-  which(Lambda0[vars_NCMP, y] != 0)
+        x <-  which(Lambda0[vars_cf_ncmp, y] != 0)
         coef <- solve(C[x, x, drop = FALSE]) %*% Lambda_tilde[x, y, drop = FALSE]
       })
       # Transform

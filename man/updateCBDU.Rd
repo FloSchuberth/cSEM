@@ -17,7 +17,8 @@ updateCBDU(
   n_constructs,
   b_index,
   n_case,
-  con_type
+  con_type,
+  modes
 )
 }
 \arguments{
@@ -48,6 +49,8 @@ updateCBDU(
 \item{con_type}{A vector that denotes whether each construct variable
 (columns in W0 and C0) is a common factor or composite. Its length should
 be equal to the number of columns of W0 and C0.}
+
+\item{modes}{Named vector of whether the construct is a Common factor, nomological composite or canonical composite.}
 }
 \value{
 List of matrices:

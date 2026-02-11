@@ -28,7 +28,8 @@ mod <- csem(
   .approach_weights = "GSCA",
   .dominant_indicators = NULL,
   .tolerance = 0.0001,
-  .conv_criterion = "sum_diff_absolute"
+  .conv_criterion = "sum_diff_absolute",
+  .GSCA_modes = "NCMP"
 )
 
 
@@ -57,7 +58,8 @@ gsca_mod <- csem(
   .approach_weights = "GSCA",
   .dominant_indicators = NULL,
   .tolerance = 0.0001,
-  .conv_criterion = "sum_diff_absolute"
+  .conv_criterion = "sum_diff_absolute",
+  .GSCA_modes = "NCMP"
 )
 
 test_that("GSCA estimates are nominal", {
@@ -484,8 +486,9 @@ CustomerLoyality ~ CustomerSatisfaction + Competence + Likeability'
     .approach_weights = "GSCA",
     .disattenuate = TRUE,
     .dominant_indicators = NULL,
-    .tolerance = 0.0001,
+    .tolerance = 0.001,
     .conv_criterion = "sum_diff_absolute",
+  .GSCA_modes = "NCMP",
     .starting_values = list(
       "Quality" = c(
         "qual_1" = 0.173,
