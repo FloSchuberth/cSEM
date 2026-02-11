@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_igsca.R
 \name{igsca}
 \alias{igsca}
-\title{R Implementation of igsca_sim.m}
+\title{Integrated Generalized Structured Component Analysis}
 \usage{
 igsca(
   .X = args_default()$.X,
