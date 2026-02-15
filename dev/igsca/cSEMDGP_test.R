@@ -20,7 +20,7 @@ w1 <- c(0.4, 0.3, 0.2)
 
 w1 %*% Sxi1 %*% w1
 
-cmp_canonical_weights <- w1 / c(sqrt(w1 %*% Sxi1 %*% w1))
+(cmp_canonical_weights <- w1 / c(sqrt(w1 %*% Sxi1 %*% w1)))
 
 # GSCA -------------------------------------------------------------------
 modelpop <- ' 
@@ -128,7 +128,9 @@ xi3 =~ x31 + x32 + x33
 xi3~ xi2+xi1
 '
 
-out = csem(
+debugonce(updateCBDU)
+
+out_CCMP = csem(
     .data = datapop,
     .model = modelest,
     .approach_weights = 'GSCA',
@@ -136,7 +138,17 @@ out = csem(
     .conv_criterion = "sum_diff_absolute",
     .GSCA_modes = "CCMP"
 )
-tidy(out)
+tidy(out_CCMP) |> View()
+
+out_NCMP = csem(
+    .data = datapop,
+    .model = modelest,
+    .approach_weights = 'GSCA',
+    .disattenuate = TRUE,
+    .conv_criterion = "sum_diff_absolute",
+    .GSCA_modes = "NCMP"
+)
+tidy(out_NCMP) |> View()
 
 
 # TODO: Add single indicator composite

@@ -748,22 +748,26 @@ updateCBDU <-
     vars_cf_ncmp <- names(modes)[modes %in% c("Common factor", "NCMP")]
     cov_gamma_indicators <- t(Gamma) %*% Z
     vcv_gamma <- t(Gamma) %*% Gamma
-    Y <- which(colSums(C[vars_cf_ncmp, , drop = FALSE]) != 0)
+    dep_vars <- (colSums(C[vars_cf_ncmp, , drop = FALSE]) != 0) |> 
+        which() |> 
+        names()
     # This approach assumes that every factor/NCMP loads onto one indicator: no cross-loadings
-    loadings <- lapply(Y, function(y) {
-      x    <-  which(C[vars_cf_ncmp, y] != 0)
-      # FIXME: The pseudo-inverse approach is slightly different from the solve() approach. But both approaches differ from the Kronecker product. 
+    loadings <- lapply(dep_vars, function(y) {
+      x <- (rowSums(C[vars_cf_ncmp, y, drop = FALSE]) != 0) |> 
+          which() |> 
+          names()
       coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*% cov_gamma_indicators[x, y, drop = FALSE]
-      # coef <- solve(vcv_gamma[x, x, drop = FALSE]) %*% cov_gamma_indicators[x, y, drop = FALSE]
     })
     # A future approach should consider avoiding c_index and using explicit names, for safety.
     C[c_index] <- unlist(loadings, use.names =  FALSE)
 
     # Path Coefficients Update ------------------------------------------------
-    vars_endo <- which(colSums(B) != 0)
+    vars_endo <- colnames(B)[colSums(B) != 0]
 
     beta <- lapply(vars_endo, function(y) {
-      x <- which(B[, y, drop = FALSE] != 0)
+      x <- (rowSums(B[, y, drop = FALSE]) != 0) |> 
+        which() |> 
+        names()
       coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*%
         vcv_gamma[x, y, drop = FALSE]
     })

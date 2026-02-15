@@ -455,7 +455,11 @@ calculateWeightsGSCA <- function(
     # Step 1a: Estimate B (the structural coefficients for a given W)
     C <- W_iter %*% .S %*% t(W_iter)
     B <- lapply(vars_endo, function(y) {
-      x <-  colnames(B0[y, B0[y, ] != 0, drop = FALSE])
+      x <-  (colSums(B0[y, , drop = FALSE])  !=  0) |> 
+        which() |> 
+        names()
+      # The old approach could create problems when there was only one exogenous and one endogenous variable
+      # x <-  colnames(B0[y, B0[y, ] != 0, drop = FALSE])
       coef <- solve(C[x, x, drop = FALSE]) %*% C[x, y, drop = FALSE]
       
       # Since Var(dep_Var) = 1 we have R2 = Var(X coef) = t(coef) %*% X'X %*% coef
@@ -469,9 +473,14 @@ calculateWeightsGSCA <- function(
     # Step 1b: Estimate Lambda (the loadings for a given W)
     if(any(modes %in% "NCMP")) {
       Lambda_tilde <- W_iter %*% .S
-      dep_vars <- names(which(colSums(Lambda0[vars_cf_ncmp, , drop = FALSE]) != 0))
+      dep_vars <- (colSums(Lambda0[vars_cf_ncmp, , drop = FALSE]) != 0) |> 
+        which() |> 
+        names()
       Lambda <- lapply(dep_vars, function(y) {
-        x <-  which(Lambda0[vars_cf_ncmp, y] != 0)
+        x <- (rowSums(Lambda0[vars_cf_ncmp, y, drop = FALSE]) != 0) |> 
+          which() |> 
+          names()
+
         coef <- solve(C[x, x, drop = FALSE]) %*% Lambda_tilde[x, y, drop = FALSE]
       })
       # Transform
