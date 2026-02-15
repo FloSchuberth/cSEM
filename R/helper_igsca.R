@@ -327,121 +327,6 @@ igsca <-
     )
   }
 
-#' R Implementation of gsca_inione.m from Heungsun Hwang
-#'
-#' Initializes the values for I-GSCA by using modified Generalized Structured
-#' Component Analysis (GSCA) to estimate the model.
-#'
-#' @inheritParams igsca
-#' @inheritParams csem_arguments
-#' @importFrom MASS ginv
-#' @author Michael S. Truong
-#' @returns Returns a list of starting values for:
-#' * Weights (W)
-#' * Loadings (C)
-#' * Path Coefficients (B)
-#'
-initializeIgscaEstimates <- function(Z0, W0, B0, .S = args_default()$.S) {
-  N <- nrow(Z0)
-  J <- nrow(W0)
-  P <- ncol(W0)
-  TRep <- J + P
-  C0 <- t(W0)
-  A0 <- cbind(C0, B0)
-
-  w_index <- which(W0 != 0)
-  aindex <- which(A0 != 0)
-
-  # The original algorithm uses the biased consistent estimator of the standard deviation instead of unbiased. This is unlikely to matter.
-  # Proof: 
-  # Scaling creates: (x - mean(x)) / sqrt(sum(x - mean(x)^2) / sqrt(n-1))
-  # Which is equal to (x - mean(x))*sqrt(n-1) / sqrt(sum(x - mean(x)^2)).
-  # Therefore, scale(Z0, center = TRUE, scale = TRUE) * sqrt(N) / sqrt(N - 1)
-  # is equal to (x - mean(x))*sqrt(n) / sqrt(sum(x - mean(x)^2)).
-  # Z <- scale(Z0, center = TRUE, scale = TRUE) * sqrt(N) / sqrt(N - 1)
-  Z <- Z0
-  # Random Values to W and A
-  W <- W0
-  A <- A0
-
-  W[w_index] <- rep(1, length(w_index))
-  A[aindex] <- runif(length(aindex), min = 0, max = 1)
-
-  Gamma <- Z %*% W
-  W <-
-    W /
-    (t(sqrt(diag(
-      t(
-        Gamma
-      ) %*%
-        Gamma
-    ))) |>
-      rep(each = nrow(W)))
-  V <- cbind(diag(J), W)
-  Gamma <- Z %*% W
-
-  Psi <- Z %*% V
-  vecPsi <- c(Psi)
-  it <- 0
-  f0 <- 100000000
-  imp <- 100000000
-  while ((it <= 300) && (imp > 0.0001)) {
-    it <- it + 1
-    # Phi = kronecker(diag(TRep), Gamma)
-    # Phi <- Phi[, aindex]
-    Phi <- kroneckerC(diag(TRep), Gamma, aindex)
-    A[aindex] <- solve(t(Phi) %*% Phi, t(Phi)) %*% vecPsi
-
-    for (p in seq_len(P)) {
-      t_lil <- J + p
-      windex_p <- which(W0[, p, drop = FALSE] != 0)
-      m <- matrix(0, nrow = 1, ncol = TRep)
-      m[t_lil] <- 1
-      a <- A[p, , drop = FALSE]
-      beta <- m - a
-      H1 <- diag(P)
-      H2 <- diag(TRep)
-      H1[p, p] <- 0
-      H2[t_lil, t_lil] <- 0
-      Delta <- (W %*% H1 %*% A) - (V %*% H2)
-      # vecZDelta <- c(Z %*% Delta)
-
-      # XI <- kronecker(t(beta), Z)
-      # XI <- XI[, windex_p]
-
-      # XI <- kroneckerC(t(beta), Z, windex_p)
-      # Theta <- MASS::ginv(t(XI) %*% XI) %*% t(XI) %*% vecZDelta
-
-      # Kronecker bypass -- as shown in calculateWeightsGSCA.R
-      Theta <- MASS::ginv(
-        as.numeric(beta %*% t(beta)) * .S[windex_p, windex_p, drop = FALSE]
-      ) %*%
-        t(beta %*% t(Delta) %*% .S[, windex_p, drop = FALSE])
-
-      zw <- Z[, windex_p, drop = FALSE] %*% Theta
-
-      Theta <- sqrt(N) * Theta / norm(zw, "2")
-      W[windex_p, p] <- Theta
-      V[windex_p, t_lil] <- Theta
-    }
-    Gamma <- Z %*% W
-    Psi <- Z %*% V
-    dif <- Psi - Gamma %*% A
-    f <- sum(diag(t(dif) %*% dif))
-    imp <- f0 - f
-    f0 <- f
-    vecPsi <- c(Psi)
-  }
-  C <- A[, 1:J, drop = FALSE]
-  B <- A[, (J + 1):ncol(A), drop = FALSE]
-  return(list(
-    "W" = W,
-    "C" = C,
-    "B" = B,
-    "it" = it
-  ))
-}
-
 
 #' Prepare for ALS Algorithm
 #'
@@ -486,16 +371,6 @@ initializeAlsEstimates <- function(
   B <- matrix()
 
   # Initial estimates using GSCA
-  
-  # browser()
-  # initial_est <-
-  #   initializeIgscaEstimates(
-  #     Z0 = Z0,
-  #     W0 = W0,
-  #     B0 = B0,
-  #     .S = .S
-  #   )
-
   GSCA_starting_values <- calculateWeightsGSCA(
     .X = .X,
     .S = .S,
