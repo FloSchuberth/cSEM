@@ -188,7 +188,9 @@ igsca <-
     if (length(b_index) > 0) {
       est <- B[b_index]
     } else {
-      est <- C[c_index]
+      # Because canonical composites do not estimate loadings, here the weights are generally used to determine convergenece, instead of loadings
+        est <- W[w_index]
+        # est <- C[c_index]
     }
     est0 <- est + 1
     it <- 0
@@ -286,7 +288,9 @@ igsca <-
       if (length(b_index) > 0) {
         est <- B[b_index]
       } else {
-        est <- C[c_index]
+        # Because canonical composites do not estimate loadings, here the weights are generally used to determine convergenece, instead of loadings
+        est <- W[w_index]
+        # est <- C[c_index]
       }
     }
 
