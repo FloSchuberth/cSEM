@@ -35,7 +35,6 @@
 #' * (5) Unique Component of Indicators (for common factors) DU
 #'
 #' @importFrom MASS ginv
-#' @import RcppArmadillo
 #'
 #' @references
 #'   \insertAllCited{}
@@ -377,7 +376,7 @@ initializeAlsEstimates <- function(
     .csem_model = .csem_model,
     .conv_criterion = .conv_criterion,
     .GSCA_modes = .GSCA_modes,
-    .iter_max = .iter_max,
+    .iter_max = 10,
     .tolerance = .tolerance,
     .starting_values = .starting_values
   )
