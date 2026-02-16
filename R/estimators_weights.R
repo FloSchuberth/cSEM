@@ -504,7 +504,9 @@ calculateWeightsGSCA <- function(
     W <- W_iter
     for(j in 1:J){
       t <- K + j
-      windex_j <- which(W[j, ] != 0)
+      windex_j <- (colSums(W[j, , drop = FALSE]) != 0) |>
+        which() |>
+        names()
       m <- matrix(0, 1, JK)
       m[t] <- 1
       # a <- A[, j]
@@ -771,7 +773,6 @@ calculateWeightsGSCAm <- function(
   
   
   D <- diag(diag(t(U) %*% Z))
-  
   est  <-  A[which(A != 0)]
   est0 <- est + 1
   iter_counter <- 0
@@ -790,7 +791,10 @@ calculateWeightsGSCAm <- function(
     X <- Z - U %*% D
     WW <- t(C) %*% solve(C %*% t(C) + Ip - 2 * B + B %*% t(B))
     for (p in 1:P) {
-      windex_p <- which(W[, p] != 0)
+      # windex_p <- which(W[, p] != 0)
+      windex_p <- (rowSums(W[, p, drop = FALSE]) != 0) |>
+        which() |>
+        names()
       w <- WW[windex_p, p]
       Xp <- X[, windex_p, drop = FALSE]
       # If construct p is a single-indicator construct, dividing w by its norm
@@ -809,10 +813,12 @@ calculateWeightsGSCAm <- function(
 
     # Step 2a: Update B (the structural coefficients for a given W)
     vcv_gamma <- t(Gamma) %*% Gamma
-    vars_endo <- which(colSums(B) != 0)
+    vars_endo <- colnames(B)[colSums(B) != 0]
 
     beta <- lapply(vars_endo, function(y) {
-      x <- which(B[, y, drop = FALSE] != 0)
+      x <- (rowSums(B[, y, drop = FALSE]) != 0) |> 
+        which() |> 
+        names()
       coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*%
         vcv_gamma[x, y, drop = FALSE]
     })
@@ -823,9 +829,13 @@ calculateWeightsGSCAm <- function(
     # if (length(vars_cf) > 0) {
       cov_gamma_indicators <- t(Gamma) %*% X
       # Y <- which(colSums(C[vars_cf, ]) != 0)
-      Y <- which(colSums(C) != 0)
+      Y <- (colSums(C) != 0) |> 
+        which() |> 
+        names()
       loadings <- lapply(Y, function(y) {
-        x <- which(C[, y] != 0)
+        x <- (rowSums(C[, y, drop = FALSE]) != 0) |> 
+          which() |> 
+          names()
         coef <- solve(vcv_gamma[x, x, drop = FALSE]) %*%
           cov_gamma_indicators[x, y, drop = FALSE]
       })

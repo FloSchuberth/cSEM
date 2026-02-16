@@ -33,39 +33,45 @@ xi2<~0.4*x21 + 0.3*x22 + 0.2*x23
 x21~~0.4*x22 + -0.3*x23
 x22~~0.4*x23
 
-
-
 xi2~ 0.3*xi1
 
 '
-datapop=generateData(.model = modelpop,.empirical = T)
+datapop <- generateData(.model = modelpop,.empirical = T)
+
+debugonce(calculateWeightsGSCA)
 
 modelest <- ' 
 xi1<~x11 + x12 + x13
 
 xi2<~x21 + x22 + x23
-
-
-xi2~ xi1
+xi1 ~~ xi2
 '
 
-out_ccmp = csem(
-    .data = datapop,
-    .model = modelest,
-    .approach_weights = 'GSCA',
-    .disattenuate = FALSE,
-    .GSCA_modes = "CCMP"
-)
-tidy(out_ccmp)
-
-out_ncmp = csem(
+csem(
     .data = datapop,
     .model = modelest,
     .approach_weights = 'GSCA',
     .disattenuate = FALSE,
     .GSCA_modes = "NCMP"
 )
-tidy(out_ncmp)
+
+debugonce(calculateWeightsGSCA)
+
+modelest <- ' 
+xi1<~x11 + x12 + x13
+
+xi2<~x21 + x22 + x23
+
+xi2~ xi1
+'
+
+csem(
+    .data = datapop,
+    .model = modelest,
+    .approach_weights = 'GSCA',
+    .disattenuate = FALSE,
+    .GSCA_modes = "NCMP"
+)
 
 
 # GSCA M -----------------------------------------------------------------
