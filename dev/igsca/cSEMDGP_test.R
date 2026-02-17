@@ -292,7 +292,7 @@ tidied_igsca_mods <- lapply(igsca_mods, function(x) {
 }) |> 
     list_rbind(names_to = 'mod')
     
-
+# Note: There seems to sometimes be convergence problems when using factors with only one indicator, but not always. Although the parameter estimates seem fine and, in-practice, what could the meaning of a single indicator common factor mean?
 
 
 
