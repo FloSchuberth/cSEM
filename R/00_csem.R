@@ -294,7 +294,7 @@
 #'   described in e.g.,
 #'   \insertCite{Spiller2013;textual}{cSEM}}
 #' \item{[doRedundancyAnalysis()]}{Perform a redundancy analysis (RA) as proposed by 
-#' \insertCite{Hair2016;textual}{cSEM} with reference to \insertCite{Chin1998;textual}{cSEM}}
+#' \insertCite{Hair2017b;textual}{cSEM} with reference to \insertCite{Chin1998;textual}{cSEM}}
 #' }
 #' @importFrom Rdpack reprompt
 #' @references

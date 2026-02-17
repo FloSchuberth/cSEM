@@ -8,7 +8,7 @@
 An object of class \code{data.frame} with 773 rows and 107 columns.
 }
 \source{
-The data were made available in \insertCite{ledang2022DataBrief;textual}{cSEM}
+The data were made available in \insertCite{Le2022;textual}{cSEM}.
 }
 \usage{
 LeDang2022
@@ -21,9 +21,14 @@ labelled factors for the demographic data and the unconverted Likert scale
 data for the psychometric data.
 }
 \details{
-This data is based on self-report surveys collected from graduates of universities in Northern Vietnam \insertCite{ledang2022DataBrief}{cSEM}. The data has been used to analyze the relationship between measures of HEXACO personality traits and two job-search outcomes: (1) number of job interviews; and (2) job offers through job search networking behavior \insertCite{ledang2022DataBrief}{cSEM}.
+This data is based on self-report surveys collected from graduates of universities
+in Northern Vietnam \insertCite{Le2022}{cSEM}. The data has been used to analyze
+the relationship between measures of HEXACO personality traits and two job-search outcomes:
+(1) number of job interviews; and (2) job offers through job search
+networking behavior \insertCite{Le2022}{cSEM}.
 
-The data were also analyzed using an Integrated-Generalised Structued Component Analysis (I-GSCA) approach in GSCAPro \insertCite{hwangetal2023StructuralEquationModelingAMultidisciplinaryJournal}{cSEM}.
+The data were also analyzed using Integrated-Generalized Structured Component
+Analysis (IGSCA) in GSCAPro \insertCite{Hwang2021a}{cSEM}.
 }
 \references{
 \insertAllCited{}

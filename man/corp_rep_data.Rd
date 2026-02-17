@@ -3,9 +3,22 @@
 \docType{data}
 \name{corp_rep_data}
 \alias{corp_rep_data}
-\title{Data: Measurement Instrument for the Corporate Reputation Model}
+\title{Data: corp_rep_data}
 \format{
-A data frame with 344 rows and 41 variables:
+An object of class \code{data.frame} with 344 rows and 41 columns.
+}
+\source{
+The \href{https://github.com/sem-in-r/seminr}{seminr} package (version 2.4.0).
+}
+\usage{
+corp_rep_data
+}
+\description{
+A data frame with 344 observations and 41 variables.
+It was used in \insertCite{Hair2017b;textual}{cSEM} to demonstrate PLS-PM.
+}
+\details{
+The dataset contains 344 observations on the following 41 variables:
 \describe{
 \item{serviceprovider}{A categorical variable for the service provider: 1, 2, 3, or 4.}
 \item{servicetype}{A categorical variable for the service type: 1=Prepaid plan (n=125); 2=Contract plan (n=219).}
@@ -50,23 +63,7 @@ A data frame with 344 rows and 41 variables:
 \item{switch_4}{In general, it would be a hassle switching to another company.}
 }
 }
-\source{
-The \href{https://github.com/sem-in-r/seminr}{seminr} package (version 2.4.0).
-}
-\usage{
-corp_rep_data
-}
-\description{
-The data set is used as measurement instrument for corporate reputation.
-}
-\details{
-The data frame mobi contains the observed data for the model specified by Corporate Reputation.
-}
-\examples{
-data("corp_rep_data")
-
-}
 \references{
-Hair, J. F., Hult, G. T. M., Ringle, C. M., and Sarstedt, M. (2017). A Primer on Partial Least Squares Structural Equation Modeling (2nd ed.). Thousand Oakes, CA: Sage.
+\insertAllCited{}
 }
 \keyword{datasets}

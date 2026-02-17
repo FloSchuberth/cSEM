@@ -2,7 +2,7 @@
 #' 
 #' \lifecycle{stable}
 #' 
-#' Perform a redundancy analysis (RA) as proposed by \insertCite{Hair2016;textual}{cSEM}
+#' Perform a redundancy analysis (RA) as proposed by \insertCite{Hair2017b;textual}{cSEM}
 #' with reference to \insertCite{Chin1998;textual}{cSEM}.
 #'
 #' RA is confined to PLS-PM, specifically PLS-PM with at least one construct

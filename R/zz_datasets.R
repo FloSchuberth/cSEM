@@ -692,9 +692,14 @@
 
 #' Data: LeDang2022
 #'
-#' This data is based on self-report surveys collected from graduates of universities in Northern Vietnam \insertCite{ledang2022DataBrief}{cSEM}. The data has been used to analyze the relationship between measures of HEXACO personality traits and two job-search outcomes: (1) number of job interviews; and (2) job offers through job search networking behavior \insertCite{ledang2022DataBrief}{cSEM}.
+#' This data is based on self-report surveys collected from graduates of universities
+#' in Northern Vietnam \insertCite{Le2022}{cSEM}. The data has been used to analyze 
+#' the relationship between measures of HEXACO personality traits and two job-search outcomes:
+#' (1) number of job interviews; and (2) job offers through job search 
+#' networking behavior \insertCite{Le2022}{cSEM}.
 #' 
-#' The data were also analyzed using an Integrated-Generalised Structued Component Analysis (I-GSCA) approach in GSCAPro \insertCite{hwangetal2023StructuralEquationModelingAMultidisciplinaryJournal}{cSEM}.
+#' The data were also analyzed using Integrated-Generalized Structured Component 
+#' Analysis (IGSCA) in GSCAPro \insertCite{Hwang2021a}{cSEM}.
 #' 
 #' @docType data
 #'
@@ -707,17 +712,13 @@
 #' @references
 #'   \insertAllCited{}
 #'     
-#' @source The data were made available in \insertCite{ledang2022DataBrief;textual}{cSEM}
+#' @source The data were made available in \insertCite{Le2022;textual}{cSEM}.
 "LeDang2022"
 
 
-#' Data: Measurement Instrument for the Corporate Reputation Model
+#' Data: corp_rep_data
 #'
-#' The data set is used as measurement instrument for corporate reputation.
-#' 
-#' @docType data
-#'
-#' @format A data frame with 344 rows and 41 variables:
+#' The dataset contains 344 observations on the following 41 variables: 
 #' \describe{
 #'   \item{serviceprovider}{A categorical variable for the service provider: 1, 2, 3, or 4.}
 #'   \item{servicetype}{A categorical variable for the service type: 1=Prepaid plan (n=125); 2=Contract plan (n=219).}
@@ -761,10 +762,15 @@
 #'   \item{switch_3}{It takes a lot of effort to get used to a new company with its specific "rules" and practices.}
 #'   \item{switch_4}{In general, it would be a hassle switching to another company.}
 #' }
+#' 
+#' @docType data
 #'
-#' @details The data frame mobi contains the observed data for the model specified by Corporate Reputation.
+#' @description A data frame with 344 observations and 41 variables. 
+#' It was used in \insertCite{Hair2017b;textual}{cSEM} to demonstrate PLS-PM.
+#'
 #' @source The \href{https://github.com/sem-in-r/seminr}{seminr} package (version 2.4.0).
-#' @references Hair, J. F., Hult, G. T. M., Ringle, C. M., and Sarstedt, M. (2017). A Primer on Partial Least Squares Structural Equation Modeling (2nd ed.). Thousand Oakes, CA: Sage.
-#' @examples data("corp_rep_data")
+#' 
+#' @references
+#'   \insertAllCited{} 
 #'
 "corp_rep_data"
