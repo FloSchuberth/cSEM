@@ -1,14 +1,15 @@
 # Test IGSCA
 library(cSEM.DGP)
 library(lavaan)
+library(dplyr)
+library(purrr)
 # library(cSEM)
 devtools::load_all()
 
 
 # General Population Values ----------------------------------------------
 
-
-# TODO: This assumes canonical weights. How so?
+# Note: cSEM.DGP assumes canonical weights
 
 # These are the actual weights used to construct the population correlation matrix,
 # from which the data is sampled
@@ -22,90 +23,280 @@ w1 %*% Sxi1 %*% w1
 
 (cmp_canonical_weights <- w1 / c(sqrt(w1 %*% Sxi1 %*% w1)))
 
+(single_indicator_weight <- .4 / sqrt(.4 %*% 1 %*% .4))
+
 # GSCA -------------------------------------------------------------------
-modelpop <- ' 
-xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
-x11~~0.4*x12 + -0.3*x13
-x12~~0.4*x13
 
+gsca_pops <- list(
+    uni_uni = 'xi1 <~ .4*x11
 
-xi2<~0.4*x21 + 0.3*x22 + 0.2*x23
-x21~~0.4*x22 + -0.3*x23
-x22~~0.4*x23
+               xi2 <~ .3*x21
 
-xi2~ 0.3*xi1
+               xi2 ~ .5*xi1',
+    uni_tri = 'xi1 <~ .4*x11
 
-'
-datapop <- generateData(.model = modelpop,.empirical = T)
+               xi2<~0.4*x21 + 0.3*x22 + 0.2*x23
+               x21~~0.4*x22 + -0.3*x23
+               x22~~0.4*x23
 
-debugonce(calculateWeightsGSCA)
-
-modelest <- ' 
-xi1<~x11 + x12 + x13
-
-xi2<~x21 + x22 + x23
-xi1 ~~ xi2
-'
-
-csem(
-    .data = datapop,
-    .model = modelest,
-    .approach_weights = 'GSCA',
-    .disattenuate = FALSE,
-    .GSCA_modes = "NCMP"
+               xi2 ~ .5*xi1',
+    tri_uni = 'xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
+               x11~~0.4*x12 + -0.3*x13
+               x12~~0.4*x13
+               
+               xi2 <~ .3*x21
+               
+               xi2 ~ .5*xi1',
+    tri_tri = 'xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
+               x11~~0.4*x12 + -0.3*x13
+               x12~~0.4*x13
+               
+               xi2<~0.4*x21 + 0.3*x22 + 0.2*x23
+               x21~~0.4*x22 + -0.3*x23
+               x22~~0.4*x23
+               
+               xi2 ~ 0.5*xi1'
 )
 
-debugonce(calculateWeightsGSCA)
 
-modelest <- ' 
-xi1<~x11 + x12 + x13
+gsca_datapop <- lapply(gsca_pops, cSEM.DGP::generateData, .empirical = TRUE)
 
-xi2<~x21 + x22 + x23
+gsca_model_spec <- list(
+    uni_uni = 'xi1 <~ x11
 
-xi2~ xi1
-'
+               xi2 <~ x21
 
-csem(
-    .data = datapop,
-    .model = modelest,
+               xi2 ~ xi1',
+    uni_tri = 'xi1 <~ x11
+
+               xi2<~x21 + x22 + x23
+
+               xi2 ~ xi1',
+    tri_uni = 'xi1<~x11 + x12 + x13
+               
+               xi2 <~ x21
+               
+               xi2 ~ xi1',
+    tri_tri = 'xi1<~x11 + x12 + x13
+               
+               xi2<~x21 + x22 + x23
+               
+               xi2 ~ xi1'
+)
+
+gsca_mods <- mapply(
+    cSEM::csem,
+    .data = gsca_datapop,
+    .model = gsca_model_spec,
+    SIMPLIFY = FALSE,
     .approach_weights = 'GSCA',
     .disattenuate = FALSE,
-    .GSCA_modes = "NCMP"
+    .GSCA_modes = "CCMP"
 )
+
+tidied_gsca_mods <- lapply(gsca_mods, function(x) {
+    tidy(x) |>
+        dplyr::filter(op %in%  c('<~', '~')) |>
+        dplyr::select(term, estimate)
+}) |> 
+    list_rbind(names_to = 'mod')
 
 
 # GSCA M -----------------------------------------------------------------
-modelpop <- ' 
-xi1=~0.4*x11 + 0.3*x12 + 0.2*x13
+set.seed(1234)
+gscam_pop <- list(
+    uni_uni = 'xi1 =~ 1*x11
 
-xi2=~0.4*x21 + 0.3*x22 + 0.2*x23
+               xi2 =~ 1*x21
 
-xi2~ 0.3*xi1
+               xi2 ~ .5*xi1',
+    uni_tri = 'xi1 =~ 1*x11
 
-'
+               xi2=~0.6*x21 + 0.8*x22 + 0.7*x23
 
-datapop=generateData(.model = modelpop,.empirical = T)
+               xi2 ~ .5*xi1',
+    tri_uni = 'xi1=~0.6*x11 + 0.8*x12 + 0.7*x13
+               
+               xi2 =~ 1*x21
+               
+               xi2 ~ .5*xi1',
+    tri_tri = 'xi1=~0.6*x11 + 0.8*x12 + 0.7*x13
+               
+               xi2=~0.6*x21 + 0.8*x22 + 0.7*x23
+               
+               xi2 ~ 0.5*xi1'
+)
 
-modelest <- ' 
-xi1=~x11 + x12 + x13
 
-xi2=~x21 + x22 + x23
+gscam_datapop <- lapply(gscam_pop, cSEM.DGP::generateData, .empirical = TRUE)
 
+gscam_model_spec <- list(
+    uni_uni = 'xi1 =~ x11
 
-xi2~ xi1
-'
+               xi2 =~ x21
 
-out = csem(
-    .data = datapop,
-    .model = modelest,
+               xi2 ~ xi1',
+    uni_tri = 'xi1 =~ x11
+
+               xi2=~x21 + x22 + x23
+
+               xi2 ~ xi1',
+    tri_uni = 'xi1=~x11 + x12 + x13
+               
+               xi2 =~ x21
+               
+               xi2 ~ xi1',
+    tri_tri = 'xi1=~x11 + x12 + x13
+               
+               xi2=~x21 + x22 + x23
+               
+               xi2 ~ xi1'
+)
+
+gscam_mods <- mapply(
+    cSEM::csem,
+    .data = gscam_datapop,
+    .model = gscam_model_spec,
+    SIMPLIFY = FALSE,
     .approach_weights = 'GSCA',
     .disattenuate = TRUE,
     .conv_criterion = "sum_diff_absolute"
 )
-tidy(out)
+
+tidied_gscam_mods <- lapply(gscam_mods, function(x) {
+    tidy(x) |>
+        dplyr::filter(op %in%  c('=~', '~')) |>
+        dplyr::select(term, estimate)
+}) |> 
+    list_rbind(names_to = 'mod')
+    
+# Note: The current GSCA_M may sometimes have trouble in computing D2 and U, especially when there's only one indicator for a common factor with a small loading
 
 
 # IGSCA ------------------------------------------------------------------
+
+igsca_pop <- list(
+    uniC_uniF = 'xi1 <~ .4*x11
+
+               xi2 =~ 1*x21
+
+               xi2 ~ .5*xi1',
+    uniC_triF = 'xi1 <~ .4*x11
+
+               xi2=~0.6*x21 + 0.8*x22 + 0.7*x23
+
+               xi2 ~ .5*xi1',
+    triC_uniF = 'xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
+               x11~~0.4*x12 + -0.3*x13
+               x12~~0.4*x13
+               
+               xi2 =~ 1*x21
+               
+               xi2 ~ .5*xi1',
+    triC_triF = 'xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
+               x11~~0.4*x12 + -0.3*x13
+               x12~~0.4*x13
+               
+               xi2=~0.6*x21 + 0.8*x22 + 0.7*x23
+               
+               xi2 ~ 0.5*xi1',
+    uniF_uniC = 'xi1 =~ 1*x11
+
+               xi2 <~ .4*x21
+
+               xi2 ~ .5*xi1',
+    uniF_triC = 'xi1 =~ 1*x11
+
+               xi2<~0.4*x21 + 0.3*x22 + 0.2*x23
+               x21~~0.4*x22 + -0.3*x23
+               x22~~0.4*x23
+
+               xi2 ~ .5*xi1',
+    triF_uniC = 'xi1=~0.6*x11 + 0.8*x12 + 0.7*x13
+               
+               xi2 =~ 1*x21
+               
+               xi2 ~ .5*xi1',
+    triF_triC = 'xi1=~0.6*x11 + 0.8*x12 + 0.7*x13
+               
+               xi2<~0.4*x21 + 0.3*x22 + 0.2*x23
+               x21~~0.4*x22 + -0.3*x23
+               x22~~0.4*x23
+               
+               xi2 ~ 0.5*xi1'
+)
+
+
+igsca_datapop <- lapply(igsca_pop, cSEM.DGP::generateData, .empirical = TRUE)
+
+igsca_model_spec <- list(
+    uniC_uniF = 'xi1 <~ x11
+
+               xi2 =~ x21
+
+               xi2 ~ xi1',
+    uniC_triF = 'xi1 <~ x11
+
+               xi2=~x21 + x22 + x23
+
+               xi2 ~ xi1',
+    triC_uniF = 'xi1<~x11 + x12 + x13
+               
+               xi2 =~ x21
+               
+               xi2 ~ xi1',
+    triC_triF = 'xi1<~x11 + x12 + x13
+               
+               xi2=~x21 + x22 + x23
+               
+               xi2 ~ xi1',
+    uniF_uniC = 'xi1 =~ x11
+
+               xi2 <~ x21
+
+               xi2 ~ xi1',
+    uniF_triC = 'xi1 =~ x11
+
+               xi2<~x21 + x22 + x23
+
+               xi2 ~ xi1',
+    triF_uniC = 'xi1=~x11 + x12 + x13
+               
+               xi2 <~ x21
+               
+               xi2 ~ xi1',
+    triF_triC = 'xi1=~x11 + x12 + x13
+               
+               xi2<~x21 + x22 + x23
+               
+               xi2 ~ xi1'
+)
+
+igsca_mods <- mapply(
+    cSEM::csem,
+    .data = igsca_datapop,
+    .model = igsca_model_spec,
+    SIMPLIFY = FALSE,
+    .approach_weights = 'GSCA',
+    .disattenuate = TRUE,
+    .conv_criterion = "sum_diff_absolute",
+    .GSCA_modes = "CCMP",
+    .tolerance = 0.001,
+    .iter_max = 1000
+)
+
+tidied_igsca_mods <- lapply(igsca_mods, function(x) {
+    tidy(x) |>
+        dplyr::filter(op %in%  c('=~', '~', '<~')) |>
+        dplyr::select(term, estimate)
+}) |> 
+    list_rbind(names_to = 'mod')
+    
+
+
+
+
+# Old Test Code ----------------------------------------------------------
 modelpop <- ' 
 xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
 x11~~0.4*x12 + -0.3*x13
@@ -134,7 +325,7 @@ xi3 =~ x31 + x32 + x33
 xi3~ xi2+xi1
 '
 
-debugonce(updateCBDU)
+
 
 out_CCMP = csem(
     .data = datapop,
@@ -145,21 +336,6 @@ out_CCMP = csem(
     .GSCA_modes = "CCMP"
 )
 tidy(out_CCMP) |> View()
-
-out_NCMP = csem(
-    .data = datapop,
-    .model = modelest,
-    .approach_weights = 'GSCA',
-    .disattenuate = TRUE,
-    .conv_criterion = "sum_diff_absolute",
-    .GSCA_modes = "NCMP"
-)
-tidy(out_NCMP) |> View()
-
-
-# TODO: Add single indicator composite
-# TODO: Add single indicator factor
-
 
 # Mixture composite and common factors
 modelpop <- ' 
