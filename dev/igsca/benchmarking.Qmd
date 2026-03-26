@@ -1,0 +1,118 @@
+---
+title: "IGSCA Benchmarking"
+author: ""
+date: today
+date-format: long
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    code-fold: show
+    code-tools:
+      source: true
+      toggle: true
+    code-download: true
+    embed-resources: true
+  typst:
+    toc: true
+bibliography: grateful-refs.bib
+execute:
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(profvis)
+library(proftools)
+library(bench)
+library(grateful)
+library(sessioninfo)
+library(rlang)
+rlang::global_handle()
+library(lobstr)
+cli::pretty_print_code()
+```
+
+# LLM Disclosure
+
+The following describes the use of large language models (LLMs) in the preparation of this document:
+
+- LLMs were used to assist with code drafting, debugging, and editing prose.
+- All LLM-generated content was reviewed and verified by the author(s).
+- Final responsibility for the accuracy and integrity of this work rests with the author(s).
+
+# Profile Visualization
+
+Here, I use `profvis` to see what might be the bottlenecks in the current git version of the code. 
+
+## Repository Info
+
+```{r}
+#| label: git-info
+git_hash <- system("git rev-parse HEAD", intern = TRUE)
+git_short <- system("git rev-parse --short HEAD", intern = TRUE)
+git_branch <- system("git rev-parse --abbrev-ref HEAD", intern = TRUE)
+git_msg <- system("git log -1 --format=%s", intern = TRUE)
+```
+
+This document was compiled from commit **`r git_short`** on branch **`r git_branch`** (`r git_msg`).
+Full SHA: `r git_hash`
+
+## Profile Visualization
+
+```{r}
+source(here::here("dev/igsca/benchmarking_R/igsca_benchmark.R"))
+```
+
+### Big N Small p
+
+```{r}
+pv_bigN_smallp <- profvis({
+  bigN_smallp()
+})
+```
+
+
+```{r, eval = FALSE}
+# TODO: Consider using this
+summaryRprof()
+```
+
+### Small N Big p
+
+
+### Small N Small p
+
+### Big N Big p
+
+# Benchmarking
+
+As long as I'm not comparing between installed vs locally-loaded code packages, this should be legitimate.
+
+Here, I benchmark different approaches for handling specific  bottlenecks.
+
+```{r}
+
+```
+
+# Computational Environment
+
+
+```{r}
+#| label: session-info
+sessioninfo::session_info()
+```
+
+## Packages Used
+
+```{r}
+#| label: pkg-citations
+grateful::cite_packages(output = "paragraph", out.dir = ".")
+```
+
+
