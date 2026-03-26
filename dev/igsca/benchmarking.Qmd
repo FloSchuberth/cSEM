@@ -69,6 +69,10 @@ Full SHA: `r git_hash`
 source(here::here("dev/igsca/benchmarking_R/igsca_benchmark.R"))
 ```
 
+```{r}
+bigN_smallp()
+```
+
 ### Big N Small p
 
 ```{r}
@@ -89,6 +93,10 @@ summaryRprof()
 ### Small N Small p
 
 ### Big N Big p
+
+#  List of potential fixes
+
+- Differentiate argument name from parameter itself, potentially triggering look-ups that might slow things down.
 
 # Benchmarking
 

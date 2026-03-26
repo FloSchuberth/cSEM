@@ -23,18 +23,16 @@ mod <- 'xi1=~x11 + x12 + x13
         xi2 ~ xi1'
 
 
-bigN_smallp <- function(triF_triC = triF_triC, mod = mod) {
-  dat <- cSEM.DGP::generateData(triF_triC, .empirical = TRUE, .N = 500)
+bigN_smallp <- function(.dgp = triF_triC, .mod = mod) {
+  dat <- cSEM.DGP::generateData(.dgp, .empirical = TRUE, .N = 1000)
   csem(
     .data = dat,
-    .model = mod,
+    .model = .mod,
     .approach_weights = 'GSCA',
     .disattenuate = TRUE,
     .conv_criterion = "sum_diff_absolute",
     .GSCA_modes = "CCMP",
-    .tolerance = 0.0001,
+    .tolerance = 0.0000001,
     .iter_max = 1000
   )
-
-  return()
 }
