@@ -259,10 +259,11 @@ igsca <-
 
         # This is where Gamma, Weights and V are updated based on which gamma_idx
         Theta <- Theta / norm(X_gamma_idx %*% Theta, "2")
-        Gamma[, gamma_idx] <- X_gamma_idx %*% Theta
+        # Gamma[, gamma_idx] <- X_gamma_idx %*% Theta # TODO: This line is very computationally costly
         W[windex_gamma_idx, gamma_idx] <- Theta
         V[windex_gamma_idx, tot] <- Theta
       }
+      Gamma  <- X %*% W # Trying to save on compute time
 
       #### Update Loadings, Path Coefficients and Uniqueness Terms ----------
       updated_C_B_D_U <- updateCBDU(
