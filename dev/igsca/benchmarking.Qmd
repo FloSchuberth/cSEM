@@ -27,7 +27,10 @@ execute:
 
 ```{r}
 #| label: setup
-#| include: false
+#| include: true
+
+library(RhpcBLASctl)
+RhpcBLASctl::blas_set_num_threads(2)
 library(profvis)
 library(proftools)
 library(bench)
@@ -270,21 +273,38 @@ t()
 1. Re-organize functions used for updating weights -- only two. One for updating weights of composites and another for updating weights of common factors. Also fix the assignment of the construct scores as that is computationally costly... [R]
 2. Re-organize `updateCBDU()` [R]
 3. Make the update of unique scores and unique loadings into a single common function across igsca and GSCA-M [R]
-3. Minimize the number of transposes `t()`, `%*%` and `diag` if possible. If there's a large number of matrix multiplications to do in a zone, then consider putting  it all into a single C++ program. Also see if  the use of `MASS::ginv()` can be reduced, as it uses `svd()` and is also computationally expensive. Also, try avoiding memory intensive things where we are writing to a subset of an object. [R]
-4. Improve numerical stability of updating of  loadings/path-coefficients [R]
-5. Improve numerical stability of updating of weights if possible [R], or else write into C++ [C++]
-6. Write update of unique/scores unique-loadings in C++ [C++]
-7. Improve numerical stability for how unique scores/unique-loadings is done
-8. Reduce the number of random assignments + temporary variables, if possible
+4. Minimize the number of transposes `t()`, `%*%` and `diag` if possible. If there's a large number of matrix multiplications to do in a zone, then consider putting  it all into a single C++ program. Also see if  the use of `MASS::ginv()` can be reduced, as it uses `svd()` and is also computationally expensive. Also, try avoiding memory intensive things where we are writing to a subset of an object. [R]
+5. Improve numerical stability of updating of  loadings/path-coefficients [R]
+6. Improve numerical stability of updating of weights if possible [R], or else write into C++ [C++]
+7. Write update of unique/scores unique-loadings in C++ [C++]
+8. Improve numerical stability for how unique scores/unique-loadings is done
+9. Reduce the number of random assignments + temporary variables, if possible
 
 # Benchmarking
 
 As long as I'm not comparing between installed vs locally-loaded code packages, this should be legitimate.
 
-Here, I benchmark different approaches for handling specific  bottlenecks.
+Here, I benchmark different approaches for handling specific  bottlenecks. It takes a long time to run, but on my home PC, it seems like 2 threads is optimal, but 1 thread is very close. On the HPC, they disable hyperthreading anyways...
 
-```{r}
 
+```{r, eval = FALSE}
+RhpcBLASctl::blas_set_num_threads(24)
+system.time({bigN_bigp()})
+```
+
+```{r, eval = FALSE}
+RhpcBLASctl::blas_set_num_threads(4)
+system.time({bigN_bigp()})
+```
+
+```{r, eval = FALSE}
+RhpcBLASctl::blas_set_num_threads(2)
+system.time({bigN_bigp()})
+```
+
+```{r, eval = FALSE}
+RhpcBLASctl::blas_set_num_threads(1)
+system.time({bigN_bigp()})
 ```
 
 # Computational Environment
@@ -292,7 +312,7 @@ Here, I benchmark different approaches for handling specific  bottlenecks.
 
 ```{r}
 #| label: session-info
-sessioninfo::session_info()
+sessioninfo::session_info(info = "all")
 ```
 
 ## Packages Used

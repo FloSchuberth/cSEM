@@ -17,3 +17,7 @@ cli::pretty_print_code()
 #' library(tibble)
 # For printing something easier to see
 #' tibble::as_tibble()
+
+
+library(RhpcBLASctl)
+RhpcBLASctl::blas_set_num_threads(2)
