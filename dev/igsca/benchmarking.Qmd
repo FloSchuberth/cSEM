@@ -279,6 +279,7 @@ t()
 7. Write update of unique/scores unique-loadings in C++ [C++]
 8. Improve numerical stability for how unique scores/unique-loadings is done
 9. Reduce the number of random assignments + temporary variables, if possible
+10. Be careful about how RcppArmadillo and the package are using BLAS. The wasteful/slow multithreading could be a problem.
 
 # Benchmarking
 
