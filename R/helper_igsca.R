@@ -98,47 +98,50 @@ igsca <-
     n_indicators <- ncol(.Z0)
     n_constructs <- ncol(.W0)
     n_total_var <- n_indicators + n_constructs
+    
+    # Normalize data matrix to make normalized Z
     normalization_factor <- sqrt(n_case - 1)
-
+    Z <- .Z0 / normalization_factor
     w_index <- which(c(.W0) == 1)
     b_index <- which(c(.B0) == 1)
 
-    # Initialize Bindpoints for list2env
-    Z <- matrix()
-    C <- matrix()
-    W <- matrix()
-    B <- matrix()
-    V <- matrix()
-    D <- matrix()
-    U <- matrix()
-    Gamma <- matrix()
-    X <- matrix()
-    WW <- matrix()
-
-    ### Starting Values ------------------------------------
-    prepared_for_ALS <- initializeAlsEstimates(
+    ### Initial Values ------------------------------------
+    GSCA_starting_values <- calculateWeightsGSCA(
       .X = .X,
       .S = .S,
       .csem_model = .csem_model,
       .conv_criterion = .conv_criterion,
       .GSCA_modes = .GSCA_modes,
-      .iter_max = .iter_max,
-      .starting_values = .starting_values,
+      .iter_max = 10,
       .tolerance = .tolerance,
-      Z0 = .Z0,
-      W0 = .W0,
-      B0 = .B0,
-      n_indicators = n_indicators,
-      n_case = n_case,
-      n_constructs = n_constructs,
-      .indicator_type = .indicator_type,
-      normalization_factor = normalization_factor
+      .starting_values = .starting_values
     )
 
-    list2env(
-      prepared_for_ALS[c("W", "C", "B", "V", "Z", "D", "U", "Gamma")],
-      envir = environment()
+    W <- t(GSCA_starting_values$W)
+    B <- t(GSCA_starting_values$B)
+    C <- GSCA_starting_values$C
+    V <- cbind(diag(n_indicators), W)
+
+    # Create initial values for U and D, using normalized data (Z) and construct scores (Gamma) --------------
+
+
+    # Create Initial Normalized Construct Scores Matrix
+    Gamma <- Eta <- Z %*% W
+
+    # Initalize unique loadings
+
+    list_UD <- updateUD(
+      D = diag(n_indicators),
+      Eta_normed = Eta,
+      .indicator_type = .indicator_type,
+      n_constructs = n_constructs,
+      n_indicators = n_indicators,
+      n_case = n_case,
+      Z_normed = Z
     )
+
+    "U" <- list_UD[["U"]]
+    "D" <- list_UD[["D"]]
 
     # if starting values are provided
     if (!is.null(.starting_values)) {
@@ -147,7 +150,11 @@ igsca <-
     }
 
     # Define and Check Modes: 'Common factor', 'NCMP', and 'CCMP'
-    modes <- ifelse(.csem_model$construct_type == "Composite", yes = "CCMP", no = .csem_model$construct_type)
+    modes <- ifelse(
+      .csem_model$construct_type == "Composite",
+      yes = "CCMP",
+      no = .csem_model$construct_type
+    )
     if (!is.null(.GSCA_modes)) {
       stopifnot(
         "Invalid .GSCA_modes selected. Only NCMP or CCMP are supported" = all(sapply(
@@ -166,7 +173,12 @@ igsca <-
         )
         modes[names(.GSCA_modes)] <- .GSCA_modes
       } else if (length(names(.GSCA_modes)) == 0) {
-        stopifnot("When passing a global setting to .GSCA_modes, only one choice may be passed" = length(.GSCA_modes) == 1)
+        stopifnot(
+          "When passing a global setting to .GSCA_modes, only one choice may be passed" = length(
+            .GSCA_modes
+          ) ==
+            1
+        )
 
         # If only an unnamed element is given (NCMP or CCMP), then set all composites to .GSCA_modes
         if (length(.GSCA_modes) == 1) {
@@ -179,7 +191,7 @@ igsca <-
     # Create c_index which should only exist for nomological composites and common factors
     .C0[which(modes == "CCMP"), ] <- 0
     c_index <- which(c(.C0) == 1)
-    
+
     ## Alternating Least Squares Algorithm -------------------------------------
 
     ### Optimization Preparation -----------------------------------------------
@@ -189,8 +201,8 @@ igsca <-
       est <- B[b_index]
     } else {
       # Because canonical composites do not estimate loadings, here the weights are generally used to determine convergenece, instead of loadings
-        est <- W[w_index]
-        # est <- C[c_index]
+      est <- W[w_index]
+      # est <- C[c_index]
     }
     est0 <- est + 1
     it <- 0
@@ -215,7 +227,8 @@ igsca <-
 
       # WW is important for updating the Theta for common factors
       WW <-
-        t(C) %*% solve((C %*% t(C) + diag(n_constructs) - (2 * B) + (B %*% t(B))))
+        t(C) %*%
+        solve((C %*% t(C) + diag(n_constructs) - (2 * B) + (B %*% t(B))))
 
       #### for-loop update per construct ---------------------------------------
       A <- cbind(C, B)
@@ -229,15 +242,15 @@ igsca <-
         if (.con_type[eta_idx] == "Composite") {
           Theta <-
             updateCompositeTheta(
-              W = W, 
+              W = W,
               A = A,
-              X = X, 
-              V = V, 
-              eta_idx = eta_idx, 
-              tot = tot, 
+              X = X,
+              V = V,
+              eta_idx = eta_idx,
+              tot = tot,
               n_constructs = n_constructs,
               n_total_var = n_total_var,
-              windex_eta_idx = windex_eta_idx, 
+              windex_eta_idx = windex_eta_idx,
               .S = .S
             )
         } else if (.con_type[eta_idx] == "Common factor") {
@@ -283,7 +296,6 @@ igsca <-
 
       list2env(list_UD[c("U", "D")], envir = environment())
 
-      
       if (length(b_index) > 0) {
         est <- B[b_index]
       } else {
@@ -303,11 +315,11 @@ igsca <-
         ,
         drop = FALSE
       ]
-    } 
-    
+    }
+
     D_diag <- diag(D)
     names(D_diag) <- colnames(Z)
-  
+
     # Get the standardized unique scores back from normalized U
     Unique_scores <- U * normalization_factor
     colnames(Unique_scores) <- colnames(Z)
@@ -327,93 +339,6 @@ igsca <-
       )
     )
   }
-
-
-#' Prepare for ALS Algorithm
-#'
-#' Internal I-GSCA function
-#'
-#' @inheritParams igsca
-#' @inheritParams csem_arguments
-#' @param n_indicators Number of indicators
-#' @param n_case Number of measurements
-#' @param n_constructs Number of constructs
-#' @param normalization_factor Factor to normalize the data by
-#'
-#' @returns List of matrices to put through the Alternating Least Squared (ALS) algorithm:
-#' * Estimated Weights matrix (W)
-#' * Estimated Loadings matrix (C)
-#' * Estimated Path Coefficients matrix (B)
-#' * Computational Helper Matrix (V)
-#' * Estimated Uniqueness Errors vector (D)
-#' * Estimated Related to Uniqueness Errors vector (U)
-#' * Estimated Construct Scores matrix (Gamma)
-initializeAlsEstimates <- function(
-  .X                           = args_default()$.X,
-  .S                           = args_default()$.S,
-  .csem_model                  = args_default()$.csem_model,
-  .conv_criterion              = args_default()$.conv_criterion,
-  .GSCA_modes                  = args_default()$.GSCA_modes,
-  .iter_max                    = args_default()$.iter_max,
-  .starting_values             = args_default()$.starting_values,
-  .tolerance                   = args_default()$.tolerance,
-  Z0,
-  W0,
-  B0,
-  n_indicators,
-  n_case,
-  n_constructs,
-  .indicator_type,
-  normalization_factor
-) {
-  
-  # Initial weights, path-coefficients and loadings using GSCA
-  GSCA_starting_values <- calculateWeightsGSCA(
-    .X = .X,
-    .S = .S,
-    .csem_model = .csem_model,
-    .conv_criterion = .conv_criterion,
-    .GSCA_modes = .GSCA_modes,
-    .iter_max = 10,
-    .tolerance = .tolerance,
-    .starting_values = .starting_values
-  )
-
-  W <- t(GSCA_starting_values$W)
-  B <- t(GSCA_starting_values$B)
-  C <- GSCA_starting_values$C
-  
-  # Create initial values for U and D, using normalized data (Z) and construct scores (Gamma) --------------
-
-  # Normalize data matrix to make normalized Z
-  Z <- Z0 / normalization_factor
-
-  # Create Initial Normalized Construct Scores Matrix
-  Eta <- Z %*% W
-
-  # Initalize unique loadings
-  
-  list_UD <- updateUD(
-      D = diag(n_indicators),
-      Eta_normed = Eta,
-      .indicator_type = .indicator_type,
-      n_constructs = n_constructs,
-      n_indicators = n_indicators,
-      n_case = n_case,
-      Z_normed = Z
-    )
-
-  return(list(
-    "W" = W,
-    "C" = C,
-    "B" = B,
-    "V" = cbind(diag(n_indicators), W),
-    "Z" = Z,
-    "D" = list_UD[["D"]],
-    "U" = list_UD[["U"]],
-    "Gamma" = Eta
-  ))
-}
 
 #' Update Theta for Composite Variables
 #' 
@@ -474,7 +399,6 @@ updateCompositeTheta <-
 
 #' Update Loadings and Path-Coefficients
 #'
-#' @inheritParams initializeAlsEstimates
 #' @inheritParams igsca
 #' @param X Indicators with measurement error removed
 #' @param Eta Construct Scores

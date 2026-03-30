@@ -26,10 +26,6 @@ updateCB(
 
 \item{.indicator_type}{Vector of whether each indicator corresponds to a common factor or composite}
 
-\item{n_indicators}{Number of indicators}
-
-\item{n_constructs}{Number of constructs}
-
 \item{b_index}{Index of Path Coefficients}
 
 \item{n_case}{Number of Cases}
