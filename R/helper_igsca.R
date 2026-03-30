@@ -195,8 +195,6 @@ igsca <-
     est0 <- est + 1
     it <- 0
 
-    ### Optimization Loop: Alternating Between Weights and Loadings ---------------
-
     while (
       (!checkConvergence(
         .W_new = est,
@@ -210,62 +208,51 @@ igsca <-
       it <- it + 1
       est0 <- est
 
-      #### Compute Pseudo-Weights --------------------------------------------------
-      updated_X_WW_pseudo_weights <- updateXAndWW(
-        Z = Z,
-        U = U,
-        D = D,
-        C = C,
-        B = B,
-        n_constructs = n_constructs
-      )
-      # Creates X (for updating Composites) and WW (for updating Factors)
-      list2env(updated_X_WW_pseudo_weights[c("X", "WW")], envir = environment())
+      ### Update Weights --------------------------------------------------
 
-      #### Sequential Updating of Constructs ---------------------------------------
+      # X is the indicators Z with measurement error removed UD.
+      X <- Z - (U %*% D)
 
+      # WW is important for updating the Theta for common factors
+      WW <-
+        t(C) %*% solve((C %*% t(C) + diag(n_constructs) - (2 * B) + (B %*% t(B))))
+
+      #### for-loop Updating of Constructs ---------------------------------------
       A <- cbind(C, B)
 
       # After each cycle, the Gamma, W and V matrices are updated
-      for (gamma_idx in seq_len(n_constructs)) {
-        tot <- n_indicators + gamma_idx
-        windex_gamma_idx <- (.W0[, gamma_idx, drop = FALSE] == 1)
-        X_gamma_idx <- X[, windex_gamma_idx, drop = FALSE]
+      for (eta_idx in seq_len(n_constructs)) {
+        tot <- n_indicators + eta_idx
+        windex_eta_idx <- (.W0[, eta_idx, drop = FALSE] == 1)
+        X_eta_idx <- X[, windex_eta_idx, drop = FALSE]
 
-        if (.con_type[gamma_idx] == "Composite") {
+        if (.con_type[eta_idx] == "Composite") {
           Theta <-
             updateCompositeTheta(
-              W = W, # Changes per gamma_idx iteration
+              W = W, 
               A = A,
-              X = X, # X = Z- UD, as per updateXAndWW()
-              V = V, # Changes per gamma_idx iteration
-              gamma_idx = gamma_idx, # Changes per gamma_idx iteration
-              tot = tot, # Changes per gamma_idx iteration
+              X = X, 
+              V = V, 
+              eta_idx = eta_idx, 
+              tot = tot, 
               n_constructs = n_constructs,
               n_total_var = n_total_var,
-              windex_gamma_idx = windex_gamma_idx, # Changes per gamma_idx iteration
+              windex_eta_idx = windex_eta_idx, 
               .S = .S
             )
-        } else if (.con_type[gamma_idx] == "Common factor") {
-          Theta <-
-            updateCommonFactorTheta(
-              WW = WW,
-              windex_gamma_idx = windex_gamma_idx, # Changes per gamma_idx iteration
-              gamma_idx = gamma_idx # Changes per gamma_idx iteration
-            )
+        } else if (.con_type[eta_idx] == "Common factor") {
+          Theta <- WW[windex_eta_idx, eta_idx, drop = FALSE]
         } else {
           stop(".con_type should only either be `Composite` or `Common factor`")
         }
 
-        # This is where Gamma, Weights and V are updated based on which gamma_idx
-        Theta <- Theta / norm(X_gamma_idx %*% Theta, "2")
-        # Gamma[, gamma_idx] <- X_gamma_idx %*% Theta # TODO: This line is very computationally costly
-        W[windex_gamma_idx, gamma_idx] <- Theta
-        V[windex_gamma_idx, tot] <- Theta
+        normed_weights <- Theta / norm(X_eta_idx %*% Theta, "2")
+        W[windex_eta_idx, eta_idx] <- normed_weights
+        V[windex_eta_idx, tot] <- normed_weights
       }
-      Gamma  <- X %*% W # Trying to save on compute time
+      Gamma <- X %*% W # Trying to save on compute time
 
-      #### Update Loadings, Path Coefficients and Uniqueness Terms ----------
+      ### Update Loadings, Path Coefficients and Uniqueness Terms ----------
       updated_C_B_D_U <- updateCBDU(
         X = X,
         Gamma = Gamma,
@@ -297,7 +284,7 @@ igsca <-
 
     ## Output Formatting -------------------------------------------------------
 
-    # Loadings for Canonical Composites
+    # Compute loadings for Canonical Composites
     if (any(modes %in% "CCMP")) {
       CCMP_C <- t(W) %*% .S * .csem_model$measurement
       C[names(modes)[modes == "CCMP"], ] <- CCMP_C[
@@ -306,12 +293,11 @@ igsca <-
         drop = FALSE
       ]
     } 
-    # identical(diag(D^2), diag(D)^2)
+    
     D_diag <- diag(D)
     names(D_diag) <- colnames(Z)
-    # colnames(D_squared) <- colnames(Z)
-    # rownames(D_squared) <- colnames(Z)
-
+  
+    # Get the standardized unique scores back from normalized U
     Unique_scores <- U * normalization_factor
     colnames(Unique_scores) <- colnames(Z)
 
@@ -369,12 +355,8 @@ initializeAlsEstimates <- function(
   .indicator_type,
   normalization_factor
 ) {
-  # Initialize Bindpoints for list2env
-  W <- matrix()
-  C <- matrix()
-  B <- matrix()
-
-  # Initial estimates using GSCA
+  
+  # Initial weights, path-coefficients and loadings using GSCA
   GSCA_starting_values <- calculateWeightsGSCA(
     .X = .X,
     .S = .S,
@@ -386,81 +368,29 @@ initializeAlsEstimates <- function(
     .starting_values = .starting_values
   )
 
-  GSCA_starting_values$B <- t(GSCA_starting_values$B)
-  GSCA_starting_values$W <- t(GSCA_starting_values$W)
-
-  list2env(GSCA_starting_values[c("W", "C", "B")], envir = environment())
+  W <- t(GSCA_starting_values$W)
+  B <- t(GSCA_starting_values$B)
+  C <- GSCA_starting_values$C
   
-  # 
-  # Getting starting values of U and D by running internal GSCAm--------------------------------
-  # This doesn't seem like it's worth it because GSCAm is doing much more internally than just obtaining U and D
-  # W_NA <- W
-  # W_NA[c(!as.logical(t(.csem_model$measurement)))] <- NA
-
-  # W_starting_values <- W_NA |>
-  #   asplit(2, drop = FALSE) |>
-  #   lapply(\(x) x |> c() |> na.omit() |> c())
-
-  # GSCAM_starting_values <- calculateWeightsGSCAm(
-  #         .X = .X,
-  #         .csem_model = .csem_model,
-  #         .conv_criterion = .conv_criterion,
-  #         .iter_max = 1,
-  #         .tolerance = .tolerance,
-  #         .starting_values = W_starting_values
-  #       )
-  # GSCAM_starting_values$U <- GSCAM_starting_values$Unique_scores
-  # GSCAM_starting_values$D <- GSCAM_starting_values$D_diag
-
-  # list2env(GSCAM_starting_values[c("U", "D")])
-
-
   # Create initial values for U and D, using normalized data (Z) and construct scores (Gamma) --------------
 
-  # Normalize data matrix to make Z
-  # normalization_factor <- sqrt(n_case - 1)
+  # Normalize data matrix to make normalized Z
   Z <- Z0 / normalization_factor
-  # Create Initial Construct Scores Matrix
-  Gamma <- Z %*% W
 
-  D <- diag(n_indicators)
+  # Create Initial Normalized Construct Scores Matrix
+  Eta <- Z %*% W
 
-  # Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, (n_constructs+1):n_case, drop = FALSE]
-  # Gamma_orth is F_o
-  F_o <- qr.Q(qr(Gamma), complete = TRUE)[, (n_constructs + 1):n_case, drop = FALSE]
+  # Initalize unique loadings
   
-  if (n_case <= n_indicators) {
-    s <- svd(D %*% t(Z) %*% F_o)
-    Utilde <- s$v %*% t(s$u)
-    U <- F_o %*% Utilde 
-  } else if (n_case > n_indicators) {
-    # svd between R and Matlab by Ahmed Fasih on February 1/2017
-    # https://stackoverflow.com/a/41972818
-
-    U <- tryCatch(
-      {
-        svd_out <- (D %*% t(Z) %*% F_o) |>
-          {
-            \(mx) svd(mx, nu = nrow(mx), nv = ncol(mx))
-          }()
-        u <- svd_out$u
-        v <- svd_out$v
-        # Utilde deviates from Matlab because of the SVD
-        Utilde <- v[, 1:n_indicators, drop = FALSE] %*% t(u)
-        U <- F_o %*% Utilde
-      },
-      error = function(e) {
-        s <- svd(D %*% t(Z) %*% F_o)
-        Utilde <- s$v %*% t(s$u)
-        U <- F_o %*% Utilde # Gamma_orth = F_o
-        return(U)
-      }
+  list_UD <- updateUD(
+      D = diag(n_indicators),
+      Eta_normed = Eta,
+      .indicator_type = .indicator_type,
+      n_constructs = n_constructs,
+      n_indicators = n_indicators,
+      n_case = n_case,
+      Z_normed = Z
     )
-  }
-  
-  U[, .indicator_type == "Composite"] <- 0
-  D <- diag(diag(t(U) %*% Z)) 
-  D[.indicator_type == "Composite", .indicator_type == "Composite"] <- 0
 
   return(list(
     "W" = W,
@@ -468,53 +398,10 @@ initializeAlsEstimates <- function(
     "B" = B,
     "V" = cbind(diag(n_indicators), W),
     "Z" = Z,
-    "D" = D,
-    "U" = U,
-    "Gamma" = Gamma
+    "D" = list_UD[["D"]],
+    "U" = list_UD[["U"]],
+    "Gamma" = Eta
   ))
-}
-
-#' Update X and WW (Pseudo Weights) for Composites and Common-Factors
-#'
-#' Computation of WW matrix was converted between Matlab to R based on page 44 of \insertCite{Hiebeler2015;textual}{cSEM}.
-#' @param Z Standardized data matrix
-#' @param D Matrix of estimated unique error
-#' @param U Matrix of estimates related to unique error
-#' @param C Matrix of estimated loadings
-#' @param B Matrix of path coefficients
-#' @param n_constructs  Number of constructs
-#'
-#' @returns Two matrices:
-#' * X: Remaining part of data (Z) after accounting for uniqueness terms (U) and (D), used for estimating composite loadings. Also used for standardizing Theta when updating Gamma, W and V
-#' * WW: Weights after accounting for current Loading and Path-Coefficients values, used for estimating common-factor loadings
-#'
-#' @references
-#'   \insertAllCited{}
-#'
-#'
-updateXAndWW <- function(Z, U, D, C, B, n_constructs) {
-  # X deviates from Matlab because it is an offspring of svd_out
-  X <- Z - U %*% D
-
-  WW <-
-    t(C) %*% solve((C %*% t(C) + diag(n_constructs) - 2 * B + (B %*% t(B))))
-  return(list("X" = X, "WW" = WW))
-}
-
-
-#' Update Theta for Common Factor Variable
-#'
-#' @param WW Pseudo-weights for Common Factors
-#' @param windex_gamma_idx Index of weights related to the indicators for the construct of interest
-#' @param gamma_idx Index of which construct we are examining
-#'
-#' @return Theta: Used to update factor latent variables -- after accounting for loadings and path-coefficients.
-#'
-#'
-#'
-updateCommonFactorTheta <- function(WW, windex_gamma_idx, gamma_idx) {
-  Theta <- WW[windex_gamma_idx, gamma_idx, drop = FALSE]
-  return(Theta)
 }
 
 #' Update Theta for Composite Variables
@@ -523,14 +410,14 @@ updateCommonFactorTheta <- function(WW, windex_gamma_idx, gamma_idx) {
 #' However, from a non-computational point of view, it shouldn't matter because for the composite indicators, X_comp = Z_comp
 #'
 #' @param W Weights matrix
-#' @param A Stacked matrix of loadings and path coefficients
-#' @param V Unclear meaning
-#' @param X The matrix X is equal to Z - UD
-#' @param windex_gamma_idx Index of weights related to the indicators for the construct of interest
+#' @param A Stacked matrix of loadings and path coefficients \eqn{\left[\Lambda \mid B \right]}
+#' @param V Stacked matrix of identity matrix and weights \eqn{\left[I \mid W \right]}
+#' @param X The matrix X is equal to \eqn{Z - UD}
+#' @param windex_eta_idx Index of weights related to the indicators for the construct of interest
 #' @param n_total_var Number of indicators and constructs
 #' @param tot Index dependent on which construct variable we are examining
 #' @param n_constructs Number of constructs
-#' @param gamma_idx Index of which construct we are examining
+#' @param eta_idx Index of which construct we are examining
 #' @inheritParams csem_arguments
 #' @importFrom MASS ginv
 #' @return Theta: A matrix that will later be used to update the weights for the composite variable.
@@ -542,11 +429,11 @@ updateCompositeTheta <-
     A,
     V,
     X,
-    windex_gamma_idx,
+    windex_eta_idx,
     n_total_var,
     tot,
     n_constructs,
-    gamma_idx,
+    eta_idx,
     .S = args_default()$.S
   ) {
     e <- matrix(0, nrow = 1, ncol = n_total_var)
@@ -554,35 +441,29 @@ updateCompositeTheta <-
     H1 <- diag(n_total_var)
     H2 <- diag(n_constructs)
     H1[tot, tot] <- 0
-    H2[gamma_idx, gamma_idx] <- 0
+    H2[eta_idx, eta_idx] <- 0
     Delta <- (W %*% H2 %*% A) - (V %*% H1)
 
-    # vecZDelta <- c(X %*% Delta) # Commented out because no longer computing kronecker product
-    beta <- e - A[gamma_idx, , drop = FALSE]
-    # XI <- kronecker(t(beta), X)
-    # XI <- XI[, windex_gamma_idx]
+    beta <- e - A[eta_idx, , drop = FALSE]
 
-    # XI <- kroneckerC(t(beta), X, which(windex_gamma_idx))
-    # Theta <- solve((t(XI) %*% XI), t(XI)) %*% vecZDelta
-
-    # Kronecker bypass -- as shown in calculateWeightsGSCA.R
-    # Bypassing the kronecker product this way leads to minor differences in results,
-    # but the original matlab solution may already have been inaccurate due to matrix inversion.
-    #
-    # The best way to identify whether this difference does or does not matter is by a combination of mathematics
-    #  (theoretical equivalence, ignoring computational details) and simulation study
     Theta <- MASS::ginv(
-      as.numeric(beta %*% t(beta)) * .S[windex_gamma_idx, windex_gamma_idx]
+      as.numeric(beta %*% t(beta)) * .S[windex_eta_idx, windex_eta_idx, drop = FALSE]
     ) %*%
-      t(beta %*% t(Delta) %*% .S[, windex_gamma_idx, drop = FALSE])
+      t(beta %*% t(Delta) %*% .S[, windex_eta_idx, drop = FALSE])
 
     return(Theta)
+
+    # Kronecker Method
+    # vecZDelta <- c(X %*% Delta) 
+    # XI <- kronecker(t(beta), X)
+    # XI <- XI[, windex_eta_idx]
+    # XI <- kroneckerC(t(beta), X, which(windex_eta_idx))
+    # Theta <- solve((t(XI) %*% XI), t(XI)) %*% vecZDelta
   }
 
 #' Update Loadings, Path-Coefficients and Uniqueness Terms After Updating Latent Variables
 #'
 #' @inheritParams initializeAlsEstimates
-#' @inheritParams updateXAndWW
 #' @inheritParams igsca
 #' @param X Pseudo-weights for composites
 #' @param Gamma Construct Scores
@@ -653,56 +534,81 @@ updateCBDU <-
     B[b_index] <- unlist(beta, use.names = FALSE)
 
     ## Uniqueness Component Update ---------------------------------------------
-    
-    # TODO: The following procedure creates non-zero columns of U, even for composite indicators. It would be better if this could be avoided.
-    # Solution for Q is copied from estimators_weights.R
-    Q <- qr.Q(qr(Gamma), complete = TRUE)
-    F_o <- Q[, (n_constructs + 1):n_case, drop = FALSE]
 
-    if (n_case <= n_indicators) {
-      # From estimator_weights.R, which is from one of the older GSCA_m implementations
-      # Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, (n_constructs+1):n_case, drop = FALSE]
-      s <- svd(D %*% t(Z) %*% F_o)
-      Utilde <- s$v %*% t(s$u)
-      U <- F_o %*% Utilde # Gamma_orth = F_o
-    } else if (n_case > n_indicators) {
-      # svd between R and Matlab by Ahmed Fasih on February 1/2017
-      # https://stackoverflow.com/a/41972818
-
-      U <- tryCatch(
-        {
-          svd_out <- (D %*% t(Z) %*% F_o) |>
-            {
-              \(mx) svd(mx, nu = nrow(mx), nv = ncol(mx))
-            }()
-          u <- svd_out$u
-          v <- svd_out$v
-          # Utilde deviates from Matlab because of the SVD
-          Utilde <- v[, 1:n_indicators, drop = FALSE] %*% t(u)
-          U <- F_o %*% Utilde
-        },
-        error = function(e) {
-          s <- svd(D %*% t(Z) %*% F_o)
-          Utilde <- s$v %*% t(s$u)
-          U <- F_o %*% Utilde # Gamma_orth = F_o
-          return(U)
-        }
-      )
-    }
-
-    U[, .indicator_type == "Composite"] <- 0
-    D <- diag(diag(t(U) %*% Z))
-    D[.indicator_type == "Composite", .indicator_type == "Composite"] <- 0
+    list_UD <- updateUD(
+      D = D,
+      Eta_normed = Gamma,
+      .indicator_type = .indicator_type,
+      n_constructs = n_constructs,
+      n_indicators = n_indicators,
+      n_case = n_case,
+      Z_normed = Z
+    )
 
     return(
       list(
         "C" = C,
         "B" = B,
-        "D" = D,
-        "U" = U
+        "D" = list_UD[["D"]],
+        "U" = list_UD[["U"]]
       )
     )
   }
+
+
+#' Update unique scores and unique loadings
+#' 
+#' Intended to be used within the alternating least squares algorithm for either GSCA_M or IGSCA. Assumes that the construct scores and data are normalized.
+#'
+#' @param D Unique loadings
+#' @param Eta_normed Normalized data
+#' @param Z_normed Normalized data
+#'
+#' @returns List of 2 elements, normalized unique scores (`U`) and normalized unique loadings (`D`)
+#' 
+#' @inheritParams igsca
+#' @inheritParams csem_arguments
+#'
+#' @export
+updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_indicators, Z_normed) {
+
+
+  # Update Unique Scores
+  Eta_Q2 <- qr.Q(qr(Eta_normed), complete = TRUE)[,
+    (n_constructs + 1):n_case,
+    drop = FALSE
+  ]
+
+  # svd between R and Matlab by Ahmed Fasih on February 1/2017
+  # https://stackoverflow.com/a/41972818
+
+  mx <- D %*% t(Z_normed) %*% Eta_Q2
+
+  U <- tryCatch(
+    {
+      svd_mx <- svd(mx, nu = nrow(mx), nv = ncol(mx))
+      u <- svd_mx$u
+      v <- svd_mx$v
+      Utilde <- v[, 1:n_indicators, drop = FALSE] %*% t(u)
+      U <- Eta_Q2 %*% Utilde
+    },
+    error = function(e) {
+      svd_mx <- svd(mx)
+      Utilde <- svd_mx$v %*% t(svd_mx$u)
+      U <- Eta_Q2 %*% Utilde
+      return(U)
+    }
+  )
+  
+  U[, .indicator_type == "Composite"] <- 0
+
+  # Update Unique Loadings
+  D <- diag(diag(t(U) %*% Z_normed))
+  D[.indicator_type == "Composite", .indicator_type == "Composite"] <- 0
+
+  # Return output
+  return(list("U" = U, "D" = D))
+} 
 
 #' Block Diagonalize Estimated Parameter Matrices to Facilitate Computation of FIT Statistics
 #'

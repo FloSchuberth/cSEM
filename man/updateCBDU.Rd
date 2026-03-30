@@ -22,17 +22,9 @@ updateCBDU(
 )
 }
 \arguments{
-\item{Z}{Standardized data matrix}
-
 \item{X}{Pseudo-weights for composites}
 
 \item{Gamma}{Construct Scores}
-
-\item{C}{Matrix of estimated loadings}
-
-\item{B}{Matrix of path coefficients}
-
-\item{D}{Matrix of estimated unique error}
 
 \item{.indicator_type}{Vector of whether each indicator corresponds to a common factor or composite}
 

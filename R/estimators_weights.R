@@ -946,13 +946,13 @@ calculateWeightsIGSCA <- function(
   )
   names(indicator_type) <- csemify$indicators
 
-  composite_indicators <- C0[names(csemify$construct_type[csemify$construct_type == "Composite"]),] |> 
+  composite_indicators <- C0[names(csemify$construct_type[csemify$construct_type == "Composite"]),, drop = FALSE] |> 
     colSums() |> 
     sapply(\(x) x == 1)
   
   indicator_type[composite_indicators] <-  "Composite"
 
-  common_factor_indicators <- C0[names(csemify$construct_type[csemify$construct_type == "Common factor"]),] |> 
+  common_factor_indicators <- C0[names(csemify$construct_type[csemify$construct_type == "Common factor"]),, drop = FALSE] |> 
     colSums() |> 
     sapply(\(x) x == 1)
 

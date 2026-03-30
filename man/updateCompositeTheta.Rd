@@ -9,24 +9,24 @@ updateCompositeTheta(
   A,
   V,
   X,
-  windex_gamma_idx,
+  windex_eta_idx,
   n_total_var,
   tot,
   n_constructs,
-  gamma_idx,
+  eta_idx,
   .S = args_default()$.S
 )
 }
 \arguments{
 \item{W}{Weights matrix}
 
-\item{A}{Stacked matrix of loadings and path coefficients}
+\item{A}{Stacked matrix of loadings and path coefficients \eqn{\left[\Lambda \mid B \right]}}
 
-\item{V}{Unclear meaning}
+\item{V}{Stacked matrix of identity matrix and weights \eqn{\left[I \mid W \right]}}
 
-\item{X}{The matrix X is equal to Z - UD}
+\item{X}{The matrix X is equal to \eqn{Z - UD}}
 
-\item{windex_gamma_idx}{Index of weights related to the indicators for the construct of interest}
+\item{windex_eta_idx}{Index of weights related to the indicators for the construct of interest}
 
 \item{n_total_var}{Number of indicators and constructs}
 
@@ -34,7 +34,7 @@ updateCompositeTheta(
 
 \item{n_constructs}{Number of constructs}
 
-\item{gamma_idx}{Index of which construct we are examining}
+\item{eta_idx}{Index of which construct we are examining}
 
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 }
