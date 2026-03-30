@@ -402,7 +402,11 @@ updateCompositeTheta <-
 #' @inheritParams igsca
 #' @param X Indicators with measurement error removed
 #' @param Eta Construct Scores
-#' @param c_index Index of loadings
+#' @param Lambda Loadings matrix
+#' @param B Path coefficients matrix
+#' @param n_indicators Number of indicators
+#' @param n_constructs Number of oncstructs
+#' @param lambda_index Index of loadings
 #' @param b_index Index of Path Coefficients
 #' @param n_case Number of Cases
 #' @param .indicator_type Vector of whether each indicator corresponds to a common factor or composite
@@ -482,6 +486,9 @@ updateCB <-
 #' @param D Unique loadings
 #' @param Eta_normed Normalized data
 #' @param Z_normed Normalized data
+#' @param n_constructs Number of constructs
+#' @param n_case Number of cases
+#' @param n_indicators Number of indicators
 #'
 #' @returns List of 2 elements, normalized unique scores (`U`) and normalized unique loadings (`D`)
 #' 

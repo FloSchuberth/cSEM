@@ -24,7 +24,17 @@ updateCB(
 
 \item{Eta}{Construct Scores}
 
+\item{Lambda}{Loadings matrix}
+
+\item{B}{Path coefficients matrix}
+
 \item{.indicator_type}{Vector of whether each indicator corresponds to a common factor or composite}
+
+\item{n_indicators}{Number of indicators}
+
+\item{lambda_index}{Index of loadings}
+
+\item{n_constructs}{Number of oncstructs}
 
 \item{b_index}{Index of Path Coefficients}
 
@@ -35,8 +45,6 @@ updateCB(
 be equal to the number of columns of W0 and C0.}
 
 \item{modes}{Named vector of whether the construct is a Common factor, nomological composite or canonical composite.}
-
-\item{c_index}{Index of loadings}
 }
 \value{
 List of matrices:

@@ -24,6 +24,12 @@ updateUD(
 composite variable (0). This vector is important for computing the
 uniqueness terms (D) because it zeros the entries for composite indicators.}
 
+\item{n_constructs}{Number of constructs}
+
+\item{n_case}{Number of cases}
+
+\item{n_indicators}{Number of indicators}
+
 \item{Z_normed}{Normalized data}
 }
 \value{
