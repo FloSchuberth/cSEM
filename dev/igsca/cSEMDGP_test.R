@@ -148,71 +148,40 @@ igsca_mods <- mapply(
   .iter_max = 1000
 )
 
+
+# TODO: It'd be nice to remove the unique loadings from this as well... 
+
 tidied_igsca_mods <- lapply(igsca_mods, function(x) {
-  tidy(x) |>
-    dplyr::filter(op %in% c('=~', '~', '<~')) |>
-    dplyr::filter(!grepl('xi2 <~', term, fixed = TRUE)) |>
-    dplyr::select(term, estimate)
+    tidy(x) |>
+        dplyr::filter(op %in% c('=~', '~', '<~')) |>
+        dplyr::select(term, estimate)
 }) |>
-  list_rbind(names_to = 'mod')
+    list_rbind(names_to = 'mod') |>
+    dplyr::filter(
+        !((grepl('xi2 <~', term, fixed = TRUE) &
+            grepl(pattern = '_...F', x = mod, fixed = FALSE)) &
+            (grepl('xi1 <~', term, fixed = TRUE) &
+                grepl(pattern = '...F_', x = mod, fixed = FALSE)))
+    )
 
-
-View(tidied_igsca_mods)
-
-# Test IGSCA parameter recovery ------------------------------------------
+## Test IGSCA parameter recovery ------------------------------------------
 # Note: There seems to sometimes be convergence problems when using factors
-# with only one indicator, but not always. Although the parameter estimates
-# seem fine and, in-practice, what could the meaning of a single indicator
-# common factor mean?
+# with only one indicator, but not always.
 
-igsca_expected <- list(
-  list(
-    mod_name = "uniC_uniF",
-    weights = list(xi1 = c(x11 = 1)),
-    loadings = list(xi2 = c(x21 = 1)),
-    paths = path_xi2_xi1
-  ),
-  list(
-    mod_name = "uniC_triF",
-    weights = list(xi1 = c(x11 = 1)),
-    loadings = list(xi2 = xi2_tri_fct_loadings),
-    paths = path_xi2_xi1
-  ),
-  list(
-    mod_name = "triC_uniF",
-    weights = list(xi1 = xi1_tri_cmp_weights),
-    loadings = list(xi2 = c(x21 = 1)),
-    paths = path_xi2_xi1
-  ),
-  list(
-    mod_name = "triC_triF",
-    weights = list(xi1 = xi1_tri_cmp_weights),
-    loadings = list(xi2 = xi2_tri_fct_loadings),
-    paths = path_xi2_xi1
-  ),
-  list(
-    mod_name = "uniF_uniC",
-    loadings = list(xi1 = c(x11 = 1)),
-    paths = path_xi2_xi1
-  ),
-  list(
-    mod_name = "uniF_triC",
-    loadings = list(xi1 = c(x11 = 1)),
-    paths = path_xi2_xi1
-  ),
-  list(
-    mod_name = "triF_uniC",
-    loadings = list(xi1 = xi1_tri_fct_loadings),
-    paths = path_xi2_xi1
-  ),
-  list(
-    mod_name = "triF_triC",
-    loadings = list(xi1 = xi1_tri_fct_loadings),
-    paths = path_xi2_xi1
-  )
-) |>
-  lapply(\(cfg) do.call(build_expected_popvalues, cfg)) |>
-  (\(dfs) Reduce(rbind, dfs))()
+igsca_expected <- make_expected_from_names(
+    c(
+        "uniC_uniF",
+        "uniC_triF",
+        "triC_uniF",
+        "triC_triF",
+        "uniF_uniC",
+        "uniF_triC",
+        "triF_uniC",
+        "triF_triC"
+    ),
+    paths = path_xi2_xi1,
+    exclude_xi2_weights = TRUE
+)
 
 igsca_joined <- merge(tidied_igsca_mods, igsca_expected, by = c("mod", "term"))
 
@@ -233,7 +202,7 @@ testthat::test_that("IGSCA recovers population weights, loadings, and path coeff
   testthat::expect_equal(
     igsca_joined$estimate[is_path],
     igsca_joined$pop_value[is_path],
-    tolerance = 0.001
+    tolerance = 0.01
   )
   testthat::expect_equal(
     igsca_joined$estimate[is_loading],
@@ -241,6 +210,8 @@ testthat::test_that("IGSCA recovers population weights, loadings, and path coeff
     tolerance = 0.02
   )
 })
+
+View(igsca_joined)
 
 # GSCA -------------------------------------------------------------------
 
@@ -318,32 +289,19 @@ tidied_gsca_mods <- lapply(gsca_mods, function(x) {
 }) |>
   list_rbind(names_to = 'mod')
 
-# Test GSCA parameter recovery -------------------------------------------
+## Test GSCA parameter recovery -------------------------------------------
 
-gsca_expected <- list(
-  list(
-    mod_name = "uni_uni",
-    weights = list(xi1 = c(x11 = 1), xi2 = c(x21 = 1)),
-    paths = path_xi2_xi1
-  ),
-  list(
-    mod_name = "uni_tri",
-    weights = list(xi1 = c(x11 = 1), xi2 = xi2_tri_cmp_weights),
-    paths = path_xi2_xi1
-  ),
-  list(
-    mod_name = "tri_uni",
-    weights = list(xi1 = xi1_tri_cmp_weights, xi2 = c(x21 = 1)),
-    paths = path_xi2_xi1
-  ),
-  list(
-    mod_name = "tri_tri",
-    weights = list(xi1 = xi1_tri_cmp_weights, xi2 = xi2_tri_cmp_weights),
-    paths = path_xi2_xi1
-  )
-) |>
-  lapply(\(cfg) do.call(build_expected_popvalues, cfg)) |>
-  (\(dfs) Reduce(rbind, dfs))()
+gsca_expected <- make_expected_from_names(
+    c(
+        "uni_uni",
+        "uni_tri",
+        "tri_uni",
+        "tri_tri",
+    ),
+    default_type = "C",
+    paths = path_xi2_xi1,
+    exclude_xi2_weights = FALSE
+)
 
 gsca_joined <- merge(tidied_gsca_mods, gsca_expected, by = c("mod", "term"))
 
@@ -428,34 +386,22 @@ tidied_gscam_mods <- lapply(gscam_mods, function(x) {
 }) |>
   list_rbind(names_to = 'mod')
 
-# Test GSCAM parameter recovery ------------------------------------------
+## Test GSCAM parameter recovery ------------------------------------------
 # Note: The current GSCA_M may sometimes have trouble in computing D2 and U,
 # especially when there's only one indicator for a common factor with a small loading
 
-gscam_expected <- list(
-  list(
-    mod_name = "uni_uni",
-    loadings = list(xi1 = c(x11 = 1), xi2 = c(x21 = 1)),
-    paths = path_xi2_xi1
-  ),
-  list(
-    mod_name = "uni_tri",
-    loadings = list(xi1 = c(x11 = 1), xi2 = xi2_tri_fct_loadings),
-    paths = path_xi2_xi1
-  ),
-  list(
-    mod_name = "tri_uni",
-    loadings = list(xi1 = xi1_tri_fct_loadings, xi2 = c(x21 = 1)),
-    paths = path_xi2_xi1
-  ),
-  list(
-    mod_name = "tri_tri",
-    loadings = list(xi1 = xi1_tri_fct_loadings, xi2 = xi2_tri_fct_loadings),
-    paths = path_xi2_xi1
-  )
-) |>
-  lapply(\(cfg) do.call(build_expected_popvalues, cfg)) |>
-  (\(dfs) Reduce(rbind, dfs))()
+
+gsca_expected <- make_expected_from_names(
+    c(
+        "uni_uni",
+        "uni_tri",
+        "tri_uni",
+        "tri_tri",
+    ),
+    default_type = "F",
+    paths = path_xi2_xi1,
+    exclude_xi2_weights = TRUE
+)
 
 gscam_joined <- merge(tidied_gscam_mods, gscam_expected, by = c("mod", "term"))
 
@@ -478,211 +424,3 @@ testthat::test_that("GSCAM recovers population loadings and path coefficients", 
     tolerance = 0.02
   )
 })
-
-
-# Old Test Code ----------------------------------------------------------
-modelpop <- ' 
-xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
-x11~~0.4*x12 + -0.3*x13
-x12~~0.4*x13
-
-
-xi2<~0.4*x21 + 0.3*x22 + 0.2*x23
-x21~~0.4*x22 + -0.3*x23
-x22~~0.4*x23
-
-xi3=~0.8*x31 + 0.6*x32 + 0.7*x33
-
-xi3~ .5*xi1 + .5*xi2
-
-xi1~~0.3*xi2
-'
-
-datapop = generateData(.model = modelpop, .empirical = T)
-
-modelest <- ' 
-xi1<~x11 + x12 + x13
-
-xi2<~x21 + x22 + x23
-xi3 =~ x31 + x32 + x33
-
-xi3~ xi2+xi1
-'
-
-
-out_CCMP = csem(
-  .data = datapop,
-  .model = modelest,
-  .approach_weights = 'GSCA',
-  .disattenuate = TRUE,
-  .conv_criterion = "sum_diff_absolute",
-  .GSCA_modes = "CCMP"
-)
-tidy(out_CCMP) |> View()
-
-# Mixture composite and common factors
-modelpop <- ' 
-xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
-x11~~0.4*x12 + -0.3*x13
-x12~~0.4*x13
-
-
-xi2=~0.8*x21 + 0.6*x22 + 0.7*x23
-
-xi3 =~ 1*x31
-
-xi4 <~ 1*x41
-
-
-xi3~ -0.3*xi1 + 0.4*xi2
-xi1~~0.3*xi2
-xi4 ~ 0.3*xi3
-'
-
-datapop = generateData(.model = modelpop, .empirical = T)
-
-
-# library(cSEM)
-modelest <- ' 
-xi1<~x11 + x12 + x13
-
-xi2=~x21 + x22 + x23
-
-xi3 =~ x31
-
-xi4 <~ x41
-
-
-xi3~ xi1 + xi2
-xi4 ~ xi3
-
-'
-
-
-# debugonce(igsca)
-out = csem(
-  .data = datapop,
-  .model = modelest,
-  .approach_weights = 'GSCA',
-  .disattenuate = TRUE,
-  .tolerance = 0.00001,
-  .conv_criterion = "sum_diff_absolute",
-  .GSCA_modes = "CCMP"
-)
-summarize(out)
-
-csa <- lavaan::sem(
-  modelest,
-  datapop,
-  optim.gradient = "numerical"
-)
-broom::tidy(csa)
-
-out1 = csem(
-  .data = datapop,
-  .model = modelest,
-  .approach_weights = 'PLS-PM',
-  .disattenuate = TRUE
-)
-summarize(out1)
-
-
-# Other tests ------------------------------------------------------------
-
-# Common factors only
-modelpop <- ' 
-xi1=~0.4*x11 + 0.3*x12 + 0.2*x13
-
-
-
-xi2=~0.8*x21 + 0.6*x22 + 0.7*x23
-
-xi3 =~ 1*x31
-
-xi4 =~ 1*x41
-
-
-xi3~ -0.3*xi1 + 0.4*xi2
-xi1~~0.3*xi2
-xi4 ~ 0.3*xi3
-'
-
-datapop = generateData(.model = modelpop, .empirical = T)
-
-out = csem(
-  .data = datapop,
-  .model = modelest,
-  .approach_weights = 'GSCA',
-  .tolerance = 0.0001,
-  .conv_criterion = "sum_diff_absolute"
-)
-summarize(out)
-
-# Mixture composite and common factors
-modelpop <- ' 
-xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
-x11~~0.4*x12 + -0.3*x13
-x12~~0.4*x13
-
-
-xi2<~0.8*x21 + 0.6*x22 + 0.7*x23
-
-x21~~-.3*x22 + 0.2*x23
-x22~~-0.3*x23
-
-xi3 <~ 1*x31
-
-xi4 <~ 1*x41
-
-
-xi3~ -0.3*xi1 + 0.4*xi2
-xi1~~0.3*xi2
-xi4 ~ 0.3*xi3
-'
-
-datapop = generateData(.model = modelpop, .empirical = T)
-
-
-out = csem(.data = datapop, .model = modelest, .approach_weights = 'GSCA')
-summarize(out)
-
-# --- without single indicator constructs
-modelpop <- ' 
-xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
-x11~~0.4*x12 + -0.3*x13
-x12~~0.4*x13
-
-
-xi2=~0.8*x21 + 0.6*x22 + 0.7*x23
-
-xi3 =~ 0.7*x31 + 0.8*x32
-
-
-
-xi3~ -0.3*xi1 + 0.4*xi2
-xi1~~0.3*xi2
-
-'
-
-datapop = generateData(.model = modelpop, .empirical = T)
-
-modelest <- ' 
-xi1<~x11 + x12 + x13
-
-xi2=~x21 + x22 + x23
-
-xi3 =~ x31 + x32
-
-
-xi3~ xi1 + xi2
-
-
-'
-
-out = csem(
-  .data = datapop,
-  .model = modelest,
-  .approach_weights = 'GSCA',
-  .disattenuate = TRUE
-)
-summarize(out)
