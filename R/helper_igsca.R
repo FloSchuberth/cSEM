@@ -509,8 +509,9 @@ updateCB <-
     # Kronecker bypass
     # browser()
     vars_cf_ncmp <- names(modes)[modes %in% c("Common factor", "NCMP")]
-    cov_eta_indicators <- t(Eta) %*% X
-    vcv_eta <- t(Eta) %*% Eta # How does this  compare against cov(Eta)?
+    cov_eta_indicators <- t(Eta) %*% X # Interestingly, this is not the same as cor(Eta, X)?
+    cor_eta <- t(Eta) %*% Eta # This seem identical to cor(Eta)?
+    # cor_eta <- cor(Eta) # Apparently this creates a problem with starting values
 
     dep_vars <- (colSums(Lambda[vars_cf_ncmp, , drop = FALSE]) != 0) |> 
         which() |> 
@@ -520,7 +521,7 @@ updateCB <-
       x <- (rowSums(Lambda[vars_cf_ncmp, y, drop = FALSE]) != 0) |> 
           which() |> 
           names()
-      coef <- MASS::ginv(vcv_eta[x, x, drop = FALSE]) %*% cov_eta_indicators[x, y, drop = FALSE]
+      coef <- MASS::ginv(cor_eta[x, x, drop = FALSE]) %*% cov_eta_indicators[x, y, drop = FALSE]
     })
     # A future approach should consider avoiding c_index and using explicit names, for safety.
     Lambda[lambda_index] <- unlist(loadings, use.names =  FALSE)
@@ -536,8 +537,8 @@ updateCB <-
       x <- (rowSums(B[, y, drop = FALSE]) != 0) |> 
         which() |> 
         names()
-      coef <- MASS::ginv(vcv_eta[x, x, drop = FALSE]) %*%
-        vcv_eta[x, y, drop = FALSE]
+      coef <- MASS::ginv(cor_eta[x, x, drop = FALSE]) %*%
+        cor_eta[x, y, drop = FALSE]
     })
     B[b_index] <- unlist(beta, use.names = FALSE)
 
