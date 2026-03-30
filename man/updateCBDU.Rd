@@ -11,13 +11,13 @@ updateCBDU(
   C,
   B,
   D,
-  indicator_type,
+  .indicator_type,
   n_indicators,
   c_index,
   n_constructs,
   b_index,
   n_case,
-  con_type,
+  .con_type,
   modes
 )
 }
@@ -34,7 +34,7 @@ updateCBDU(
 
 \item{D}{Matrix of estimated unique error}
 
-\item{indicator_type}{Vector of whether each indicator corresponds to a common factor or composite}
+\item{.indicator_type}{Vector of whether each indicator corresponds to a common factor or composite}
 
 \item{n_indicators}{Number of indicators}
 
@@ -46,7 +46,7 @@ updateCBDU(
 
 \item{n_case}{Number of Cases}
 
-\item{con_type}{A vector that denotes whether each construct variable
+\item{.con_type}{A vector that denotes whether each construct variable
 (columns in W0 and C0) is a common factor or composite. Its length should
 be equal to the number of columns of W0 and C0.}
 

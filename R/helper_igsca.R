@@ -7,19 +7,19 @@
 #' **Note**: Here, we assume that there is only one unique loading per indicator.
 #'
 #'
-#' @param Z0 Data matrix of N cases (measurements) x J indicators with named
+#' @param .Z0 Data matrix of N cases (measurements) x J indicators with named
 #'   columns, unstandardized.
-#' @param W0 Indicator matrix of weights: J indicators (rows) and their
+#' @param .W0 Indicator matrix of weights: J indicators (rows) and their
 #'   corresponding Gamma construct variables (columns).
-#' @param C0 Indicator matrix of loadings: J indicators (rows) and their
+#' @param .C0 Indicator matrix of loadings: J indicators (rows) and their
 #'   corresponding Gamma construct variable (columns).
-#' @param B0 Square indicator matrix of path coefficients:
+#' @param .B0 Square indicator matrix of path coefficients:
 #'   from-construct-variable (rows) and to-construct-variable (columns). The
 #'   order of Gamma construct variables should match the order in C0 and W0.
-#' @param con_type A vector that denotes whether each construct variable
+#' @param .con_type A vector that denotes whether each construct variable
 #'   (columns in W0 and C0) is a common factor or composite. Its length should
 #'   be equal to the number of columns of W0 and C0.
-#' @param indicator_type An indicator vector that indices whether a j indicator
+#' @param .indicator_type An indicator vector that indices whether a j indicator
 #'   (rows of W0 and C0) corresponds to a common factor variable (1) or a
 #'   composite variable (0). This vector is important for computing the
 #'   uniqueness terms (D) because it zeros the entries for composite indicators.
@@ -86,22 +86,22 @@ igsca <-
     .iter_max = args_default()$.iter_max,
     .starting_values = args_default()$.starting_values,
     .tolerance = args_default()$.tolerance,
-    Z0,
-    W0,
-    C0,
-    B0,
-    con_type,
-    indicator_type
+    .Z0,
+    .W0,
+    .C0,
+    .B0,
+    .con_type,
+    .indicator_type
   ) {
     ## Initialize Computational Variables -----------------------------------------------------
-    n_case <- nrow(Z0)
-    n_indicators <- ncol(Z0)
-    n_constructs <- ncol(W0)
+    n_case <- nrow(.Z0)
+    n_indicators <- ncol(.Z0)
+    n_constructs <- ncol(.W0)
     n_total_var <- n_indicators + n_constructs
     normalization_factor <- sqrt(n_case - 1)
 
-    w_index <- which(c(W0) == 1)
-    b_index <- which(c(B0) == 1)
+    w_index <- which(c(.W0) == 1)
+    b_index <- which(c(.B0) == 1)
 
     # Initialize Bindpoints for list2env
     Z <- matrix()
@@ -125,13 +125,13 @@ igsca <-
       .iter_max = .iter_max,
       .starting_values = .starting_values,
       .tolerance = .tolerance,
-      Z0 = Z0,
-      W0 = W0,
-      B0 = B0,
+      Z0 = .Z0,
+      W0 = .W0,
+      B0 = .B0,
       n_indicators = n_indicators,
       n_case = n_case,
       n_constructs = n_constructs,
-      indicator_type = indicator_type,
+      .indicator_type = .indicator_type,
       normalization_factor = normalization_factor
     )
 
@@ -177,8 +177,8 @@ igsca <-
     # Set Loadings of canonical composites to 0 just in case it wasn't handled properly in the initial values
     C[which(modes == "CCMP"), ] <- 0
     # Create c_index which should only exist for nomological composites and common factors
-    C0[which(modes == "CCMP"), ] <- 0
-    c_index <- which(c(C0) == 1)
+    .C0[which(modes == "CCMP"), ] <- 0
+    c_index <- which(c(.C0) == 1)
     
     ## Alternating Least Squares Algorithm -------------------------------------
 
@@ -229,10 +229,10 @@ igsca <-
       # After each cycle, the Gamma, W and V matrices are updated
       for (gamma_idx in seq_len(n_constructs)) {
         tot <- n_indicators + gamma_idx
-        windex_gamma_idx <- (W0[, gamma_idx, drop = FALSE] == 1)
+        windex_gamma_idx <- (.W0[, gamma_idx, drop = FALSE] == 1)
         X_gamma_idx <- X[, windex_gamma_idx, drop = FALSE]
 
-        if (con_type[gamma_idx] == "Composite") {
+        if (.con_type[gamma_idx] == "Composite") {
           Theta <-
             updateCompositeTheta(
               W = W, # Changes per gamma_idx iteration
@@ -246,7 +246,7 @@ igsca <-
               windex_gamma_idx = windex_gamma_idx, # Changes per gamma_idx iteration
               .S = .S
             )
-        } else if (con_type[gamma_idx] == "Common factor") {
+        } else if (.con_type[gamma_idx] == "Common factor") {
           Theta <-
             updateCommonFactorTheta(
               WW = WW,
@@ -254,7 +254,7 @@ igsca <-
               gamma_idx = gamma_idx # Changes per gamma_idx iteration
             )
         } else {
-          stop("con_type should only either be `Composite` or `Common factor`")
+          stop(".con_type should only either be `Composite` or `Common factor`")
         }
 
         # This is where Gamma, Weights and V are updated based on which gamma_idx
@@ -274,12 +274,12 @@ igsca <-
         D = D,
         Z = Z,
         n_indicators = n_indicators,
-        indicator_type = indicator_type,
+        .indicator_type = .indicator_type,
         n_constructs = n_constructs,
         n_case = n_case,
         c_index = c_index,
         b_index = b_index,
-        con_type = con_type,
+        .con_type = .con_type,
         modes = modes
       )
 
@@ -321,7 +321,7 @@ igsca <-
         "C" = C, # C is P \times J. As shown in the examples ?csem, res$Estimates$Loading_estimates should be P \times J
         "B" = t(B), # B is From \times To; so t(B) is To \times From. As shown in the examples ?csem, res$Estimates$Path_estimates should be To \times From
         # Recall that Z0 is the original standardized data
-        "Construct_scores" = (Z0 - (Unique_scores %*% D)) %*% W,
+        "Construct_scores" = (.Z0 - (Unique_scores %*% D)) %*% W,
         "Unique_loading_estimates" = D_diag,
         "Unique_scores" = Unique_scores,
         "Modes" = "gsca (igsca)",
@@ -366,7 +366,7 @@ initializeAlsEstimates <- function(
   n_indicators,
   n_case,
   n_constructs,
-  indicator_type,
+  .indicator_type,
   normalization_factor
 ) {
   # Initialize Bindpoints for list2env
@@ -458,9 +458,9 @@ initializeAlsEstimates <- function(
     )
   }
   
-  U[, indicator_type == "Composite"] <- 0
+  U[, .indicator_type == "Composite"] <- 0
   D <- diag(diag(t(U) %*% Z)) 
-  D[indicator_type == "Composite", indicator_type == "Composite"] <- 0
+  D[.indicator_type == "Composite", .indicator_type == "Composite"] <- 0
 
   return(list(
     "W" = W,
@@ -589,7 +589,7 @@ updateCompositeTheta <-
 #' @param c_index Index of loadings
 #' @param b_index Index of Path Coefficients
 #' @param n_case Number of Cases
-#' @param indicator_type Vector of whether each indicator corresponds to a common factor or composite
+#' @param .indicator_type Vector of whether each indicator corresponds to a common factor or composite
 #' @param modes Named vector of whether the construct is a Common factor, nomological composite or canonical composite.
 #' @importFrom MASS ginv
 #' @return List of matrices:
@@ -606,13 +606,13 @@ updateCBDU <-
     C,
     B,
     D,
-    indicator_type,
+    .indicator_type,
     n_indicators,
     c_index,
     n_constructs,
     b_index,
     n_case,
-    con_type,
+    .con_type,
     modes
   ) {
     ## Loading Update ----------------------------------------------------------
@@ -690,9 +690,9 @@ updateCBDU <-
       )
     }
 
-    U[, indicator_type == "Composite"] <- 0
+    U[, .indicator_type == "Composite"] <- 0
     D <- diag(diag(t(U) %*% Z))
-    D[indicator_type == "Composite", indicator_type == "Composite"] <- 0
+    D[.indicator_type == "Composite", .indicator_type == "Composite"] <- 0
 
     return(
       list(
@@ -700,89 +700,6 @@ updateCBDU <-
         "B" = B,
         "D" = D,
         "U" = U
-      )
-    )
-  }
-
-#' Gets the Relevant Inputs for IGSCA
-#'
-#' In the context of igsca, this function prepares: (1) the initial indicators
-#' (Z0), weights (W0), structural (B0), loadings(C0) matrices; (2) whether a
-#' construct is a latent or composite variable (con_type); (3) whether an
-#' indicator corresponds to a latent or composite variable (indicator_type); and
-#' (4) the dominant indicator of each construct (.dominant_indicators).
-#'
-#' @inheritParams csem
-#'
-#'
-#' @return Returns a list of matrices/vectors required for igsca_sim() to run:
-#' * Z0
-#' * W0
-#' * B0
-#' * C0
-#' * con_type
-#' * indicator_type
-getIgscaInputs <-
-  function(.data, .model) {
-    # Note: parseModel is from cSEM internal
-
-    csemify <- parseModel(.model = .model)
-
-    Z0 <- .data[, csemify$indicators, drop = FALSE]
-
-    # Igsca assumes \eta \times B, so the rows should be from
-    # and the columns should be to. This is in contrast to 
-    # the rest of cSEM
-    B0 <- t(csemify$structural) 
-
-    C0 <- csemify$measurement
-    W0 <- t(csemify$measurement)
-
-    # con_type <- csemify$construct_type == "Common factor"
-    con_type <- csemify$construct_type
-
-    # Constructing indicator_type
-    indicator_type <- vector(
-      mode = "character",
-      length = ncol(csemify$measurement)
-    )
-    # Default value must be "Composite" because of how the measurement matrix
-    #  returned by parseModel uses 0 to denote both composite variables and the 
-    # absence of any corresponding construct variable.
-    indicator_type <- rep("Composite", length(indicator_type))
-    names(indicator_type) <- colnames(csemify$measurement)
-
-    for (gamma_idx in rownames(csemify$measurement)) {
-      for (indicator in colnames(csemify$measurement)) {
-        if (csemify$construct_type[gamma_idx] == "Common factor") {
-          if (csemify$measurement[gamma_idx, indicator] == 1) {
-            indicator_type[indicator] <- "Common factor"
-          }
-        } else if (csemify$construct_type[gamma_idx] == "Composite") {
-          # The reason why the following code breaks behavior is because
-          # it makes indicator_type turn into all "Composite because in the parseModel's return
-          # the value 0 in the measurement matrix denotes both a composite and
-          #  no correspondence to any latent variable
-          #
-          # if(csemify$measurement[gamma_idx, indicator] == 0) {
-          #   indicator_type[indicator] <- "Composite"
-          # }
-        } else {
-          warning(
-            "Indicator does not correspond to either a Composite or Common factor. Unsupported behavior may ensue."
-          )
-        }
-      }
-    }
-
-    return(
-      list(
-        "Z0" = Z0,
-        "B0" = B0,
-        "W0" = W0,
-        "C0" = C0,
-        "con_type" = con_type,
-        "indicator_type" = indicator_type
       )
     )
   }

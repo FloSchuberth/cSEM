@@ -21,3 +21,9 @@ cli::pretty_print_code()
 
 library(RhpcBLASctl)
 RhpcBLASctl::blas_set_num_threads(2)
+
+
+#' devtools::test_active_file()
+
+debug(igsca)
+debug(calculateWeightsIGSCA)

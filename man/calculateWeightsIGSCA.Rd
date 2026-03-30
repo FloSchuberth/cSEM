@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimators_weights.R
 \name{calculateWeightsIGSCA}
 \alias{calculateWeightsIGSCA}
-\title{Calculate weights using Integrated Generalised Structured Component Analysis (I-GSCA)}
+\title{Calculate weights using Integrated Generalised Structured Component Analysis (IGSCA)}
 \usage{
 calculateWeightsIGSCA(
   .data,
@@ -17,11 +17,9 @@ calculateWeightsIGSCA(
 }
 \arguments{
 \item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandardized
-data (indicators/items/manifest variables).
-Additionally, a \code{list} of data sets (data frames or matrices) is accepted in which
-case estimation is repeated for each data set. Possible column types or classes
+data (indicators/items/manifest variables). Possible column types or classes
 of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or "\code{integer}"),
-"\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (will be converted to factor),
+"\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (converted to factor),
 or a mix of several types.}
 
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
@@ -55,8 +53,8 @@ wishes to set. The vectors must be named vectors of \code{"indicator_name" = val
 pairs, where \code{value} is the (scaled or unscaled) starting weight. Defaults to \code{NULL}.}
 }
 \value{
-List of matrices of the fitted I-GSCA Model
+List of matrices of the fitted IGSCA Model
 }
 \description{
-Calculate weights using Integrated Generalised Structured Component Analysis (I-GSCA)
+Calculate weights using Integrated Generalised Structured Component Analysis (IGSCA)
 }

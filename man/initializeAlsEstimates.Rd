@@ -19,7 +19,7 @@ initializeAlsEstimates(
   n_indicators,
   n_case,
   n_constructs,
-  indicator_type,
+  .indicator_type,
   normalization_factor
 )
 }
@@ -72,7 +72,7 @@ order of Gamma construct variables should match the order in C0 and W0.}
 
 \item{n_constructs}{Number of constructs}
 
-\item{indicator_type}{An indicator vector that indices whether a j indicator
+\item{.indicator_type}{An indicator vector that indices whether a j indicator
 (rows of W0 and C0) corresponds to a common factor variable (1) or a
 composite variable (0). This vector is important for computing the
 uniqueness terms (D) because it zeros the entries for composite indicators.}

@@ -13,12 +13,12 @@ igsca(
   .iter_max = args_default()$.iter_max,
   .starting_values = args_default()$.starting_values,
   .tolerance = args_default()$.tolerance,
-  Z0,
-  W0,
-  C0,
-  B0,
-  con_type,
-  indicator_type
+  .Z0,
+  .W0,
+  .C0,
+  .B0,
+  .con_type,
+  .indicator_type
 )
 }
 \arguments{
@@ -54,24 +54,24 @@ pairs, where \code{value} is the (scaled or unscaled) starting weight. Defaults 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
 
-\item{Z0}{Data matrix of N cases (measurements) x J indicators with named
+\item{.Z0}{Data matrix of N cases (measurements) x J indicators with named
 columns, unstandardized.}
 
-\item{W0}{Indicator matrix of weights: J indicators (rows) and their
+\item{.W0}{Indicator matrix of weights: J indicators (rows) and their
 corresponding Gamma construct variables (columns).}
 
-\item{C0}{Indicator matrix of loadings: J indicators (rows) and their
+\item{.C0}{Indicator matrix of loadings: J indicators (rows) and their
 corresponding Gamma construct variable (columns).}
 
-\item{B0}{Square indicator matrix of path coefficients:
+\item{.B0}{Square indicator matrix of path coefficients:
 from-construct-variable (rows) and to-construct-variable (columns). The
 order of Gamma construct variables should match the order in C0 and W0.}
 
-\item{con_type}{A vector that denotes whether each construct variable
+\item{.con_type}{A vector that denotes whether each construct variable
 (columns in W0 and C0) is a common factor or composite. Its length should
 be equal to the number of columns of W0 and C0.}
 
-\item{indicator_type}{An indicator vector that indices whether a j indicator
+\item{.indicator_type}{An indicator vector that indices whether a j indicator
 (rows of W0 and C0) corresponds to a common factor variable (1) or a
 composite variable (0). This vector is important for computing the
 uniqueness terms (D) because it zeros the entries for composite indicators.}

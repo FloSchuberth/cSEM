@@ -902,13 +902,12 @@ calculateWeightsGSCAm <- function(
   
 } # END calculateWeightsGSCAm
 
-#' Calculate weights using Integrated Generalised Structured Component Analysis (I-GSCA)
+#' Calculate weights using Integrated Generalised Structured Component Analysis (IGSCA)
 #'
 #' @inheritParams igsca
-#' @inheritParams getIgscaInputs
 #' @inheritParams csem_arguments
 #'
-#' @return List of matrices of the fitted I-GSCA Model
+#' @return List of matrices of the fitted IGSCA Model
 #'
 #'
 calculateWeightsIGSCA <- function(
@@ -921,24 +920,60 @@ calculateWeightsIGSCA <- function(
   .tolerance = args_default()$.tolerance,
   .starting_values = args_default()$.starting_values
 ) {
+
+  csemify <- parseModel(.model = .csem_model)
+  #  Initial Indicators Z0
+  Z0 <- .data[, csemify$indicators, drop = FALSE]
+
+  # Igsca assumes \eta \times B, so the rows should be from
+  # and the columns should be to. This is in contrast to
+  # the rest of cSEM
+  B0 <- t(csemify$structural)
+
+  C0 <- csemify$measurement
+  W0 <- t(csemify$measurement)
+
+  # whether a construct is a latent or composite variable (con_type)
+  con_type <- csemify$construct_type
+
+  # Whether an indicator corresponds to a latent or composite variable (indicator_type)
+  # Default value must be "Composite" because of how the measurement matrix
+  #  returned by parseModel uses 0 to denote both composite variables and the
+  # absence of any corresponding construct variable.
+  indicator_type <- vector(
+    mode = "character",
+    length = ncol(csemify$measurement)
+  )
+  names(indicator_type) <- csemify$indicators
+
+  composite_indicators <- C0[names(csemify$construct_type[csemify$construct_type == "Composite"]),] |> 
+    colSums() |> 
+    sapply(\(x) x == 1)
   
-  igsca_in <- getIgscaInputs(.model = .csem_model, .data = .data)
+  indicator_type[composite_indicators] <-  "Composite"
+
+  common_factor_indicators <- C0[names(csemify$construct_type[csemify$construct_type == "Common factor"]),] |> 
+    colSums() |> 
+    sapply(\(x) x == 1)
+
+  indicator_type[common_factor_indicators] <-  "Common factor"
+
 
   igsca_out <- igsca(
-    .X  = .data,
+    .X = .data,
     .S = .S,
     .csem_model = .csem_model,
     .conv_criterion = .conv_criterion,
-    .GSCA_modes  = .GSCA_modes,
+    .GSCA_modes = .GSCA_modes,
     .iter_max = .iter_max,
     .starting_values = .starting_values,
     .tolerance = .tolerance,
-    Z0 = igsca_in$Z0,
-    W0 = igsca_in$W0,
-    C0 = igsca_in$C0,
-    B0 = igsca_in$B0,
-    con_type = igsca_in$con_type,
-    indicator_type = igsca_in$indicator_type
+    .Z0 = Z0,
+    .W0 = W0,
+    .C0 = C0,
+    .B0 = B0,
+    .con_type = con_type,
+    .indicator_type = indicator_type
   )
 
   return(igsca_out)
