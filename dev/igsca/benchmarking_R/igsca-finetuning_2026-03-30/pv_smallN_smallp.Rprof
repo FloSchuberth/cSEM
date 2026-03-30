@@ -1,0 +1,8 @@
+memory profiling: GC profiling: line profiling: sample.interval=10000
+#File 1: /home/mstruong/Documents/RStudio/phd/cSEM/R/csem_model.R
+#File 2: /home/mstruong/Documents/RStudio/phd/cSEM/R/00_csem.R
+:2379739:4234206:166413352:3568:"na.omit" "lav_partable_block_values" "lav_partable_vnames" "lav_partable_flat" "lavaan::lavaanify" 1#75 "parseModel" 2#397 "csem" "smallN_smallp" "__profvis_execute__" "profvis" ".main" 
+#File 3: /home/mstruong/Documents/RStudio/phd/cSEM/R/helper_igsca.R
+#File 4: /home/mstruong/Documents/RStudio/phd/cSEM/R/estimators_weights.R
+#File 5: /home/mstruong/Documents/RStudio/phd/cSEM/R/00_foreman.R
+:2431858:4334710:173041008:3874:"diag" 3#550 "updateUD" 3#287 "igsca" 4#962 "calculateWeightsIGSCA" 5#241 "<Anonymous>" "csem" "smallN_smallp" "__profvis_execute__" "profvis" ".main" 
