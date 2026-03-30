@@ -217,7 +217,7 @@ igsca <-
       WW <-
         t(C) %*% solve((C %*% t(C) + diag(n_constructs) - (2 * B) + (B %*% t(B))))
 
-      #### for-loop Updating of Constructs ---------------------------------------
+      #### for-loop update per construct ---------------------------------------
       A <- cbind(C, B)
 
       # After each cycle, the Gamma, W and V matrices are updated
@@ -253,31 +253,42 @@ igsca <-
       Gamma <- X %*% W # Trying to save on compute time
 
       ### Update Loadings, Path Coefficients and Uniqueness Terms ----------
-      updated_C_B_D_U <- updateCBDU(
+      list_CB <- updateCB(
         X = X,
-        Gamma = Gamma,
-        C = C,
+        Eta = Gamma,
+        Lambda = C,
         B = B,
-        D = D,
-        Z = Z,
         n_indicators = n_indicators,
         .indicator_type = .indicator_type,
         n_constructs = n_constructs,
         n_case = n_case,
-        c_index = c_index,
+        lambda_index = c_index,
         b_index = b_index,
         .con_type = .con_type,
         modes = modes
       )
 
-      list2env(updated_C_B_D_U[c("D", "U", "C", "B")], envir = environment())
+      list2env(list_CB[c("C", "B")], envir = environment())
 
-      #### Update estimates for while-loop condition testing -----------------------
+      ## Uniqueness Scores and Loadings Update ------------------------------------
+      list_UD <- updateUD(
+        D = D,
+        Eta_normed = Gamma,
+        .indicator_type = .indicator_type,
+        n_constructs = n_constructs,
+        n_indicators = n_indicators,
+        n_case = n_case,
+        Z_normed = Z
+      )
+
+      list2env(list_UD[c("U", "D")], envir = environment())
+
+      
       if (length(b_index) > 0) {
         est <- B[b_index]
       } else {
-        # Because canonical composites do not estimate loadings, here the weights are generally used to determine convergenece, instead of loadings
         est <- W[w_index]
+        # Because canonical composites do not estimate loadings, here the weights are generally used to determine convergenece, instead of loadings
         # est <- C[c_index]
       }
     }
@@ -461,12 +472,12 @@ updateCompositeTheta <-
     # Theta <- solve((t(XI) %*% XI), t(XI)) %*% vecZDelta
   }
 
-#' Update Loadings, Path-Coefficients and Uniqueness Terms After Updating Latent Variables
+#' Update Loadings and Path-Coefficients
 #'
 #' @inheritParams initializeAlsEstimates
 #' @inheritParams igsca
-#' @param X Pseudo-weights for composites
-#' @param Gamma Construct Scores
+#' @param X Indicators with measurement error removed
+#' @param Eta Construct Scores
 #' @param c_index Index of loadings
 #' @param b_index Index of Path Coefficients
 #' @param n_case Number of Cases
@@ -475,82 +486,65 @@ updateCompositeTheta <-
 #' @importFrom MASS ginv
 #' @return List of matrices:
 #'
-#' * (1) Uniqueness terms (D) and (U)
+#' * (1) Estimated Loadings matrix (C)
 #' * (2) Estimated Path Coefficients matrix (B)
-#' * (3) Estimated Loadings matrix (C)
 #'
-updateCBDU <-
+updateCB <-
   function(
-    Z,
     X,
-    Gamma,
-    C,
+    Eta,
+    Lambda,
     B,
-    D,
     .indicator_type,
     n_indicators,
-    c_index,
+    lambda_index,
     n_constructs,
     b_index,
     n_case,
     .con_type,
     modes
   ) {
-    ## Loading Update ----------------------------------------------------------
+    # Loading Update ----------------------------------------------------------
 
-    # Kronecker Approach and Assumes All Composites are Nomological
-    # t1 <- c(X)
-    # M1 <- kroneckerC(diag(n_indicators), Gamma, c_index)
-    # C[c_index] <- MASS::ginv(t(M1) %*% M1) %*% (t(M1) %*% t1)
-    
     # Kronecker bypass
     # browser()
     vars_cf_ncmp <- names(modes)[modes %in% c("Common factor", "NCMP")]
-    cov_gamma_indicators <- t(Gamma) %*% Z
-    vcv_gamma <- t(Gamma) %*% Gamma
-    dep_vars <- (colSums(C[vars_cf_ncmp, , drop = FALSE]) != 0) |> 
+    cov_eta_indicators <- t(Eta) %*% X
+    vcv_eta <- t(Eta) %*% Eta # How does this  compare against cov(Eta)?
+
+    dep_vars <- (colSums(Lambda[vars_cf_ncmp, , drop = FALSE]) != 0) |> 
         which() |> 
         names()
     # This approach assumes that every factor/NCMP loads onto one indicator: no cross-loadings
     loadings <- lapply(dep_vars, function(y) {
-      x <- (rowSums(C[vars_cf_ncmp, y, drop = FALSE]) != 0) |> 
+      x <- (rowSums(Lambda[vars_cf_ncmp, y, drop = FALSE]) != 0) |> 
           which() |> 
           names()
-      coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*% cov_gamma_indicators[x, y, drop = FALSE]
+      coef <- MASS::ginv(vcv_eta[x, x, drop = FALSE]) %*% cov_eta_indicators[x, y, drop = FALSE]
     })
     # A future approach should consider avoiding c_index and using explicit names, for safety.
-    C[c_index] <- unlist(loadings, use.names =  FALSE)
+    Lambda[lambda_index] <- unlist(loadings, use.names =  FALSE)
+
+    # Kronecker Approach and Assumes All Composites are Nomological
+    # t1 <- c(X)
+    # M1 <- kroneckerC(diag(n_indicators), Eta, c_index)
+    # C[c_index] <- MASS::ginv(t(M1) %*% M1) %*% (t(M1) %*% t1)
 
     # Path Coefficients Update ------------------------------------------------
     vars_endo <- colnames(B)[colSums(B) != 0]
-
     beta <- lapply(vars_endo, function(y) {
       x <- (rowSums(B[, y, drop = FALSE]) != 0) |> 
         which() |> 
         names()
-      coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*%
-        vcv_gamma[x, y, drop = FALSE]
+      coef <- MASS::ginv(vcv_eta[x, x, drop = FALSE]) %*%
+        vcv_eta[x, y, drop = FALSE]
     })
     B[b_index] <- unlist(beta, use.names = FALSE)
 
-    ## Uniqueness Component Update ---------------------------------------------
-
-    list_UD <- updateUD(
-      D = D,
-      Eta_normed = Gamma,
-      .indicator_type = .indicator_type,
-      n_constructs = n_constructs,
-      n_indicators = n_indicators,
-      n_case = n_case,
-      Z_normed = Z
-    )
-
     return(
       list(
-        "C" = C,
-        "B" = B,
-        "D" = list_UD[["D"]],
-        "U" = list_UD[["U"]]
+        "C" = Lambda,
+        "B" = B
       )
     )
   }
@@ -572,8 +566,33 @@ updateCBDU <-
 #' @export
 updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_indicators, Z_normed) {
 
+  # Update Unique Scores----------------------
 
-  # Update Unique Scores
+  # TODO: Allowing this makes the tests diverge. Need to investigate this more, theoretically
+  # Implementation based on the updated MATLAB code provided by Heungsun in
+  # private communication to deal with big dataset (20.10.2021)
+    # svd_etaprod <- svd(t(Eta_normed) %*% Eta_normed)
+    # gd2 <- diag(svd_etaprod$d)
+    # gv <- svd_etaprod$v
+    # GU <- Eta_normed %*% gv %*% solve(sqrt(gd2))
+    # M3 <- Z_normed %*% D - GU %*% (t(GU) %*% Z_normed) %*% t(D)
+
+    # if (n_case > n_indicators) {
+    #   svd_M3prod <- svd(t(M3) %*% M3)
+    #   d2 <- diag(svd_M3prod$d)
+    #   v <- svd_M3prod$v
+
+    #   u <- M3 %*% v %*% solve(sqrt(d2))
+    #   U <- u[, 1:n_indicators, drop = FALSE] %*% t(v)
+    # } else {
+    #   svd_M3 = svd(M3)
+    #   u <- svd_M3$u
+    #   v <- svd_M3$v
+    #   U <- u[, 1:n_indicators, drop = FALSE] %*% t(v)
+    # }
+
+  # Old method based on Hwang et al. (2017)
+
   Eta_Q2 <- qr.Q(qr(Eta_normed), complete = TRUE)[,
     (n_constructs + 1):n_case,
     drop = FALSE
