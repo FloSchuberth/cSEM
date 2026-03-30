@@ -25,6 +25,127 @@ w1 %*% Sxi1 %*% w1
 
 (single_indicator_weight <- .4 / sqrt(.4 %*% 1 %*% .4))
 
+# IGSCA ------------------------------------------------------------------
+
+igsca_pop <- list(
+    uniC_uniF = 'xi1 <~ .4*x11
+
+               xi2 =~ 1*x21
+
+               xi2 ~ .5*xi1',
+    uniC_triF = 'xi1 <~ .4*x11
+
+               xi2=~0.6*x21 + 0.8*x22 + 0.7*x23
+
+               xi2 ~ .5*xi1',
+    triC_uniF = 'xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
+               x11~~0.4*x12 + -0.3*x13
+               x12~~0.4*x13
+               
+               xi2 =~ 1*x21
+               
+               xi2 ~ .5*xi1',
+    triC_triF = 'xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
+               x11~~0.4*x12 + -0.3*x13
+               x12~~0.4*x13
+               
+               xi2=~0.6*x21 + 0.8*x22 + 0.7*x23
+               
+               xi2 ~ 0.5*xi1',
+    uniF_uniC = 'xi1 =~ 1*x11
+
+               xi2 <~ .4*x21
+
+               xi2 ~ .5*xi1',
+    uniF_triC = 'xi1 =~ 1*x11
+
+               xi2<~0.4*x21 + 0.3*x22 + 0.2*x23
+               x21~~0.4*x22 + -0.3*x23
+               x22~~0.4*x23
+
+               xi2 ~ .5*xi1',
+    triF_uniC = 'xi1=~0.6*x11 + 0.8*x12 + 0.7*x13
+               
+               xi2 =~ 1*x21
+               
+               xi2 ~ .5*xi1',
+    triF_triC = 'xi1=~0.6*x11 + 0.8*x12 + 0.7*x13
+               
+               xi2<~0.4*x21 + 0.3*x22 + 0.2*x23
+               x21~~0.4*x22 + -0.3*x23
+               x22~~0.4*x23
+               
+               xi2 ~ 0.5*xi1'
+)
+
+
+igsca_datapop <- lapply(igsca_pop, cSEM.DGP::generateData, .empirical = TRUE)
+
+igsca_model_spec <- list(
+    uniC_uniF = 'xi1 <~ x11
+
+               xi2 =~ x21
+
+               xi2 ~ xi1',
+    uniC_triF = 'xi1 <~ x11
+
+               xi2=~x21 + x22 + x23
+
+               xi2 ~ xi1',
+    triC_uniF = 'xi1<~x11 + x12 + x13
+               
+               xi2 =~ x21
+               
+               xi2 ~ xi1',
+    triC_triF = 'xi1<~x11 + x12 + x13
+               
+               xi2=~x21 + x22 + x23
+               
+               xi2 ~ xi1',
+    uniF_uniC = 'xi1 =~ x11
+
+               xi2 <~ x21
+
+               xi2 ~ xi1',
+    uniF_triC = 'xi1 =~ x11
+
+               xi2<~x21 + x22 + x23
+
+               xi2 ~ xi1',
+    triF_uniC = 'xi1=~x11 + x12 + x13
+               
+               xi2 <~ x21
+               
+               xi2 ~ xi1',
+    triF_triC = 'xi1=~x11 + x12 + x13
+               
+               xi2<~x21 + x22 + x23
+               
+               xi2 ~ xi1'
+)
+
+igsca_mods <- mapply(
+    cSEM::csem,
+    .data = igsca_datapop,
+    .model = igsca_model_spec,
+    SIMPLIFY = FALSE,
+    .approach_weights = 'GSCA',
+    .disattenuate = TRUE,
+    .conv_criterion = "sum_diff_absolute",
+    .GSCA_modes = "CCMP",
+    .tolerance = 0.001,
+    .iter_max = 1000
+)
+
+tidied_igsca_mods <- lapply(igsca_mods, function(x) {
+    tidy(x) |>
+        dplyr::filter(op %in%  c('=~', '~', '<~')) |>
+        dplyr::select(term, estimate)
+}) |> 
+    list_rbind(names_to = 'mod')
+    
+# Note: There seems to sometimes be convergence problems when using factors with only one indicator, but not always. Although the parameter estimates seem fine and, in-practice, what could the meaning of a single indicator common factor mean?
+
 # GSCA -------------------------------------------------------------------
 
 gsca_pops <- list(
@@ -172,127 +293,6 @@ tidied_gscam_mods <- lapply(gscam_mods, function(x) {
     
 # Note: The current GSCA_M may sometimes have trouble in computing D2 and U, especially when there's only one indicator for a common factor with a small loading
 
-
-# IGSCA ------------------------------------------------------------------
-
-igsca_pop <- list(
-    uniC_uniF = 'xi1 <~ .4*x11
-
-               xi2 =~ 1*x21
-
-               xi2 ~ .5*xi1',
-    uniC_triF = 'xi1 <~ .4*x11
-
-               xi2=~0.6*x21 + 0.8*x22 + 0.7*x23
-
-               xi2 ~ .5*xi1',
-    triC_uniF = 'xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
-               x11~~0.4*x12 + -0.3*x13
-               x12~~0.4*x13
-               
-               xi2 =~ 1*x21
-               
-               xi2 ~ .5*xi1',
-    triC_triF = 'xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
-               x11~~0.4*x12 + -0.3*x13
-               x12~~0.4*x13
-               
-               xi2=~0.6*x21 + 0.8*x22 + 0.7*x23
-               
-               xi2 ~ 0.5*xi1',
-    uniF_uniC = 'xi1 =~ 1*x11
-
-               xi2 <~ .4*x21
-
-               xi2 ~ .5*xi1',
-    uniF_triC = 'xi1 =~ 1*x11
-
-               xi2<~0.4*x21 + 0.3*x22 + 0.2*x23
-               x21~~0.4*x22 + -0.3*x23
-               x22~~0.4*x23
-
-               xi2 ~ .5*xi1',
-    triF_uniC = 'xi1=~0.6*x11 + 0.8*x12 + 0.7*x13
-               
-               xi2 =~ 1*x21
-               
-               xi2 ~ .5*xi1',
-    triF_triC = 'xi1=~0.6*x11 + 0.8*x12 + 0.7*x13
-               
-               xi2<~0.4*x21 + 0.3*x22 + 0.2*x23
-               x21~~0.4*x22 + -0.3*x23
-               x22~~0.4*x23
-               
-               xi2 ~ 0.5*xi1'
-)
-
-
-igsca_datapop <- lapply(igsca_pop, cSEM.DGP::generateData, .empirical = TRUE)
-
-igsca_model_spec <- list(
-    uniC_uniF = 'xi1 <~ x11
-
-               xi2 =~ x21
-
-               xi2 ~ xi1',
-    uniC_triF = 'xi1 <~ x11
-
-               xi2=~x21 + x22 + x23
-
-               xi2 ~ xi1',
-    triC_uniF = 'xi1<~x11 + x12 + x13
-               
-               xi2 =~ x21
-               
-               xi2 ~ xi1',
-    triC_triF = 'xi1<~x11 + x12 + x13
-               
-               xi2=~x21 + x22 + x23
-               
-               xi2 ~ xi1',
-    uniF_uniC = 'xi1 =~ x11
-
-               xi2 <~ x21
-
-               xi2 ~ xi1',
-    uniF_triC = 'xi1 =~ x11
-
-               xi2<~x21 + x22 + x23
-
-               xi2 ~ xi1',
-    triF_uniC = 'xi1=~x11 + x12 + x13
-               
-               xi2 <~ x21
-               
-               xi2 ~ xi1',
-    triF_triC = 'xi1=~x11 + x12 + x13
-               
-               xi2<~x21 + x22 + x23
-               
-               xi2 ~ xi1'
-)
-
-igsca_mods <- mapply(
-    cSEM::csem,
-    .data = igsca_datapop,
-    .model = igsca_model_spec,
-    SIMPLIFY = FALSE,
-    .approach_weights = 'GSCA',
-    .disattenuate = TRUE,
-    .conv_criterion = "sum_diff_absolute",
-    .GSCA_modes = "CCMP",
-    .tolerance = 0.001,
-    .iter_max = 1000
-)
-
-tidied_igsca_mods <- lapply(igsca_mods, function(x) {
-    tidy(x) |>
-        dplyr::filter(op %in%  c('=~', '~', '<~')) |>
-        dplyr::select(term, estimate)
-}) |> 
-    list_rbind(names_to = 'mod')
-    
-# Note: There seems to sometimes be convergence problems when using factors with only one indicator, but not always. Although the parameter estimates seem fine and, in-practice, what could the meaning of a single indicator common factor mean?
 
 
 
@@ -491,9 +491,10 @@ xi3~ xi1 + xi2
 
 '
 
-out=csem(.data = datapop,.model = modelest,.approach_weights = 'GSCA', .disattenuate = TRUE)
+out = csem(
+    .data = datapop,
+    .model = modelest,
+    .approach_weights = 'GSCA',
+    .disattenuate = TRUE
+)
 summarize(out)
-
-
-
-
