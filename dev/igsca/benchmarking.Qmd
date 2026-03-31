@@ -335,8 +335,8 @@ n_constructs <- ncol(Eta)
 
 ```{r}
 # This assumes that the expressions are equal -- they're not.
-svd_comp <-  bench::mark(
-  SVDA =  {
+svd_comp <- bench::mark(
+  SVDA = {
     # Path SVD A
     svd_etaprod <- svd(t(Eta_normed) %*% Eta_normed)
     gd2 <- diag(svd_etaprod$d)
@@ -347,7 +347,6 @@ svd_comp <-  bench::mark(
     d2 <- diag(svd_M3prod$d)
     v <- svd_M3prod$v
     u <- M3 %*% v %*% solve(sqrt(d2))
-    U
     u[, 1:n_indicators, drop = FALSE] %*% t(v)
   },
   SVDB = {
@@ -361,7 +360,6 @@ svd_comp <-  bench::mark(
     d2 <- diag(svd_M3prod$d)
     v <- svd_M3prod$v
     u <- M3 %*% v %*% solve(sqrt(d2))
-    U
     u[, 1:n_indicators, drop = FALSE] %*% t(v)
   },
   QR_SVD = {
@@ -373,6 +371,20 @@ svd_comp <-  bench::mark(
     svd_mx <- svd(mx)
     Utilde <- svd_mx$v %*% t(svd_mx$u)
     Eta_Q2 %*% Utilde
+  },
+  LLM = {
+    qr_eta <- qr(Eta_normed)
+    # Q2' Z via implicit Householder: O(NPJ), result is N×J, extract rows (P+1):N
+    QtZ_null <- qr.qty(qr_eta, Z_normed)[
+      (n_constructs + 1):n_case,
+      ,
+      drop = FALSE
+    ]
+    # SVD of D Z' Q2 = D t(Q2' Z): J × (N-P), same input as original approach
+    svd_mx <- svd(D %*% t(QtZ_null))
+    Utilde <- svd_mx$v %*% t(svd_mx$u) # (N-P) × J
+    # Recover U = Q2 Utilde via implicit Householder: O(NPJ)
+    qr.qy(qr_eta, rbind(matrix(0, n_constructs, n_indicators), Utilde))
   },
   check = FALSE
 )
@@ -386,12 +398,14 @@ autoplot(svd_comp)
 # TODO: The LLM and also the SVDA/SVDB approaches diverge when there are single indicator common factors. The current igscaPrimer test fails because the loading for the customerSatisfaction is not equal to 1, which seems to make the downstream path coefficients change.
 LLM_SVD_comp <- bench::mark(
   LLM = {
-    # Path SVD B
-    Q_thin <- qr.Q(qr(Eta_normed))
-    ZD <- Z_normed %*% D
-    M_proj <- ZD - Q_thin %*% crossprod(Q_thin, ZD)
-    svd_mx <- svd(M_proj)
-    svd_mx$u %*% t(svd_mx$v)
+    qr_eta <- qr(Eta_normed)
+    # Q2' Z via implicit Householder: O(NPJ), result is N×J, extract rows (P+1):N
+    QtZ_null <- qr.qty(qr_eta, Z_normed)[(n_constructs + 1):n_case, , drop = FALSE]
+    # SVD of D Z' Q2 = D t(Q2' Z): J × (N-P), same input as original approach
+    svd_mx <- svd(D %*% t(QtZ_null))
+    Utilde <- svd_mx$v %*% t(svd_mx$u)  # (N-P) × J
+    # Recover U = Q2 Utilde via implicit Householder: O(NPJ)
+    qr.qy(qr_eta, rbind(matrix(0, n_constructs, n_indicators), Utilde))
   },
   QR_SVD = {
     Eta_Q2 <- qr.Q(qr(Eta_normed), complete = TRUE)[,
@@ -454,7 +468,7 @@ svd_mx <- svd(M_proj)
 svd_mx$u %*% t(svd_mx$v)
 ```
 
-```{r}
+```{r, eval = FALSE}
 waldo::compare(SVDA_U, QR_SVDA_U)
 ```
 

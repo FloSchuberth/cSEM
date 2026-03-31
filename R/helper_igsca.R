@@ -555,14 +555,30 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
   # svd_mx <- svd(M_proj)
   # U <- svd_mx$u %*% t(svd_mx$v)
 
+  # Implicit Householder method: O(NJ^2 + NPJ) instead of O(N^2 J)
+  # Avoids forming the N×N complete Q matrix while structurally guaranteeing
+  # U lies in null(Eta') via U = Q2 %*% Utilde (applied implicitly).
+  # This is critical for single-indicator common factors where M_proj has
+  # near-zero columns — the projection approach's SVD can produce left
+  # singular vectors that escape null(Eta'), violating U' Eta = 0.
+  # See dev/igsca/benchmarking_R/unique_scores_optimization.md for details.
+  qr_eta <- qr(Eta_normed)
+  # Q2' Z via implicit Householder: O(NPJ), result is N×J, extract rows (P+1):N
+  QtZ_null <- qr.qty(qr_eta, Z_normed)[(n_constructs + 1):n_case, , drop = FALSE]
+  # SVD of D Z' Q2 = D t(Q2' Z): J × (N-P), same input as original approach
+  svd_mx <- svd(D %*% t(QtZ_null))
+  Utilde <- svd_mx$v %*% t(svd_mx$u)  # (N-P) × J
+  # Recover U = Q2 Utilde via implicit Householder: O(NPJ)
+  U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs, n_indicators), Utilde))
+
   # Old method based on Hwang et al. (2017) — O(N^2) memory and computation
-  Eta_Q2 <- qr.Q(qr(Eta_normed), complete = TRUE)[,
-    (n_constructs + 1):n_case,
-    drop = FALSE
-  ]
-  svd_mx <- svd(D %*% t(Z_normed) %*% Eta_Q2)
-  Utilde <- svd_mx$v %*% t(svd_mx$u)
-  U <- Eta_Q2 %*% Utilde
+  # Eta_Q2 <- qr.Q(qr(Eta_normed), complete = TRUE)[,
+  #   (n_constructs + 1):n_case,
+  #   drop = FALSE
+  # ]
+  # svd_mx <- svd(D %*% t(Z_normed) %*% Eta_Q2)
+  # Utilde <- svd_mx$v %*% t(svd_mx$u)
+  # U <- Eta_Q2 %*% Utilde
   
   # U[, .indicator_type == "Composite"] <- 0
 
