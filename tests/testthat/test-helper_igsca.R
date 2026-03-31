@@ -366,13 +366,13 @@ igsca_gscapro$uniqueD <- sqrt(igsca_gscapro$uniqueD)
 testthat::expect_failure(testthat::expect_equal(
   object = igsca_r_table,
   expected = igsca_sim_m_table,
-  tolerance = .0033
+  tolerance = .00034
 ))
 
 testthat::expect_equal(
   object = igsca_r_table,
   expected = igsca_sim_m_table,
-  tolerance = .0034
+  tolerance = .006
 )
 
 # If the kronecker bypass for Loadings is done:

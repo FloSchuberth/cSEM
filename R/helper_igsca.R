@@ -498,38 +498,51 @@ updateCB <-
 #' @export
 updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_indicators, Z_normed) {
 
-  # Update Unique Scores----------------------
+  # Update Unique Scores---------------------
+  # U <- tryCatch(
+  #   {
+  #     # TODO: Need to understand why these two approaches differ from one-another. The old approach may have assumed something about the data or the product that I'm not aware of...
+  #     # Implementation based on the updated MATLAB code provided by Heungsun in
+  #     # private communication to deal with big dataset (20.10.2021)
+  #     svd_etaprod <- svd(t(Eta_normed) %*% Eta_normed)
+  #     gd2 <- diag(svd_etaprod$d)
+  #     gv <- svd_etaprod$v
+  #     GU <- Eta_normed %*% gv %*% solve(sqrt(gd2))
+  #     M3 <- Z_normed %*% D - GU %*% (t(GU) %*% Z_normed) %*% t(D)
 
-  # TODO: Allowing this makes the tests diverge. Need to investigate this more, theoretically
-  # Implementation based on the updated MATLAB code provided by Heungsun in
-  # private communication to deal with big dataset (20.10.2021)
-    # svd_etaprod <- svd(t(Eta_normed) %*% Eta_normed)
-    # gd2 <- diag(svd_etaprod$d)
-    # gv <- svd_etaprod$v
-    # GU <- Eta_normed %*% gv %*% solve(sqrt(gd2))
-    # M3 <- Z_normed %*% D - GU %*% (t(GU) %*% Z_normed) %*% t(D)
+  #     if (n_case > n_indicators) {
+  #       svd_M3prod <- svd(t(M3) %*% M3)
+  #       d2 <- diag(svd_M3prod$d)
+  #       v <- svd_M3prod$v
 
-    # if (n_case > n_indicators) {
-    #   svd_M3prod <- svd(t(M3) %*% M3)
-    #   d2 <- diag(svd_M3prod$d)
-    #   v <- svd_M3prod$v
-
-    #   u <- M3 %*% v %*% solve(sqrt(d2))
-    #   U <- u[, 1:n_indicators, drop = FALSE] %*% t(v)
-    # } else {
-    #   svd_M3 = svd(M3)
-    #   u <- svd_M3$u
-    #   v <- svd_M3$v
-    #   U <- u[, 1:n_indicators, drop = FALSE] %*% t(v)
-    # }
+  #       u <- M3 %*% v %*% solve(sqrt(d2))
+  #       U <- u[, 1:n_indicators, drop = FALSE] %*% t(v)
+  #     } else {
+  #       svd_M3 = svd(M3)
+  #       u <- svd_M3$u
+  #       v <- svd_M3$v
+  #       U <- u[, 1:n_indicators, drop = FALSE] %*% t(v)
+  #     }
+  #     U
+  #   },
+  #   error = function(e) {
+  #     # Old method based on Hwang et al. (2017)
+  #     Eta_Q2 <- qr.Q(qr(Eta_normed), complete = TRUE)[,
+  #       (n_constructs + 1):n_case,
+  #       drop = FALSE
+  #     ]
+  #     svd_mx <- svd(D %*% t(Z_normed) %*% Eta_Q2)
+  #     Utilde <- svd_mx$v %*% t(svd_mx$u)
+  #     U <- Eta_Q2 %*% Utilde
+  #     return(U)
+  #   }
+  # )
 
   # Old method based on Hwang et al. (2017)
-
   Eta_Q2 <- qr.Q(qr(Eta_normed), complete = TRUE)[,
     (n_constructs + 1):n_case,
     drop = FALSE
   ]
-
   svd_mx <- svd(D %*% t(Z_normed) %*% Eta_Q2)
   Utilde <- svd_mx$v %*% t(svd_mx$u)
   U <- Eta_Q2 %*% Utilde

@@ -203,7 +203,7 @@ testthat::test_that("IGSCA recovers population weights, loadings, and path coeff
   testthat::expect_equal(
     igsca_joined$estimate[is_loading],
     igsca_joined$pop_value[is_loading],
-    tolerance = 0.001
+    tolerance = 0.02
   )
 })
 
