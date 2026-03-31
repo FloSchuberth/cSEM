@@ -229,6 +229,8 @@ igsca <-
       WW <-
         t(C) %*%
         solve((C %*% t(C) + diag(n_constructs) - (2 * B) + (B %*% t(B))))
+      # TODO: Could the following be better? Is it equivalent?
+      # WW <- solve((C %*% t(C) + diag(n_constructs) - (2 * B) + (B %*% t(B))), C)
 
       #### for-loop update per construct ---------------------------------------
       A <- cbind(C, B)
