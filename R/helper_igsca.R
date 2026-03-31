@@ -122,11 +122,11 @@ igsca <-
     C <- GSCA_starting_values$C
     V <- cbind(diag(n_indicators), W)
 
-    # Create initial values for U and D, using normalized data (Z) and construct scores (Gamma) --------------
+    # Create initial values for U and D, using normalized data (Z) and construct scores (Eta) --------------
 
 
     # Create Initial Normalized Construct Scores Matrix
-    Gamma <- Eta <- Z %*% W
+    Eta <- Z %*% W
 
     # Initalize unique loadings
 
@@ -263,12 +263,12 @@ igsca <-
         W[windex_eta_idx, eta_idx] <- normed_weights
         V[windex_eta_idx, tot] <- normed_weights
       }
-      Gamma <- X %*% W # Trying to save on compute time
+      Eta <- X %*% W # Trying to save on compute time
 
       ### Update Loadings, Path Coefficients and Uniqueness Terms ----------
       list_CB <- updateCB(
         X = X,
-        Eta = Gamma,
+        Eta = Eta,
         Lambda = C,
         B = B,
         n_indicators = n_indicators,
@@ -286,7 +286,7 @@ igsca <-
       ## Uniqueness Scores and Loadings Update ------------------------------------
       list_UD <- updateUD(
         D = D,
-        Eta_normed = Gamma,
+        Eta_normed = Eta,
         .indicator_type = .indicator_type,
         n_constructs = n_constructs,
         n_indicators = n_indicators,
