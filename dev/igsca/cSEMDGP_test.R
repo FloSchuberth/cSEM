@@ -207,7 +207,7 @@ testthat::test_that("IGSCA recovers population weights, loadings, and path coeff
   )
 })
 
-View(igsca_joined)
+# View(igsca_joined)
 
 # GSCA -------------------------------------------------------------------
 

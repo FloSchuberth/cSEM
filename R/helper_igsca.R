@@ -321,6 +321,7 @@ igsca <-
     names(D_diag) <- colnames(Z)
 
     # Get the standardized unique scores back from normalized U
+    U[, .indicator_type == "Composite"] <- 0
     Unique_scores <- U * normalization_factor
     colnames(Unique_scores) <- colnames(Z)
 
@@ -437,9 +438,11 @@ updateCB <-
     # Kronecker bypass
     # browser()
     vars_cf_ncmp <- names(modes)[modes %in% c("Common factor", "NCMP")]
-    cov_eta_indicators <- t(Eta) %*% X # Interestingly, this is not the same as cor(Eta, X)?
-    cor_eta <- t(Eta) %*% Eta # This seem identical to cor(Eta)?
-    # cor_eta <- cor(Eta) # Apparently this creates a problem with starting values
+    # cov_eta_indicators <- t(Eta) %*% X # Interestingly, this is not the same as cor(Eta, X)?
+    cov_eta_indicators <- crossprod(Eta, X) # TODO: Check that this is equivalent to t(Eta) %*% X
+    # cor_eta <- t(Eta) %*% Eta 
+    cor_eta <- crossprod(Eta) # TODO: Check that this is equivalent to t(Eta) %*% Eta
+    
 
     dep_vars <- (colSums(Lambda[vars_cf_ncmp, , drop = FALSE]) != 0) |> 
         which() |> 
@@ -538,7 +541,19 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
   #   }
   # )
 
-  # Old method based on Hwang et al. (2017)
+  # Claude's Approach --- Efficient projection method: O(NJ^2 + NPJ) instead of O(N^2 J)
+  # Uses thin QR (N x P, not N x N) to avoid forming the null space basis.
+  # Mathematically equivalent to the Hwang et al. (2017) complete QR approach
+  # because P_perp Z D = Gamma_perp (Gamma_perp' Z D), preserving SVD structure.
+  # See dev/igsca/benchmarking_R/unique_scores_optimization.md for full proof.
+  # TODO: Investigate Claude's approach more deeply.
+  # Q_thin <- qr.Q(qr(Eta_normed))
+  # ZD <- Z_normed %*% D
+  # M_proj <- ZD - Q_thin %*% crossprod(Q_thin, ZD)
+  # svd_mx <- svd(M_proj)
+  # U <- svd_mx$u %*% t(svd_mx$v)
+
+  # Old method based on Hwang et al. (2017) — O(N^2) memory and computation
   Eta_Q2 <- qr.Q(qr(Eta_normed), complete = TRUE)[,
     (n_constructs + 1):n_case,
     drop = FALSE
@@ -547,7 +562,7 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
   Utilde <- svd_mx$v %*% t(svd_mx$u)
   U <- Eta_Q2 %*% Utilde
   
-  U[, .indicator_type == "Composite"] <- 0
+  # U[, .indicator_type == "Composite"] <- 0
 
   # Update Unique Loadings
   D <- diag(diag(t(U) %*% Z_normed))

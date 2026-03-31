@@ -420,7 +420,7 @@ testthat::expect_success(testthat::expect_equal(
 # for each sub-group?
 
 # Starting Values --------------------------------------------------------
-test_that("Starting Values run with IGSCA", {
+test_that("Starting Values run with IGSCA and IGSCA Primer results are replicated", {
   # Using IGSCA  Primer results
   data(corp_rep_data, package = "cSEM")
 

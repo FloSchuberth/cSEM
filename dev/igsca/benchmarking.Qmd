@@ -382,6 +382,34 @@ autoplot(svd_comp)
 ```
 
 
+```{r}
+# TODO: The LLM and also the SVDA/SVDB approaches diverge when there are single indicator common factors. The current igscaPrimer test fails because the loading for the customerSatisfaction is not equal to 1, which seems to make the downstream path coefficients change.
+LLM_SVD_comp <- bench::mark(
+  LLM = {
+    # Path SVD B
+    Q_thin <- qr.Q(qr(Eta_normed))
+    ZD <- Z_normed %*% D
+    M_proj <- ZD - Q_thin %*% crossprod(Q_thin, ZD)
+    svd_mx <- svd(M_proj)
+    svd_mx$u %*% t(svd_mx$v)
+  },
+  QR_SVD = {
+    Eta_Q2 <- qr.Q(qr(Eta_normed), complete = TRUE)[,
+      (n_constructs + 1):n_case,
+      drop = FALSE
+    ]
+    mx <- D %*% t(Z_normed) %*% Eta_Q2
+    svd_mx <- svd(mx)
+    Utilde <- svd_mx$v %*% t(svd_mx$u)
+    Eta_Q2 %*% Utilde
+  },
+  check = FALSE # Fails if true
+)
+
+LLM_SVD_comp
+autoplot(LLM_SVD_comp)
+```
+
 #### Hidden
 ```{r, eval = FALSE}
 # Path SVD A
@@ -417,6 +445,13 @@ Eta_Q2 <- qr.Q(qr(Eta_normed), complete = TRUE)[,
 svd_mx <- svd(D %*% t(Z_normed) %*% Eta_Q2)
 Utilde <- svd_mx$v %*% t(svd_mx$u)
 Eta_Q2 %*% Utilde
+
+# LLM
+Q_thin <- qr.Q(qr(Eta_normed))
+ZD <- Z_normed %*% D
+M_proj <- ZD - Q_thin %*% crossprod(Q_thin, ZD)
+svd_mx <- svd(M_proj)
+svd_mx$u %*% t(svd_mx$v)
 ```
 
 ```{r}
