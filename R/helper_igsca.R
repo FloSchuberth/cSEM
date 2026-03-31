@@ -530,26 +530,9 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
     drop = FALSE
   ]
 
-  # svd between R and Matlab by Ahmed Fasih on February 1/2017
-  # https://stackoverflow.com/a/41972818
-
-  mx <- D %*% t(Z_normed) %*% Eta_Q2
-
-  U <- tryCatch(
-    {
-      svd_mx <- svd(mx, nu = nrow(mx), nv = ncol(mx))
-      u <- svd_mx$u
-      v <- svd_mx$v
-      Utilde <- v[, 1:n_indicators, drop = FALSE] %*% t(u)
-      U <- Eta_Q2 %*% Utilde
-    },
-    error = function(e) {
-      svd_mx <- svd(mx)
-      Utilde <- svd_mx$v %*% t(svd_mx$u)
-      U <- Eta_Q2 %*% Utilde
-      return(U)
-    }
-  )
+  svd_mx <- svd(D %*% t(Z_normed) %*% Eta_Q2)
+  Utilde <- svd_mx$v %*% t(svd_mx$u)
+  U <- Eta_Q2 %*% Utilde
   
   U[, .indicator_type == "Composite"] <- 0
 
