@@ -320,7 +320,7 @@ igsca <-
     D_diag <- diag(D)
     names(D_diag) <- colnames(Z)
 
-    # Get the standardized unique scores back from normalized U
+    # Get the standardized unique scores back from normalized U and zero out the unique scores for composite indicators
     U[, .indicator_type == "Composite"] <- 0
     Unique_scores <- U * normalization_factor
     colnames(Unique_scores) <- colnames(Z)
@@ -565,7 +565,9 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
   # U[, .indicator_type == "Composite"] <- 0
 
   # Update Unique Loadings
-  D <- diag(diag(t(U) %*% Z_normed))
+
+  # D <- diag(diag(t(U) %*% Z_normed))
+  D <- diag(diag(crossprod(U, Z_normed)))
   D[.indicator_type == "Composite", .indicator_type == "Composite"] <- 0
 
   # Return output
