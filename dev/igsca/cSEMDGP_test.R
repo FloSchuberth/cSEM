@@ -148,9 +148,6 @@ igsca_mods <- mapply(
   .iter_max = 1000
 )
 
-
-# TODO: It'd be nice to remove the unique loadings from this as well... 
-
 tidied_igsca_mods <- lapply(igsca_mods, function(x) {
     tidy(x) |>
         dplyr::filter(op %in% c('=~', '~', '<~')) |>
@@ -179,8 +176,7 @@ igsca_expected <- make_expected_from_names(
         "triF_uniC",
         "triF_triC"
     ),
-    paths = path_xi2_xi1,
-    exclude_xi2_weights = TRUE
+    paths = path_xi2_xi1
 )
 
 igsca_joined <- merge(tidied_igsca_mods, igsca_expected, by = c("mod", "term"))
@@ -196,18 +192,18 @@ testthat::test_that("IGSCA recovers population weights, loadings, and path coeff
   is_path <- !is_loading & !is_weight
   testthat::expect_equal(
     igsca_joined$estimate[is_weight],
-    igsca_joined$pop_value[is_weight],
-    tolerance = 0.0001
+    igsca_joined$pop_value[is_weight] #,
+    # tolerance = 0.0001
   )
   testthat::expect_equal(
     igsca_joined$estimate[is_path],
     igsca_joined$pop_value[is_path],
-    tolerance = 0.01
+    tolerance = 0.001
   )
   testthat::expect_equal(
     igsca_joined$estimate[is_loading],
     igsca_joined$pop_value[is_loading],
-    tolerance = 0.02
+    tolerance = 0.001
   )
 })
 
@@ -216,26 +212,26 @@ View(igsca_joined)
 # GSCA -------------------------------------------------------------------
 
 gsca_pops <- list(
-  uni_uni = 'xi1 <~ .4*x11
+  uniC_uniC = 'xi1 <~ .4*x11
 
                xi2 <~ .3*x21
 
                xi2 ~ .5*xi1',
-  uni_tri = 'xi1 <~ .4*x11
+  uniC_triC = 'xi1 <~ .4*x11
 
                xi2<~0.4*x21 + 0.3*x22 + 0.2*x23
                x21~~0.4*x22 + -0.3*x23
                x22~~0.4*x23
 
                xi2 ~ .5*xi1',
-  tri_uni = 'xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
+  triC_uniC = 'xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
                x11~~0.4*x12 + -0.3*x13
                x12~~0.4*x13
                
                xi2 <~ .3*x21
                
                xi2 ~ .5*xi1',
-  tri_tri = 'xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
+  triC_triC = 'xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
                x11~~0.4*x12 + -0.3*x13
                x12~~0.4*x13
                
@@ -250,22 +246,22 @@ gsca_pops <- list(
 gsca_datapop <- lapply(gsca_pops, cSEM.DGP::generateData, .empirical = TRUE)
 
 gsca_model_spec <- list(
-  uni_uni = 'xi1 <~ x11
+  uniC_uniC = 'xi1 <~ x11
 
                xi2 <~ x21
 
                xi2 ~ xi1',
-  uni_tri = 'xi1 <~ x11
+  uniC_triC = 'xi1 <~ x11
 
                xi2<~x21 + x22 + x23
 
                xi2 ~ xi1',
-  tri_uni = 'xi1<~x11 + x12 + x13
+  triC_uniC = 'xi1<~x11 + x12 + x13
                
                xi2 <~ x21
                
                xi2 ~ xi1',
-  tri_tri = 'xi1<~x11 + x12 + x13
+  triC_triC = 'xi1<~x11 + x12 + x13
                
                xi2<~x21 + x22 + x23
                
@@ -293,14 +289,12 @@ tidied_gsca_mods <- lapply(gsca_mods, function(x) {
 
 gsca_expected <- make_expected_from_names(
     c(
-        "uni_uni",
-        "uni_tri",
-        "tri_uni",
-        "tri_tri",
+        "uniC_uniC",
+        "uniC_triC",
+        "triC_uniC",
+        "triC_triC"
     ),
-    default_type = "C",
-    paths = path_xi2_xi1,
-    exclude_xi2_weights = FALSE
+    paths = path_xi2_xi1
 )
 
 gsca_joined <- merge(tidied_gsca_mods, gsca_expected, by = c("mod", "term"))
@@ -313,30 +307,29 @@ testthat::test_that("GSCA recovers population weights and path coefficients", {
   )
   testthat::expect_equal(
     gsca_joined$estimate,
-    gsca_joined$pop_value,
-    tolerance = 0.0001
+    gsca_joined$pop_value
   )
 })
 
 # GSCA M -----------------------------------------------------------------
 set.seed(1234)
 gscam_pop <- list(
-  uni_uni = 'xi1 =~ 1*x11
+  uniF_uniF = 'xi1 =~ 1*x11
 
                xi2 =~ 1*x21
 
                xi2 ~ .5*xi1',
-  uni_tri = 'xi1 =~ 1*x11
+  uniF_triF = 'xi1 =~ 1*x11
 
                xi2=~0.6*x21 + 0.8*x22 + 0.7*x23
 
                xi2 ~ .5*xi1',
-  tri_uni = 'xi1=~0.6*x11 + 0.8*x12 + 0.7*x13
+  triF_uniF = 'xi1=~0.6*x11 + 0.8*x12 + 0.7*x13
                
                xi2 =~ 1*x21
                
                xi2 ~ .5*xi1',
-  tri_tri = 'xi1=~0.6*x11 + 0.8*x12 + 0.7*x13
+  triF_triF = 'xi1=~0.6*x11 + 0.8*x12 + 0.7*x13
                
                xi2=~0.6*x21 + 0.8*x22 + 0.7*x23
                
@@ -347,22 +340,22 @@ gscam_pop <- list(
 gscam_datapop <- lapply(gscam_pop, cSEM.DGP::generateData, .empirical = TRUE)
 
 gscam_model_spec <- list(
-  uni_uni = 'xi1 =~ x11
+  uniF_uniF = 'xi1 =~ x11
 
                xi2 =~ x21
 
                xi2 ~ xi1',
-  uni_tri = 'xi1 =~ x11
+  uniF_triF = 'xi1 =~ x11
 
                xi2=~x21 + x22 + x23
 
                xi2 ~ xi1',
-  tri_uni = 'xi1=~x11 + x12 + x13
+  triF_uniF = 'xi1=~x11 + x12 + x13
                
                xi2 =~ x21
                
                xi2 ~ xi1',
-  tri_tri = 'xi1=~x11 + x12 + x13
+  triF_triF = 'xi1=~x11 + x12 + x13
                
                xi2=~x21 + x22 + x23
                
@@ -391,16 +384,14 @@ tidied_gscam_mods <- lapply(gscam_mods, function(x) {
 # especially when there's only one indicator for a common factor with a small loading
 
 
-gsca_expected <- make_expected_from_names(
+gscam_expected <- make_expected_from_names(
     c(
-        "uni_uni",
-        "uni_tri",
-        "tri_uni",
-        "tri_tri",
+        "uniF_uniF",
+        "uniF_triF",
+        "triF_uniF",
+        "triF_triF"
     ),
-    default_type = "F",
     paths = path_xi2_xi1,
-    exclude_xi2_weights = TRUE
 )
 
 gscam_joined <- merge(tidied_gscam_mods, gscam_expected, by = c("mod", "term"))
@@ -416,11 +407,11 @@ testthat::test_that("GSCAM recovers population loadings and path coefficients", 
   testthat::expect_equal(
     gscam_joined$estimate[is_path],
     gscam_joined$pop_value[is_path],
-    tolerance = 0.02
+    tolerance = 0.001
   )
   testthat::expect_equal(
     gscam_joined$estimate[is_loading],
     gscam_joined$pop_value[is_loading],
-    tolerance = 0.02
+    tolerance = 0.01
   )
 })

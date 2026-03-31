@@ -66,7 +66,7 @@ build_expected_popvalues <- function(
     )
   }
 
-  Reduce(rbind, rows)
+  return(Reduce(rbind, rows))
 }
 
 #' Generate expected population values from model name conventions
@@ -77,41 +77,27 @@ build_expected_popvalues <- function(
 #' Name format: `"{count}[Type]_{count}[Type]"` where the first part maps to
 #' xi1 and the second to xi2.
 #' - count: `"uni"` (1 indicator) or `"tri"` (3 indicators)
-#' - Type (optional suffix): `"C"` = composite (weights), `"F"` = factor (loadings).
-#'   When omitted, `default_type` is used.
 #'
 #' @param mod_names Character vector of model names (e.g., `"uniC_triF"`).
 #' @param paths Named numeric vector of path coefficients.
-#' @param default_type `"C"` or `"F"`. Used when names lack a type suffix
-#'   (e.g., `"uni_tri"` with `default_type = "C"` treats both as composites).
 #' @param tri_weights Named list (`xi1`, `xi2`) of population weight vectors
 #'   for triple-indicator composites.
 #' @param tri_loadings Named list (`xi1`, `xi2`) of population loading vectors
 #'   for triple-indicator factors.
-#' @param exclude_xi2_weights Logical. If `TRUE`, omit xi2 composite weights
-#'   from the output (useful when the tidy step filters them out).
 #'
 #' @return A data.frame with columns: `mod`, `term`, `pop_value`.
 make_expected_from_names <- function(
   mod_names,
   paths,
-  default_type = NULL,
   tri_weights = list(xi1 = xi1_tri_cmp_weights, xi2 = xi2_tri_cmp_weights),
-  tri_loadings = list(xi1 = xi1_tri_fct_loadings, xi2 = xi2_tri_fct_loadings),
-  exclude_xi2_weights = FALSE
+  tri_loadings = list(xi1 = xi1_tri_fct_loadings, xi2 = xi2_tri_fct_loadings)
 ) {
   constructs <- c("xi1", "xi2")
 
   parse_part <- function(part) {
-    if (grepl("[CF]$", part)) {
-      count <- sub("[CF]$", "", part)
-      type  <- sub(".*([CF])$", "\\1", part)
-    } else {
-      stopifnot("default_type required when name has no C/F suffix" = !is.null(default_type))
-      count <- part
-      type  <- default_type
-    }
-    list(count = count, type = type)
+    count <- sub("[CF]$", "", part)
+    type <- sub(".*([CF])$", "\\1", part)
+    return(list(count = count, type = type))
   }
 
   configs <- lapply(mod_names, function(mn) {
@@ -126,7 +112,6 @@ make_expected_from_names <- function(
       uni_name <- paste0("x", i, "1")
 
       if (parsed$type == "C") {
-        if (xi == "xi2" && exclude_xi2_weights) next
         val <- if (parsed$count == "uni") setNames(1, uni_name) else tri_weights[[xi]]
         cfg$weights <- c(cfg$weights, setNames(list(val), xi))
       } else {
@@ -135,7 +120,7 @@ make_expected_from_names <- function(
       }
     }
 
-    cfg
+    return(cfg)
   })
 
   configs |>
