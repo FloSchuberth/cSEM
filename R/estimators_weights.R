@@ -363,7 +363,7 @@ calculateWeightsKettenring <- function(
 #'    )
 #'    
 #' @inheritParams csem_arguments
-#'
+#' @importFrom MASS ginv
 #' @return A named list. J stands for the number of constructs and K for the number
 #' of indicators.
 #' \describe{
@@ -460,7 +460,7 @@ calculateWeightsGSCA <- function(
         names()
       # The old approach could create problems when there was only one exogenous and one endogenous variable
       # x <-  colnames(B0[y, B0[y, ] != 0, drop = FALSE])
-      coef <- solve(C[x, x, drop = FALSE]) %*% C[x, y, drop = FALSE]
+      coef <- MASS::ginv(C[x, x, drop = FALSE]) %*% C[x, y, drop = FALSE]
       
       # Since Var(dep_Var) = 1 we have R2 = Var(X coef) = t(coef) %*% X'X %*% coef
       # r2   <- t(coef) %*% .P[indep_var, indep_var, drop = FALSE] %*% coef
@@ -481,7 +481,7 @@ calculateWeightsGSCA <- function(
           which() |> 
           names()
 
-        coef <- solve(C[x, x, drop = FALSE]) %*% Lambda_tilde[x, y, drop = FALSE]
+        coef <- MASS::ginv(C[x, x, drop = FALSE]) %*% Lambda_tilde[x, y, drop = FALSE]
       })
       # Transform
       tLambda <- t(Lambda0)
@@ -621,7 +621,7 @@ calculateWeightsGSCA <- function(
 #'    )
 #'    
 #' @inheritParams csem_arguments
-#'
+#' @importFrom MASS ginv
 #' @return A list with the elements
 #' \describe{
 #'   \item{`$W`}{A (J x K) matrix of estimated weights.}
@@ -704,7 +704,7 @@ calculateWeightsGSCAm <- function(
   C  <- .csem_model$measurement # Matrix of the measurement model (non-zero only for common factors)
   # C[which(.csem_model$construct_type == "Composite"), ]  <- 0
   B  <- t(.csem_model$structural) # Matrix of the structural model
-  
+  indicator_type <- .csem_model$construct_type
   N  <- nrow(Z) # number of observations
   J  <- nrow(W) # number of indicators
   P  <- ncol(W) # number of constructs
@@ -728,33 +728,45 @@ calculateWeightsGSCAm <- function(
   # Normalized Gamma
   Gamma <- Z %*% W
   
+  list_UD <- updateUD(
+      D = diag(J),
+      Eta_normed = Gamma,
+      .indicator_type = indicator_type,
+      n_constructs = P,
+      n_indicators = J,
+      n_case = N,
+      Z_normed = Z
+    )
+
+  U <- list_UD[["U"]]
+  D <- list_UD[["D"]]
   # Calculate initial values for the unique variables in U
   # analogous to step 3 of the modified ALS-algorithm
-  D          <- Ij
+  # D          <- Ij
   
   # Implementation based on the updated MATLAB code provided by Heungsun in 
   # private communication to deal with big dataset (20.10.2021)
-  temp <- svd(t(Gamma)%*%Gamma)
-  gd2 <- diag(temp$d)
-  gv <- temp$v
+  # temp <- svd(t(Gamma)%*%Gamma)
+  # gd2 <- diag(temp$d)
+  # gv <- temp$v
   
-  GU <- Gamma%*%gv%*%solve(sqrt(gd2))
+  # GU <- Gamma%*%gv%*%solve(sqrt(gd2))
   
-  M3 <- Z%*%t(D) - GU%*%(t(GU)%*%Z)%*%t(D)
+  # M3 <- Z%*%t(D) - GU%*%(t(GU)%*%Z)%*%t(D)
   
-  if(N>J){
-    temp <- svd(t(M3)%*%M3)
-    d2 <- diag(temp$d)
-    v <- temp$v
+  # if(N>J){
+  #   temp <- svd(t(M3)%*%M3)
+  #   d2 <- diag(temp$d)
+  #   v <- temp$v
     
-    u <- M3%*%v%*%solve(sqrt(d2))
-    U <- u[,1:J,drop=FALSE]%*%t(v)
-  } else {
-    temp = svd(M3)
-    u <- temp$u
-    v <- temp$v
-    U <- u[,1:J,drop = FALSE]%*%t(v)
-  }
+  #   u <- M3%*%v%*%solve(sqrt(d2))
+  #   U <- u[,1:J,drop=FALSE]%*%t(v)
+  # } else {
+  #   temp = svd(M3)
+  #   u <- temp$u
+  #   v <- temp$v
+  #   U <- u[,1:J,drop = FALSE]%*%t(v)
+  # }
   
   # Old GSCAm version which faces problem in case of large datasets
   # Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, (P+1):N, drop = FALSE]
@@ -774,13 +786,19 @@ calculateWeightsGSCAm <- function(
       .W_old = est0,
       .tolerance = .tolerance,
       .conv_criterion = .conv_criterion
-    )) &
+    )) &&
       (iter_counter < .iter_max)
   ) {
     iter_counter <- iter_counter + 1
     est0 <- est
     X <- Z - U %*% D
-    WW <- t(C) %*% solve(C %*% t(C) + Ip - 2 * B + B %*% t(B))
+    WW <- crossprod(
+      x = C,
+      y = MASS::ginv(
+        (tcrossprod(C) + diag(P) - (2 * B) + (tcrossprod(B)))
+      )
+    )
+    # WW <- t(C) %*% solve(C %*% t(C) + Ip - 2 * B + B %*% t(B))
     for (p in 1:P) {
       # windex_p <- which(W[, p] != 0)
       windex_p <- (rowSums(W[, p, drop = FALSE]) != 0) |>
@@ -803,12 +821,13 @@ calculateWeightsGSCAm <- function(
     }
 
     # Step 2a: Update B (the structural coefficients for a given W)
-    vcv_gamma <- t(Gamma) %*% Gamma
+    vcv_gamma <- crossprod(Gamma)
+    # vcv_gamma <- t(Gamma) %*% Gamma
     vars_endo <- colnames(B)[colSums(B) != 0]
 
     beta <- lapply(vars_endo, function(y) {
-      x <- (rowSums(B[, y, drop = FALSE]) != 0) |> 
-        which() |> 
+      x <- (rowSums(B[, y, drop = FALSE]) != 0) |>
+        which() |>
         names()
       coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*%
         vcv_gamma[x, y, drop = FALSE]
@@ -818,47 +837,61 @@ calculateWeightsGSCAm <- function(
     # Step 2b: Update C (the loadings for a given W)
     # vars_cf <- which(.csem_model$construct_type == "Common factor")
     # if (length(vars_cf) > 0) {
-      cov_gamma_indicators <- t(Gamma) %*% X
-      # Y <- which(colSums(C[vars_cf, ]) != 0)
-      Y <- (colSums(C) != 0) |> 
-        which() |> 
+    cov_gamma_indicators <- crossprod(x = Gamma, y = X)
+    # cov_gamma_indicators <- t(Gamma) %*% X
+    # Y <- which(colSums(C[vars_cf, ]) != 0)
+    Y <- (colSums(C) != 0) |>
+      which() |>
+      names()
+    loadings <- lapply(Y, function(y) {
+      x <- (rowSums(C[, y, drop = FALSE]) != 0) |>
+        which() |>
         names()
-      loadings <- lapply(Y, function(y) {
-        x <- (rowSums(C[, y, drop = FALSE]) != 0) |> 
-          which() |> 
-          names()
-        coef <- solve(vcv_gamma[x, x, drop = FALSE]) %*%
-          cov_gamma_indicators[x, y, drop = FALSE]
-      })
+      coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*%
+        cov_gamma_indicators[x, y, drop = FALSE]
+    })
 
-      # Transform
-      tC <- t(C)
-      tC[tC != 0] <- unlist(loadings)
-      C <- t(tC)
+    # Transform
+    tC <- t(C)
+    tC[tC != 0] <- unlist(loadings)
+    C <- t(tC)
     # }
+
+    list_UD <- updateUD(
+      D = D,
+      Eta_normed = Gamma,
+      .indicator_type = indicator_type,
+      n_constructs = P,
+      n_indicators = J,
+      n_case = N,
+      Z_normed = Z
+    )
+
+    U <- list_UD[["U"]]
+    D <- list_UD[["D"]]
 
     # Implementation based on the updated MATLAB code provided by Heungsun in
     # private communication to deal with big dataset (20.10.2021)
-    temp <- svd(t(Gamma) %*% Gamma)
-    gd2 <- diag(temp$d)
-    gv <- temp$v
+    # temp <- svd(t(Gamma) %*% Gamma)
+    # gd2 <- diag(temp$d)
+    # gv <- temp$v
 
-    GU <- Gamma %*% gv %*% solve(sqrt(gd2))
-    M3 <- Z %*% D - GU %*% (t(GU) %*% Z) %*% t(D)
+    # GU <- Gamma %*% gv %*% solve(sqrt(gd2))
+    # M3 <- Z %*% D - GU %*% (t(GU) %*% Z) %*% t(D)
 
-    if (N > J) {
-      temp <- svd(t(M3) %*% M3)
-      d2 <- diag(temp$d)
-      v <- temp$v
+    # if (N > J) {
+    #   temp <- svd(t(M3) %*% M3)
+    #   d2 <- diag(temp$d)
+    #   v <- temp$v
 
-      u <- M3 %*% v %*% solve(sqrt(d2))
-      U <- u[, 1:J, drop = FALSE] %*% t(v)
-    } else {
-      temp = svd(M3)
-      u <- temp$u
-      v <- temp$v
-      U <- u[, 1:J, drop = FALSE] %*% t(v)
-    }
+    #   u <- M3 %*% v %*% solve(sqrt(d2))
+    #   U <- u[, 1:J, drop = FALSE] %*% t(v)
+    # } else {
+    #   temp = svd(M3)
+    #   u <- temp$u
+    #   v <- temp$v
+    #   U <- u[, 1:J, drop = FALSE] %*% t(v)
+    # }
 
     # Old GSCAm implementation
     #
@@ -867,7 +900,7 @@ calculateWeightsGSCAm <- function(
     # U_tilde    <- s$v %*% t(s$u)
     # U          <- Gamma_orth %*% U_tilde # this is the initial matrix U
 
-    D <- diag(diag(t(U) %*% Z))
+    # D <- diag(diag(t(U) %*% Z))
 
     # Build A
     A <- cbind(C, B)

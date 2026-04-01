@@ -104,7 +104,7 @@ igsca <-
     Z <- .Z0 / normalization_factor
     w_index <- which(c(.W0) == 1)
     b_index <- which(c(.B0) == 1)
-
+    
     ### Initial Values ------------------------------------
     GSCA_starting_values <- calculateWeightsGSCA(
       .X = .X,
@@ -140,8 +140,8 @@ igsca <-
       Z_normed = Z
     )
 
-    "U" <- list_UD[["U"]]
-    "D" <- list_UD[["D"]]
+    U <- list_UD[["U"]]
+    D <- list_UD[["D"]]
 
     # if starting values are provided
     if (!is.null(.starting_values)) {
@@ -226,7 +226,7 @@ igsca <-
       X <- Z - (U %*% D)
 
       # WW is important for updating the Theta for common factors
-      WW <- crossprod(x = C, y = MASS::ginv((C %*% t(C) + diag(n_constructs) - (2 * B) + (B %*% t(B)))))
+      WW <- crossprod(x = C, y = MASS::ginv((tcrossprod(C) + diag(n_constructs) - (2 * B) + (tcrossprod(B)))))
    
       # WW <- t(C) %*% solve((C %*% t(C) + diag(n_constructs) - (2 * B) + (B %*% t(B))))
 
@@ -294,7 +294,8 @@ igsca <-
         Z_normed = Z
       )
 
-      list2env(list_UD[c("U", "D")], envir = environment())
+      U <- list_UD[["U"]]
+      D <- list_UD[["D"]]
 
       if (length(b_index) > 0) {
         est <- B[b_index]
@@ -510,8 +511,8 @@ updateCB <-
 updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_indicators, Z_normed) {
 
   qr_eta <- qr(Eta_normed)
-  QtZ_null <- qr.qty(qr_eta, Z_normed)[(n_constructs + 1):n_case, , drop = FALSE]
-  svd_mx <- svd(tcrossprod(x = D, y = QtZ_null))
+  # QtZ_null <- qr.qty(qr_eta, Z_normed)[(n_constructs + 1):n_case, , drop = FALSE]
+  svd_mx <- svd(tcrossprod(x = D, y = qr.qty(qr_eta, Z_normed)[(n_constructs + 1):n_case, , drop = FALSE]))
   #  svd_mx <- svd(D %*% t(QtZ_null))
   Utilde <-   # (N-P) × J
   U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs, n_indicators),  tcrossprod(x= svd_mx$v, y = svd_mx$u)))

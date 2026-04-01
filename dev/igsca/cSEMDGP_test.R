@@ -147,7 +147,7 @@ igsca_mods <- mapply(
   .tolerance = 0.001,
   .iter_max = 1000
 )
-
+# Note that the uniC_uniF can sometimes create false positive convergence failures despite appearing to produce correct parameter estimates
 tidied_igsca_mods <- lapply(igsca_mods, function(x) {
     tidy(x) |>
         dplyr::filter(op %in% c('=~', '~', '<~')) |>
