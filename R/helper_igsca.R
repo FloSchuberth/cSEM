@@ -450,10 +450,10 @@ updateCB <-
     # Kronecker bypass
     # browser()
     vars_cf_ncmp <- names(modes)[modes %in% c("Common factor", "NCMP")]
-    # cov_eta_indicators <- t(Eta) %*% X # Interestingly, this is not the same as cor(Eta, X)?
-    cov_eta_indicators <- crossprod(Eta, X) # TODO: Check that this is equivalent to t(Eta) %*% X
+    # cov_eta_indicators <- t(Eta) %*% X 
+    cov_eta_indicators <- crossprod(Eta, X) 
     # cor_eta <- t(Eta) %*% Eta 
-    cor_eta <- crossprod(Eta) # TODO: Check that this is equivalent to t(Eta) %*% Eta
+    cor_eta <- crossprod(Eta) 
     
 
     dep_vars <- (colSums(Lambda[vars_cf_ncmp, , drop = FALSE]) != 0) |> 
