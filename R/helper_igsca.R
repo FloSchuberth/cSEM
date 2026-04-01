@@ -374,6 +374,9 @@ updateCompositeTheta <-
     eta_idx,
     .S = args_default()$.S
   ) {
+    # The following code is based on the ASGSCA package (licensed
+    # under GPL-3). Notation is adapted to be conform with the notation of the
+    # cSEM package
     e <- matrix(0, nrow = 1, ncol = n_total_var)
     e[tot] <- 1
     H1 <- diag(n_total_var)
