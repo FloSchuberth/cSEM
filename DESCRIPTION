@@ -85,7 +85,8 @@ Imports:
     partykit,
     Formula,
     boot,
-    tibble (>= 3.0.0)
+    tibble (>= 3.0.0),
+    Rcpp
 RdMacros: Rdpack, lifecycle
 RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
@@ -114,3 +115,6 @@ Config/testthat/edition: 3
 Config/testthat/parallel: true
 VignetteBuilder: knitr
 Language: en-US
+LinkingTo: 
+    Rcpp,
+    RcppArmadillo
