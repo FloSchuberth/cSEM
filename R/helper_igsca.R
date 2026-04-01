@@ -226,11 +226,9 @@ igsca <-
       X <- Z - (U %*% D)
 
       # WW is important for updating the Theta for common factors
-      WW <-
-        t(C) %*%
-        solve((C %*% t(C) + diag(n_constructs) - (2 * B) + (B %*% t(B))))
-      # TODO: Could the following be better? Is it equivalent?
-      # WW <- solve((C %*% t(C) + diag(n_constructs) - (2 * B) + (B %*% t(B))), C)
+      WW <- crossprod(x = C, y = MASS::ginv((C %*% t(C) + diag(n_constructs) - (2 * B) + (B %*% t(B)))))
+   
+      # WW <- t(C) %*% solve((C %*% t(C) + diag(n_constructs) - (2 * B) + (B %*% t(B))))
 
       #### for-loop update per construct ---------------------------------------
       A <- cbind(C, B)
@@ -385,10 +383,18 @@ updateCompositeTheta <-
 
     beta <- e - A[eta_idx, , drop = FALSE]
 
-    Theta <- MASS::ginv(
-      as.numeric(beta %*% t(beta)) * .S[windex_eta_idx, windex_eta_idx, drop = FALSE]
-    ) %*%
-      t(beta %*% t(Delta) %*% .S[, windex_eta_idx, drop = FALSE])
+    Theta <- tcrossprod(
+      x = MASS::ginv(
+        as.numeric(beta %*% t(beta)) *
+          .S[windex_eta_idx, windex_eta_idx, drop = FALSE]
+      ),
+      y = beta %*% t(Delta) %*% .S[, windex_eta_idx, drop = FALSE]
+    )
+
+    # Theta <- MASS::ginv(
+    #   as.numeric(beta %*% t(beta)) * .S[windex_eta_idx, windex_eta_idx, drop = FALSE]
+    # ) %*%
+    #   t(beta %*% t(Delta) %*% .S[, windex_eta_idx, drop = FALSE])
 
     return(Theta)
 
@@ -503,73 +509,13 @@ updateCB <-
 #' @export
 updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_indicators, Z_normed) {
 
-  # Update Unique Scores---------------------
-  # U <- tryCatch(
-  #   {
-  #     # TODO: Need to understand why these two approaches differ from one-another. The old approach may have assumed something about the data or the product that I'm not aware of...
-  #     # Implementation based on the updated MATLAB code provided by Heungsun in
-  #     # private communication to deal with big dataset (20.10.2021)
-  #     svd_etaprod <- svd(t(Eta_normed) %*% Eta_normed)
-  #     gd2 <- diag(svd_etaprod$d)
-  #     gv <- svd_etaprod$v
-  #     GU <- Eta_normed %*% gv %*% solve(sqrt(gd2))
-  #     M3 <- Z_normed %*% D - GU %*% (t(GU) %*% Z_normed) %*% t(D)
-
-  #     if (n_case > n_indicators) {
-  #       svd_M3prod <- svd(t(M3) %*% M3)
-  #       d2 <- diag(svd_M3prod$d)
-  #       v <- svd_M3prod$v
-
-  #       u <- M3 %*% v %*% solve(sqrt(d2))
-  #       U <- u[, 1:n_indicators, drop = FALSE] %*% t(v)
-  #     } else {
-  #       svd_M3 = svd(M3)
-  #       u <- svd_M3$u
-  #       v <- svd_M3$v
-  #       U <- u[, 1:n_indicators, drop = FALSE] %*% t(v)
-  #     }
-  #     U
-  #   },
-  #   error = function(e) {
-  #     # Old method based on Hwang et al. (2017)
-  #     Eta_Q2 <- qr.Q(qr(Eta_normed), complete = TRUE)[,
-  #       (n_constructs + 1):n_case,
-  #       drop = FALSE
-  #     ]
-  #     svd_mx <- svd(D %*% t(Z_normed) %*% Eta_Q2)
-  #     Utilde <- svd_mx$v %*% t(svd_mx$u)
-  #     U <- Eta_Q2 %*% Utilde
-  #     return(U)
-  #   }
-  # )
-
-  # Claude's Approach --- Efficient projection method: O(NJ^2 + NPJ) instead of O(N^2 J)
-  # Uses thin QR (N x P, not N x N) to avoid forming the null space basis.
-  # Mathematically equivalent to the Hwang et al. (2017) complete QR approach
-  # because P_perp Z D = Gamma_perp (Gamma_perp' Z D), preserving SVD structure.
-  # See dev/igsca/benchmarking_R/unique_scores_optimization.md for full proof.
-  # TODO: Investigate Claude's approach more deeply.
-  # Q_thin <- qr.Q(qr(Eta_normed))
-  # ZD <- Z_normed %*% D
-  # M_proj <- ZD - Q_thin %*% crossprod(Q_thin, ZD)
-  # svd_mx <- svd(M_proj)
-  # U <- svd_mx$u %*% t(svd_mx$v)
-
-  # Implicit Householder method: O(NJ^2 + NPJ) instead of O(N^2 J)
-  # Avoids forming the N×N complete Q matrix while structurally guaranteeing
-  # U lies in null(Eta') via U = Q2 %*% Utilde (applied implicitly).
-  # This is critical for single-indicator common factors where M_proj has
-  # near-zero columns — the projection approach's SVD can produce left
-  # singular vectors that escape null(Eta'), violating U' Eta = 0.
-  # See dev/igsca/benchmarking_R/unique_scores_optimization.md for details.
   qr_eta <- qr(Eta_normed)
-  # Q2' Z via implicit Householder: O(NPJ), result is N×J, extract rows (P+1):N
   QtZ_null <- qr.qty(qr_eta, Z_normed)[(n_constructs + 1):n_case, , drop = FALSE]
-  # SVD of D Z' Q2 = D t(Q2' Z): J × (N-P), same input as original approach
-  svd_mx <- svd(D %*% t(QtZ_null))
-  Utilde <- svd_mx$v %*% t(svd_mx$u)  # (N-P) × J
-  # Recover U = Q2 Utilde via implicit Householder: O(NPJ)
-  U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs, n_indicators), Utilde))
+  svd_mx <- svd(tcrossprod(x = D, y = QtZ_null))
+  #  svd_mx <- svd(D %*% t(QtZ_null))
+  Utilde <-   # (N-P) × J
+  U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs, n_indicators),  tcrossprod(x= svd_mx$v, y = svd_mx$u)))
+  # U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs, n_indicators), svd_mx$v %*% t(svd_mx$u)))
 
   # Old method based on Hwang et al. (2017) — O(N^2) memory and computation
   # Eta_Q2 <- qr.Q(qr(Eta_normed), complete = TRUE)[,

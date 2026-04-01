@@ -50,7 +50,7 @@ arma::mat arma_update_U_qrQ(const arma::mat& Eta_normed,
 
   arma::mat U_svd, V_svd;
   arma::vec d_svd;
-  arma::svd(U_svd, d_svd, V_svd, D * Z_normed.t() * Q2);  // J × (N-P)
+  arma::svd_econ(U_svd, d_svd, V_svd, D * Z_normed.t() * Q2);  // J × (N-P)
 
   arma::mat Utilde = V_svd * U_svd.t();             // (N-P) × J
   return Q2 * Utilde;                                // N × J

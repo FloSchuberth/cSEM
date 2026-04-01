@@ -312,7 +312,7 @@ testthat::test_that("GSCA recovers population weights and path coefficients", {
 })
 
 # GSCA M -----------------------------------------------------------------
-set.seed(1234)
+set.seed(3883)
 gscam_pop <- list(
   uniF_uniF = 'xi1 =~ 1*x11
 
