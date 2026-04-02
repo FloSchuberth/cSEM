@@ -454,7 +454,6 @@ updateCompositeTheta <-
 
 #' Update Loadings and Path-Coefficients for IGSCA
 #'
-#' @inheritParams igsca
 #' @param X Indicators with measurement error removed
 #' @param Eta Construct Scores
 #' @param Lambda Loadings matrix
@@ -549,7 +548,6 @@ updateCB <-
 #'
 #' @returns List of 2 elements, normalized unique scores (`U`) and normalized unique loadings (`D`)
 #' 
-#' @inheritParams igsca
 #' @inheritParams csem_arguments
 #'
 updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_indicators, Z_normed) {

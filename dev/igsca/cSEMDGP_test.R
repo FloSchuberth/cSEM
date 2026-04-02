@@ -153,7 +153,7 @@ tidied_igsca_mods <- lapply(igsca_mods, function(x) {
         dplyr::filter(op %in% c('=~', '~', '<~')) |>
         dplyr::select(term, estimate)
 }) |>
-    list_rbind(names_to = 'mod') |>
+    purrr::list_rbind(names_to = 'mod') |>
     dplyr::filter(
         !((grepl('xi2 <~', term, fixed = TRUE) &
             grepl(pattern = '_...F', x = mod, fixed = FALSE)) &
@@ -283,7 +283,7 @@ tidied_gsca_mods <- lapply(gsca_mods, function(x) {
     dplyr::filter(op %in% c('<~', '~')) |>
     dplyr::select(term, estimate)
 }) |>
-  list_rbind(names_to = 'mod')
+  purrr::list_rbind(names_to = 'mod')
 
 ## Test GSCA parameter recovery -------------------------------------------
 
@@ -377,7 +377,7 @@ tidied_gscam_mods <- lapply(gscam_mods, function(x) {
     dplyr::filter(op %in% c('=~', '~')) |>
     dplyr::select(term, estimate)
 }) |>
-  list_rbind(names_to = 'mod')
+  purrr::list_rbind(names_to = 'mod')
 
 ## Test GSCAM parameter recovery ------------------------------------------
 # Note: The current GSCA_M may sometimes have trouble in computing D2 and U,
