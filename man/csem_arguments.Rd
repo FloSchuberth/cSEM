@@ -386,6 +386,8 @@ additional resampling are returned, i.e., all quantities but "\emph{CI_bca}", "\
 the names of the J construct names used in the measurement model. Note
 Q^2 is also called the reliability coefficient.}
 
+\item{.quiet}{Boolean. Quietly executes function without printing}
+
 \item{.reliabilities}{A character vector of \code{"name" = value} pairs,
 where \code{value} is a number between 0 and 1 and \code{"name"} a character string
 of the corresponding construct name, or \code{NULL}. Reliabilities

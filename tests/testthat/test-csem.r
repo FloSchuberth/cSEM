@@ -147,15 +147,19 @@ for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR", "PCA",
 
   # Export to Excel test
   exportToExcel(assess(res), .filename = paste0("test_assess_", i, ".xlsx"),
-                .path = testthat::test_path("test_results_exportToExcel"))
+                .path = testthat::test_path("test_results_exportToExcel"),
+              .quiet = TRUE)
   exportToExcel(summarize(res), .filename = paste0("test_summarize_", i, ".xlsx"),
-                .path = testthat::test_path("test_results_exportToExcel"))
+                .path = testthat::test_path("test_results_exportToExcel"),
+              .quiet = TRUE)
   exportToExcel(predict(res, .handle_inadmissibles = 'set_NA', .benchmark = "lm", .disattenuate = FALSE),
                 .filename = paste0("test_predict_", i, ".xlsx"),
-                .path = testthat::test_path("test_results_exportToExcel"))
+                .path = testthat::test_path("test_results_exportToExcel"),
+              .quiet = TRUE)
   exportToExcel(testOMF(res, .R = 10, .handle_inadmissibles = 'drop'),
                         .filename = paste0("test_testOMF_", i, ".xlsx"),
-                        .path = testthat::test_path("test_results_exportToExcel"))
+                        .path = testthat::test_path("test_results_exportToExcel"),
+              .quiet = TRUE)
 }
 
 ### DGP_linear_3compostites ====================================================
@@ -241,9 +245,12 @@ test_that("DPG_2ndorder_cf_of_cfs is correctly estimated", {
 expect_no_error(capture.output(print(res)))
 
 # Export to Excel test
-exportToExcel(summarize(res), .filename = "test_summarize_sole.xlsx", .path = testthat::test_path("test_results_exportToExcel"))
-exportToExcel(suppressWarnings(assess(res)), .filename = "test_assess_sole.xlsx", .path = testthat::test_path("test_results_exportToExcel"))
-exportToExcel(testOMF(res, .R = 20), .filename = "test_testOMF_sole.xlsx", .path = testthat::test_path("test_results_exportToExcel"))
+exportToExcel(summarize(res), .filename = "test_summarize_sole.xlsx", .path = testthat::test_path("test_results_exportToExcel"),
+              .quiet = TRUE)
+exportToExcel(suppressWarnings(assess(res)), .filename = "test_assess_sole.xlsx", .path = testthat::test_path("test_results_exportToExcel"),
+              .quiet = TRUE)
+exportToExcel(testOMF(res, .R = 20), .filename = "test_testOMF_sole.xlsx", .path = testthat::test_path("test_results_exportToExcel"),
+              .quiet = TRUE)
 
 ### DGP_2ndorder - Common factor of composites =================================
 # Loads Sigma, models and population values

@@ -19,6 +19,8 @@ updateUD(
 
 \item{Eta_normed}{Normalized data}
 
+\item{.indicator_type}{Vector of whether each indicator corresponds to a common factor or composite}
+
 \item{n_constructs}{Number of constructs}
 
 \item{n_case}{Number of cases}

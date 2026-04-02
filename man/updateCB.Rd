@@ -15,7 +15,6 @@ updateCB(
   n_constructs,
   b_index,
   n_case,
-  .con_type,
   modes
 )
 }

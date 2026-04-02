@@ -483,7 +483,6 @@ updateCB <-
     n_constructs,
     b_index,
     n_case,
-    .con_type,
     modes
   ) {
     # Loading Update ----------------------------------------------------------
@@ -545,10 +544,9 @@ updateCB <-
 #' @param n_constructs Number of constructs
 #' @param n_case Number of cases
 #' @param n_indicators Number of indicators
-#'
+#' @param .indicator_type Vector of whether each indicator corresponds to a common factor or composite
 #' @returns List of 2 elements, normalized unique scores (`U`) and normalized unique loadings (`D`)
 #' 
-#' @inheritParams csem_arguments
 #'
 updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_indicators, Z_normed) {
 

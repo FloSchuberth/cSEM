@@ -287,6 +287,7 @@
 #' @param .Q A vector of composite-construct correlations with element names equal to
 #'   the names of the J construct names used in the measurement model. Note 
 #'   Q^2 is also called the reliability coefficient.
+#' @param .quiet Boolean. Quietly executes function without printing
 #' @param .reliabilities A character vector of `"name" = value` pairs, 
 #'   where `value` is a number between 0 and 1 and `"name"` a character string
 #'   of the corresponding construct name, or `NULL`. Reliabilities

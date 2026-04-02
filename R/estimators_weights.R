@@ -1237,7 +1237,6 @@ calculateWeightsIGSCA <- function(
       n_case = n_case,
       lambda_index = c_index,
       b_index = b_index,
-      .con_type = con_type,
       modes = modes
     )
 

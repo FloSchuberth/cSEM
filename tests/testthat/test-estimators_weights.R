@@ -272,7 +272,7 @@ test_that("Model estimation passes standards", {
 
 ## DGP Data ---------------------------------------------------------------
 test_that("Tests pass use of cSEM.DGP", {
-  skip_if_not_installed(c("cSEM.DGP", "purrr", "dplyr"))
+  testthat::skip_if_not_installed(c("cSEM.DGP", "purrr", "dplyr"))
 
   #' Build a data frame of expected population values for a single model
   #'
@@ -418,10 +418,7 @@ test_that("Tests pass use of cSEM.DGP", {
 
   # These are the actual weights used to construct the population correlation matrix,
   # from which the data is sampled
-  Sxi1 <- matrix(c(1, 0.4, -0.3,
-                 0.4, 1, 0.4,
-                 -0.3, 0.4, 1),
-                  3, 3)
+  Sxi1 <- matrix(c(1, 0.4, -0.3, 0.4, 1, 0.4, -0.3, 0.4, 1), 3, 3)
   w1 <- c(0.4, 0.3, 0.2)
 
   w1 %*% Sxi1 %*% w1
@@ -551,18 +548,20 @@ test_that("Tests pass use of cSEM.DGP", {
     .iter_max = 1000
   )
   # Note that the uniC_uniF can sometimes create false positive convergence failures despite appearing to produce correct parameter estimates
-  tidied_igsca_mods <- lapply(igsca_mods, function(x) {
-    tidy(x) |>
-      dplyr::filter(op %in% c('=~', '~', '<~')) |>
-      dplyr::select(term, estimate)
-  }) |>
-    purrr::list_rbind(names_to = 'mod') |>
-    dplyr::filter(
-      !((grepl('xi2 <~', term, fixed = TRUE) &
-        grepl(pattern = '_...F', x = mod, fixed = FALSE)) &
-        (grepl('xi1 <~', term, fixed = TRUE) &
-          grepl(pattern = '...F_', x = mod, fixed = FALSE)))
-    )
+  tidied_igsca_mods <- suppressWarnings({
+    lapply(igsca_mods, function(x) {
+      tidy(x) |>
+        dplyr::filter(op %in% c('=~', '~', '<~')) |>
+        dplyr::select(term, estimate)
+    }) |>
+      purrr::list_rbind(names_to = 'mod') |>
+      dplyr::filter(
+        !((grepl('xi2 <~', term, fixed = TRUE) &
+          grepl(pattern = '_...F', x = mod, fixed = FALSE)) &
+          (grepl('xi1 <~', term, fixed = TRUE) &
+            grepl(pattern = '...F_', x = mod, fixed = FALSE)))
+      )
+  })
 
   ## Test IGSCA parameter recovery ------------------------------------------
   # Note: There seems to sometimes be convergence problems when using factors
@@ -684,12 +683,14 @@ test_that("Tests pass use of cSEM.DGP", {
     .GSCA_modes = "CCMP"
   )
 
-  tidied_gsca_mods <- lapply(gsca_mods, function(x) {
-    tidy(x) |>
-      dplyr::filter(op %in% c('<~', '~')) |>
-      dplyr::select(term, estimate)
-  }) |>
-    purrr::list_rbind(names_to = 'mod')
+  tidied_gsca_mods <- suppressWarnings({
+    lapply(gsca_mods, function(x) {
+      tidy(x) |>
+        dplyr::filter(op %in% c('<~', '~')) |>
+        dplyr::select(term, estimate)
+    }) |>
+      purrr::list_rbind(names_to = 'mod')
+  })
 
   ## Test GSCA parameter recovery -------------------------------------------
 
@@ -718,7 +719,6 @@ test_that("Tests pass use of cSEM.DGP", {
   })
 
   # GSCA M -----------------------------------------------------------------
-  set.seed(3883)
   gscam_pop <- list(
     uniF_uniF = 'xi1 =~ 1*x11
 
@@ -777,12 +777,14 @@ test_that("Tests pass use of cSEM.DGP", {
     .conv_criterion = "sum_diff_absolute"
   )
 
-  tidied_gscam_mods <- lapply(gscam_mods, function(x) {
-    tidy(x) |>
-      dplyr::filter(op %in% c('=~', '~')) |>
-      dplyr::select(term, estimate)
-  }) |>
-    purrr::list_rbind(names_to = 'mod')
+  tidied_gscam_mods <- suppressWarnings({
+    lapply(gscam_mods, function(x) {
+      tidy(x) |>
+        dplyr::filter(op %in% c('=~', '~')) |>
+        dplyr::select(term, estimate)
+    }) |>
+      purrr::list_rbind(names_to = 'mod')
+  })
 
   ## Test GSCAM parameter recovery ------------------------------------------
   # Note: The current GSCA_M may sometimes have trouble in computing D2 and U,

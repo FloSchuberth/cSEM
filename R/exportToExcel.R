@@ -22,7 +22,8 @@
 #' @usage exportToExcel(
 #'   .postestimation_object = NULL, 
 #'   .filename              = "results.xlsx",
-#'   .path                  = NULL
+#'   .path                  = NULL,
+#'   .quiet                 = FALSE
 #'   )
 #'
 #' @inheritParams csem_arguments
@@ -33,7 +34,8 @@
 exportToExcel <- function(
   .postestimation_object  = NULL, 
   .filename               = "results.xlsx",
-  .path                   = NULL) {
+  .path                   = NULL,
+  .quiet                  = FALSE) {
   
   ## Install openxlsx if not already installed
   if (!requireNamespace("openxlsx", quietly = TRUE)) {
@@ -236,5 +238,7 @@ exportToExcel <- function(
   file = file.path(.path, .filename)
   
   openxlsx::saveWorkbook(wb, file = file, overwrite = TRUE)
-  print(paste0("File saved as: '", .filename, "' in: ", .path))
+  if (isTRUE(!.quiet)) {
+    print(paste0("File saved as: '", .filename, "' in: ", .path))
+  }
 }

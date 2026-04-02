@@ -7,7 +7,8 @@
 exportToExcel(
   .postestimation_object = NULL, 
   .filename              = "results.xlsx",
-  .path                  = NULL
+  .path                  = NULL,
+  .quiet                 = FALSE
   )
 }
 \arguments{
@@ -18,6 +19,8 @@ postestimation functions (e.g. \code{\link[=summarize]{summarize()}}).}
 
 \item{.path}{Character string. Path of the directory to save the file to. Defaults
 to \code{NULL}.}
+
+\item{.quiet}{Boolean. Quietly executes function without printing}
 }
 \description{
 \lifecycle{experimental}
