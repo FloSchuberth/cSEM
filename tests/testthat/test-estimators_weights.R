@@ -279,7 +279,9 @@ test_that("Tests pass use of cSEM.DGP", {
   #' Constructs a reference data frame mapping model terms to their known
   #' population values. Terms are built from the names of the supplied vectors,
   #' so all population value vectors must be named.
-  #'
+  #' 
+  #' Written with the help of Claude Opus 4.6.
+  #' 
   #' @param mod_name Character. Model identifier for the `mod` column.
   #' @param weights Named list of named numeric vectors. Each element represents
   #'   a composite construct (list name = construct name). Vector names are
@@ -346,6 +348,7 @@ test_that("Tests pass use of cSEM.DGP", {
   }
 
   #' Generate expected population values from model name conventions
+  #' 
   #'
   #' Parses model names to automatically determine which constructs get weights
   #' vs loadings, and whether they use single or triple indicators.
@@ -353,6 +356,8 @@ test_that("Tests pass use of cSEM.DGP", {
   #' Name format: `"{count}[Type]_{count}[Type]"` where the first part maps to
   #' xi1 and the second to xi2.
   #' - count: `"uni"` (1 indicator) or `"tri"` (3 indicators)
+  #' 
+  #' Written with the help of Claude Opus 4.6.
   #'
   #' @param mod_names Character vector of model names (e.g., `"uniC_triF"`).
   #' @param paths Named numeric vector of path coefficients.
@@ -360,6 +365,7 @@ test_that("Tests pass use of cSEM.DGP", {
   #'   for triple-indicator composites.
   #' @param tri_loadings Named list (`xi1`, `xi2`) of population loading vectors
   #'   for triple-indicator factors.
+  #' 
   #'
   #' @return A data.frame with columns: `mod`, `term`, `pop_value`.
   make_expected_from_names <- function(
