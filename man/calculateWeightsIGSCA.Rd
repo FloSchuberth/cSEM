@@ -17,9 +17,11 @@ calculateWeightsIGSCA(
 }
 \arguments{
 \item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandardized
-data (indicators/items/manifest variables). Possible column types or classes
+data (indicators/items/manifest variables).
+Additionally, a \code{list} of data sets (data frames or matrices) is accepted in which
+case estimation is repeated for each data set. Possible column types or classes
 of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or "\code{integer}"),
-"\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (converted to factor),
+"\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (will be converted to factor),
 or a mix of several types.}
 
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
@@ -53,8 +55,65 @@ wishes to set. The vectors must be named vectors of \code{"indicator_name" = val
 pairs, where \code{value} is the (scaled or unscaled) starting weight. Defaults to \code{NULL}.}
 }
 \value{
-List of matrices of the fitted IGSCA Model
+List of 4 matrices that make up a fitted I-GSCA Model:
+\itemize{
+\item (1) Weights
+\item (2) Loadings
+\item (3) Squared Unique Loadings D^2
+\item (4) Path Coefficients.
+\item (5) Unique Component of Indicators (for common factors) DU
+}
 }
 \description{
-Calculate weights using Integrated Generalised Structured Component Analysis (IGSCA)
+This R implementation of I-GSCA is based on the Matlab implementation in igsca_sim.m by Dr. Heungsun Hwang.
+}
+\details{
+In the example section, the specified model is based on the tutorial I-GSCA model associated with GSCA Pro \insertCite{hwangetal2023StructuralEquationModelingAMultidisciplinaryJournal}{cSEM}.
+
+\strong{Note}: Here, we assume that there is only one unique loading per indicator.
+}
+\examples{
+\dontrun{
+# Specify the model according to GSCA Pro's example
+tutorial_igsca_model <- "
+# Composite Model
+NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 +
+                      Behavior7 + Behavior8 +  Behavior9
+Numberofjobinterviews <~ Interview1 + Interview2
+Numberofjoboffers <~ Offer1 + Offer2
+
+# Reflective Measurement Model
+HonestyHumility =~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 +
+                    Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10
+Emotionality =~ Emotion1 + Emotion2 + Emotion3 + Emotion4 +
+                Emotion5 + Emotion6 + Emotion8 + Emotion10
+Extraversion =~ Extraver2 + Extraver3 + Extraver4 + Extraver5 +
+                Extraver6 + Extraver7 + Extraver8 + Extraver9 + Extraver10
+Agreeableness =~ Agreeable1 + Agreeable3 + Agreeable4 + Agreeable5 +
+                 Agreeable7 + Agreeable8 + Agreeable9 + Agreeable10
+Conscientiousness =~ Conscientious1 + Conscientious3 + Conscientious4 +
+                     Conscientious6 + Conscientious7 + Conscientious8 +
+                     Conscientious9 + Conscientious10
+OpennesstoExperience =~ Openness1 + Openness2 + Openness3 + Openness5 +
+                        Openness7 + Openness8 + Openness9 + Openness10
+
+# Structural Model
+NetworkingBehavior ~ HonestyHumility + Emotionality + Extraversion +
+                     Agreeableness + Conscientiousness + OpennesstoExperience
+Numberofjobinterviews ~ NetworkingBehavior
+Numberofjoboffers ~ NetworkingBehavior
+"
+
+data(LeDang2022)
+
+csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "GSCA",
+.dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion =
+"sum_diff_absolute")
+}
+}
+\references{
+\insertAllCited{}
+}
+\author{
+Michael S. Truong
 }
