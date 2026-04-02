@@ -15,3 +15,4 @@ tests/comparisons/igsca_translation/matlab_out
 .idea
 SimDesign-results*
 .vscode
+inst/doc
