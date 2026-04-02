@@ -113,6 +113,8 @@ Suggests:
     RhpcBLASctl
 Remotes:
        T-Schamberger/cSEM.DGP
+Config/Needs/check:
+       T-Schamberger/cSEM.DGP
 Config/testthat/edition: 3
 Config/testthat/parallel: true
 VignetteBuilder: knitr

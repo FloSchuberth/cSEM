@@ -418,7 +418,10 @@ test_that("Tests pass use of cSEM.DGP", {
 
   # These are the actual weights used to construct the population correlation matrix,
   # from which the data is sampled
-  Sxi1 <- matrix(c(1, 0.4, -0.3, 0.4, 1, 0.4, -0.3, 0.4, 1), 3, 3)
+  Sxi1 <- matrix(c(1, 0.4, -0.3,
+                 0.4, 1, 0.4,
+                 -0.3, 0.4, 1),
+                  3, 3)
   w1 <- c(0.4, 0.3, 0.2)
 
   w1 %*% Sxi1 %*% w1
