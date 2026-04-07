@@ -71,7 +71,6 @@ Imports:
     matrixStats,
     polycor,
     progressr,
-    psych,
     purrr,
     Rdpack,
     rlang,

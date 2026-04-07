@@ -203,8 +203,7 @@ calculateOuterWeightsPLS <- function(
     } else if(.modes[block] == "PCA"){
       ## PCA - Weights to create the first principal component are used  (= the first eigenvector of
       ##       of S_jj).
-      temp <- psych::principal(r = .S[indicators, indicators], nfactors = 1)
-      W[block, indicators] <- c(temp$weights)
+      W[block, indicators] <- first_principal_weights(.S[indicators, indicators])
       
     } 
     # Set weights of single-indicator constructs to 1 (in order to avoid floating
@@ -682,4 +681,16 @@ bdiagonalizeMultiGroupIgscaEstimates <- function(x) {
     # Single-Group Code
     stop("This function is only meant for multi-group models.")
   }
+}
+
+#' First principal component weights
+#'
+#' Equivalent to `psych::principal(r, nfactors = 1)$weights`:
+#' extract the first eigenvector of the correlation/covariance matrix,
+#' then scale by `w / sqrt(w' S w)` so that the resulting composite has unit variance.
+#' @noRd
+first_principal_weights <- function(S) {
+  e <- eigen(S, symmetric = TRUE)
+  w <- e$vectors[, 1]
+  w / as.numeric(sqrt(t(w) %*% S %*% w))
 }
