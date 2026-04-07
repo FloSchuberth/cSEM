@@ -79,7 +79,7 @@ verify <- function(.object){
       stat["2"] <- TRUE
     }
     
-    if(!matrixcalc::is.positive.semi.definite(x2$Construct_VCV)) {
+    if(!is_psd(x2$Construct_VCV)) {
       stat["3"] <- TRUE
     }
     
@@ -97,7 +97,7 @@ verify <- function(.object){
       # do nothing
     } else {
       if (x1$Model$model_type == "Linear" &&
-          !matrixcalc::is.positive.semi.definite(fit(.object,
+          !is_psd(fit(.object,
                                                      .saturated = FALSE,
                                                      .type_vcv = 'indicator'))) {
         stat["5"] <- TRUE

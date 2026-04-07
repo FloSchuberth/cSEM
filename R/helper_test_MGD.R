@@ -38,7 +38,7 @@ calculateDistance <- function(
   }
 
   ## Check if matrices are all symmetric
-  if(!all(sapply(.matrices, matrixcalc::is.symmetric.matrix))) {
+  if(!all(sapply(.matrices, isSymmetric))) {
     stop2("All matrices in `.matrices` must be symmetric.")
   }
   

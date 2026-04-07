@@ -55,8 +55,8 @@ processData <- function(
   ## Check if data set is symmetric. This is an indicator that a covariance
   ## matrix has been supplied (which is not supported by cSEM):
   if(
-    matrixcalc::is.square.matrix(as.matrix(.data)) &&
-    matrixcalc::is.symmetric.matrix(as.matrix(.data))) {
+    nrow(as.matrix(.data)) == ncol(as.matrix(.data)) &&
+    isSymmetric(as.matrix(.data))) {
     warning2("Data is symmetric! Did you provide a covariance or correlation matrix to `.data`?\n",
              "Argument `.data` requires a matrix or data.frame of raw data.")
   }

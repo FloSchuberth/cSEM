@@ -167,3 +167,16 @@ makeLine <- function(type = 1, width) {
   
   paste(rep(x,  width), collapse = "")
 }
+
+#' Matrix trace: sum of diagonal elements
+#' @noRd
+matrix_trace <- function(x) {
+  sum(diag(x))
+}
+
+#' Check if a matrix is positive semi-definite
+#' @noRd
+is_psd <- function(x) {
+  eigenvalues <- eigen(x, symmetric = TRUE, only.values = TRUE)$values
+  all(eigenvalues >= -sqrt(.Machine$double.eps))
+}

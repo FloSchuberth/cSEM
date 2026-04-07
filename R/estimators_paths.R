@@ -235,7 +235,7 @@ estimatePath <- function(
     
     ## Check if all vcv matrices are semi positive-definite and warn if not
     semidef <- lapply(vcv_explana_ls, function(x) {
-      matrixcalc::is.positive.semi.definite(x)
+      is_psd(x)
     })
     
     if(any(!unlist(semidef))) {

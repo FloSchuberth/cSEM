@@ -68,7 +68,6 @@ Imports:
     magrittr,
     MASS,
     Matrix,
-    matrixcalc,
     matrixStats,
     polycor,
     progressr,
