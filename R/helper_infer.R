@@ -102,8 +102,8 @@ StandardCIResample <- function(
         theta_star + qnorm(z) * y
       }
     })
-  }, w = .first_resample, y = boot_sd, SIMPLIFY = FALSE) %>% 
-    lapply(function(x) do.call(rbind, x)) %>% 
+  }, w = .first_resample, y = boot_sd, SIMPLIFY = FALSE) |> 
+    lapply(function(x) do.call(rbind, x)) |> 
     lapply(function(x) {
       # rownames(x) <- paste0(c("L_", "U_"), rep(cl, each = 2))
       rownames(x) <- unlist(lapply(100*cl, function(x) 
@@ -197,8 +197,8 @@ TStatCIResample <- function(
   ## confidence level (for rownames)
   cl <- 1 - .probs[seq(1, length(.probs), by = 2)]*2
   
-  boot_sd_star <- lapply(.second_resample, SdResample, .resample_method = .resample_method2, .n = .n) %>% 
-    purrr::transpose(.) %>% 
+  boot_sd_star <- lapply(.second_resample, SdResample, .resample_method = .resample_method2, .n = .n) |> 
+    purrr::transpose(.) |> 
     lapply(function(y) do.call(rbind, y))
   
   boot_sd <- SdResample(.first_resample, .resample_method = .resample_method, .n = .n)
@@ -222,8 +222,8 @@ TStatCIResample <- function(
       ## Confidence interval
       theta_star - qt_boot * y
     })
-  }, i = seq_along(.first_resample), y = boot_sd, SIMPLIFY = FALSE) %>% 
-    lapply(function(x) do.call(rbind, x)) %>% 
+  }, i = seq_along(.first_resample), y = boot_sd, SIMPLIFY = FALSE) |> 
+    lapply(function(x) do.call(rbind, x)) |> 
     lapply(function(x) {
       x <- x[1:nrow(x) + rep(c(1, -1), times = nrow(x)/2), , drop = FALSE]
       # rownames(x) <- paste0(c("L_", "U_"), rep(cl, each = 2))
@@ -255,8 +255,8 @@ BcCIResample <- function(.first_resample, .probs) {
     })
     names(bc) <- names(x$Original)
     bc
-  }) %>% 
-    lapply(function(x) t(do.call(rbind, x))) %>% 
+  }) |> 
+    lapply(function(x) t(do.call(rbind, x))) |> 
     lapply(function(x) {
       # rownames(x) <- paste0(c("L_", "U_"), rep(cl, each = 2))
       rownames(x) <- unlist(lapply(100*cl, function(x) 
@@ -297,7 +297,7 @@ BcaCIResample <- function(.object, .first_resample, .probs) {
     1/6 * (sum(x^3) / sum(x^2)^1.5)
   }
   
-  a <- lapply(jack_estimates, function(x) t(x$Original - t(x$Resampled))) %>% 
+  a <- lapply(jack_estimates, function(x) t(x$Original - t(x$Resampled))) |> 
     lapply(function(x) apply(x, 2, aFun)) 
   
   p0 <- lapply(.first_resample, function(x) colMeans(t(t(x$Resampled) <= x$Original)))
@@ -310,8 +310,8 @@ BcaCIResample <- function(.object, .first_resample, .probs) {
     })
     names(bca) <- names(.first_resample[[i]]$Original)
     bca
-  })%>% 
-    lapply(function(x) t(do.call(rbind, x))) %>% 
+  })|> 
+    lapply(function(x) t(do.call(rbind, x))) |> 
     lapply(function(x) {
       # rownames(x) <- paste0(c("L_", "U_"), rep(cl, each = 2))
       rownames(x) <- unlist(lapply(100*cl, function(x) 

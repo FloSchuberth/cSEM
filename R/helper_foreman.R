@@ -49,16 +49,13 @@ calculateCorrectionFactors <- function(
     ## Depending on the mode: extract vector of weights or indicator-proxy
     # correlations (composite loadings) of block j 
     if(.modes[j] == "modeA") {
-      w_j <- .W[j, ] %>%
-        .[. != 0] %>%
-        as.matrix(.)
+      w_j <- .W[j, ]
+      w_j <- as.matrix(w_j[w_j != 0])
     } else if(.modes[j] == "modeB") {
-      w_j <- L[j, ] %>%
-        .[. != 0] %>%
-        as.matrix(.)
+      w_j <- L[j, ]
+      w_j <- as.matrix(w_j[w_j != 0])
     } else {
-      w_j <- .W[j, ] %>% 
-        as.matrix(.)
+      w_j <- as.matrix(.W[j, ])
     }
     
     ## Check if single indicator block or composite; If yes, set cf to 1
@@ -73,15 +70,15 @@ calculateCorrectionFactors <- function(
       
       ## Set indicator pairs whose measurement errors are correlated to zero and
       ## extract non-zero off-diagonal elements of S_jj (result is vectorized)
-      S_vect <- replace(S_jj, which(E_jj == 1), NA) %>%
-        .[lower.tri(.) | upper.tri(.)] %>%
-        .[!is.na(.)]
-      
+      S_temp <- replace(S_jj, which(E_jj == 1), NA)
+      S_vect <- S_temp[lower.tri(S_temp) | upper.tri(S_temp)]
+      S_vect <- S_vect[!is.na(S_vect)]
+
       ## Set indicator pairs whose measurement errors are correlated to zero and
       ## extract non-zero off-diagonal elements of W_jj (vectorized)
-      W_vect <- replace(W_jj, which(E_jj == 1), NA)  %>%
-        .[lower.tri(.) | upper.tri(.)] %>%
-        .[!is.na(.)]
+      W_temp <- replace(W_jj, which(E_jj == 1), NA)
+      W_vect <- W_temp[lower.tri(W_temp) | upper.tri(W_temp)]
+      W_vect <- W_vect[!is.na(W_vect)]
       
       if(length(S_vect) == 0) {
         stop2(

@@ -630,7 +630,7 @@ resamplecSEMResults <- function(
     out   <- purrr::transpose(out$Estimates1)
   }
   
-  out <- out %>% 
+  out <- out |> 
     lapply(function(x) do.call(rbind, x))
   
   # Add estimated quantities based on the the original sample/data

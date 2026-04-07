@@ -337,19 +337,19 @@ testMICOM <- function(
     # --- Now we have a list of length 1 + .R containing two list elements
     #     "Mean" and "Var" which in turn contain as many list elements as there are
     #     groups
-    meanvar <- c(list(id), replicate(.R, sample(id), simplify = FALSE)) %>% 
-      lapply(function(x) as.data.frame(cbind(Est$Estimates$Construct_scores, id = x))) %>% 
-      lapply(function(x) split(x, f = x$id)) %>% 
-      lapply(function(x) lapply(x, function(y) as.matrix(y[, -ncol(y), drop = FALSE]))) %>% 
+    meanvar <- c(list(id), replicate(.R, sample(id), simplify = FALSE)) |> 
+      lapply(function(x) as.data.frame(cbind(Est$Estimates$Construct_scores, id = x))) |> 
+      lapply(function(x) split(x, f = x$id)) |> 
+      lapply(function(x) lapply(x, function(y) as.matrix(y[, -ncol(y), drop = FALSE]))) |> 
       lapply(function(x) lapply(x, function(y) list(
         "Mean" = colMeans(y), 
         "Var"  = {tt <- matrixStats::colVars(y); names(tt) <- colnames(y); tt})
-      )) %>% 
+      )) |> 
       lapply(function(x) purrr::transpose(x))
     
     # Compute the difference of the means for each possible group combination 
     # and attach a name
-    m <- meanvar %>% 
+    m <- meanvar |> 
       lapply(function(x) {
         tt <- utils::combn(x[["Mean"]], m = 2, 
                            FUN = function(y) y[[1]] - y[[2]], 
@@ -361,7 +361,7 @@ testMICOM <- function(
     
     # Compute the log difference of the variances for each possible group combination
     # and attach a name
-    v <- meanvar %>% 
+    v <- meanvar |> 
       lapply(function(x) {
         tt <- utils::combn(x[["Var"]], m = 2, 
                            FUN = function(y) log(y[[1]]) - log(y[[2]]), 
@@ -372,11 +372,11 @@ testMICOM <- function(
       })
     
     # Combine in a list and bind (log) differences for each replication in a list
-    mv <- list("Mean" = m, "Var"= v) %>% 
-      lapply(function(x) lapply(x, function(y) do.call(rbind, y))) %>% 
+    mv <- list("Mean" = m, "Var"= v) |> 
+      lapply(function(x) lapply(x, function(y) do.call(rbind, y))) |> 
       lapply(function(x) cbind(as.data.frame(do.call(rbind, x), row.names = FALSE), 
-                               id = rownames(do.call(rbind, x)))) %>% 
-      lapply(function(x) split(x, f = x$id)) %>% 
+                               id = rownames(do.call(rbind, x)))) |> 
+      lapply(function(x) split(x, f = x$id)) |> 
       lapply(function(x) lapply(x, function(y) as.matrix(y[, -ncol(y), drop = FALSE])))
     
     # Extract the original group differences. This is the first row of each group
@@ -472,7 +472,7 @@ testMICOM <- function(
     # 
 
 
-    # critical_values_step3 <- lapply(mv, function(x) lapply(x, function(y) y[-1, ])) %>% 
+    # critical_values_step3 <- lapply(mv, function(x) lapply(x, function(y) y[-1, ])) |> 
     #   lapply(function(x) lapply(x, function(y) matrixStats::colQuantiles(y, probs =  probs, drop = FALSE)))
     # 
     # ## Compare critical value and test statistic

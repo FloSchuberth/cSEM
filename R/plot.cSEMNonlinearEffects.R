@@ -105,7 +105,7 @@ plot.cSEMNonlinearEffects <- function(
                               y = x$out_surface$values_ind2, 
                               z = x$out_surface$values_dep, 
                               type = "surface",
-                              colors = 'Greys') %>%
+                              colors = 'Greys') |>
       
       plotly::add_surface(
         contours = list(
@@ -114,14 +114,14 @@ plot.cSEMNonlinearEffects <- function(
             usecolormap=TRUE,
             highlightcolor="#ff0000",
             project=list(z=TRUE)
-          ))) %>%
+          ))) |>
       plotly::layout( # Axis labeling
         title = paste("Surface analysis:",x$Information$dependent),
         scene = list(
           xaxis = list(title = paste('Standardized ',x$Information$independent)),
           yaxis = list(title = paste('Standardized ',x$Information$moderator)),
           zaxis = list(title = x$Information$dependent)
-        ))%>% plotly::hide_colorbar()
+        ))|> plotly::hide_colorbar()
     
     # save current viewer settings. Set to null that figure is opened in browser
     op=options()

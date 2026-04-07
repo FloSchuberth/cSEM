@@ -165,9 +165,9 @@ f4 <- function(.i, .j, .Q, .H, .var_struc_error, .temp = NULL) {
       term_split <- strsplit(name_i[k], "\\.")
 
       ## Count instances of each construct name (used for classifying)
-      tab_i <- term_split %>%
-        table(.) %>%
-        as.data.frame(., stringsAsFactors = FALSE)
+      tab_i <- term_split |>
+        table() |>
+        as.data.frame(stringsAsFactors = FALSE)
       colnames(tab_i) <- c("Component", "Component_freq")
 
       freq      <- tab_i$Component_freq

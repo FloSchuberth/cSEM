@@ -811,14 +811,14 @@ structureTestMGDDecisions <- function(.object){
   # Test only provides an overall decision 
   
   if("Klesel" %in% names(.object)){
-    klesel <- .object$Klesel$Decision %>% 
-      purrr::map(dplyr::bind_rows) %>% 
-      dplyr::bind_rows(.id = "alpha") %>%
+    klesel <- .object$Klesel$Decision |> 
+      purrr::map(dplyr::bind_rows) |> 
+      dplyr::bind_rows(.id = "alpha") |>
       # longer format
       tidyr::pivot_longer(cols = c(.data$dG, .data$dL), 
                           names_to = "Distance_metric", 
-                          values_to = "Decision") %>%
-      tidyr::pivot_wider(names_from = .data$alpha, values_from = .data$Decision) %>%
+                          values_to = "Decision") |>
+      tidyr::pivot_wider(names_from = .data$alpha, values_from = .data$Decision) |>
       dplyr::mutate(Test = "Klesel", Comparison = "overall")
     
     out <- dplyr::bind_rows(out, klesel)
@@ -829,26 +829,26 @@ structureTestMGDDecisions <- function(.object){
   if("Chin" %in% names(.object)){
     
     # overall decision
-    chin1 <- .object$Chin$Decision_overall %>% 
-      purrr::map(dplyr::bind_rows) %>% 
-      dplyr::bind_rows(.id = "p-value_correction") %>%
+    chin1 <- .object$Chin$Decision_overall |> 
+      purrr::map(dplyr::bind_rows) |> 
+      dplyr::bind_rows(.id = "p-value_correction") |>
       dplyr::mutate(Test = "Chin", Comparison = "overall")
     
-    chin2 <-  .object$Chin$Decision %>% 
-      purrr::modify_depth(3, dplyr::bind_rows) %>%
-      purrr::modify_depth(2, dplyr::bind_rows, .id = "Comparison") %>%
-      purrr::modify_depth(1, dplyr::bind_rows, .id = "alpha") %>%
-      dplyr::bind_rows(.id = "p-value_correction") %>%
+    chin2 <-  .object$Chin$Decision |> 
+      purrr::modify_depth(3, dplyr::bind_rows) |>
+      purrr::modify_depth(2, dplyr::bind_rows, .id = "Comparison") |>
+      purrr::modify_depth(1, dplyr::bind_rows, .id = "alpha") |>
+      dplyr::bind_rows(.id = "p-value_correction") |>
       # Check all comparisons
-      dplyr::group_by(.data$`p-value_correction`, .data$alpha) %>%
-      dplyr::summarise_at(dplyr::vars(-.data$Comparison), all) %>%
-      dplyr::ungroup() %>% 
+      dplyr::group_by(.data$`p-value_correction`, .data$alpha) |>
+      dplyr::summarise_at(dplyr::vars(-.data$Comparison), all) |>
+      dplyr::ungroup() |> 
       # put results into format 
       tidyr::pivot_longer(cols = (-c(.data$`p-value_correction`, .data$alpha)),
                           names_to = "Comparison", 
-                          values_to = "Decision") %>%
+                          values_to = "Decision") |>
       # put alphas in cols
-      tidyr::pivot_wider(names_from = .data$alpha, values_from = .data$Decision) %>%
+      tidyr::pivot_wider(names_from = .data$alpha, values_from = .data$Decision) |>
       dplyr::mutate(Test = "Chin")
     
     out <- dplyr::bind_rows(out, chin1, chin2)
@@ -859,22 +859,22 @@ structureTestMGDDecisions <- function(.object){
   if("Sarstedt" %in% names(.object)){
     
     # overall result
-    sarstedt1 <- .object$Sarstedt$Decision_overall %>% 
-      purrr::map(dplyr::bind_rows) %>% 
-      dplyr::bind_rows(.id = "p-value_correction") %>%
+    sarstedt1 <- .object$Sarstedt$Decision_overall |> 
+      purrr::map(dplyr::bind_rows) |> 
+      dplyr::bind_rows(.id = "p-value_correction") |>
       dplyr::mutate(Test = "Sarstedt", Comparison = "overall")
     
     # decision based on single paths
-    sarstedt2 <- .object$Sarstedt$Decision %>%
-      purrr::modify_depth(2, dplyr::bind_rows) %>%
-      purrr::map(dplyr::bind_rows, .id = "alpha") %>%
-      dplyr::bind_rows(.id = "p-value_correction") %>%
+    sarstedt2 <- .object$Sarstedt$Decision |>
+      purrr::modify_depth(2, dplyr::bind_rows) |>
+      purrr::map(dplyr::bind_rows, .id = "alpha") |>
+      dplyr::bind_rows(.id = "p-value_correction") |>
       # put results into format 
       tidyr::pivot_longer(cols = (-c(.data$`p-value_correction`, .data$alpha)),
                           names_to = "Comparison", 
-                          values_to = "Decision") %>%
+                          values_to = "Decision") |>
       # put alphas in cols
-      tidyr::pivot_wider(names_from = .data$alpha, values_from = .data$Decision) %>%
+      tidyr::pivot_wider(names_from = .data$alpha, values_from = .data$Decision) |>
       dplyr::mutate(Test = "Sarstedt")
     
     out <- dplyr::bind_rows(out, sarstedt1, sarstedt2)
@@ -885,26 +885,26 @@ structureTestMGDDecisions <- function(.object){
   if("Keil" %in% names(.object)){
     
     # overall decision
-    keil1 <- .object$Keil$Decision_overall %>% 
-      purrr::map(dplyr::bind_rows) %>% 
-      dplyr::bind_rows(.id = "p-value_correction") %>%
+    keil1 <- .object$Keil$Decision_overall |> 
+      purrr::map(dplyr::bind_rows) |> 
+      dplyr::bind_rows(.id = "p-value_correction") |>
       dplyr::mutate(Test = "Keil", Comparison = "overall")
     
     # decision based on single paths
-    keil2 <- .object$Keil$Decision %>%
-      purrr::modify_depth(3, dplyr::bind_rows) %>%
-      purrr::modify_depth(2, dplyr::bind_rows, .id = "Comparison") %>%
-      purrr::modify_depth(1, dplyr::bind_rows, .id = "alpha") %>%
-      dplyr::bind_rows(.id = "p-value_correction") %>%
-      dplyr::group_by(.data$`p-value_correction`, .data$alpha) %>%
-      dplyr::summarise_at(dplyr::vars(-.data$Comparison),all) %>%
-      dplyr::ungroup() %>%
+    keil2 <- .object$Keil$Decision |>
+      purrr::modify_depth(3, dplyr::bind_rows) |>
+      purrr::modify_depth(2, dplyr::bind_rows, .id = "Comparison") |>
+      purrr::modify_depth(1, dplyr::bind_rows, .id = "alpha") |>
+      dplyr::bind_rows(.id = "p-value_correction") |>
+      dplyr::group_by(.data$`p-value_correction`, .data$alpha) |>
+      dplyr::summarise_at(dplyr::vars(-.data$Comparison),all) |>
+      dplyr::ungroup() |>
       # put results into format 
       tidyr::pivot_longer(cols = (-c(.data$`p-value_correction`, .data$alpha)),
                           names_to = "Comparison", 
-                          values_to = "Decision") %>%
+                          values_to = "Decision") |>
       # put alphas in cols
-      tidyr::pivot_wider(names_from = .data$alpha, values_from = .data$Decision) %>%
+      tidyr::pivot_wider(names_from = .data$alpha, values_from = .data$Decision) |>
       dplyr::mutate(Test = "Keil")
     
     out <- dplyr::bind_rows(out, keil1, keil2)
@@ -915,26 +915,26 @@ structureTestMGDDecisions <- function(.object){
   if("Nitzl" %in% names(.object)){
     
     # overall decision
-    nitzl1 <- .object$Nitzl$Decision_overall %>% 
-      purrr::map(dplyr::bind_rows) %>% 
-      dplyr::bind_rows(.id = "p-value_correction") %>%
+    nitzl1 <- .object$Nitzl$Decision_overall |> 
+      purrr::map(dplyr::bind_rows) |> 
+      dplyr::bind_rows(.id = "p-value_correction") |>
       dplyr::mutate(Test = "Nitzl", Comparison = "overall")
     
     # decision based on single paths
-    nitzl2 <- .object$Nitzl$Decision %>%
-      purrr::modify_depth(3, dplyr::bind_rows) %>%
-      purrr::modify_depth(2, dplyr::bind_rows, .id = "Comparison") %>%
-      purrr::modify_depth(1, dplyr::bind_rows, .id = "alpha") %>%
-      dplyr::bind_rows(.id = "p-value_correction") %>%
-      dplyr::group_by(.data$`p-value_correction`, .data$alpha) %>%
-      dplyr::summarise_at(dplyr::vars(-.data$Comparison),all) %>%
-      dplyr::ungroup() %>%
+    nitzl2 <- .object$Nitzl$Decision |>
+      purrr::modify_depth(3, dplyr::bind_rows) |>
+      purrr::modify_depth(2, dplyr::bind_rows, .id = "Comparison") |>
+      purrr::modify_depth(1, dplyr::bind_rows, .id = "alpha") |>
+      dplyr::bind_rows(.id = "p-value_correction") |>
+      dplyr::group_by(.data$`p-value_correction`, .data$alpha) |>
+      dplyr::summarise_at(dplyr::vars(-.data$Comparison),all) |>
+      dplyr::ungroup() |>
       # put results into format 
       tidyr::pivot_longer(cols = (-c(.data$`p-value_correction`, .data$alpha)),
                           names_to = "Comparison", 
-                          values_to = "Decision") %>%
+                          values_to = "Decision") |>
       # put alphas in cols
-      tidyr::pivot_wider(names_from = .data$alpha, values_from = .data$Decision) %>%
+      tidyr::pivot_wider(names_from = .data$alpha, values_from = .data$Decision) |>
       dplyr::mutate(Test = "Nitzl")
     
     out <- dplyr::bind_rows(out, nitzl1, nitzl2)
@@ -945,26 +945,26 @@ structureTestMGDDecisions <- function(.object){
   if("Henseler" %in% names(.object)){
     
     # overall decision
-    henseler1 <- .object$Henseler$Decision_overall %>% 
-      purrr::map(dplyr::bind_rows) %>% 
-      dplyr::bind_rows(.id = "p-value_correction") %>%
+    henseler1 <- .object$Henseler$Decision_overall |> 
+      purrr::map(dplyr::bind_rows) |> 
+      dplyr::bind_rows(.id = "p-value_correction") |>
       dplyr::mutate(Test = "Henseler", Comparison = "overall")
     
     # decision based on single paths
-    henseler2 <- .object$Henseler$Decision %>%
-      purrr::modify_depth(3, dplyr::bind_rows) %>%
-      purrr::modify_depth(2, dplyr::bind_rows, .id = "Comparison") %>%
-      purrr::modify_depth(1, dplyr::bind_rows, .id = "alpha") %>%
-      dplyr::bind_rows(.id = "p-value_correction") %>%
-      dplyr::group_by(.data$`p-value_correction`, .data$alpha) %>%
-      dplyr::summarise_at(dplyr::vars(-.data$Comparison),all) %>%
-      dplyr::ungroup() %>%
+    henseler2 <- .object$Henseler$Decision |>
+      purrr::modify_depth(3, dplyr::bind_rows) |>
+      purrr::modify_depth(2, dplyr::bind_rows, .id = "Comparison") |>
+      purrr::modify_depth(1, dplyr::bind_rows, .id = "alpha") |>
+      dplyr::bind_rows(.id = "p-value_correction") |>
+      dplyr::group_by(.data$`p-value_correction`, .data$alpha) |>
+      dplyr::summarise_at(dplyr::vars(-.data$Comparison),all) |>
+      dplyr::ungroup() |>
       # put results into format 
       tidyr::pivot_longer(cols = (-c(.data$`p-value_correction`, .data$alpha)),
                           names_to = "Comparison", 
-                          values_to = "Decision") %>%
+                          values_to = "Decision") |>
       # put alphas in cols
-      tidyr::pivot_wider(names_from = .data$alpha, values_from = .data$Decision) %>%
+      tidyr::pivot_wider(names_from = .data$alpha, values_from = .data$Decision) |>
       dplyr::mutate(Test = "Henseler")
     
     out <- dplyr::bind_rows(out, henseler1, henseler2)
@@ -975,36 +975,36 @@ structureTestMGDDecisions <- function(.object){
   if("CI_para" %in% names(.object)){
     
     # overall decision
-    CIpara1 <- .object$CI_para$Decision_overall %>% 
-      purrr::map(dplyr::bind_rows) %>% 
-      dplyr::bind_rows(.id = "alpha") %>%
+    CIpara1 <- .object$CI_para$Decision_overall |> 
+      purrr::map(dplyr::bind_rows) |> 
+      dplyr::bind_rows(.id = "alpha") |>
       tidyr::pivot_longer(cols = dplyr::contains("CI"), 
                           names_to = "CI_type", 
-                          values_to = "Decision") %>%
-      tidyr::pivot_wider(names_from = .data$alpha, values_from = .data$Decision) %>%
+                          values_to = "Decision") |>
+      tidyr::pivot_wider(names_from = .data$alpha, values_from = .data$Decision) |>
       # Change % as equivlanet to alpha
-      dplyr::rename_at(dplyr::vars(dplyr::contains("%")), changeCItoAlphaEquivalent) %>%
+      dplyr::rename_at(dplyr::vars(dplyr::contains("%")), changeCItoAlphaEquivalent) |>
       dplyr::mutate(Test = "CI_para", Comparison = "overall")
     
     # decision based on single paths
-    CIpara2 <-  .object$CI_para$Decision %>%
-      purrr::modify_depth(3, dplyr::bind_rows) %>%
-      purrr::modify_depth(3, ~ dplyr::select(., .data$Name, .data$Decision)) %>%
-      purrr::modify_depth(2, dplyr::bind_rows, .id = "CI_type") %>%
-      purrr::modify_depth(1, dplyr::bind_rows, .id = "Comparison") %>%
-      dplyr::bind_rows(.id = "alpha") %>%
-      tidyr::pivot_wider(names_from = .data$Name, values_from = .data$Decision) %>%
-      dplyr::group_by(.data$alpha, .data$CI_type) %>%
-      dplyr::summarise_at(dplyr::vars(-.data$Comparison), all) %>%
-      dplyr::ungroup() %>%
+    CIpara2 <-  .object$CI_para$Decision |>
+      purrr::modify_depth(3, dplyr::bind_rows) |>
+      purrr::modify_depth(3, ~ dplyr::select(., .data$Name, .data$Decision)) |>
+      purrr::modify_depth(2, dplyr::bind_rows, .id = "CI_type") |>
+      purrr::modify_depth(1, dplyr::bind_rows, .id = "Comparison") |>
+      dplyr::bind_rows(.id = "alpha") |>
+      tidyr::pivot_wider(names_from = .data$Name, values_from = .data$Decision) |>
+      dplyr::group_by(.data$alpha, .data$CI_type) |>
+      dplyr::summarise_at(dplyr::vars(-.data$Comparison), all) |>
+      dplyr::ungroup() |>
       # put results into format 
       tidyr::pivot_longer(cols = (-c(.data$CI_type, .data$alpha)),
                           names_to = "Comparison", 
-                          values_to = "Decision") %>%
+                          values_to = "Decision") |>
       # put alphas in cols
-      tidyr::pivot_wider(names_from = .data$alpha, values_from = .data$Decision) %>%
+      tidyr::pivot_wider(names_from = .data$alpha, values_from = .data$Decision) |>
       # Change % as equivalent to alpha
-      dplyr::rename_at(dplyr::vars(dplyr::contains("%")), changeCItoAlphaEquivalent) %>%
+      dplyr::rename_at(dplyr::vars(dplyr::contains("%")), changeCItoAlphaEquivalent) |>
       dplyr::mutate(Test = "CI_para")
     
     out <- dplyr::bind_rows(out, CIpara1, CIpara2)
@@ -1015,36 +1015,36 @@ structureTestMGDDecisions <- function(.object){
   if("CI_overlap" %in% names(.object)){
     
     # overall decision
-    CIoverlap1 <- .object$CI_overlap$Decision_overall %>% 
-      purrr::map(dplyr::bind_rows) %>% 
-      dplyr::bind_rows(.id = "alpha") %>%
+    CIoverlap1 <- .object$CI_overlap$Decision_overall |> 
+      purrr::map(dplyr::bind_rows) |> 
+      dplyr::bind_rows(.id = "alpha") |>
       tidyr::pivot_longer(cols = dplyr::contains("CI"), 
                           names_to = "CI_type", 
-                          values_to = "Decision") %>%
-      tidyr::pivot_wider(names_from = .data$alpha, values_from = .data$Decision) %>%
+                          values_to = "Decision") |>
+      tidyr::pivot_wider(names_from = .data$alpha, values_from = .data$Decision) |>
       # Change % as equivalent to alpha
-      dplyr::rename_at(dplyr::vars(dplyr::contains("%")), changeCItoAlphaEquivalent) %>%
+      dplyr::rename_at(dplyr::vars(dplyr::contains("%")), changeCItoAlphaEquivalent) |>
       dplyr::mutate(Test = "CI_overlap", Comparison = "overall")
     
     # decision based on single paths
-    CIoverlap2 <-  .object$CI_overlap$Decision %>%
-      purrr::modify_depth(3, dplyr::bind_rows) %>%
-      purrr::modify_depth(3, ~ dplyr::select(., .data$Name, .data$Decision)) %>%
-      purrr::modify_depth(2, dplyr::bind_rows, .id = "CI_type") %>%
-      purrr::modify_depth(1, dplyr::bind_rows, .id = "Comparison") %>%
-      dplyr::bind_rows(.id = "alpha") %>%
-      tidyr::pivot_wider(names_from = .data$Name, values_from = .data$Decision) %>%
-      dplyr::group_by(.data$alpha, .data$CI_type) %>%
-      dplyr::summarise_at(dplyr::vars(-.data$Comparison), all) %>%
-      dplyr::ungroup() %>%
+    CIoverlap2 <-  .object$CI_overlap$Decision |>
+      purrr::modify_depth(3, dplyr::bind_rows) |>
+      purrr::modify_depth(3, ~ dplyr::select(., .data$Name, .data$Decision)) |>
+      purrr::modify_depth(2, dplyr::bind_rows, .id = "CI_type") |>
+      purrr::modify_depth(1, dplyr::bind_rows, .id = "Comparison") |>
+      dplyr::bind_rows(.id = "alpha") |>
+      tidyr::pivot_wider(names_from = .data$Name, values_from = .data$Decision) |>
+      dplyr::group_by(.data$alpha, .data$CI_type) |>
+      dplyr::summarise_at(dplyr::vars(-.data$Comparison), all) |>
+      dplyr::ungroup() |>
       # put results into format 
       tidyr::pivot_longer(cols = (-c(.data$CI_type, .data$alpha)),
                           names_to = "Comparison", 
-                          values_to = "Decision") %>%
+                          values_to = "Decision") |>
       # put alphas in cols
-      tidyr::pivot_wider(names_from = .data$alpha, values_from = .data$Decision) %>%
+      tidyr::pivot_wider(names_from = .data$alpha, values_from = .data$Decision) |>
       # Change % as equivalent to alpha
-      dplyr::rename_at(dplyr::vars(dplyr::contains("%")), changeCItoAlphaEquivalent) %>%
+      dplyr::rename_at(dplyr::vars(dplyr::contains("%")), changeCItoAlphaEquivalent) |>
       dplyr::mutate(Test = "CI_overlap")
     
     out <- dplyr::bind_rows(out, CIoverlap1, CIoverlap2)

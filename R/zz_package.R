@@ -9,16 +9,16 @@
 #' fixed weights, as well as several tests and typical postestimation 
 #' procedures (e.g., assess the model fit, compute direct, indirect and total effects).
 #'
-#' @importFrom magrittr %>%
 #' @importFrom matrixStats rowProds
 #' @importFrom rlang .data
-#' @importFrom cli rule boxx
-#' @import crayon
+#' @importFrom cli rule boxx ansi_align style_bold col_green col_red col_cyan
+#'   col_magenta col_yellow
+#' @importFrom lifecycle deprecated
 #' @import stats
 #' @import utils
-#' 
+#'
 #' @keywords internal
 "_PACKAGE"
 
-## quiets concerns of R CMD check re: the .'s that appear in pipelines
-if(getRversion() >= "2.15.1") globalVariables(c(".", "alpha", ""))
+## quiets concerns of R CMD check re: variables used in NSE contexts
+if(getRversion() >= "2.15.1") globalVariables(c("alpha", "", "Construct_type", "pruned_tree"))

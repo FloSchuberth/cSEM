@@ -29,14 +29,14 @@ plot.cSEMPredict <- function(x, ...) {
   }
   
   x <- lapply(x[1:4], as.data.frame)
-  xx <- x %>% 
+  xx <- x |> 
     lapply(function(x) {
       x$Obs <- as.numeric(rownames(x))
       x
-    }) %>% 
-    dplyr::bind_rows(.id = "Type") %>% 
-    tidyr::pivot_longer(cols = colnames(x[[1]]), names_to = "Indicator") %>% 
-    tidyr::pivot_wider(names_from = "Type", values_from = "value") %>% 
+    }) |> 
+    dplyr::bind_rows(.id = "Type") |> 
+    tidyr::pivot_longer(cols = colnames(x[[1]]), names_to = "Indicator") |> 
+    tidyr::pivot_wider(names_from = "Type", values_from = "value") |> 
     as.data.frame()
   
   ## Actual vs. predicted
