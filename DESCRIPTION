@@ -60,7 +60,6 @@ LazyData: true
 Imports: 
     alabama,
     cli,
-    crayon,
     expm (>= 0.999-5),
     future.apply,
     future,

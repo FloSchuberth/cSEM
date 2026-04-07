@@ -26,22 +26,22 @@ print.cSEMAssess <- function(x, ...) {
       for(j in seq_along(nn)) {
         cat2(
           "\n\n\t", 
-          col_align("Construct", max(l, nchar("Construct")) + 2)
+          ansi_align("Construct", max(l, nchar("Construct")) + 2)
         )
         for(k in nn[[j]]) {
           cat2(
-            col_align(k, 14, align = "center")
+            ansi_align(k, 14, align = "center")
           )
         }
         
         for(i in c_names) {
           cat2(
             "\n\t", 
-            col_align(i, max(l, nchar("Construct")) + 2)
+            ansi_align(i, max(l, nchar("Construct")) + 2)
           )
           
           for(k in nn[[j]]) {
-            cat2(col_align(sprintf("%.4f",x[[k]][i]), 14, align = "center"))
+            cat2(ansi_align(sprintf("%.4f",x[[k]][i]), 14, align = "center"))
           }
         } 
       }
@@ -59,19 +59,19 @@ print.cSEMAssess <- function(x, ...) {
       
       cat2(
         "\n\t", 
-        col_align("Construct", l + 2, align = "left"), 
-        col_align(names(rel)[1], 17, align = "center"), 
-        col_align(names(rel)[2], 18, align = "center"),
-        col_align(names(rel)[3], 26, align = "center")
+        ansi_align("Construct", l + 2, align = "left"), 
+        ansi_align(names(rel)[1], 17, align = "center"), 
+        ansi_align(names(rel)[2], 18, align = "center"),
+        ansi_align(names(rel)[3], 26, align = "center")
       )
       
       for(i in c_names) {
         cat2(
           "\n\t",
-          col_align(i, l + 2, align = "left"),
-          col_align(sprintf("%.4f", rel[[1]][i]), 17, align = "center"),
-          col_align(sprintf("%.4f", rel[[2]][i]), 18, align = "center"),
-          col_align(sprintf("%.4f", rel[[3]][i]), 26, align = "center")
+          ansi_align(i, l + 2, align = "left"),
+          ansi_align(sprintf("%.4f", rel[[1]][i]), 17, align = "center"),
+          ansi_align(sprintf("%.4f", rel[[2]][i]), 18, align = "center"),
+          ansi_align(sprintf("%.4f", rel[[3]][i]), 26, align = "center")
         )
         
       } 
@@ -103,22 +103,22 @@ print.cSEMAssess <- function(x, ...) {
       for(j in seq_along(nn)) {
         cat2(
           "\n\n\t", 
-          col_align("Construct", max(l, nchar("Construct")) + 2)
+          ansi_align("Construct", max(l, nchar("Construct")) + 2)
         )
         for(k in nn[[j]]) {
           cat2(
-            col_align(k, 14, align = "center")
+            ansi_align(k, 14, align = "center")
           )
         }
         
         for(i in c_names) {
           cat2(
             "\n\t", 
-            col_align(i, max(l, nchar("Construct")) + 2)
+            ansi_align(i, max(l, nchar("Construct")) + 2)
           )
           
           for(k in nn[[j]]) {
-            cat2(col_align(sprintf("%.4f",x[[k]][i]), 14, align = "center"))
+            cat2(ansi_align(sprintf("%.4f",x[[k]][i]), 14, align = "center"))
           }
         } 
       }
@@ -133,66 +133,66 @@ print.cSEMAssess <- function(x, ...) {
     cat2("\n\n", rule2("Distance and fit measures"), "\n")
     
     if(any(names(x) == "DG")) {
-      cat2(col_align("\n\tGeodesic distance", 30), "= ", x$DG)
+      cat2(ansi_align("\n\tGeodesic distance", 30), "= ", x$DG)
     }
     if(any(names(x) == "DL")) {
-      cat2(col_align("\n\tSquared Euclidean distance", 30), "= ", x$DL)
+      cat2(ansi_align("\n\tSquared Euclidean distance", 30), "= ", x$DL)
     }
     if(any(names(x) == "DML")) {
-      cat2(col_align("\n\tML distance", 30), "= ", x$DML)
+      cat2(ansi_align("\n\tML distance", 30), "= ", x$DML)
     }
     
     cat2("\n")
     
     if(any(names(x) == "Chi_square")) {
-      cat2(col_align("\n\tChi_square", 17), "= ", x$Chi_square)
+      cat2(ansi_align("\n\tChi_square", 17), "= ", x$Chi_square)
     }
     if(any(names(x) == "Chi_square_df")) {
-      cat2(col_align("\n\tChi_square_df", 17), "= ", x$Chi_square_df)
+      cat2(ansi_align("\n\tChi_square_df", 17), "= ", x$Chi_square_df)
     }
     if(any(names(x) == "CFI")) {
-      cat2(col_align("\n\tCFI", 17), "= ", x$CFI)
+      cat2(ansi_align("\n\tCFI", 17), "= ", x$CFI)
     }
     if(any(names(x) == "CN")) {
-      cat2(col_align("\n\tCN", 17), "= ")
+      cat2(ansi_align("\n\tCN", 17), "= ")
       cat(x$CN, sep = ", ")
     }
     if(any(names(x) == "GFI")) {
-      cat2(col_align("\n\tGFI", 17), "= ", x$GFI)
+      cat2(ansi_align("\n\tGFI", 17), "= ", x$GFI)
     }
     if(any(names(x) == "IFI")) {
-      cat2(col_align("\n\tIFI", 17), "= ", x$IFI)
+      cat2(ansi_align("\n\tIFI", 17), "= ", x$IFI)
     }
     if(any(names(x) == "NFI")) {
-      cat2(col_align("\n\tNFI", 17), "= ", x$NFI)
+      cat2(ansi_align("\n\tNFI", 17), "= ", x$NFI)
     }
     if(any(names(x) == "NNFI")) {
-      cat2(col_align("\n\tNNFI", 17), "= ", x$NNFI)
+      cat2(ansi_align("\n\tNNFI", 17), "= ", x$NNFI)
     }
     if(any(names(x) == "RMSEA")) {
-      cat2(col_align("\n\tRMSEA", 17), "= ", x$RMSEA)
+      cat2(ansi_align("\n\tRMSEA", 17), "= ", x$RMSEA)
     }
     if(any(names(x) == "RMS_theta")) {
-      cat2(col_align("\n\tRMS_theta", 17), "= ", x$RMS_theta)
+      cat2(ansi_align("\n\tRMS_theta", 17), "= ", x$RMS_theta)
     }
     if(any(names(x) == "RMS_theta_mi")) {
-      cat2(col_align("\n\tRMS_theta_mi", 17), "= ", x$RMS_theta)
+      cat2(ansi_align("\n\tRMS_theta_mi", 17), "= ", x$RMS_theta)
     }
     if(any(names(x) == "SRMR")) {
-      cat2(col_align("\n\tSRMR", 17), "= ", x$SRMR)
+      cat2(ansi_align("\n\tSRMR", 17), "= ", x$SRMR)
     }
     if(any(names(x) == "FIT")) {
-      cat2(col_align("\n\tFIT", 17), "= ", x$FIT)
+      cat2(ansi_align("\n\tFIT", 17), "= ", x$FIT)
     }
     if(any(names(x) == "FIT_m")) {
-      cat2(col_align("\n\tFIT_m", 17), "= ", x$FIT_m)
+      cat2(ansi_align("\n\tFIT_m", 17), "= ", x$FIT_m)
     }
     if(any(names(x) == "FIT_s")) {
-      cat2(col_align("\n\tFIT_s", 17), "= ", x$FIT_s)
+      cat2(ansi_align("\n\tFIT_s", 17), "= ", x$FIT_s)
     }
     
     if(any(names(x) == "Df")) {
-      cat2(col_align("\n\n\tDegrees of freedom", 25), "= ", x$Df)
+      cat2(ansi_align("\n\n\tDegrees of freedom", 25), "= ", x$Df)
     }
   }
   
@@ -223,22 +223,22 @@ print.cSEMAssess <- function(x, ...) {
       for(j in seq_along(nn)) {
         cat2(
           "\n\n\t", 
-          col_align("Construct", max(l, nchar("Construct")) + 2)
+          ansi_align("Construct", max(l, nchar("Construct")) + 2)
         )
         for(k in nn[[j]]) {
           cat2(
-            col_align(k, 14, align = "center")
+            ansi_align(k, 14, align = "center")
           )
         }
         
         for(i in c_names) {
           cat2(
             "\n\t", 
-            col_align(i, max(l, nchar("Construct")) + 2)
+            ansi_align(i, max(l, nchar("Construct")) + 2)
           )
           
           for(k in nn[[j]]) {
-            cat2(col_align(sprintf("%.4f",x[[k]][i]), 14, align = "center"))
+            cat2(ansi_align(sprintf("%.4f",x[[k]][i]), 14, align = "center"))
           }
         } 
       }
@@ -253,14 +253,14 @@ print.cSEMAssess <- function(x, ...) {
       cat2("\n\n  Dependent construct: '", i, "'\n")
       cat2(
         "\n\t", 
-        col_align("Independent construct", max(nchar(names(x$VIF[i, ])), nchar("Independent construct")) + 2), 
-        col_align("VIF value", 12, align = "center")
+        ansi_align("Independent construct", max(nchar(names(x$VIF[i, ])), nchar("Independent construct")) + 2), 
+        ansi_align("VIF value", 12, align = "center")
       )
       for(j in names(which(x$VIF[i, ] != 0))) {
         cat2(
           "\n\t", 
-          col_align(j, max(nchar(names(x$VIF[i, ])), nchar("Independent construct")) + 2), 
-          col_align(sprintf("%.4f", x$VIF[i, j]), 12, align = "center")
+          ansi_align(j, max(nchar(names(x$VIF[i, ])), nchar("Independent construct")) + 2), 
+          ansi_align(sprintf("%.4f", x$VIF[i, j]), 12, align = "center")
         )  
       }
     }
@@ -274,14 +274,14 @@ print.cSEMAssess <- function(x, ...) {
       cat2("\n\n  Construct: '", i, "'\n")
       cat2(
         "\n\t", 
-        col_align("Weight", max(nchar(names(x$VIF_modeB[i, ])), nchar("Weight")) + 2), 
-        col_align("VIF value", 12, align = "center")
+        ansi_align("Weight", max(nchar(names(x$VIF_modeB[i, ])), nchar("Weight")) + 2), 
+        ansi_align("VIF value", 12, align = "center")
       )
       for(j in names(which(x$VIF_modeB[i, ] != 0))) {
         cat2(
           "\n\t", 
-          col_align(j, max(nchar(names(x$VIF_modeB[i, ])), nchar("Weight")) + 2), 
-          col_align(sprintf("%.4f", x$VIF_modeB[i, j]), 12, align = "center")
+          ansi_align(j, max(nchar(names(x$VIF_modeB[i, ])), nchar("Weight")) + 2), 
+          ansi_align(sprintf("%.4f", x$VIF_modeB[i, j]), 12, align = "center")
         )  
       }
     }
@@ -296,14 +296,14 @@ print.cSEMAssess <- function(x, ...) {
       cat2("\n\n  Dependent construct: '", i, "'\n")
       cat2(
         "\n\t", 
-        col_align("Independent construct", max(ll, nchar("Independent construct")) + 2), 
-        col_align("f^2", 12, align = "center")
+        ansi_align("Independent construct", max(ll, nchar("Independent construct")) + 2), 
+        ansi_align("f^2", 12, align = "center")
       )
       for(j in colnames(x$F2[i, x$F2[i, ] != 0, drop = FALSE])) {
         cat2(
           "\n\t", 
-          col_align(j, max(ll, nchar("Independent construct")) + 2), 
-          col_align(sprintf("%.4f", x$F2[i, j]), 12, align = "center")
+          ansi_align(j, max(ll, nchar("Independent construct")) + 2), 
+          ansi_align(sprintf("%.4f", x$F2[i, j]), 12, align = "center")
         )  
       }
     }

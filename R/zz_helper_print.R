@@ -12,12 +12,12 @@ printSummarizeOverview <- function(.summarize_object) {
   
   cat2("\n\tGeneral information:\n\t","------------------------")
   cat2(
-    col_align("\n\tEstimation status", 35), "= ", ifelse(sum(x$Estimation_status) == 0, green("Ok"), 
-                                                         c(red("Not ok!"), "Use: verify()."))
+    ansi_align("\n\tEstimation status", 35), "= ", ifelse(sum(x$Estimation_status) == 0, col_green("Ok"), 
+                                                         c(col_red("Not ok!"), "Use: verify()."))
   )
   cat2(
-    col_align("\n\tNumber of observations", 35), "= ", nrow(x$Arguments$.data),
-    col_align("\n\tWeight estimator", 35), "= ", 
+    ansi_align("\n\tNumber of observations", 35), "= ", nrow(x$Arguments$.data),
+    ansi_align("\n\tWeight estimator", 35), "= ", 
     if(x$Arguments$.approach_weights == "GSCA") {x$Weight_info$Modes} else {
       ifelse(x$Arguments$.approach_weights == "PLS-PM" && 
              !all(x$Type_of_indicator_correlation == 'Pearson'), 
@@ -27,12 +27,12 @@ printSummarizeOverview <- function(.summarize_object) {
   
   if(x$Arguments$.approach_weights == "PLS-PM") {
     cat2(
-      col_align("\n\tInner weighting scheme", 35), "= ", '"', 
+      ansi_align("\n\tInner weighting scheme", 35), "= ", '"', 
       x$Arguments$.PLS_weight_scheme_inner, '"'
     )
   }
   cat2(
-    col_align("\n\tType of indicator correlation", 35), "= ", 
+    ansi_align("\n\tType of indicator correlation", 35), "= ", 
     paste0(x$Type_of_indicator_correlation, collapse = ", ")
   )
   
@@ -45,12 +45,12 @@ printSummarizeOverview <- function(.summarize_object) {
     )
   } else {
     cat2(
-      col_align("\n\tPath model estimator", 35), "= ", x$Arguments$.approach_paths
+      ansi_align("\n\tPath model estimator", 35), "= ", x$Arguments$.approach_paths
     )
   }
 
   cat2(
-    col_align("\n\tSecond-order approach", 35), "= ", x$Approach_2ndorder
+    ansi_align("\n\tSecond-order approach", 35), "= ", x$Approach_2ndorder
   )
   
   
@@ -58,8 +58,8 @@ printSummarizeOverview <- function(.summarize_object) {
   
   
   cat2(
-    col_align("\n\tType of path model", 35), "= ", x$Model$model_type,
-    col_align("\n\tDisattenuated", 35), "= ", 
+    ansi_align("\n\tType of path model", 35), "= ", x$Model$model_type,
+    ansi_align("\n\tDisattenuated", 35), "= ", 
     ifelse(x$Arguments$.disattenuate & any(x$Model$construct_type == "Common factor"), 
            ifelse(x$Arguments$.approach_weights == "PLS-PM", 
                   # If the model contains second-order constructs, the mixed or two-stage approach 
@@ -70,7 +70,7 @@ printSummarizeOverview <- function(.summarize_object) {
                   if(!is.na(x$Approach_2ndorder)){
                     paste("First stage:", ifelse(.summarize_object$First_stage$Information$Arguments$.disattenuate==TRUE,
                                                  "Yes",
-                                                 "No"), "\n",col_align("= Second stage:", 55, "right"), 
+                                                 "No"), "\n",ansi_align("= Second stage:", 55, "right"), 
                           ifelse(x$Arguments$.disattenuate == TRUE, "Yes", "No"))
                   }else{
                          "Yes (PLSc)"
@@ -90,23 +90,23 @@ printSummarizeOverview <- function(.summarize_object) {
   if(inherits(.summarize_object, "cSEMSummarize_resampled")) {
     cat2("\n\n\tResample information:\n\t","---------------------")
     cat2(
-      col_align("\n\tResample method", 35), "= ", '"', xx$Information_resample$Method, '"',
-      col_align("\n\tNumber of resamples", 35), "= ", xx$Information_resample$Number_of_runs
+      ansi_align("\n\tResample method", 35), "= ", '"', xx$Information_resample$Method, '"',
+      ansi_align("\n\tNumber of resamples", 35), "= ", xx$Information_resample$Number_of_runs
     )
     if(xx$Information_resample$Method2 %in% c("bootstrap", "jackknife")) {
       cat2(
-        col_align("\n\tResample of resample method", 35), "= ", '"',xx$Information_resample$Method2, '"',
-        col_align("\n\tNumber of resamples per resample", 35), "= ", xx$Information_resample$Number_of_runs2
+        ansi_align("\n\tResample of resample method", 35), "= ", '"',xx$Information_resample$Method2, '"',
+        ansi_align("\n\tNumber of resamples per resample", 35), "= ", xx$Information_resample$Number_of_runs2
       ) 
     }
     cat2(
-      col_align("\n\tNumber of admissible results ", 35), "= ", xx$Information_resample$Number_of_admissibles,
-      col_align("\n\tApproach to handle inadmissibles ", 35), "= ", '"', xx$Information_resample$Handle_inadmissibles, '"', 
-      col_align("\n\tSign change option", 35), "= ", '"', xx$Information_resample$Sign_change_option, '"'
+      ansi_align("\n\tNumber of admissible results ", 35), "= ", xx$Information_resample$Number_of_admissibles,
+      ansi_align("\n\tApproach to handle inadmissibles ", 35), "= ", '"', xx$Information_resample$Handle_inadmissibles, '"', 
+      ansi_align("\n\tSign change option", 35), "= ", '"', xx$Information_resample$Sign_change_option, '"'
     )
     if(!isFALSE(xx$Information_resample$Seed)) {
       cat2(
-        col_align("\n\tRandom seed", 35), "= ", xx$Information_resample$Seed
+        ansi_align("\n\tRandom seed", 35), "= ", xx$Information_resample$Seed
       )
     }
   }
@@ -145,12 +145,12 @@ printSummarizeConstructDetails <- function(.summarize_object) {
   
   cat2(
     "\n\t", 
-    col_align("Name", max(l, nchar("Name")) + 2), 
-    col_align("Modeled as", 13 + 2),
-    col_align("Order", 12 + 2)
+    ansi_align("Name", max(l, nchar("Name")) + 2), 
+    ansi_align("Modeled as", 13 + 2),
+    ansi_align("Order", 12 + 2)
   )
   if(x2$Arguments$.approach_weights == "PLS-PM") {
-    cat2(col_align("Mode", 10))
+    cat2(ansi_align("Mode", 10))
   }
   cat("\n")
   
@@ -159,33 +159,33 @@ printSummarizeConstructDetails <- function(.summarize_object) {
     # First stage
     for(i in names(x1$Model$construct_type)) {
       cat2("\n\t", 
-          col_align(i, max(l, nchar("Name")) + 2), 
-          col_align(x1$Model$construct_type[i], 13 + 2), 
-          col_align("First order", 12 + 2))
+          ansi_align(i, max(l, nchar("Name")) + 2), 
+          ansi_align(x1$Model$construct_type[i], 13 + 2), 
+          ansi_align("First order", 12 + 2))
       if(x1$Arguments$.approach_weights == "PLS-PM") {
-        cat2(col_align(paste0('"', x1$Weight_info$Modes[i],'"'), 10))
+        cat2(ansi_align(paste0('"', x1$Weight_info$Modes[i],'"'), 10))
       }
     }
     # Second stage
     for(i in names(x2$Model$construct_type[c_2nd_order])) {
       cat2("\n\t", 
-          col_align(i, max(l, nchar("Name")) + 2), 
-          col_align(x2$Model$construct_type[i], 13 + 2), 
-          col_align("Second order", 12 + 2))
+          ansi_align(i, max(l, nchar("Name")) + 2), 
+          ansi_align(x2$Model$construct_type[i], 13 + 2), 
+          ansi_align("Second order", 12 + 2))
       if(x2$Arguments$.approach_weights == "PLS-PM") {
-        cat2(col_align(paste0('"', x2$Weight_info$Modes[i],'"'), 10))
+        cat2(ansi_align(paste0('"', x2$Weight_info$Modes[i],'"'), 10))
       }
     }
   } else {
     for(i in names(x2$Model$construct_type)) {
       cat2(
         "\n\t", 
-        col_align(i, max(l, nchar("Name")) + 2), 
-        col_align(x2$Model$construct_type[i], 13 + 2), 
-        col_align(x2$Model$construct_order[i], 12 + 2)
+        ansi_align(i, max(l, nchar("Name")) + 2), 
+        ansi_align(x2$Model$construct_type[i], 13 + 2), 
+        ansi_align(x2$Model$construct_order[i], 12 + 2)
       )
       if(x2$Arguments$.approach_weights == "PLS-PM") {
-        cat2(col_align(paste0('"', x2$Weight_info$Modes[i],'"'), 10))
+        cat2(ansi_align(paste0('"', x2$Weight_info$Modes[i],'"'), 10))
       }
     }
   }
@@ -229,39 +229,39 @@ printSummarizePathCorrelation <- function(.summarize_object, .ci_colnames, .what
     interval_names    <- unique(sapply(xx, `[`, 1))
     sig_level_names   <- unique(gsub("[LU]", "", sapply(xx, `[`, 2)))
     
-    cat2("\n  ",  col_align("", width = max(l, nchar(.what)) + 44))
+    cat2("\n  ",  ansi_align("", width = max(l, nchar(.what)) + 44))
     for(i in interval_names) {
-      cat2(col_align(i, width = 20*length(sig_level_names), align = "center"))
+      cat2(ansi_align(i, width = 20*length(sig_level_names), align = "center"))
     }
   }
   cat2(
     "\n  ", 
-    col_align(.what, l + 2), 
-    col_align("Estimate", 10, align = "right"), 
-    col_align("Std. error", 12, align = "right"),
-    col_align("t-stat.", 10, align = "right"), 
-    col_align("p-value", 10, align = "right")
+    ansi_align(.what, l + 2), 
+    ansi_align("Estimate", 10, align = "right"), 
+    ansi_align("Std. error", 12, align = "right"),
+    ansi_align("t-stat.", 10, align = "right"), 
+    ansi_align("p-value", 10, align = "right")
   )
   if(length(.ci_colnames) != 0) {
     for(i in rep(sig_level_names, length(interval_names))) {
-      cat2(col_align(i, 20, align = "center"))
+      cat2(ansi_align(i, 20, align = "center"))
     } 
   }
   
   for(i in 1:nrow(x)) {
     cat2(
       "\n  ", 
-      col_align(x[i, "Name"], l + 2), 
-      col_align(sprintf("%.4f", x[i, "Estimate"]), 10, align = "right"),
-      col_align(sprintf("%.4f", x[i, "Std_err"]), 12, align = "right"),
-      col_align(sprintf("%.4f", x[i, "t_stat"]), 10, align = "right"),
-      col_align(sprintf("%.4f", x[i, "p_value"]), 10, align = "right")
+      ansi_align(x[i, "Name"], l + 2), 
+      ansi_align(sprintf("%.4f", x[i, "Estimate"]), 10, align = "right"),
+      ansi_align(sprintf("%.4f", x[i, "Std_err"]), 12, align = "right"),
+      ansi_align(sprintf("%.4f", x[i, "t_stat"]), 10, align = "right"),
+      ansi_align(sprintf("%.4f", x[i, "p_value"]), 10, align = "right")
     )
     if(length(.ci_colnames) != 0) {
       for(j in seq(1, length(.ci_colnames), by = 2) + 
           ifelse(.what == "Correlation", 5, 6)) {
         cat2(
-          col_align(
+          ansi_align(
             paste0("[", sprintf("%7.4f", x[i, j]), ";", 
                    sprintf("%7.4f", x[i, j+1]), " ]"), 20, align = "center")
         )
@@ -293,16 +293,16 @@ printSummarizeLoadingsWeights <- function(.summarize_object, .ci_colnames) {
       }
       cat2(
         "\n  ", 
-        col_align(x[i, "Name"], max(l, nchar(.what)) + 2), 
-        col_align(sprintf("%.4f", x[i, "Estimate"]), 10, align = "right"), 
-        col_align(sprintf("%.4f", x[i, "Std_err"]), 12, align = "right"),
-        col_align(sprintf("%.4f", x[i, "t_stat"]), 10, align = "right"),
-        col_align(sprintf("%.4f", x[i, "p_value"]), 10, align = "right")
+        ansi_align(x[i, "Name"], max(l, nchar(.what)) + 2), 
+        ansi_align(sprintf("%.4f", x[i, "Estimate"]), 10, align = "right"), 
+        ansi_align(sprintf("%.4f", x[i, "Std_err"]), 12, align = "right"),
+        ansi_align(sprintf("%.4f", x[i, "t_stat"]), 10, align = "right"),
+        ansi_align(sprintf("%.4f", x[i, "p_value"]), 10, align = "right")
       )
       if(length(.ci_colnames) != 0) {
         for(j in seq(1, length(.ci_colnames), by = 2) + 6) {
           cat2(
-            col_align(
+            ansi_align(
               paste0("[", sprintf("%7.4f", x[i, j]), ";", 
                      sprintf("%7.4f", x[i, j+1]), " ]"), 20, align = "center")
           )
@@ -335,24 +335,24 @@ printSummarizeLoadingsWeights <- function(.summarize_object, .ci_colnames) {
   cat2("\n\nEstimated loadings:\n===================")
   
   if(length(.ci_colnames) != 0) {
-    cat2("\n  ",  col_align("", width = max(l, nchar("Loadings")) + 44))
+    cat2("\n  ",  ansi_align("", width = max(l, nchar("Loadings")) + 44))
     for(i in interval_names) {
-      cat2(col_align(i, width = 20*length(sig_level_names), align = "center"))
+      cat2(ansi_align(i, width = 20*length(sig_level_names), align = "center"))
     }
   }
     
   cat2(
     "\n  ", 
-    col_align("Loading", max(l, nchar("Loading")) + 2), 
-    col_align("Estimate", 10, align = "right"), 
-    col_align("Std. error", 12, align = "right"),
-    col_align("t-stat.", 10, align = "right"), 
-    col_align("p-value", 10, align = "right")
+    ansi_align("Loading", max(l, nchar("Loading")) + 2), 
+    ansi_align("Estimate", 10, align = "right"), 
+    ansi_align("Std. error", 12, align = "right"),
+    ansi_align("t-stat.", 10, align = "right"), 
+    ansi_align("p-value", 10, align = "right")
   )
   
   if(length(.ci_colnames) != 0) {
     for(i in rep(sig_level_names, length(interval_names))) {
-      cat2(col_align(i, 20, align = "center"))
+      cat2(ansi_align(i, 20, align = "center"))
     } 
   }
   
@@ -364,24 +364,24 @@ printSummarizeLoadingsWeights <- function(.summarize_object, .ci_colnames) {
   cat2("\n\nEstimated weights:\n==================")
   
   if(length(.ci_colnames) != 0) {
-    cat2("\n  ",  col_align("", width = max(l, nchar("Weights")) + 44))
+    cat2("\n  ",  ansi_align("", width = max(l, nchar("Weights")) + 44))
     for(i in interval_names) {
-      cat2(col_align(i, width = 20*length(sig_level_names), align = "center"))
+      cat2(ansi_align(i, width = 20*length(sig_level_names), align = "center"))
     }
   }
   
   cat2(
     "\n  ", 
-    col_align("Weight", max(l, nchar("Weights")) + 2), 
-    col_align("Estimate", 10, align = "right"), 
-    col_align("Std. error", 12, align = "right"),
-    col_align("t-stat.", 10, align = "right"), 
-    col_align("p-value", 10, align = "right")
+    ansi_align("Weight", max(l, nchar("Weights")) + 2), 
+    ansi_align("Estimate", 10, align = "right"), 
+    ansi_align("Std. error", 12, align = "right"),
+    ansi_align("t-stat.", 10, align = "right"), 
+    ansi_align("p-value", 10, align = "right")
   ) 
   
   if(length(.ci_colnames) != 0) {
     for(i in rep(sig_level_names, length(interval_names))) {
-      cat2(col_align(i, 20, align = "center"))
+      cat2(ansi_align(i, 20, align = "center"))
     } 
   }
   
@@ -410,28 +410,28 @@ printVerifyDetails <- function(.x) {
   if(inherits(.x, "cSEMVerify_2ndorder")) {
     cat2(
       "  ", 
-      col_align("Code", 7), 
-      col_align("Stage 1", 10), 
-      col_align("Stage 2", 10), 
+      ansi_align("Code", 7), 
+      ansi_align("Stage 1", 10), 
+      ansi_align("Stage 2", 10), 
       "Description\n"
       )
     
     for(i in names(.x$First_stage)) {
-      cat2("  ", col_align(i, 7), 
-           col_align(ifelse(.x$First_stage[i] == FALSE, green("ok"), red("not ok")), 10), 
-           col_align(ifelse(.x$Second_stage[i] == FALSE, green("ok"), red("not ok")), 10), 
-           col_align(text[i], max(nchar(text) + 2), align = "left"), "\n")
+      cat2("  ", ansi_align(i, 7), 
+           ansi_align(ifelse(.x$First_stage[i] == FALSE, col_green("ok"), col_red("not ok")), 10), 
+           ansi_align(ifelse(.x$Second_stage[i] == FALSE, col_green("ok"), col_red("not ok")), 10), 
+           ansi_align(text[i], max(nchar(text) + 2), align = "left"), "\n")
     }
   } else {
     cat2("  ", 
-         col_align("Code", 7), 
-         col_align("Status", 10), 
+         ansi_align("Code", 7), 
+         ansi_align("Status", 10), 
          "Description\n")
     
     for(i in names(.x)) {
-      cat2("  ", col_align(i, 7), 
-           col_align(ifelse(.x[i] == FALSE, green("ok"), red("not ok")), 10), 
-           col_align(text[i], max(nchar(text)) + 2, align = "left"), "\n")
+      cat2("  ", ansi_align(i, 7), 
+           ansi_align(ifelse(.x[i] == FALSE, col_green("ok"), col_red("not ok")), 10), 
+           ansi_align(text[i], max(nchar(text)) + 2, align = "left"), "\n")
     }
   }
 }
@@ -533,28 +533,28 @@ printTestMGDResults <- function(.x, .approach, .info) {
       
       cat2(
         "  ",
-        col_align("Parameter", width = l + 2),
-        col_align("Est. group 1", width = 14, align = "right"), 
-        col_align("CI group 2", width = 20, align = "center"),
-        col_align("Est. group 2", width = 14, align = "right"), 
-        col_align("CI group 1", width = 20, align = "center")
-        # col_align("Decision", width = 10, align = "right")
+        ansi_align("Parameter", width = l + 2),
+        ansi_align("Est. group 1", width = 14, align = "right"), 
+        ansi_align("CI group 2", width = 20, align = "center"),
+        ansi_align("Est. group 2", width = 14, align = "right"), 
+        ansi_align("CI group 1", width = 20, align = "center")
+        # ansi_align("Decision", width = 10, align = "right")
       )
       xx1 <- x$Decision[[1]][[i]][[1]]
       
       for(j in 1:nrow(xx1)) {
         cat2(
           "\n  ", 
-          col_align(xx1[j, "Name"], l + 2), 
-          col_align(sprintf("%.4f", xx1[j, 2]), 14, align = "right"),
-          col_align(
+          ansi_align(xx1[j, "Name"], l + 2), 
+          ansi_align(sprintf("%.4f", xx1[j, 2]), 14, align = "right"),
+          ansi_align(
             paste0("[", sprintf("%7.4f", xx1[j, 3]), ";", 
                    sprintf("%7.4f", xx1[j, 4]), " ]"), 20, align = "center"),
-          col_align(sprintf("%.4f", xx1[j, 5]), 14, align = "right"),
-          col_align(
+          ansi_align(sprintf("%.4f", xx1[j, 5]), 14, align = "right"),
+          ansi_align(
             paste0("[", sprintf("%7.4f", xx1[j, 6]), ";", 
                    sprintf("%7.4f", xx1[j, 7]), " ]"), 20, align = "center")
-          # col_align(ifelse(xx1[j, "Decision"], green("Do not reject"), red("reject")), 10, 
+          # ansi_align(ifelse(xx1[j, "Decision"], col_green("Do not reject"), col_red("reject")), 10, 
           #                  align = "right")
         )
       }
@@ -579,24 +579,24 @@ printTestMGDResults <- function(.x, .approach, .info) {
       
       cat2(
         "  ",
-        col_align("Parameter", width = l + 2),
-        col_align("CI group 1", width = 20, align = "center"),
-        col_align("CI group 2", width = 20, align = "center"),
-        col_align("Decision", width = 14, align = "right")
+        ansi_align("Parameter", width = l + 2),
+        ansi_align("CI group 1", width = 20, align = "center"),
+        ansi_align("CI group 2", width = 20, align = "center"),
+        ansi_align("Decision", width = 14, align = "right")
       )
       xx1 <- x$Decision[[1]][[i]][[1]]
       
       for(j in 1:nrow(xx1)) {
         cat2(
           "\n  ", 
-          col_align(xx1[j, "Name"], l + 2), 
-          col_align(
+          ansi_align(xx1[j, "Name"], l + 2), 
+          ansi_align(
             paste0("[", sprintf("%7.4f", xx1[j, 2]), ";", 
                    sprintf("%7.4f", xx1[j, 3]), " ]"), 20, align = "center"),
-          col_align(
+          ansi_align(
             paste0("[", sprintf("%7.4f", xx1[j, 4]), ";", 
                    sprintf("%7.4f", xx1[j, 5]), " ]"), 20, align = "center"),
-          col_align(ifelse(xx1[j, "Decision"], green("Do not reject"), red("reject")), 14,
+          ansi_align(ifelse(xx1[j, "Decision"], col_green("Do not reject"), col_red("reject")), 14,
                            align = "right")
         )
       }
@@ -621,21 +621,21 @@ printTestMGDResults <- function(.x, .approach, .info) {
         cat2("\n\n  Compared groups: ", names(x$Test_statistic)[i], "\n\n\t")
         
         cat2(
-          col_align("Parameter", width = l),
-          col_align("Test statistic", width = 14, align = "right"), 
-          col_align("p-value", width = 16, align = "right"),
-          col_align("Decision", width = 16, align = "right")
+          ansi_align("Parameter", width = l),
+          ansi_align("Test statistic", width = 14, align = "right"), 
+          ansi_align("p-value", width = 16, align = "right"),
+          ansi_align("Decision", width = 16, align = "right")
         )
         
         for(j in seq_along(x$Test_statistic[[i]])) {
           
           cat2(
             "\n\t",
-            col_align(names(x$Test_statistic[[i]])[j], width = l),
-            col_align(sprintf("%.4f", x$Test_statistic[[i]][j]), width = 14, 
+            ansi_align(names(x$Test_statistic[[i]])[j], width = l),
+            ansi_align(sprintf("%.4f", x$Test_statistic[[i]][j]), width = 14, 
                       align = "right"), 
-            col_align(sprintf("%.4f", x$P_value[[p]][[i]][j]), width = 16, align = "right"),
-            col_align(ifelse(x$Decision[[p]][[1]][[i]][j], green("Do not reject"), red("reject")),
+            ansi_align(sprintf("%.4f", x$P_value[[p]][[i]][j]), width = 16, align = "right"),
+            ansi_align(ifelse(x$Decision[[p]][[1]][[i]][j], col_green("Do not reject"), col_red("reject")),
                       width = 16, align = "right")
           )
         }

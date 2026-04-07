@@ -19,7 +19,7 @@ print.cSEMVerify <- function(x, ...) {
     
     cat2(
       "\n\t", 
-      col_align("Dataset", l, align = "left"),
+      ansi_align("Dataset", l, align = "left"),
       "Status"
     )
     
@@ -28,17 +28,17 @@ print.cSEMVerify <- function(x, ...) {
       
       cat2(
         "\n\t", 
-        col_align(names(x)[j], l, align = "left"),
-        ifelse(n_defects == 0, green("admissible"), red("inadmissible"))
+        ansi_align(names(x)[j], l, align = "left"),
+        ifelse(n_defects == 0, col_green("admissible"), col_red("inadmissible"))
       )
     }
   } else {
     n_defects <- sum(sapply(x, sum))
     
     if(n_defects == 0) {
-      cat2(green("\n\t admissible"))
+      cat2(col_green("\n\t admissible"))
     } else {
-      cat2(red("\n\t inadmissible"))
+      cat2(col_red("\n\t inadmissible"))
     }
   }
   

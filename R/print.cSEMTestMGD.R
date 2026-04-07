@@ -39,54 +39,54 @@ print.cSEMTestMGD <- function(
     rule2("Overview")
   )
   cat2(
-    col_align("\n\n\tTotal permutation runs", width = 37), "= ", 
+    ansi_align("\n\n\tTotal permutation runs", width = 37), "= ", 
     info$Information_permutation$Total_runs,
-    col_align("\n\tAdmissible permutation results", width = 36), "= ", 
+    ansi_align("\n\tAdmissible permutation results", width = 36), "= ", 
     info$Information_permutation$Number_admissibles,
-    col_align("\n\tPermutation seed", width = 36), "= ", 
+    ansi_align("\n\tPermutation seed", width = 36), "= ", 
     info$Information_permutation$Permutation_seed,
-    col_align("\n\n\tTotal bootstrap runs", width = 37), "= ", 
+    ansi_align("\n\n\tTotal bootstrap runs", width = 37), "= ", 
     info$Information_bootstrap$Total_runs[[1]],
     "\n\tAdmissible bootstrap results:"
   )
   l <- max(nchar(c(info$Group_names, "Group")))
   
   cat2("\n\n\t",
-       col_align("Group", width = l + 6),
-       col_align("Admissibles", width = 14, align = "center")
+       ansi_align("Group", width = l + 6),
+       ansi_align("Admissibles", width = 14, align = "center")
   )
   for(i in seq_along(info$Information_bootstrap$Number_admissibles)) {
     cat2(
       "\n\t",
-      col_align(info$Group_names[i], width = l + 6), 
-      col_align(info$Information_bootstrap$Number_admissibles[i], 
+      ansi_align(info$Group_names[i], width = l + 6), 
+      ansi_align(info$Information_bootstrap$Number_admissibles[i], 
                 width = 14, align = "center")
     )
   }
   cat2("\n\n\tBootstrap seed:",
        "\n\n\t",
-       col_align("Group", width = l + 6),
-       col_align("Seed", width = 14, align = "center")
+       ansi_align("Group", width = l + 6),
+       ansi_align("Seed", width = 14, align = "center")
   )
   for(i in seq_along(info$Information_bootstrap$Bootstrap_seed)) {
     cat2(
       "\n\t",
-      col_align(info$Group_names[i], width = l + 6), 
-      col_align(info$Information_bootstrap$Bootstrap_seed[i], 
+      ansi_align(info$Group_names[i], width = l + 6), 
+      ansi_align(info$Information_bootstrap$Bootstrap_seed[i], 
                 width = 14, align = "right")
     )
   }
   cat2("\n\n\tNumber of observations per group:")
   
   cat2("\n\n\t",
-       col_align("Group", width = l + 6),
-       col_align("No. Obs.", width = 10, align = "center")
+       ansi_align("Group", width = l + 6),
+       ansi_align("No. Obs.", width = 10, align = "center")
   )
   for(i in seq_along(info$Group_names)) {
     cat2(
       "\n\t",
-      col_align(info$Group_names[i], width = l + 6), 
-      col_align(info$Number_of_observations[i], width = 10, align = "center")
+      ansi_align(info$Group_names[i], width = l + 6), 
+      ansi_align(info$Number_of_observations[i], width = 10, align = "center")
     )
   }
   
@@ -94,20 +94,20 @@ print.cSEMTestMGD <- function(
   approach <- intersect(info$Approach, c("Sarstedt", "Chin", "Keil", "Nitzl"))
   if(length(approach) > 0) {
     cat2("\n\n\tOverall decision (based on alpha = ", paste0(info$Alpha[1] * 100, "%):"))
-    cat2("\n\n\t",col_align("", width = 10))
+    cat2("\n\n\t",ansi_align("", width = 10))
     for(j in names(x[[approach[1]]]$Decision_overall)) {
       cat2(
-        col_align(paste0("p_adjust = '", j, "'"), width = 20, align = "right")
+        ansi_align(paste0("p_adjust = '", j, "'"), width = 20, align = "right")
       )
     }
     for(i in approach) {
       cat2(
         "\n\t",
-        col_align(i, width = 10)
+        ansi_align(i, width = 10)
       )
       for(j in seq_along(x[[i]]$Decision_overall)) {
         cat2(
-          col_align(ifelse(x[[i]]$Decision_overall[[j]][[1]], green("Do not reject"), red("reject")),
+          ansi_align(ifelse(x[[i]]$Decision_overall[[j]][[1]], col_green("Do not reject"), col_red("reject")),
                     width = 20, align = "right")
         )
       }
@@ -161,21 +161,21 @@ print.cSEMTestMGD <- function(
       }
       
       cat2(
-        col_align("Distance measure", width = 20),
-        col_align("Test statistic", width = 14, align = "right"), 
-        col_align("p-value", width = 16, align = "right"),
-        col_align("Decision", width = 16, align = "right")
+        ansi_align("Distance measure", width = 20),
+        ansi_align("Test statistic", width = 14, align = "right"), 
+        ansi_align("p-value", width = 16, align = "right"),
+        ansi_align("Decision", width = 16, align = "right")
       )
       
       for(j in seq_along(xk$Test_statistic)) {
         
         cat2(
           "\n\t",
-          col_align(names(xk$Test_statistic)[j], width = 20),
-          col_align(sprintf("%.4f", xk$Test_statistic[j]), width = 14, 
+          ansi_align(names(xk$Test_statistic)[j], width = 20),
+          ansi_align(sprintf("%.4f", xk$Test_statistic[j]), width = 14, 
                     align = "right"), 
-          col_align(sprintf("%.4f", xk$P_value[j]), width = 16, align = "right"),
-          col_align(ifelse(xk$Decision[[1]][j], green("Do not reject"), red("reject")),
+          ansi_align(sprintf("%.4f", xk$P_value[j]), width = 16, align = "right"),
+          ansi_align(ifelse(xk$Decision[[1]][j], col_green("Do not reject"), col_red("reject")),
                     width = 16, align = "right")
         )
       }
@@ -192,7 +192,7 @@ print.cSEMTestMGD <- function(
       )
       
       cat2(
-        red("\n\n\t!WARNING: the test is unreliable. Usage is discouraged!")
+        col_red("\n\n\t!WARNING: the test is unreliable. Usage is discouraged!")
       )
       ## Null hypothesis ---------------------------------------------------------
       cat2(
@@ -217,21 +217,21 @@ print.cSEMTestMGD <- function(
         cat2("\n\tMultiple testing adjustment: '", names(xs$P_value)[i], "'\n\n\t")
         
         cat2(
-          col_align("Parameter", width = l + 4),
-          col_align("Test statistic", width = 14, align = "right"), 
-          col_align("p-value", width = 16, align = "right"),
-          col_align("Decision", width = 16, align = "right")
+          ansi_align("Parameter", width = l + 4),
+          ansi_align("Test statistic", width = 14, align = "right"), 
+          ansi_align("p-value", width = 16, align = "right"),
+          ansi_align("Decision", width = 16, align = "right")
         )
         
         for(j in seq_along(xs$Test_statistic)) {
           
           cat2(
             "\n\t",
-            col_align(names(xs$Test_statistic)[j], width = l + 4),
-            col_align(sprintf("%.4f", xs$Test_statistic[j]), width = 14, 
+            ansi_align(names(xs$Test_statistic)[j], width = l + 4),
+            ansi_align(sprintf("%.4f", xs$Test_statistic[j]), width = 14, 
                       align = "right"), 
-            col_align(sprintf("%.4f", xs$P_value[[i]][j]), width = 16, align = "right"),
-            col_align(ifelse(xs$Decision[[i]][[1]][j], green("Do not reject"), red("reject")),
+            ansi_align(sprintf("%.4f", xs$P_value[[i]][j]), width = 16, align = "right"),
+            ansi_align(ifelse(xs$Decision[[i]][[1]][j], col_green("Do not reject"), col_red("reject")),
                       width = 16, align = "right")
           )
         }

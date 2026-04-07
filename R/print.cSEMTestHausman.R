@@ -34,20 +34,20 @@ print.cSEMTestHausman <- function(x, ...) {
     l <- max(nchar(x1[[i]]$Name))
     cat2(
       "\n\t", 
-      col_align("Independent construct", max(l, nchar("Independent construct")) + 2), 
-      col_align("Estimate", 10, align = "right"), 
-      col_align("Std. error", 12, align = "right"),
-      col_align("t-stat.", 10, align = "right"), 
-      col_align("p-value", 10, align = "right")
+      ansi_align("Independent construct", max(l, nchar("Independent construct")) + 2), 
+      ansi_align("Estimate", 10, align = "right"), 
+      ansi_align("Std. error", 12, align = "right"),
+      ansi_align("t-stat.", 10, align = "right"), 
+      ansi_align("p-value", 10, align = "right")
     )
     for(j in 1:nrow(x1[[i]])) {
       cat2(
         "\n\t", 
-        col_align(x1[[i]][j, "Name"], max(l, nchar("Independent construct")) + 2), 
-        col_align(sprintf("%.4f", x1[[i]][j, "Estimate"]), 10, align = "right"),
-        col_align(sprintf("%.4f", x1[[i]][j, "Std_error"]), 12, align = "right"),
-        col_align(sprintf("%.4f", x1[[i]][j, "t_stat"]), 10, align = "right"),
-        col_align(sprintf("%.4f", x1[[i]][j, "p_value"]), 10, align = "right")
+        ansi_align(x1[[i]][j, "Name"], max(l, nchar("Independent construct")) + 2), 
+        ansi_align(sprintf("%.4f", x1[[i]][j, "Estimate"]), 10, align = "right"),
+        ansi_align(sprintf("%.4f", x1[[i]][j, "Std_error"]), 12, align = "right"),
+        ansi_align(sprintf("%.4f", x1[[i]][j, "t_stat"]), 10, align = "right"),
+        ansi_align(sprintf("%.4f", x1[[i]][j, "p_value"]), 10, align = "right")
       )
     }
     cat2("\n")

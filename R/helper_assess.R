@@ -2366,38 +2366,38 @@ printEffects <- function(.effect, .ci_colnames, .what = "Total effect") {
     interval_names    <- unique(sapply(xx, `[`, 1))
     sig_level_names   <- unique(gsub("[LU]", "", sapply(xx, `[`, 2)))
     
-    cat2("\n  ",  col_align("", width = max(l, nchar(.what)) + 44))
+    cat2("\n  ",  ansi_align("", width = max(l, nchar(.what)) + 44))
     for(i in interval_names) {
-      cat2(col_align(i, width = 20*length(sig_level_names), align = "center"))
+      cat2(ansi_align(i, width = 20*length(sig_level_names), align = "center"))
     }
   }
   cat2(
     "\n  ", 
-    col_align(.what, l + 2), 
-    col_align("Estimate", 10, align = "right"), 
-    col_align("Std. error", 12, align = "right"),
-    col_align("t-stat.", 10, align = "right"), 
-    col_align("p-value", 10, align = "right")
+    ansi_align(.what, l + 2), 
+    ansi_align("Estimate", 10, align = "right"), 
+    ansi_align("Std. error", 12, align = "right"),
+    ansi_align("t-stat.", 10, align = "right"), 
+    ansi_align("p-value", 10, align = "right")
   )
   if(length(.ci_colnames) != 0) {
     for(i in rep(sig_level_names, length(interval_names))) {
-      cat2(col_align(i, 20, align = "center"))
+      cat2(ansi_align(i, 20, align = "center"))
     } 
   }
   
   for(i in 1:nrow(.effect)) {
     cat2(
       "\n  ", 
-      col_align(.effect[i, "Name"], l + 2), 
-      col_align(sprintf("%.4f", .effect[i, "Estimate"]), 10, align = "right"),
-      col_align(sprintf("%.4f", .effect[i, "Std_err"]), 12, align = "right"),
-      col_align(sprintf("%.4f", .effect[i, "t_stat"]), 10, align = "right"),
-      col_align(sprintf("%.4f", .effect[i, "p_value"]), 10, align = "right")
+      ansi_align(.effect[i, "Name"], l + 2), 
+      ansi_align(sprintf("%.4f", .effect[i, "Estimate"]), 10, align = "right"),
+      ansi_align(sprintf("%.4f", .effect[i, "Std_err"]), 12, align = "right"),
+      ansi_align(sprintf("%.4f", .effect[i, "t_stat"]), 10, align = "right"),
+      ansi_align(sprintf("%.4f", .effect[i, "p_value"]), 10, align = "right")
     )
     if(length(.ci_colnames) != 0) {
       for(j in seq(1, length(.ci_colnames), by = 2) + 6) {
         cat2(
-          col_align(
+          ansi_align(
             paste0("[", sprintf("%7.4f", .effect[i, j]), ";", 
                    sprintf("%7.4f", .effect[i, j+1]), " ]"), 20, align = "center")
         )

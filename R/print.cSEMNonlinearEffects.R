@@ -39,13 +39,13 @@ print.cSEMNonlinearEffects <- function(x, ...) {
     
     cat2(
       "\n  ", 
-      col_align("Effect", 16, align = "right"), 
-      col_align(colnames(info)[3], 12, align = "right"),
-      col_align(colnames(info)[4], 12, align = "right"),
+      ansi_align("Effect", 16, align = "right"), 
+      ansi_align(colnames(info)[3], 12, align = "right"),
+      ansi_align(colnames(info)[4], 12, align = "right"),
       "\n  ", 
-      col_align(sprintf("%.4f", info[i, 1]), 16, align = "right"),
-      col_align(sprintf("%.4f", info[i, 3]), 12, align = "right"),
-      col_align(sprintf("%.4f", info[i, 4]), 12, align = "right")
+      ansi_align(sprintf("%.4f", info[i, 1]), 16, align = "right"),
+      ansi_align(sprintf("%.4f", info[i, 3]), 12, align = "right"),
+      ansi_align(sprintf("%.4f", info[i, 4]), 12, align = "right")
     )
   }
   
@@ -56,14 +56,14 @@ print.cSEMNonlinearEffects <- function(x, ...) {
     
     cat2(
       "\n  ", 
-      col_align("x", 12, align = "right"),
-      col_align("y", 12, align = "right"))
+      ansi_align("x", 12, align = "right"),
+      ansi_align("y", 12, align = "right"))
     
     for(i in 1:nrow(JN)) {
       cat2(
         "\n  ",
-        col_align(sprintf("%.4f", JN[i, 1]), 12, align = "right"),
-        col_align(sprintf("%.4f", JN[i, 2]), 12, align = "right")
+        ansi_align(sprintf("%.4f", JN[i, 1]), 12, align = "right"),
+        ansi_align(sprintf("%.4f", JN[i, 2]), 12, align = "right")
       )
     } 
   } 

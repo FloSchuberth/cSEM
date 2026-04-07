@@ -103,7 +103,7 @@ classifyConstructs <- function(.terms = args_default()$.terms) {
 
 #' Wrapper around cat() with sep = ""
 #' @noRd
-#' 
+#'
 cat2 <- function(...) {
   cat(..., sep = "")
 }

@@ -25,17 +25,17 @@ print.cSEMTestCVPAT <- function(x, ...) {
   cat("\n\nTest statistic and p-value: \n\t", sep = "")
 
   cat2(
-  col_align("\n\tTest statistic", 35), "= ", x$test_statistic,
-  col_align("\n\tP value", 35), "= ", x$p_value,
-  col_align("\n\tDegrees of freedom", 35), "= ", x$Information$Degrees_of_Freedom,
-  col_align("\n\tTesttype", 35), "= ", x$Testtype
+  ansi_align("\n\tTest statistic", 35), "= ", x$test_statistic,
+  ansi_align("\n\tP value", 35), "= ", x$p_value,
+  ansi_align("\n\tDegrees of freedom", 35), "= ", x$Information$Degrees_of_Freedom,
+  ansi_align("\n\tTesttype", 35), "= ", x$Testtype
   )
   
   cat("\n\nInformation:\n\t", sep = "")
   
   cat2(
-    col_align("\n\tSeed", 35), ": ", x$Information$Seed,
-    col_align("\n\tSample Size", 35), ": ", x$Information$`Sample Size`
+    ansi_align("\n\tSeed", 35), ": ", x$Information$Seed,
+    ansi_align("\n\tSample Size", 35), ": ", x$Information$`Sample Size`
   )
   
 }

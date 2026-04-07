@@ -47,38 +47,38 @@ print.cSEMTestMICOM <- function(x, ...) {
     
     cat2("  Compared groups: ", names(x2$Test_statistic)[i], "\n\t")
     cat2(
-      col_align("", width = l_names),
+      ansi_align("", width = l_names),
       "\t",
-      col_align("", width = 14), 
+      ansi_align("", width = 14), 
       "\t",
-      col_align("p-value by adjustment", width = max(sum(nchar(names(x2$P_value))) + 2, 22), 
+      ansi_align("p-value by adjustment", width = max(sum(nchar(names(x2$P_value))) + 2, 22), 
                 align = "center")
     )
     cat2(
       "\n\t",
-      col_align("Construct", width = l_names),
+      ansi_align("Construct", width = l_names),
       "\t",
-      col_align("Test statistic", width = 14), 
+      ansi_align("Test statistic", width = 14), 
       "\t"
     )
     
     for(j in names(x2$P_value)) {
-      cat2(col_align(j, width = max(6, nchar(j)) + 2, align = "right"))
+      cat2(ansi_align(j, width = max(6, nchar(j)) + 2, align = "right"))
     }
     
     cat("\n\t")
     
     for(j in construct_names) {
       cat2(
-        col_align(j, width = l_names), 
+        ansi_align(j, width = l_names), 
         "\t",
-        col_align(sprintf("%.4f", x2$Test_statistic[[i]][j]), width = 14,
+        ansi_align(sprintf("%.4f", x2$Test_statistic[[i]][j]), width = 14,
                   align = "center"),
         "\t"
       )
       
       for(k in names(x2$P_value)) {
-        cat2(col_align(sprintf("%.4f", x2$P_value[[k]][[i]][j]), 
+        cat2(ansi_align(sprintf("%.4f", x2$P_value[[k]][[i]][j]), 
                        width = max(6, nchar(k)) + 2, align = "right"))
       } # END for j (each construct)
       cat("\n\t")
@@ -100,31 +100,31 @@ print.cSEMTestMICOM <- function(x, ...) {
   #   l1 <- max(c(sum(l) + 3*(ncol(x2$Decision[[i]]) - 1)), nchar("Significance level"))
   #   cat2("  Compared groups: ", names(x2$Test_statistic)[i], "\n\t")
   #   cat2(
-  #     col_align("", width = l_names), 
+  #     ansi_align("", width = l_names), 
   #     "\t",
-  #     col_align("Significance level", 
+  #     ansi_align("Significance level", 
   #               width = l1, 
   #               align = "center")
   #   )
   #   cat2(
   #     "\n\t",
-  #     col_align("Construct", width = l_names), 
+  #     ansi_align("Construct", width = l_names), 
   #     "\t"
   #   )
   #   
   #   for(j in colnames(x2$Critical_value[[i]])) {
-  #     cat2(col_align(j, width = l[j], align = "center"), "\t")
+  #     cat2(ansi_align(j, width = l[j], align = "center"), "\t")
   #   }
   #   
   #   cat("\n\t")
   #   
   #   for(j in seq_along(x2$Test_statistic[[i]])) {
   #     
-  #     cat2(col_align(names(x2$Test_statistic[[i]])[j], width = l_names), "\t")
+  #     cat2(ansi_align(names(x2$Test_statistic[[i]])[j], width = l_names), "\t")
   #     
   #     for(k in 1:ncol(x2$Critical_value[[i]])) {
   #       cat2(
-  #         col_align(ifelse(x2$Decision[[i]][j, k], 
+  #         ansi_align(ifelse(x2$Decision[[i]][j, k], 
   #                          green("Do not reject"), red("reject")), 
   #                   width = l[k], align = "center"), 
   #         "\t"
@@ -156,38 +156,38 @@ print.cSEMTestMICOM <- function(x, ...) {
       x3_type <- x3[[type]]
       cat2(type, "\n\t")
       cat2(
-        col_align("", width = l_names),
+        ansi_align("", width = l_names),
         "\t",
-        col_align("", width = 14), 
+        ansi_align("", width = 14), 
         "\t",
-        col_align("p-value by adjustment", width = max(sum(nchar(names(x3_type$P_value))) + 2, 22), 
+        ansi_align("p-value by adjustment", width = max(sum(nchar(names(x3_type$P_value))) + 2, 22), 
                   align = "center")
       )
       cat2(
         "\n\t",
-        col_align("Construct", width = l_names),
+        ansi_align("Construct", width = l_names),
         "\t",
-        col_align("Test statistic", width = 14), 
+        ansi_align("Test statistic", width = 14), 
         "\t"
       )
 
       for(j in names(x3_type$P_value)) {
-        cat2(col_align(j, width = max(6, nchar(j)) + 2, align = "right"))
+        cat2(ansi_align(j, width = max(6, nchar(j)) + 2, align = "right"))
       }
       
       cat("\n\t")
       
       for(j in construct_names) {
         cat2(
-          col_align(j, width = l_names), 
+          ansi_align(j, width = l_names), 
           "\t",
-          col_align(sprintf("%.4f", x3_type$Test_statistic[[i]][j]), width = 14,
+          ansi_align(sprintf("%.4f", x3_type$Test_statistic[[i]][j]), width = 14,
                     align = "center"),
           "\t"
         )
         
         for(k in names(x3_type$P_value)) {
-          cat2(col_align(sprintf("%.4f", x3_type$P_value[[k]][[i]][j]), 
+          cat2(ansi_align(sprintf("%.4f", x3_type$P_value[[k]][[i]][j]), 
                          width = max(6, nchar(k)) + 2, align = "right"))
         } # END for j (each construct)
         cat("\n\t")
@@ -222,22 +222,22 @@ print.cSEMTestMICOM <- function(x, ...) {
   #     
   #     cat(type, "\n\t", sep = "")
   #     cat(
-  #       col_align("", width = l_names), 
+  #       ansi_align("", width = l_names), 
   #       "\t",
-  #       col_align("Significance level", 
+  #       ansi_align("Significance level", 
   #                 width = l1, 
   #                 align = "center"),
   #       sep = ""
   #     )
   #     cat(
   #       "\n\t",
-  #       col_align("Construct", width = l_names), 
+  #       ansi_align("Construct", width = l_names), 
   #       "\t",
   #       sep = ""
   #     )
   #     
   #     for(j in seq_along(n2)) {
-  #       cat(col_align(n2[j], width = max(l[j], nchar(n2[j])), align = "center"),
+  #       cat(ansi_align(n2[j], width = max(l[j], nchar(n2[j])), align = "center"),
   #           "\t", sep = "")
   #     }
   #     
@@ -245,11 +245,11 @@ print.cSEMTestMICOM <- function(x, ...) {
   #     
   #     for(j in seq_along(x3_type$Test_statistic[[i]])) {
   #       
-  #       cat(col_align(names(x3_type$Test_statistic[[i]])[j], width = l_names), "\t", sep = "")
+  #       cat(ansi_align(names(x3_type$Test_statistic[[i]])[j], width = l_names), "\t", sep = "")
   #       
   #       for(k in 1:ncol(x3_type$Decision[[i]])) {
   #         cat(
-  #           col_align(ifelse(x3_type$Decision[[i]][j, k], 
+  #           ansi_align(ifelse(x3_type$Decision[[i]][j, k], 
   #                            green("Do not reject"), red("reject")),
   #                     width = max(l[k], nchar(n2[k])), align = "center"), 
   #           "\t", 
@@ -267,7 +267,7 @@ print.cSEMTestMICOM <- function(x, ...) {
   cat2(
     "\n\n\tOut of ", x$Information$Total_runs , " permutation runs, ", 
     x$Information$Number_admissibles, " where admissible.\n\t",
-    "See ", yellow("?"), magenta("verify"), "()",
+    "See ", col_yellow("?"), col_magenta("verify"), "()",
     " for what constitutes an inadmissible result.\n\n\t",
     "The seed used was: ", x$Information$Seed, "\n"
   )
@@ -277,15 +277,15 @@ print.cSEMTestMICOM <- function(x, ...) {
   l <- max(nchar(c(x$Information$Group_names, "Group")))
   
   cat("\n\n\t",
-      col_align("Group", width = l + 6),
-      col_align("No. observations", width = 15),
+      ansi_align("Group", width = l + 6),
+      ansi_align("No. observations", width = 15),
       sep = ""
   )
   for(i in seq_along(x$Information$Group_names)) {
     cat(
       "\n\t",
-      col_align(x$Information$Group_names[i], width = l + 6), 
-      col_align(x$Information$Number_of_observations[i], width = 15),
+      ansi_align(x$Information$Group_names[i], width = l + 6), 
+      ansi_align(x$Information$Number_of_observations[i], width = 15),
       sep = ""
     )
   }
