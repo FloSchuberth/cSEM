@@ -82,7 +82,6 @@ Imports:
     utils,
     generics,
     partykit,
-    Formula,
     boot,
     tibble (>= 3.0.0),
     lifecycle

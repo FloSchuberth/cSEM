@@ -13,7 +13,6 @@
 #' @return cSEM Tree model of class `modelparty` and `party`.
 #' @export
 #' @importFrom partykit mob mob_control
-#' @importFrom Formula as.Formula
 #' @references
 #'   \insertAllCited{}
 doTrees <- function(.object,
