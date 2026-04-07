@@ -12,7 +12,6 @@
 #' @importFrom magrittr %>%
 #' @importFrom matrixStats rowProds
 #' @importFrom rlang .data
-#' @importFrom lifecycle deprecate_soft
 #' @importFrom cli rule boxx
 #' @import crayon
 #' @import stats
