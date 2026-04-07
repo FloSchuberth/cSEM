@@ -166,7 +166,7 @@ estimatePath <- function(
     }) # END lapply
     
     names(res) <- dep_vars
-    res <- purrr::transpose(res)
+    res <- list_transpose(res)
 
   } else {
     ## Error if approach_paths is not "OLS"

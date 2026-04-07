@@ -72,7 +72,7 @@ getValuesFloodlight <- function(
       list(effect_resampled = effect_resampled,
            effect_original = effect_original)
     })
-    temp <- purrr::transpose(effect_per_term)
+    temp <- list_transpose(effect_per_term)
     bootstrapEffects <- Reduce('+', temp$effect_resampled)
     # calculate the upper and lower bound of the bootstrap runs per step
     bounds <- quantile(bootstrapEffects , c(.alpha / 2, 1 - .alpha / 2))

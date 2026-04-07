@@ -198,7 +198,7 @@ TStatCIResample <- function(
   cl <- 1 - .probs[seq(1, length(.probs), by = 2)]*2
   
   boot_sd_star <- lapply(.second_resample, SdResample, .resample_method = .resample_method2, .n = .n) |> 
-    purrr::transpose(.) |> 
+    list_transpose() |>
     lapply(function(y) do.call(rbind, y))
   
   boot_sd <- SdResample(.first_resample, .resample_method = .resample_method, .n = .n)

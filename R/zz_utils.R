@@ -180,3 +180,24 @@ is_psd <- function(x) {
   eigenvalues <- eigen(x, symmetric = TRUE, only.values = TRUE)$values
   all(eigenvalues >= -sqrt(.Machine$double.eps))
 }
+
+#' Transpose a list of lists (equivalent to purrr::transpose)
+#'
+#' Turns a list of length n where each element has names a, b, c
+#' into a list with names a, b, c where each element has length n.
+#' @noRd
+list_transpose <- function(x) {
+  nms <- names(x[[1]])
+  out <- lapply(nms, function(nm) lapply(x, `[[`, nm))
+  names(out) <- nms
+  out
+}
+
+#' Apply a function at a given depth of a nested list (equivalent to purrr::modify_depth)
+#' @noRd
+modify_depth <- function(x, .depth, .f, ...) {
+  if (.depth == 0) {
+    return(.f(x, ...))
+  }
+  lapply(x, function(elem) modify_depth(elem, .depth - 1, .f, ...))
+}

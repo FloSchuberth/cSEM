@@ -660,7 +660,7 @@ predict <- function(
         )
       } # END for j in 1:length(dat)  
       
-      out_temp <- lapply(purrr::transpose(out_cv), function(x) {
+      out_temp <- lapply(list_transpose(out_cv), function(x) {
         x <- do.call(rbind, x)
         x <- x[order(as.numeric(rownames(x))), , drop = FALSE]
         x
@@ -669,16 +669,16 @@ predict <- function(
       out_all[[i]] <- out_temp
     }
     
-    #out_temp<- lapply(purrr::transpose(out_all), function(x) {
+    #out_temp<- lapply(list_transpose(out_all), function(x) {
     #  x <- do.call(rbind, x)
     #  x <- x[order(as.numeric(rownames(x))), ]
     #  x
     #})
     
-    out_temp <- purrr::transpose(out_all)
+    out_temp <- list_transpose(out_all)
     
     # Compute average prediction over all .r runs that are not NA
-    #out_temp <- lapply(purrr::transpose(out_all), function(x) {
+    #out_temp <- lapply(list_transpose(out_all), function(x) {
       
     #  a <- apply(abind::abind(x, along = 3), 1:2, function(y) sum(y, na.rm = TRUE))
     #  b <- Reduce("+", lapply(x, function(y) !is.na(y)))

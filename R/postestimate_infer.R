@@ -248,7 +248,7 @@ infer <- function(
     }
   }
   
-  out <- purrr::transpose(out)
+  out <- list_transpose(out)
   ## Add/ set class
   class(out) <- c("cSEMInfer")
   out

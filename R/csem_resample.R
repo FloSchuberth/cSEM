@@ -623,11 +623,11 @@ resamplecSEMResults <- function(
   # Turn list "inside out" and bind bootstrap samples to matrix 
   # - columns are variables
   # - rows are bootstrap runs
-  out <- purrr::transpose(out) 
+  out <- list_transpose(out) 
   
   if(.resample_method2 != "none") {
     out_2 <- out$Estimates2
-    out   <- purrr::transpose(out$Estimates1)
+    out   <- list_transpose(out$Estimates1)
   }
   
   out <- out |> 

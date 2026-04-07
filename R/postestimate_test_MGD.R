@@ -441,7 +441,7 @@ testMGD <- function(
         
         # calculation of the CIs
         cis <- infer(.object=y, .quantity=.type_ci, .alpha = .alpha)
-        cis_temp <- purrr::transpose(cis)
+        cis_temp <- list_transpose(cis)
         cis_ret<-lapply(cis_temp,function(x){
         path_ci <- x$Path_estimates
         loading_ci <- x$Loading_estimates
@@ -543,7 +543,7 @@ testMGD <- function(
     ## Sarstedt et al. approach
     if(any(.approach_mgd %in% c("all", "Sarstedt"))) {
       ## Transpose
-      ll <- purrr::transpose(bootstrap_results)
+      ll <- list_transpose(bootstrap_results)
       group_id <- rep(1:length(.object), unlist(ll$n))
 
       # all_comb contains all parameter estimate that could potentially be compared 
@@ -746,7 +746,7 @@ testMGD <- function(
     ref_dist_Chin <- lapply(ref_dist1, function(x) x$Chin)
 
     # Transpose
-    ref_dist_Chin_temp <- purrr::transpose(ref_dist_Chin)
+    ref_dist_Chin_temp <- list_transpose(ref_dist_Chin)
     names(ref_dist_Chin_temp) <- names(teststat_Chin)
     
     ref_dist_matrices_Chin <- lapply(ref_dist_Chin_temp, function(x) {
@@ -1000,7 +1000,7 @@ testMGD <- function(
     # For the latter it is used to select the appropriate parameters
     param_per_group <- getRelevantParameters(.object = .object,
                                              .model = .parameters_to_compare)
-    param_per_group <- purrr::transpose(param_per_group)
+    param_per_group <- list_transpose(param_per_group)
     param_comp <- utils::combn(param_per_group, 2, simplify = FALSE)
     names(param_comp) <- sapply(param_comp,
                                 function(x)
@@ -1103,7 +1103,7 @@ testMGD <- function(
           })
           names(t) <- names(decision_ci_para[[alpha]])
           # Check whether there is one FALSE among the comparions' decisions
-          temp <- purrr::transpose(t)
+          temp <- list_transpose(t)
           overall_dec<-lapply(names(temp),function(x){
             all(unlist(temp[[x]]))
           })
@@ -1189,7 +1189,7 @@ testMGD <- function(
         })
         names(t) <- names(decision_ci_overlap[[alpha]])
         # Check whether there is one FALSE among the comparions' decisions
-        temp <- purrr::transpose(t)
+        temp <- list_transpose(t)
         overall_dec<-lapply(names(temp),function(x){
           all(unlist(temp[[x]]))
         })
@@ -1250,7 +1250,7 @@ testMGD <- function(
     })
     
     names(info_boot) <- names(.object)
-    info_boot <- purrr::transpose(info_boot)
+    info_boot <- list_transpose(info_boot)
     
     out[["Information"]][["Information_bootstrap"]] <- list(
       "Number_admissibles"    = info_boot$Number_admissibles, 
@@ -1306,22 +1306,22 @@ testMGD <- function(
   # Information for Keil approach  
   if(any(.approach_mgd %in% c("all", "Keil"))) {
     out[["Keil"]] <- list(
-      "Test_statistic"     = purrr::transpose(teststat_Keil)$teststat,
+      "Test_statistic"     = list_transpose(teststat_Keil)$teststat,
       "P_value"            = padjusted_Keil,
       "Decision"           = decision_Keil,
       "Decision_overall"   = decision_overall_Keil,
-      "df"                 = purrr::transpose(teststat_Keil)$df[[1]]   
+      "df"                 = list_transpose(teststat_Keil)$df[[1]]   
     )
   }
   
   # Information for Nitzl approach
   if(any(.approach_mgd %in% c("all", "Nitzl"))) {
     out[["Nitzl"]] <- list(
-      "Test_statistic"     = purrr::transpose(teststat_Nitzl)$teststat,
+      "Test_statistic"     = list_transpose(teststat_Nitzl)$teststat,
       "P_value"            = padjusted_Nitzl,
       "Decision"           = decision_Nitzl,
       "Decision_overall"   = decision_overall_Nitzl,
-      "df"                 = purrr::transpose(teststat_Nitzl)$df[[1]]
+      "df"                 = list_transpose(teststat_Nitzl)$df[[1]]
       
     )
   }
