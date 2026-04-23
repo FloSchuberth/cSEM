@@ -27,6 +27,7 @@ debugonce(selectAndVectorize) # TODO: This has to be updated to include D
 debugonce(summarize) # TODO: I may have to go into summarize in-order to get the unique loadings
 debugonce(resamplecSEMResultsCore) # TODO: The actual resampling
 debugonce(resamplecSEMResults) # TODO: This processes the results after resampling
+debugonce(resampleData) # # TODO: Used for jackknife, but what about bootstrap?
 gscam <- csem(
   threecommonfactors,
   model,
@@ -38,10 +39,16 @@ gscam <- csem(
   .dominant_indicators = c("y11", "y21", "y31")
 )
 
+debugonce(infer)
+
 (tidied_gscam <- tidy(gscam, conf.int = TRUE))
 # View(tidied_gscam)
 
-
+# FIXME: But how do you get the p-values? 
+# debugonce(summarize)
+debugonce(summarize.cSEMResults_default)
+debugonce(addInfer)
+summarize(gscam)
 # IGSCA ------------------------------------------------------------------
 
 
