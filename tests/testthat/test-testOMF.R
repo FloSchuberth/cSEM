@@ -1,11 +1,9 @@
 
-DGPs <- list.files("../data/", pattern = "DGP_")
-# DGPs <- list.files("tests/data/", pattern = "DGP_")
+DGPs <- list.files(testthat::test_path("data/"), pattern = "DGP_")
 
 for(i in DGPs) {
   ## Model and Sigma matrix
-  load(paste0("../data/", i))
-  # load(paste0("tests/data/", i))
+  load(testthat::test_path(paste0("data/", i)))
   
   ## Draw data
   dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma$Sigma)), Sigma = Sigma$Sigma, empirical = TRUE)
@@ -19,7 +17,8 @@ for(i in DGPs) {
         .object = res,
         .R      = 4,
         .handle_inadmissibles = "replace" # to make sure there are enough admissibles
-    )
+    ) |> 
+      expect_no_error()
   })
   
   test_that(paste("All arguments of testOMF work for DGP: ", i),  {
@@ -30,7 +29,8 @@ for(i in DGPs) {
         .alpha  = c(0.1, 0.05),
         .handle_inadmissibles = "replace", # to make sure there are enough admissibles
         .seed   = 2010
-      )
+      ) |> 
+        expect_no_error()
   })
 }
 
@@ -44,7 +44,8 @@ test_that(paste(".seed in testOMF works corretly"),  {
     .object = res,
     .R      = 10,
     .seed   = 1303
-  )
+  ) |> 
+        expect_no_error()
   
   # Save after calling testOMF()
   r2 <- .Random.seed
@@ -53,7 +54,8 @@ test_that(paste(".seed in testOMF works corretly"),  {
     .object = res,
     .R      = 10,
     .seed   = 1303
-  )
+  ) |> 
+        expect_no_error()
   
   # .seed should produce the same results
   expect_equal(a$Information$Bootstrap_values, b$Information$Bootstrap_values)

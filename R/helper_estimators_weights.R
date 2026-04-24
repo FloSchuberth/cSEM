@@ -232,6 +232,13 @@ calculateOuterWeightsPLS <- function(
 #'   \item{`diff_relative`}{Checks if the largest elementwise absolute rate of change
 #'                          (new - old / new) for two matrices `.W_new` 
 #'                          and `W.old` is smaller than a given tolerance.}
+#'   \item{`sum_diff_absolute`}{Checks if the sum of the element-wise absolute
+#'                              difference between two matrices `.W_new` and `W.old` is smaller than a
+#'                              given tolerance}
+#'   \item{`mean_diff_absolute`}{Checks if the mean of the element-wise absolute
+#'                              difference between two matrices `.W_new` and `W.old` is smaller than a
+#'                              given tolerance
+#'   }
 #' }
 #'
 #' @usage checkConvergence(
@@ -265,6 +272,12 @@ checkConvergence <- function(
     "diff_relative" = {
       max(abs((.W_old[.W_new != 0] - .W_new[.W_new != 0]) /
                 .W_new[.W_new != 0])) < .tolerance
+    }, 
+    "sum_diff_absolute" = {
+      (sum(abs(.W_old - .W_new))) < .tolerance
+    },
+    "mean_diff_absolute" = {
+      (mean(abs(.W_old - .W_new))) < .tolerance
     }
   )
 }
@@ -299,6 +312,7 @@ scaleWeights <- function(
                          # )) %*% .W
   
   ## Scale the weights to ensure that the proxies have a variance of one  
+  ### For GSCA_M and IGSCA models it multiplies the weights for indicators of common factors by a construct-specific constant
   W_scaled <- diag(1/sqrt(var_proxies)) %*%.W
   
   ## Assign rownames and colnames to the scaled weights and return
@@ -370,3 +384,302 @@ setStartingValues = function(.W = args_default()$.W,
   return(.W)
 }
 
+#' Update Theta for Composite Variables in IGSCA
+#' 
+#' It is unintuitive that X is used here, seeing as how X = Z-UD; and we use X to update composite variables. 
+#' However, from a non-computational point of view, it shouldn't matter because for the composite indicators, X_comp = Z_comp
+#'
+#' @param W Weights matrix
+#' @param A Stacked matrix of loadings and path coefficients \eqn{\left[\Lambda \mid B \right]}
+#' @param V Stacked matrix of identity matrix and weights \eqn{\left[I \mid W \right]}
+#' @param X The matrix X is equal to \eqn{Z - UD}
+#' @param windex_eta_idx Index of weights related to the indicators for the construct of interest
+#' @param n_total_var Number of indicators and constructs
+#' @param tot Index dependent on which construct variable we are examining
+#' @param n_constructs Number of constructs
+#' @param eta_idx Index of which construct we are examining
+#' @inheritParams csem_arguments
+#' @importFrom MASS ginv
+#' @return Theta: A matrix that will later be used to update the weights for the composite variable.
+#'
+#'
+updateCompositeTheta <-
+  function(
+    W,
+    A,
+    V,
+    X,
+    windex_eta_idx,
+    n_total_var,
+    tot,
+    n_constructs,
+    eta_idx,
+    .S = args_default()$.S
+  ) {
+    # The following code is based on the ASGSCA package (licensed
+    # under GPL-3). Notation is adapted to be conform with the notation of the
+    # cSEM package
+    e <- matrix(0, nrow = 1, ncol = n_total_var)
+    e[tot] <- 1
+    H1 <- diag(n_total_var)
+    H2 <- diag(n_constructs)
+    H1[tot, tot] <- 0
+    H2[eta_idx, eta_idx] <- 0
+    Delta <- (W %*% H2 %*% A) - (V %*% H1)
+
+    beta <- e - A[eta_idx, , drop = FALSE]
+
+    Theta <- tcrossprod(
+      x = MASS::ginv(
+        as.numeric(beta %*% t(beta)) *
+          .S[windex_eta_idx, windex_eta_idx, drop = FALSE]
+      ),
+      y = beta %*% t(Delta) %*% .S[, windex_eta_idx, drop = FALSE]
+    )
+
+    # Theta <- MASS::ginv(
+    #   as.numeric(beta %*% t(beta)) * .S[windex_eta_idx, windex_eta_idx, drop = FALSE]
+    # ) %*%
+    #   t(beta %*% t(Delta) %*% .S[, windex_eta_idx, drop = FALSE])
+
+    return(Theta)
+
+    # Kronecker Method
+    # vecZDelta <- c(X %*% Delta) 
+    # XI <- kronecker(t(beta), X)
+    # XI <- XI[, windex_eta_idx]
+    # XI <- kroneckerC(t(beta), X, which(windex_eta_idx))
+    # Theta <- solve((t(XI) %*% XI), t(XI)) %*% vecZDelta
+  }
+
+#' Update Loadings and Path-Coefficients for IGSCA
+#'
+#' @param X Indicators with measurement error removed
+#' @param Eta Construct Scores
+#' @param Lambda Loadings matrix
+#' @param B Path coefficients matrix
+#' @param n_indicators Number of indicators
+#' @param n_constructs Number of oncstructs
+#' @param lambda_index Index of loadings
+#' @param b_index Index of Path Coefficients
+#' @param n_case Number of Cases
+#' @param .indicator_type Vector of whether each indicator corresponds to a common factor or composite
+#' @param modes Named vector of whether the construct is a Common factor, nomological composite or canonical composite.
+#' @importFrom MASS ginv
+#' @return List of matrices:
+#'
+#' * (1) Estimated Loadings matrix (C)
+#' * (2) Estimated Path Coefficients matrix (B)
+#'
+updateCB <-
+  function(
+    X,
+    Eta,
+    Lambda,
+    B,
+    .indicator_type,
+    n_indicators,
+    lambda_index,
+    n_constructs,
+    b_index,
+    n_case,
+    modes
+  ) {
+    # Loading Update ----------------------------------------------------------
+
+    # Kronecker bypass
+    # browser()
+    vars_cf_ncmp <- names(modes)[modes %in% c("Common factor", "NCMP")]
+    # cov_eta_indicators <- t(Eta) %*% X 
+    cov_eta_indicators <- crossprod(Eta, X) 
+    # cor_eta <- t(Eta) %*% Eta 
+    cor_eta <- crossprod(Eta) 
+    
+
+    dep_vars <- (colSums(Lambda[vars_cf_ncmp, , drop = FALSE]) != 0) |> 
+        which() |> 
+        names()
+    # This approach assumes that every factor/NCMP loads onto one indicator: no cross-loadings
+    loadings <- lapply(dep_vars, function(y) {
+      x <- (rowSums(Lambda[vars_cf_ncmp, y, drop = FALSE]) != 0) |> 
+          which() |> 
+          names()
+      coef <- MASS::ginv(cor_eta[x, x, drop = FALSE]) %*% cov_eta_indicators[x, y, drop = FALSE]
+    })
+    # A future approach should consider avoiding c_index and using explicit names, for safety.
+    Lambda[lambda_index] <- unlist(loadings, use.names =  FALSE)
+
+    # Kronecker Approach and Assumes All Composites are Nomological
+    # t1 <- c(X)
+    # M1 <- kroneckerC(diag(n_indicators), Eta, c_index)
+    # C[c_index] <- MASS::ginv(t(M1) %*% M1) %*% (t(M1) %*% t1)
+
+    # Path Coefficients Update ------------------------------------------------
+    vars_endo <- colnames(B)[colSums(B) != 0]
+    beta <- lapply(vars_endo, function(y) {
+      x <- (rowSums(B[, y, drop = FALSE]) != 0) |> 
+        which() |> 
+        names()
+      coef <- MASS::ginv(cor_eta[x, x, drop = FALSE]) %*%
+        cor_eta[x, y, drop = FALSE]
+    })
+    B[b_index] <- unlist(beta, use.names = FALSE)
+
+    return(
+      list(
+        "C" = Lambda,
+        "B" = B
+      )
+    )
+  }
+
+
+#' Update unique scores and unique loadings
+#' 
+#' Intended to be used within the alternating least squares algorithm for either GSCA_M or IGSCA. Assumes that the construct scores and data are normalized.
+#'
+#' @param D Unique loadings
+#' @param Eta_normed Normalized data
+#' @param Z_normed Normalized data
+#' @param n_constructs Number of constructs
+#' @param n_case Number of cases
+#' @param n_indicators Number of indicators
+#' @param .indicator_type Vector of whether each indicator corresponds to a common factor or composite
+#' @returns List of 2 elements, normalized unique scores (`U`) and normalized unique loadings (`D`)
+#' 
+#'
+updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_indicators, Z_normed) {
+
+  qr_eta <- qr(Eta_normed)
+  # QtZ_null <- qr.qty(qr_eta, Z_normed)[(n_constructs + 1):n_case, , drop = FALSE]
+  svd_mx <- svd(tcrossprod(x = D, y = qr.qty(qr_eta, Z_normed)[(n_constructs + 1):n_case, , drop = FALSE]))
+  #  svd_mx <- svd(D %*% t(QtZ_null))
+  Utilde <-   # (N-P) × J
+  U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs, n_indicators),  tcrossprod(x= svd_mx$v, y = svd_mx$u)))
+  # U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs, n_indicators), svd_mx$v %*% t(svd_mx$u)))
+
+  # Old method based on Hwang et al. (2017) — O(N^2) memory and computation
+  # Eta_Q2 <- qr.Q(qr(Eta_normed), complete = TRUE)[,
+  #   (n_constructs + 1):n_case,
+  #   drop = FALSE
+  # ]
+  # svd_mx <- svd(D %*% t(Z_normed) %*% Eta_Q2)
+  # Utilde <- svd_mx$v %*% t(svd_mx$u)
+  # U <- Eta_Q2 %*% Utilde
+  
+  # U[, .indicator_type == "Composite"] <- 0
+
+  # Update Unique Loadings
+
+  # D <- diag(diag(t(U) %*% Z_normed))
+  D <- diag(diag(crossprod(U, Z_normed)))
+  D[.indicator_type == "Composite", .indicator_type == "Composite"] <- 0
+
+  # Return output
+  return(list("U" = U, "D" = D))
+} 
+
+#' Block Diagonalize Estimated Parameter Matrices to Facilitate Computation of FIT Statistics
+#'
+#' Block diagonalizes the estimated paramater matrices as shown on Equations
+#' 3.28-3.29 on page 111 of \insertCite{Hwang2014;textual}{cSEM}. Should only be used on multi-group models
+#'
+#' @inheritParams tidy.cSEMResults
+#'
+#' @return cSEMResults in single-group data structure with block diagonalized parameter estimates
+#' @importFrom Matrix bdiag
+bdiagonalizeMultiGroupIgscaEstimates <- function(x) {
+  if (!identical(names(x), c("Estimates", "Information"))) {
+    # Multi-Group Code
+
+    ## Extract Matrices ------------------------------------------------------
+    # Extract Estimated Matrices
+    # TODO: Test whether the following code works
+
+    estimates_to_be_extracted <- list(
+      "Path_estimates",
+      "Loading_estimates",
+      "Weight_estimates",
+      "Construct_scores",
+      "Unique_scores"
+    )
+
+    names(estimates_to_be_extracted) <- unlist(estimates_to_be_extracted)
+
+    extraction <- lapply(
+      X = estimates_to_be_extracted,
+      function(matrix_name, multigroup_output) {
+        extraction <- lapply(
+          multigroup_output,
+          function(onegroup_output, matrix_name) {
+            return(onegroup_output[["Estimates"]][[matrix_name]])
+          },
+          matrix_name = matrix_name
+        )
+        return(extraction)
+      },
+      multigroup_output = x
+    )
+
+    # Extract Data
+    extraction$Data <- lapply(x, function(onegroup_output) {
+      return(onegroup_output[["Information"]][["Data"]])
+    })
+
+    # Remove Null Matrices
+    extracts_to_remove <- lapply(extraction, \(x) {
+      lapply(x, is.null) |> unlist() |> all()
+    })
+
+    extraction <- extraction[which(
+      !unlist(lapply(extraction, \(x) lapply(x, is.null) |> unlist() |> all()))
+    )]
+
+    extraction <- mapply(
+      function(extract, extract_name) {
+        # We don't keep it as a sparse matrix because that might break
+        # functionality with other functions unless much more of Matrix is
+        # imported
+
+        bdiaged <- Matrix::bdiag(extract)
+        colnames(bdiaged) <- rep(
+          colnames(extract[[1]]),
+          times = length(extract)
+        )
+        if (
+          !(extract_name %in% c("Data", "Construct_scores", "Unique_scores"))
+        ) {
+          rownames(bdiaged) <- rep(
+            rownames(extract[[1]]),
+            times = length(extract)
+          )
+        }
+
+        return(as.matrix(bdiaged))
+      },
+      extract = extraction,
+      extract_name = names(extraction),
+      SIMPLIFY = FALSE
+    )
+
+    ## Create Surrogate Output -----------------------------------------------
+    surrogate_out <- list()
+    # Insert the diagonalized matrices into the surrogate
+    ## It's not simple to take x[[1]] as the surrogate structure because it has
+    ## many estimatates (such as reliabilities) that are specific to the group
+    ## model
+
+    for (extract_name in names(extraction)[which(
+      names(extraction) != "Data"
+    )]) {
+      surrogate_out[["Estimates"]][[extract_name]] <- extraction[[extract_name]]
+    }
+
+    surrogate_out[["Information"]][["Data"]] <- extraction[["Data"]]
+
+    return(surrogate_out)
+  } else if (identical(names(x), c("Estimates", "Information"))) {
+    # Single-Group Code
+    stop("This function is only meant for multi-group models.")
+  }
+}

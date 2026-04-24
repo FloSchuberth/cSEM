@@ -356,13 +356,14 @@ calculateWeightsKettenring <- function(
 #'   .S                           = args_default()$.S,
 #'   .csem_model                  = args_default()$.csem_model,
 #'   .conv_criterion              = args_default()$.conv_criterion,
+#'   .GSCA_modes                  = args_default()$.GSCA_modes,
 #'   .iter_max                    = args_default()$.iter_max,
 #'   .starting_values             = args_default()$.starting_values,
 #'   .tolerance                   = args_default()$.tolerance
 #'    )
 #'    
 #' @inheritParams csem_arguments
-#'
+#' @importFrom MASS ginv
 #' @return A named list. J stands for the number of constructs and K for the number
 #' of indicators.
 #' \describe{
@@ -383,25 +384,59 @@ calculateWeightsGSCA <- function(
   .S                           = args_default()$.S,
   .csem_model                  = args_default()$.csem_model,
   .conv_criterion              = args_default()$.conv_criterion,
+  .GSCA_modes                  = args_default()$.GSCA_modes,
   .iter_max                    = args_default()$.iter_max,
   .starting_values             = args_default()$.starting_values,
   .tolerance                   = args_default()$.tolerance
 ) {
-  ### Calculation (ALS algorithm) ==============================================
   
+  ### Calculation (ALS algorithm) ==============================================
   W0 <- Lambda0 <- .csem_model$measurement # Weight relation model
-  Lambda0[which(.csem_model$construct_type == "Composite"), ]  <- 0
   B0 <- .csem_model$structural # Structural model
   vars_endo    <- rownames(B0)[rowSums(B0) != 0]
-  vars_cf      <- names(which(.csem_model$construct_type == "Common factor"))
+  # vars_cf      <- names(which(.csem_model$construct_type == "Common factor"))
   
   J <- nrow(W0)
   K <- ncol(W0)
   JK <- J + K
+
+
+  # Composite Type ---------------------------------------------------------
+  modes <- ifelse(.csem_model$construct_type == "Composite", yes = "CCMP", no = .csem_model$construct_type)
+    if (!is.null(.GSCA_modes)) {
+      stopifnot(
+        "Invalid .GSCA_modes selected. Only NCMP or CCMP are supported" = all(sapply(
+          .GSCA_modes,
+          function(x) x %in% c('NCMP', 'CCMP')
+        ))
+      )
+
+      if (length(names(.GSCA_modes)) != 0) {
+        stopifnot(
+          "Invalid construct name listed in .GSCA_modes" = length(setdiff(
+            names(.GSCA_modes),
+            names(.csem_model$construct_type)
+          )) ==
+            0
+        )
+        modes[names(.GSCA_modes)] <- .GSCA_modes
+      } else if (length(names(.GSCA_modes)) == 0) {
+        stopifnot("When passing a global setting to .GSCA_modes, only one choice may be passed" = length(.GSCA_modes) == 1)
+
+        # If only an unnamed element is given (NCMP or CCMP), then set all composites to .GSCA_modes
+        if (length(.GSCA_modes) == 1) {
+          modes <- ifelse(modes == "CCMP", yes = .GSCA_modes, no = modes)
+        }
+      }
+    }
+  Lambda0[which(modes == "CCMP"), ]  <- 0
+  vars_NCMP <- names(modes)[modes == "NCMP"]
+  vars_cf_ncmp <- names(modes)[modes %in% c("Common factor", "NCMP")]
+
   
   
-  # if starting values are provided
-  if(!is.null(.starting_values)){
+  # Starting Values --------------------------------------------------------
+  if(!is.null(.starting_values)){;
     W0 = setStartingValues(.W = W0, .starting_values = .starting_values)
   }
   
@@ -420,8 +455,12 @@ calculateWeightsGSCA <- function(
     # Step 1a: Estimate B (the structural coefficients for a given W)
     C <- W_iter %*% .S %*% t(W_iter)
     B <- lapply(vars_endo, function(y) {
-      x <-  colnames(B0[y, B0[y, ] != 0, drop = FALSE])
-      coef <- solve(C[x, x, drop = FALSE]) %*% C[x, y, drop = FALSE]
+      x <-  (colSums(B0[y, , drop = FALSE])  !=  0) |> 
+        which() |> 
+        names()
+      # The old approach could create problems when there was only one exogenous and one endogenous variable
+      # x <-  colnames(B0[y, B0[y, ] != 0, drop = FALSE])
+      coef <- MASS::ginv(C[x, x, drop = FALSE]) %*% C[x, y, drop = FALSE]
       
       # Since Var(dep_Var) = 1 we have R2 = Var(X coef) = t(coef) %*% X'X %*% coef
       # r2   <- t(coef) %*% .P[indep_var, indep_var, drop = FALSE] %*% coef
@@ -430,21 +469,26 @@ calculateWeightsGSCA <- function(
     # Transform
     tB <- t(B0)
     tB[tB != 0] <- unlist(B)
-    
+
     # Step 1b: Estimate Lambda (the loadings for a given W)
-    if(length(vars_cf) > 0) {
+    if(any(modes %in% "NCMP")) {
       Lambda_tilde <- W_iter %*% .S
-      dep_vars <- names(which(colSums(Lambda0[vars_cf, , drop = FALSE]) !=0))
+      dep_vars <- (colSums(Lambda0[vars_cf_ncmp, , drop = FALSE]) != 0) |> 
+        which() |> 
+        names()
       Lambda <- lapply(dep_vars, function(y) {
-        x <-  which(Lambda0[vars_cf, y] != 0)
-        coef <- solve(C[x, x, drop = FALSE]) %*% Lambda_tilde[x, y, drop = FALSE]
+        x <- (rowSums(Lambda0[vars_cf_ncmp, y, drop = FALSE]) != 0) |> 
+          which() |> 
+          names()
+
+        coef <- MASS::ginv(C[x, x, drop = FALSE]) %*% Lambda_tilde[x, y, drop = FALSE]
       })
       # Transform
       tLambda <- t(Lambda0)
       tLambda[tLambda != 0] <- unlist(Lambda)
     } else {
       tLambda <- t(Lambda0)
-    }
+    } 
     
     # Build matrices A and V used in GSCA
     
@@ -460,7 +504,9 @@ calculateWeightsGSCA <- function(
     W <- W_iter
     for(j in 1:J){
       t <- K + j
-      windex_j <- which(W[j, ] != 0)
+      windex_j <- (colSums(W[j, , drop = FALSE]) != 0) |>
+        which() |>
+        names()
       m <- matrix(0, 1, JK)
       m[t] <- 1
       # a <- A[, j]
@@ -507,10 +553,32 @@ calculateWeightsGSCA <- function(
       W_iter <- W
     }
   }
+
+  if (all(modes %in% "CCMP")) {
+    Lambda <- W %*% .S * .csem_model$measurement
+  } else if (any(modes %in% "CCMP")) {
+    CCMP_Lambda <- W %*% .S * .csem_model$measurement
+    Lambda <- t(tLambda)
+    Lambda[names(modes)[modes == "CCMP"], ] <- CCMP_Lambda[
+      names(modes)[modes == "CCMP"],
+    ]
+  } else {
+    Lambda <- t(tLambda)
+  }
   
   # Return
-  l <- list("W" = W, "E" = NULL, "Modes" = "gsca", "Conv_status" = conv_status,
-            "Iterations" = iter_counter)
+  l <- list(
+    "W" = W,
+    "C" = Lambda, 
+    "B" = t(tB), 
+    "E" = NULL,
+    "Construct_scores" = .X %*% t(W),
+    "Unique_loading_estimates" = NULL,
+    "Unique_scores"  = NULL,
+    "Modes" = "gsca",
+    "Conv_status" = conv_status,
+    "Iterations" = iter_counter
+  )
   return(l)
   
   ### For maintenance: ---------------------------------------------------------
@@ -540,15 +608,8 @@ calculateWeightsGSCA <- function(
 #' If there are only constructs modeled as common factors
 #' calling [csem()] with `.appraoch_weights = "GSCA"` will automatically call 
 #' [calculateWeightsGSCAm()] unless `.disattenuate = FALSE`.
-#' GSCAm currently only works for pure common factor models. The reason is that the implementation 
-#' in \pkg{cSEM} is based on (the appendix) of \insertCite{Hwang2017;textual}{cSEM}.
-#' Following the appendix, GSCAm fails if there is at least one construct 
-#' modeled as a composite because calculating weight estimates with GSCAm leads to a product 
-#' involving the measurement matrix. This matrix does not have full rank
-#' if a construct modeled as a composite is present. 
-#' The reason is that the measurement matrix has a zero row for every construct
-#' which is a pure composite (i.e. all related loadings are zero) 
-#' and, therefore, leads to a non-invertible matrix when multiplying it with its transposed.
+#' 
+#' **Note**: Here, we assume that there is only one unique loading per indicator. 
 #' 
 #' @usage calculateWeightsGSCAm(
 #'   .X                           = args_default()$.X,
@@ -560,7 +621,7 @@ calculateWeightsGSCA <- function(
 #'    )
 #'    
 #' @inheritParams csem_arguments
-#'
+#' @importFrom MASS ginv
 #' @return A list with the elements
 #' \describe{
 #'   \item{`$W`}{A (J x K) matrix of estimated weights.}
@@ -577,7 +638,6 @@ calculateWeightsGSCA <- function(
 #' @references
 #'   \insertAllCited{}
 #'
-
 calculateWeightsGSCAm <- function(
   .X                           = args_default()$.X,
   .csem_model                  = args_default()$.csem_model,
@@ -633,17 +693,17 @@ calculateWeightsGSCAm <- function(
   ## Define matrices
   
   # Currently only pure common factor models are supported
-  if(any(.csem_model$construct_type == "Composite")) {
-    stop2("The following error occured in the `calculateWeightsGSCAm()` function:\n",
-          "GSCAm only applicable to pure common factor models.")
-  }
+  # if(any(.csem_model$construct_type == "Composite")) {
+  #   stop2("The following error occured in the `calculateWeightsGSCAm()` function:\n",
+  #         "GSCAm only applicable to pure common factor models.")
+  # }
   
   Z  <- .X # Z is the data matrix in GSCA, data are already standardized
   W  <- t(.csem_model$measurement) # Matrix of the weighted relation model
   C  <- .csem_model$measurement # Matrix of the measurement model (non-zero only for common factors)
-  C[which(.csem_model$construct_type == "Composite"), ]  <- 0
+  # C[which(.csem_model$construct_type == "Composite"), ]  <- 0
   B  <- t(.csem_model$structural) # Matrix of the structural model
-  
+  indicator_type <- .csem_model$construct_type
   N  <- nrow(Z) # number of observations
   J  <- nrow(W) # number of indicators
   P  <- ncol(W) # number of constructs
@@ -653,45 +713,59 @@ calculateWeightsGSCAm <- function(
   Ip <- diag(P)
   A  <- cbind(C, B) # (P x TT)
   # V  <- cbind(Ij, W) # (J x TT)
-  
+
   # Normalize Z
-  Z <- Z/sqrt(N - 1) 
+  normalization_factor <- sqrt(N - 1)
+  Z <- Z / normalization_factor
   
   # if starting values are provided
   if(!is.null(.starting_values)){
-    W = setStartingValues(.W = W, .starting_values = .starting_values)
+    W <- setStartingValues(.W = t(W), .starting_values = .starting_values) |> 
+      t()
   }
-  
-  # Gamma
+
+  # Normalized Gamma
   Gamma <- Z %*% W
   
+  list_UD <- updateUD(
+      D = diag(J),
+      Eta_normed = Gamma,
+      .indicator_type = indicator_type,
+      n_constructs = P,
+      n_indicators = J,
+      n_case = N,
+      Z_normed = Z
+    )
+
+  U <- list_UD[["U"]]
+  D <- list_UD[["D"]]
   # Calculate initial values for the unique variables in U
   # analogous to step 3 of the modified ALS-algorithm
-  D          <- Ij
+  # D          <- Ij
   
   # Implementation based on the updated MATLAB code provided by Heungsun in 
   # private communication to deal with big dataset (20.10.2021)
-  temp <- svd(t(Gamma)%*%Gamma)
-  gd2 <- diag(temp$d)
-  gv <- temp$v
+  # temp <- svd(t(Gamma)%*%Gamma)
+  # gd2 <- diag(temp$d)
+  # gv <- temp$v
   
-  GU <- Gamma%*%gv%*%solve(sqrt(gd2))
+  # GU <- Gamma%*%gv%*%solve(sqrt(gd2))
   
-  M3 <- Z%*%t(D) - GU%*%(t(GU)%*%Z)%*%t(D)
+  # M3 <- Z%*%t(D) - GU%*%(t(GU)%*%Z)%*%t(D)
   
-  if(N>J){
-    temp <- svd(t(M3)%*%M3)
-    d2 <- diag(temp$d)
-    v <- temp$v
+  # if(N>J){
+  #   temp <- svd(t(M3)%*%M3)
+  #   d2 <- diag(temp$d)
+  #   v <- temp$v
     
-    u <- M3%*%v%*%solve(sqrt(d2))
-    U <- u[,1:J,drop=FALSE]%*%t(v)
-  } else {
-    temp = svd(M3)
-    u <- temp$u
-    v <- temp$v
-    U <- u[,1:J,drop = FALSE]%*%t(v)
-  }
+  #   u <- M3%*%v%*%solve(sqrt(d2))
+  #   U <- u[,1:J,drop=FALSE]%*%t(v)
+  # } else {
+  #   temp = svd(M3)
+  #   u <- temp$u
+  #   v <- temp$v
+  #   U <- u[,1:J,drop = FALSE]%*%t(v)
+  # }
   
   # Old GSCAm version which faces problem in case of large datasets
   # Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, (P+1):N, drop = FALSE]
@@ -701,110 +775,532 @@ calculateWeightsGSCAm <- function(
   
   
   D <- diag(diag(t(U) %*% Z))
-  
   est  <-  A[which(A != 0)]
   est0 <- est + 1
   iter_counter <- 0
-  while (sum(sum(abs(est0 - est))) > .tolerance & iter_counter < .iter_max) {
-    
-    iter_counter  <- iter_counter + 1
-    est0  <- est
-    X     <- Z - U %*% D
-    WW    <- t(C) %*% solve(C %*% t(C) + Ip - 2*B + B %*% t(B))
-    for(p in 1:P) {
-      windex_p <- which(W[ , p] != 0)
-      w        <- WW[windex_p, p]
-      Xp       <- X[,windex_p, drop = FALSE]
+  
+  while (
+    (!checkConvergence(
+      .W_new = est,
+      .W_old = est0,
+      .tolerance = .tolerance,
+      .conv_criterion = .conv_criterion
+    )) &&
+      (iter_counter < .iter_max)
+  ) {
+    iter_counter <- iter_counter + 1
+    est0 <- est
+    X <- Z - U %*% D
+    WW <- crossprod(
+      x = C,
+      y = MASS::ginv(
+        (tcrossprod(C) + diag(P) - (2 * B) + (tcrossprod(B)))
+      )
+    )
+    # WW <- t(C) %*% solve(C %*% t(C) + Ip - 2 * B + B %*% t(B))
+    for (p in 1:P) {
+      # windex_p <- which(W[, p] != 0)
+      windex_p <- (rowSums(W[, p, drop = FALSE]) != 0) |>
+        which() |>
+        names()
+      w <- WW[windex_p, p]
+      Xp <- X[, windex_p, drop = FALSE]
       # If construct p is a single-indicator construct, dividing w by its norm
       # sometimes doesnt yield 1 exactly due to the way norm() works. This causes
       # problems in verify() since we check if loadings are > 1, which they are
 
       # if the weight is 1.000000...0002.
-      if(length(w) == 1) {
+      if (length(w) == 1) {
         w <- 1
       } else {
-        w        <- w / norm(Xp %*% w, type = "2")
+        w <- w / norm(Xp %*% w, type = "2")
       }
       W[windex_p, p] <- w
-      Gamma[ , p]    <- Xp %*% w
+      Gamma[, p] <- Xp %*% w
     }
-    
+
     # Step 2a: Update B (the structural coefficients for a given W)
-    vcv_gamma <- t(Gamma) %*% Gamma
-    vars_endo <- which(colSums(B) != 0)
-    
+    vcv_gamma <- crossprod(Gamma)
+    # vcv_gamma <- t(Gamma) %*% Gamma
+    vars_endo <- colnames(B)[colSums(B) != 0]
+
     beta <- lapply(vars_endo, function(y) {
-      x    <- which(B[, y, drop = FALSE] != 0)
-      coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*% vcv_gamma[x, y, drop = FALSE]
+      x <- (rowSums(B[, y, drop = FALSE]) != 0) |>
+        which() |>
+        names()
+      coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*%
+        vcv_gamma[x, y, drop = FALSE]
     })
     B[B != 0] <- unlist(beta)
-    
+
     # Step 2b: Update C (the loadings for a given W)
-    vars_cf <- which(.csem_model$construct_type == "Common factor")
-    if(length(vars_cf) > 0) {
-      
-      cov_gamma_indicators <- t(Gamma) %*% X
-      Y <- which(colSums(C[vars_cf, ]) !=0)
-      loadings <- lapply(Y, function(y) {
-        x    <-  which(C[vars_cf, y] != 0)
-        coef <- solve(vcv_gamma[x, x, drop = FALSE]) %*% cov_gamma_indicators[x, y, drop = FALSE]
-      })
-      
-      # Transform
-      tC <- t(C)
-      tC[tC != 0] <- unlist(loadings)
-      C <- t(tC)
-    }
-    
-    # Implementation based on the updated MATLAB code provided by Heungsun in 
+    # vars_cf <- which(.csem_model$construct_type == "Common factor")
+    # if (length(vars_cf) > 0) {
+    cov_gamma_indicators <- crossprod(x = Gamma, y = X)
+    # cov_gamma_indicators <- t(Gamma) %*% X
+    # Y <- which(colSums(C[vars_cf, ]) != 0)
+    Y <- (colSums(C) != 0) |>
+      which() |>
+      names()
+    loadings <- lapply(Y, function(y) {
+      x <- (rowSums(C[, y, drop = FALSE]) != 0) |>
+        which() |>
+        names()
+      coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*%
+        cov_gamma_indicators[x, y, drop = FALSE]
+    })
+
+    # Transform
+    tC <- t(C)
+    tC[tC != 0] <- unlist(loadings)
+    C <- t(tC)
+    # }
+
+    list_UD <- updateUD(
+      D = D,
+      Eta_normed = Gamma,
+      .indicator_type = indicator_type,
+      n_constructs = P,
+      n_indicators = J,
+      n_case = N,
+      Z_normed = Z
+    )
+
+    U <- list_UD[["U"]]
+    D <- list_UD[["D"]]
+
+    # Implementation based on the updated MATLAB code provided by Heungsun in
     # private communication to deal with big dataset (20.10.2021)
-    temp <- svd(t(Gamma)%*%Gamma)
-    gd2 <- diag(temp$d) 
-    gv <- temp$v
-    
-    GU <- Gamma%*%gv%*%solve(sqrt(gd2))
-    M3 <- Z%*%D - GU%*%(t(GU)%*%Z)%*%t(D)
-    
-    if(N>J){
-      temp <- svd(t(M3)%*%M3)
-      d2 <- diag(temp$d)
-      v <- temp$v
-      
-      u <- M3%*%v%*%solve(sqrt(d2))
-      U <- u[,1:J,drop=FALSE]%*%t(v)
-    } else {
-      temp = svd(M3)
-      u <- temp$u
-      v <- temp$v
-      U <- u[,1:J,drop = FALSE]%*%t(v)
-    }
-    
-    
+    # temp <- svd(t(Gamma) %*% Gamma)
+    # gd2 <- diag(temp$d)
+    # gv <- temp$v
+
+    # GU <- Gamma %*% gv %*% solve(sqrt(gd2))
+    # M3 <- Z %*% D - GU %*% (t(GU) %*% Z) %*% t(D)
+
+    # if (N > J) {
+    #   temp <- svd(t(M3) %*% M3)
+    #   d2 <- diag(temp$d)
+    #   v <- temp$v
+
+    #   u <- M3 %*% v %*% solve(sqrt(d2))
+    #   U <- u[, 1:J, drop = FALSE] %*% t(v)
+    # } else {
+    #   temp = svd(M3)
+    #   u <- temp$u
+    #   v <- temp$v
+    #   U <- u[, 1:J, drop = FALSE] %*% t(v)
+    # }
+
     # Old GSCAm implementation
-    # 
+    #
     # Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, (P+1):N, drop = FALSE]
     # s          <- svd(D %*% t(Z) %*% Gamma_orth)
     # U_tilde    <- s$v %*% t(s$u)
     # U          <- Gamma_orth %*% U_tilde # this is the initial matrix U
-    
-    D <- diag(diag(t(U) %*% Z))
-    
+
+    # D <- diag(diag(t(U) %*% Z))
+
     # Build A
     A <- cbind(C, B)
     est <- A[which(A != 0)]
   }
+
   
+# Output Formatting ------------------------------------------------------
+  # isTRUE(identical(diag(D^2), diag(D)^2))
+  D_diag <- diag(D)
+  names(D_diag) <- colnames(Z)
+
+  # Retrieve standardized unique_scores
+  Unique_scores <- U * normalization_factor
+  colnames(Unique_scores) <- colnames(Z)
+
   # Return
-  l <- list("W" = t(W), 
-            "C" = C,
-            "B" = B,
-            "E" = NULL, 
-            "Modes" = "gsca", 
-            "Conv_status" = ifelse(iter_counter > .iter_max, FALSE, TRUE),
-            "Iterations" = iter_counter)
+  l <- list(
+    "W" = t(W),
+    "C" = C,
+    "B" = t(B), 
+    # Recall that .X is the (unmodified) standardized data passed to this optimization function
+    "Construct_scores" = (.X - (Unique_scores %*% D)) %*% W,
+    "Unique_loading_estimates" = D_diag,
+    "Unique_scores" = Unique_scores,
+    "E" = NULL,
+    "Modes" = "gsca (gsca_m)",
+    "Conv_status" = ifelse(iter_counter > .iter_max, FALSE, TRUE),
+    "Iterations" = iter_counter
+  )
   return(l)
   
 } # END calculateWeightsGSCAm
+
+#' Calculate weights using Integrated Generalised Structured Component Analysis (IGSCA)
+#'
+#' This R implementation of I-GSCA is based on the Matlab implementation in igsca_sim.m by Dr. Heungsun Hwang.
+#'
+#' In the example section, the specified model is based on the tutorial I-GSCA model associated with GSCA Pro \insertCite{hwangetal2023StructuralEquationModelingAMultidisciplinaryJournal}{cSEM}.
+#'
+#' **Note**: Here, we assume that there is only one unique loading per indicator.
+#'
+#' @inheritParams csem
+#' @inheritParams csem_arguments
+#'
+#' @author Michael S. Truong
+#' @return List of 4 matrices that make up a fitted I-GSCA Model:
+#' * (1) Weights
+#' * (2) Loadings
+#' * (3) Squared Unique Loadings D^2
+#' * (4) Path Coefficients.
+#' * (5) Unique Component of Indicators (for common factors) DU
+#'
+#' @importFrom MASS ginv
+#'
+#' @references
+#'   \insertAllCited{}
+#' @examples
+#' \dontrun{
+#' # Specify the model according to GSCA Pro's example
+#' tutorial_igsca_model <- "
+#' # Composite Model
+#' NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 +
+#'                       Behavior7 + Behavior8 +  Behavior9
+#' Numberofjobinterviews <~ Interview1 + Interview2
+#' Numberofjoboffers <~ Offer1 + Offer2
+#'
+#' # Reflective Measurement Model
+#' HonestyHumility =~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 +
+#'                     Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10
+#' Emotionality =~ Emotion1 + Emotion2 + Emotion3 + Emotion4 +
+#'                 Emotion5 + Emotion6 + Emotion8 + Emotion10
+#' Extraversion =~ Extraver2 + Extraver3 + Extraver4 + Extraver5 +
+#'                 Extraver6 + Extraver7 + Extraver8 + Extraver9 + Extraver10
+#' Agreeableness =~ Agreeable1 + Agreeable3 + Agreeable4 + Agreeable5 +
+#'                  Agreeable7 + Agreeable8 + Agreeable9 + Agreeable10
+#' Conscientiousness =~ Conscientious1 + Conscientious3 + Conscientious4 +
+#'                      Conscientious6 + Conscientious7 + Conscientious8 +
+#'                      Conscientious9 + Conscientious10
+#' OpennesstoExperience =~ Openness1 + Openness2 + Openness3 + Openness5 +
+#'                         Openness7 + Openness8 + Openness9 + Openness10
+#'
+#' # Structural Model
+#' NetworkingBehavior ~ HonestyHumility + Emotionality + Extraversion +
+#'                      Agreeableness + Conscientiousness + OpennesstoExperience
+#' Numberofjobinterviews ~ NetworkingBehavior
+#' Numberofjoboffers ~ NetworkingBehavior
+#' "
+#'
+#' data(LeDang2022)
+#'
+#' csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "GSCA",
+#' .dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion =
+#' "sum_diff_absolute")
+#' }
+calculateWeightsIGSCA <- function(
+  .data,
+  .S = args_default()$.S,
+  .csem_model = args_default()$.csem_model,
+  .conv_criterion = args_default()$.conv_criterion,
+  .GSCA_modes = args_default()$.GSCA_modes,
+  .iter_max = args_default()$.iter_max,
+  .tolerance = args_default()$.tolerance,
+  .starting_values = args_default()$.starting_values
+) {
+  ## Initialize Computational Variables -----------------------------------------------------
+  csemify <- parseModel(.model = .csem_model)
+  #  Initial Indicators Z0
+  Z0 <- .data[, csemify$indicators, drop = FALSE]
+
+  # Igsca assumes \eta \times B, so the rows should be from
+  # and the columns should be to. This is in contrast to
+  # the rest of cSEM
+  B0 <- t(csemify$structural)
+
+  C0 <- csemify$measurement
+  W0 <- t(csemify$measurement)
+
+  # whether a construct is a latent or composite variable (con_type)
+  con_type <- csemify$construct_type
+
+  # Whether an indicator corresponds to a latent or composite variable (indicator_type)
+  # Default value must be "Composite" because of how the measurement matrix
+  #  returned by parseModel uses 0 to denote both composite variables and the
+  # absence of any corresponding construct variable.
+  indicator_type <- vector(
+    mode = "character",
+    length = ncol(csemify$measurement)
+  )
+  names(indicator_type) <- csemify$indicators
+
+  composite_indicators <- C0[
+    names(csemify$construct_type[csemify$construct_type == "Composite"]),
+    ,
+    drop = FALSE
+  ] |>
+    colSums() |>
+    sapply(\(x) x == 1)
+
+  indicator_type[composite_indicators] <- "Composite"
+
+  common_factor_indicators <- C0[
+    names(csemify$construct_type[csemify$construct_type == "Common factor"]),
+    ,
+    drop = FALSE
+  ] |>
+    colSums() |>
+    sapply(\(x) x == 1)
+
+  indicator_type[common_factor_indicators] <- "Common factor"
+  n_case <- nrow(Z0)
+  n_indicators <- ncol(Z0)
+  n_constructs <- ncol(W0)
+  n_total_var <- n_indicators + n_constructs
+
+  # Normalize data matrix to make normalized Z
+  normalization_factor <- sqrt(n_case - 1)
+  Z <- Z0 / normalization_factor
+  w_index <- which(c(W0) == 1)
+  b_index <- which(c(B0) == 1)
+
+  ### Initial Values ------------------------------------
+  GSCA_starting_values <- calculateWeightsGSCA(
+    .X = .data,
+    .S = .S,
+    .csem_model = .csem_model,
+    .conv_criterion = .conv_criterion,
+    .GSCA_modes = .GSCA_modes,
+    .iter_max = 10,
+    .tolerance = .tolerance,
+    .starting_values = .starting_values
+  )
+
+  W <- t(GSCA_starting_values$W)
+  B <- t(GSCA_starting_values$B)
+  C <- GSCA_starting_values$C
+  V <- cbind(diag(n_indicators), W)
+
+  # Create initial values for U and D, using normalized data (Z) and construct scores (Eta) --------------
+
+  # Create Initial Normalized Construct Scores Matrix
+  Eta <- Z %*% W
+
+  # Initalize unique loadings
+
+  list_UD <- updateUD(
+    D = diag(n_indicators),
+    Eta_normed = Eta,
+    .indicator_type = indicator_type,
+    n_constructs = n_constructs,
+    n_indicators = n_indicators,
+    n_case = n_case,
+    Z_normed = Z
+  )
+
+  U <- list_UD[["U"]]
+  D <- list_UD[["D"]]
+
+  # if starting values are provided
+  if (!is.null(.starting_values)) {
+    W <- setStartingValues(.W = t(W), .starting_values = .starting_values) |>
+      t()
+  }
+
+  # Define and Check Modes: 'Common factor', 'NCMP', and 'CCMP'
+  modes <- ifelse(
+    .csem_model$construct_type == "Composite",
+    yes = "CCMP",
+    no = .csem_model$construct_type
+  )
+  if (!is.null(.GSCA_modes)) {
+    stopifnot(
+      "Invalid .GSCA_modes selected. Only NCMP or CCMP are supported" = all(sapply(
+        .GSCA_modes,
+        function(x) x %in% c('NCMP', 'CCMP')
+      ))
+    )
+
+    if (length(names(.GSCA_modes)) != 0) {
+      stopifnot(
+        "Invalid construct name listed in .GSCA_modes" = length(setdiff(
+          names(.GSCA_modes),
+          names(.csem_model$construct_type)
+        )) ==
+          0
+      )
+      modes[names(.GSCA_modes)] <- .GSCA_modes
+    } else if (length(names(.GSCA_modes)) == 0) {
+      stopifnot(
+        "When passing a global setting to .GSCA_modes, only one choice may be passed" = length(
+          .GSCA_modes
+        ) ==
+          1
+      )
+
+      # If only an unnamed element is given (NCMP or CCMP), then set all composites to .GSCA_modes
+      if (length(.GSCA_modes) == 1) {
+        modes <- ifelse(modes == "CCMP", yes = .GSCA_modes, no = modes)
+      }
+    }
+  }
+  # Set Loadings of canonical composites to 0 just in case it wasn't handled properly in the initial values
+  C[which(modes == "CCMP"), ] <- 0
+  # Create c_index which should only exist for nomological composites and common factors
+  C0[which(modes == "CCMP"), ] <- 0
+  c_index <- which(c(C0) == 1)
+
+  ## Alternating Least Squares Algorithm -------------------------------------
+
+  ### Optimization Preparation -----------------------------------------------
+  # Set the initial estimates based on either the structural model or the loadings
+  # if there's no structural model
+  if (length(b_index) > 0) {
+    est <- B[b_index]
+  } else {
+    # Because canonical composites do not estimate loadings, here the weights are generally used to determine convergenece, instead of loadings
+    est <- W[w_index]
+    # est <- C[c_index]
+  }
+  est0 <- est + 1
+  it <- 0
+
+  while (
+    (!checkConvergence(
+      .W_new = est,
+      .W_old = est0,
+      .tolerance = .tolerance,
+      .conv_criterion = .conv_criterion
+    )) &&
+      (it <= .iter_max)
+  ) {
+    # Update Counter Variables
+    it <- it + 1
+    est0 <- est
+
+    ### Update Weights --------------------------------------------------
+
+    # X is the indicators Z with measurement error removed UD.
+    X <- Z - (U %*% D)
+
+    # WW is important for updating the Theta for common factors
+    WW <- crossprod(
+      x = C,
+      y = MASS::ginv(
+        (tcrossprod(C) + diag(n_constructs) - (2 * B) + (tcrossprod(B)))
+      )
+    )
+
+    # WW <- t(C) %*% solve((C %*% t(C) + diag(n_constructs) - (2 * B) + (B %*% t(B))))
+
+    #### for-loop update per construct ---------------------------------------
+    A <- cbind(C, B)
+
+    # After each cycle, the Gamma, W and V matrices are updated
+    for (eta_idx in seq_len(n_constructs)) {
+      tot <- n_indicators + eta_idx
+      windex_eta_idx <- (W0[, eta_idx, drop = FALSE] == 1)
+      X_eta_idx <- X[, windex_eta_idx, drop = FALSE]
+
+      if (con_type[eta_idx] == "Composite") {
+        Theta <-
+          updateCompositeTheta(
+            W = W,
+            A = A,
+            X = X,
+            V = V,
+            eta_idx = eta_idx,
+            tot = tot,
+            n_constructs = n_constructs,
+            n_total_var = n_total_var,
+            windex_eta_idx = windex_eta_idx,
+            .S = .S
+          )
+      } else if (con_type[eta_idx] == "Common factor") {
+        Theta <- WW[windex_eta_idx, eta_idx, drop = FALSE]
+      } else {
+        stop("con_type should only either be `Composite` or `Common factor`")
+      }
+
+      normed_weights <- Theta / norm(X_eta_idx %*% Theta, "2")
+      W[windex_eta_idx, eta_idx] <- normed_weights
+      V[windex_eta_idx, tot] <- normed_weights
+    }
+    Eta <- X %*% W # Trying to save on compute time
+
+    ### Update Loadings, Path Coefficients and Uniqueness Terms ----------
+    list_CB <- updateCB(
+      X = X,
+      Eta = Eta,
+      Lambda = C,
+      B = B,
+      n_indicators = n_indicators,
+      .indicator_type = indicator_type,
+      n_constructs = n_constructs,
+      n_case = n_case,
+      lambda_index = c_index,
+      b_index = b_index,
+      modes = modes
+    )
+
+    list2env(list_CB[c("C", "B")], envir = environment())
+
+    ## Uniqueness Scores and Loadings Update ------------------------------------
+    list_UD <- updateUD(
+      D = D,
+      Eta_normed = Eta,
+      .indicator_type = indicator_type,
+      n_constructs = n_constructs,
+      n_indicators = n_indicators,
+      n_case = n_case,
+      Z_normed = Z
+    )
+
+    U <- list_UD[["U"]]
+    D <- list_UD[["D"]]
+
+    if (length(b_index) > 0) {
+      est <- B[b_index]
+    } else {
+      est <- W[w_index]
+      # Because canonical composites do not estimate loadings, here the weights are generally used to determine convergenece, instead of loadings
+      # est <- C[c_index]
+    }
+  }
+
+  ## Output Formatting -------------------------------------------------------
+
+  # Compute loadings for Canonical Composites
+  if (any(modes %in% "CCMP")) {
+    CCMP_C <- t(W) %*% .S * .csem_model$measurement
+    C[names(modes)[modes == "CCMP"], ] <- CCMP_C[
+      names(modes)[modes == "CCMP"],
+      ,
+      drop = FALSE
+    ]
+  }
+
+  D_diag <- diag(D)
+  names(D_diag) <- colnames(Z)
+
+  # Get the standardized unique scores back from normalized U and zero out the unique scores for composite indicators
+  U[, indicator_type == "Composite"] <- 0
+  Unique_scores <- U * normalization_factor
+  colnames(Unique_scores) <- colnames(Z)
+
+  return(
+    list(
+      "W" = t(W), # W is J X P, so W^T is P \times J. As shown in the examples ?csem, res$Estimates$Weight_estimates should be P \times J
+      "C" = C, # C is P \times J. As shown in the examples ?csem, res$Estimates$Loading_estimates should be P \times J
+      "B" = t(B), # B is From \times To; so t(B) is To \times From. As shown in the examples ?csem, res$Estimates$Path_estimates should be To \times From
+      # Recall that Z0 is the original standardized data
+      "Construct_scores" = (Z0 - (Unique_scores %*% D)) %*% W,
+      "Unique_loading_estimates" = D_diag,
+      "Unique_scores" = Unique_scores,
+      "Modes" = "gsca (igsca)",
+      "Conv_status" = ifelse(it > .iter_max, FALSE, TRUE),
+      "Iterations" = it
+    )
+  )
+}
+
 
 #' Calculate composite weights using unit weights
 #'

@@ -19,7 +19,7 @@ calculateWeightsGSCAm(
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
-One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
+One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
 to "\emph{diff_absolute}".}
 
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
@@ -57,15 +57,8 @@ with uniqueness terms (GSCAm) proposed by \insertCite{Hwang2017;textual}{cSEM}.
 If there are only constructs modeled as common factors
 calling \code{\link[=csem]{csem()}} with \code{.appraoch_weights = "GSCA"} will automatically call
 \code{\link[=calculateWeightsGSCAm]{calculateWeightsGSCAm()}} unless \code{.disattenuate = FALSE}.
-GSCAm currently only works for pure common factor models. The reason is that the implementation
-in \pkg{cSEM} is based on (the appendix) of \insertCite{Hwang2017;textual}{cSEM}.
-Following the appendix, GSCAm fails if there is at least one construct
-modeled as a composite because calculating weight estimates with GSCAm leads to a product
-involving the measurement matrix. This matrix does not have full rank
-if a construct modeled as a composite is present.
-The reason is that the measurement matrix has a zero row for every construct
-which is a pure composite (i.e. all related loadings are zero)
-and, therefore, leads to a non-invertible matrix when multiplying it with its transposed.
+
+\strong{Note}: Here, we assume that there is only one unique loading per indicator.
 }
 \references{
 \insertAllCited{}

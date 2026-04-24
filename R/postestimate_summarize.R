@@ -178,6 +178,38 @@ summarize.cSEMResults_default <- function(
     residual_correlation <- data.frame(NULL)
   }
   
+
+  ## Unique Loading Estimates ----------------------------------------------------
+  # Build names
+  if (!is.null(x1$Unique_loading_estimates)) {
+    type <- rep(x2$Model$construct_type, times = rowSums(x2$Model$measurement))
+    # temp <- paste0("U_", names(x1$Unique_loading_estimates), " =~ ", names(x1$Unique_loading_estimates))
+    # Mimicking Lavaan's format for residual variances of x1 ~~ x1
+    temp <- paste0(
+      names(x1$Unique_loading_estimates),
+      " =~ ",
+      names(x1$Unique_loading_estimates)
+    )
+
+    Unique_loading_estimates <- data.frame(
+      "Name" = temp,
+      "Construct_type" = type,
+      "Estimate" = x1$Unique_loading_estimates,
+      "Std_err" = NA,
+      "t_stat" = NA,
+      "p_value" = NA,
+      stringsAsFactors = FALSE,
+      row.names = NULL
+    )
+    # Regarding `Construct_type` as global variable, 
+    # note: https://github.com/r-lib/devtools/issues/2307
+    Unique_loading_estimates <- subset(Unique_loading_estimates, Construct_type == "Common factor")
+
+  } else if (is.null(x1$Unique_loading_estimates)) {
+    Unique_loading_estimates <- NULL
+  }
+
+
   ## Indicator correlation ------------------------------------------------------
   # Set up empty matrix to select the relevant residual correlations 
   cor_selector[] <- 0
@@ -260,10 +292,13 @@ summarize.cSEMResults_default <- function(
     ## Check arguments
     match.arg(.ci, args_default(.choices = TRUE)$.ci, several.ok = TRUE)
     
-    ## The 95% percentile CI is returned by default (BCa is actually better 
-    ##  but requires a second resampling run and should therefore not be the 
+    ## The 95% percentile CI is returned by default (BCa is actually better
+    ##  but requires a second resampling run and should therefore not be the
     ##  default).
-    if(is.null(.ci)) .ci <- "CI_percentile"
+    if (is.null(.ci)) {
+      .ci <- "CI_percentile"
+      attr(.object, ".ci") <- "CI_percentile"
+    }
     
     quantity <- c("sd", .ci)
     
@@ -352,6 +387,7 @@ summarize.cSEMResults_default <- function(
   .object$Estimates$Path_estimates    <- path_estimates
   .object$Estimates$Loading_estimates <- loading_estimates
   .object$Estimates$Weight_estimates  <- weight_estimates
+  .object$Estimates$Unique_loading_estimates <- Unique_loading_estimates
   .object$Estimates$Residual_correlation <- residual_correlation
   .object$Estimates$Indicator_correlation <- indicator_correlation
   .object$Estimates$Exo_construct_correlation <- exo_construct_correlation

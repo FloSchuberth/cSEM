@@ -32,7 +32,11 @@ Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
             person(given = "Gloria", family="Pietropolli",
                    role  = c("ctb"),
                    email="",
-                   comment = c(ORCID = "0000-0001-7623-8419")))
+                   comment = c(ORCID = "0000-0001-7623-8419")),
+            person(given = "Michael S.", family = "Truong",
+                    role = c("ctb"),
+                    email = "emstruonger@gmail.com",
+                    comment = c(ORCID = "0009-0006-4521-6528")))
 Maintainer: Florian Schuberth <f.schuberth@utwente.nl>
 Depends: R (>= 4.1.0)
 Description: Estimate, assess, test, and study linear, nonlinear, hierarchical 
@@ -76,7 +80,12 @@ Imports:
     stats,
     symmoments,
     TruncatedNormal,
-    utils
+    utils,
+    generics,
+    partykit,
+    Formula,
+    boot,
+    tibble (>= 3.0.0)
 RdMacros: Rdpack, lifecycle
 RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
@@ -98,7 +107,16 @@ Suggests:
     GA,
     openxlsx,
     graphics,
-    spelling
+    spelling,
+    withr,
+    modeltests (>= 0.1.7),
+    RhpcBLASctl
+Remotes:
+       T-Schamberger/cSEM.DGP
+Config/Needs/check:
+       T-Schamberger/cSEM.DGP
 Config/testthat/edition: 3
+Config/testthat/parallel: true
 VignetteBuilder: knitr
 Language: en-US
+

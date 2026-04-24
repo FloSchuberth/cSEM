@@ -1,0 +1,10 @@
+V1,V2,Estimate,SE,95%CI(L),95%CI(U)
+Honesty-Humility->Networking Behavior,,0.1361644,0.0309411,0.0823789,0.1988008
+Emotionality->Networking Behavior,,-0.4311118,0.0340716,-0.4975993,-0.3714208
+Extraversion->Networking Behavior,,0.4051107,0.0362823,0.331708,0.4769753
+Agreeableness->Networking Behavior,,0.1268461,0.0336086,0.066576,0.2012249
+Conscientiousness->Networking Behavior,,0.0818501,0.0284513,0.0312144,0.1347351
+Openness to Experience->Networking Behavior,,0.1463257,0.0273398,0.0948065,0.2024902
+Networking Behavior->Number of job interviews,,0.1310967,0.0361253,0.0672806,0.2064333
+Networking Behavior->Number of job offers,,0.094872,0.0363889,0.0209743,0.1622576
+"",,,,,

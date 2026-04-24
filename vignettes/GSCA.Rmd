@@ -1,0 +1,272 @@
+---
+title: "GSCA, GSCA-M and IGSCA"
+subtitle: "Generalized structured component analysis with composites and common factors" 
+date: "`r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+vignette: >
+  %\VignetteIndexEntry{GSCA}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: ../inst/REFERENCES.bib
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+<!-- Adapted from and updated from Manuel Rademaker's initial drafts. -->
+
+Generalized structured component analysis (GSCA), generalized structured component analysis with uniquness terms (GSCA<sub>M</sub>), and integrated generalized structured component component analysis (IGSCA) are all members of the broader GSCA family of composite-based approaches to structural equation modeling introduced [@Hwang2004; @Hwang2014; @Hwang2017; @Hwang2021a]. 
+
+Like the other composite-based approaches, such as partial least squares path modelling (PLS), every GSCA-type method represents constructs by a linear combination of its indicators. What originally set GSCA apart from  PLS is its global objective fit function, which aims to maximize the averaged explained variance of its constructs and indicators [@henselerWhyGeneralizedStructured2012; @Hwang2014]. Compared to The global objective fit function facilitates multigroup hypothesis testing and constrained parameter estimation, which would usually be more complicated using PLS [@Hwang2014]. Additionally, compared to likelihood-based SEM, GSCA models make no distributional assumptions regarding the distribution of the indicators, constructs or their associated errors. 
+
+An important distinction between each member of the GSCA family is whether or not the measurement error is estimated and removed from the indicator before computing the construct scores. Using GSCA<sub>M</sub>, removing measurement error has enabled unbiased estimaties of path coefficients and loadings associated with common factor constructs [@Hwang2017; @Hwang2021a]. In contrast, traditional GSCA produces biased estimates when the underlying construct is a common factor. The limitation of GSCA<sub>M</sub> is that it produces biased parameter estimates for composite constructs. Hence, IGSCA was proposed as a way of handling both common factor and composite constructs within the same integrated SEM model [@Hwang2021a]. When the constructs are correctly specified, simulation studies have shown that IGSCA produces unbiased parameter estimates [@Hwang2021a]. 
+
+We now discuss how (traditional) GSCA, GSCA<sub>M</sub>  and IGSCA may be estimated using the functions of the cSEM-package see Sections [Implementation](#usage) and [Examples](#examples).
+
+# Syntax and Options {#usage}
+
+Suppose that a structural model 'model' is specified in Lavaan-syntax and that data are given in form of an observation matrix `data`. To estimate parameters now in this specified structural model by means of GSCA for the given data, the user has to call the function *csem()*:
+
+```{r setup}
+library(cSEM)
+```
+
+```{r eval=FALSE}
+csem(.data = data, .model = model, .approach_weights = "GSCA")
+```
+
+Although the `csem`-function has many more input arguments, it suffices in the case of GSCA in a first step to specify the input arguments `.model` and `.data` and to set the argument `.approach_weights` equal to *"GSCA"*. 
+
+The argument `.disattenuate` indicates whether we allow for the estimation and removal of measurement error from the indicators. Its default value is `TRUE` resulting in either GSCA<sub>M</sub> or IGSCA as the estimation method, only if there are common factors specified in the `model`---meaning using `=~`. Setting `.disattenuate = FALSE` leads to 'standard' GSCA, only if there are *only* composite constructs specified in the `model`---meaning using `<~`. IGSCA requires that `.disattenuate = TRUE` and for there to be both common factors (`=~`) and composites (`<~`) specified in `model`.
+
+There are two other input-arguments which are of interest when estimating parameters with GSCA or GSCA<sub>M</sub>:  `.iter_max` and `.tolerance`. Both will be explained in the section [Methods](#methods). 
+
+# Usage & Examples {#examples}
+
+### Example 1: Pure common factor model and GSCA<sub>M</sub> {#example1}
+
+In the following, a first application example of the *csem*-function for the estimation with GSCA is presented. Data are given in form of the dataset "satisfaction" that comes with the *cSEM*-package.
+This dataset consists of 250 observations for 27 indicators. These indicators are somehow related to 6 constructs. Before estimation can be done, a model has to be specified for the relationships among these variables. This model is a result of the user's ideas, hypotheses and theories about the original subject, which is customer satisfaction in the example. The model specification has to be done in lavaan-syntax. In the structural model, the tilde "~" is the known regression operator. However, in the measurement model, the symbol "<~" is used for pure composites whereas the symbol "=~" stands for common factors.
+Note that the following specification is just one possible way and does not reflect any common theory about customer satisfaction but is used for illustration purposes only. 
+
+```{r message=FALSE}
+library(cSEM)
+data(satisfaction)
+
+model <- "
+# Structural model
+QUAL ~ EXPE
+EXPE ~ IMAG
+SAT  ~ IMAG + EXPE + QUAL + VAL
+LOY  ~ IMAG + SAT
+VAL  ~ EXPE + QUAL
+
+# Measurement model (pure common factor)
+
+EXPE =~ expe1 + expe2 + expe3 + expe4 + expe5
+IMAG =~ imag1 + imag2 + imag3 + imag4 + imag5
+LOY  =~ loy1  + loy2  + loy3  + loy4
+QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
+SAT  =~ sat1  + sat2  + sat3  + sat4
+VAL  =~ val1  + val2  + val3  + val4
+"
+```
+
+Having specified the model to be estimated and the data, the user can now call the *csem*-function:
+
+```{r warning=FALSE}
+results1 <- csem(
+  satisfaction,
+  model,
+  .approach_weights = "GSCA",
+  .disattenuate = TRUE,
+  .conv_criterion = "sum_diff_absolute",
+  .tolerance = 0.0001,
+  .iter_max = 100
+)
+```
+
+An additional argument is to set `.conv_criterion = "sum_diff_absolute"`, which checks for convergence of the model fitting by taking the sum of the absolute differences with each iteration of the internal alternating least squares (ALS) algorithm. Depending on which type of GSCA is used, when the sum of the absolute differences of the parameters (e.g., path coefficients and loadings) changes less than `.tolerance` between ALS iterations, then the algorithm has converged. The maximum number of iterations is set by `.iter_max`. 
+
+The estimation results are stored in the object *"results1"*:
+
+```{r}
+results1
+```
+
+As indicated, the object *"results1"* is a list of class *cSEMResults* with the list elements *Estimates* and *Information*. Each sublist contains several elements which can be accessed separately:
+
+1. Estimates
++ Path_estimates
++ Loading_estimates
++ Weight_estimates
++ Inner_weight_estimates
++ Construct_scores
++ Indicator_VCV
++ Proxy_VCV
++ Construct_VCV
++ Unique_loading_estimates
++   Unique_scores
++ Construct_reliabilities
++ R2
++ R2adj
++ VIF
+
+2. Information
++ Data
++ Model
++ Arguments
++ Type_of_indicator_correlation
++ Weight_info
+
+Note that in this package's conventions, the `Construct_reliabilities` are always set to `1` in GSCA-type models. This is because, in theory, we suspect that GSCA<sub>M</sub> computes perfectly reliable (common factor) construct scores because of the casewise removal of measurement error. 
+
+Depending on the research interests that the user has, the relevant information and estimators can be extracted by the user.
+
+For GSCA, as well as for PLS and the other approaches, some postestimation functions are available:
+1. *'assess'*
+2. *'summarize'*
+3. *'verify'*
+
+Firstly, the *'assess'*-function provides the user with common evaluation criteria and fit measures to assess the model:
+
+```{r, eval=FALSE}
+assess(results1)
+```
+
+Next, if the user just wants a compact summary of the parameter estimators and of the most important information concerning the estimation, calling the *'summarize'*-function of the *cSEM*-package will provide this. 
+
+```{r}
+summarize(results1)
+```
+
+Finally, the *'verify'*-function checks whether the calculated results are admissible. That is to say, it is verified that all results are consonant with the theory underlying the estimation. If the results based on an estimated model exhibit one of the following defects they are deemed inadmissible: 
+- non-convergence
+- loadings and/or reliabilities larger than 1
+- a construct VCV and/or a model-implied VCV matrix that is not positive (semi-)definite
+
+```{r}
+verify(results1)
+```
+
+The output shows that the estimation results of the example are admissible, every status is set to "ok".
+
+Having carried out the estimation of all parameters and having established that they are all admissible, it is now question to interpret the results. 
+The influence of (exogenous) constructs on (endogenous) constructs is described by the structural model and expressed by the estimated path coefficients (reliabilities):
+
+```{r}
+results1$Estimates$Path_estimates
+```
+
+The way estimated loadings and weights are provided is the same: The user is always given a matrix which consists of the variables involved in the respective submodel of GSCA<sub>M</sub> (resp. GSCA). For the path estimates, the columns of the output matrix stand for the constructs that exert an influence and the rows for those constructs that are influenced.
+
+For example, in the considered dataset the user gets for the path coefficient "IMAG" on "EXPE" an estimated value of:  
+```{r}
+results1$Estimates$Path_estimates["EXPE","IMAG"]
+```
+
+This value describes the influence of the construct "Consumer's image of the enterprise" on the construct "Consumer's expectation". As data are standardized, parameter estimates are also standardized. Therefore, they measure the change of a variable in standard deviations. This has to be taken into account when interpreting the results. Thus, an increase of "IMAG" by one standard deviation leads to an increase of "EXPE" by `r results1$Estimates$Path_estimates["EXPE","IMAG"]` standard deviations. Furthermore, the path coefficient in the example stands for the portion of the total variance of the construct "EXPE" which is explained by the construct "IMAG".
+
+Next, the loadings are to be interpreted. The loading is the correlation between a construct (resp. its proxy) and an indicator. Obviously, this correlation always exists and can always be calculated. To this end, it is important to point out that in the scope of the *cSEM*-package three types of loadings are distinguished. The type of a specific loading is dependent on the type of the construct which is connected by the loading to an indicator. 
+
+With common factors, the loading represents the correlation between the common factor scores and measurement-error free indicators. With composites, there are either loadings from canonical composites or loadings from nomological composites. The loadings of composite constructs can be calculated either after the ALS algorithm (canonical composites) or during (nomological composites). 
+
+### Example 2: Pure composite model and GSCA {#example2}
+
+In the next example, the same model as in [Example1](#example1) is considered. However, estimation is now done with GSCA. As already mentioned, this can be achieved by setting the argument *'.disattenuate'* equal to *FALSE*. In this case, estimators can be biased when constructs are of common factor type and no pure composites.  
+
+```{r}
+cmp_model <- "
+# Structural model
+QUAL ~ EXPE
+EXPE ~ IMAG
+SAT  ~ IMAG + EXPE + QUAL + VAL
+LOY  ~ IMAG + SAT
+VAL  ~ EXPE + QUAL
+
+# Measurement model (pure common factor)
+
+EXPE <~ expe1 + expe2 + expe3 + expe4 + expe5
+IMAG <~ imag1 + imag2 + imag3 + imag4 + imag5
+LOY  <~ loy1  + loy2  + loy3  + loy4
+QUAL <~ qual1 + qual2 + qual3 + qual4 + qual5
+SAT  <~ sat1  + sat2  + sat3  + sat4
+VAL  <~ val1  + val2  + val3  + val4
+"
+
+results2 <- csem(
+  satisfaction,
+  cmp_model,
+  .approach_weights = "GSCA",
+  .disattenuate = FALSE,
+  .conv_criterion = "sum_diff_absolute",
+  .GSCA_modes = "CCMP",
+  .iter_max = 100
+)
+```
+
+Here, we also set `.GSCA_modes = "CCMP"`, which models composite constructs as canonical composites. Hence, loadings are only estimated after the ALS algorithm converges. Nomological composites may be modelled by setting `.GSCA_modes =  "NCMP"`. 
+
+For the path coefficient and the loading already considered in [Example1](#example1), the estimated values are now:
+
+```{r}
+results2$Estimates$Path_estimates["EXPE","IMAG"]
+results2$Estimates$Loading_estimates["EXPE", "expe1"]
+```
+
+The interpretation of the estimators is the same as in the case of GSCA<sub>M</sub> (see [Example1](#example1)). However, by comparing these values with those calculated before, the bias in (some) estimators when using GSCA becomes obvious. Thus, when interpreting these values the user should keep in mind that the estimators might be biased. 
+
+### Example 3: Common factors and composites using IGSCA {#example3}
+
+Now, the specified model will contain both common factors and composites. The aim is to consider models with at least one construct of composite type. 
+
+We use the same dataset as before, but the constructs "EXPE", "IMAG", "SAT" and "VAL" are now of composite type. This means that, these constructs are interpreted such that they do not have an influence on their respective indicators. Thus, they are only modeled as an (exact) linear combination (composite) of their indicators. (We  are not claiming that `EXPE`, `IMAG`, `SAT` and `VAL` are necessarily composite constructs, but we set them as composites for pedagogical purposes. The same can be said for the untouched common factor constructs---they are not necessarily true common factors.) The structural model stays the same.
+
+```{r message=FALSE}
+cf_cmp_model <- "
+# Structural model
+QUAL ~ EXPE
+EXPE ~ IMAG
+SAT  ~ IMAG + EXPE + QUAL + VAL
+LOY  ~ IMAG + SAT
+VAL  ~ EXPE + QUAL
+
+# Measurement model (common factors and composites)
+
+EXPE <~ expe1 + expe2 + expe3 + expe4 + expe5
+IMAG <~ imag1 + imag2 + imag3 + imag4 + imag5
+LOY  =~ loy1  + loy2  + loy3  + loy4
+QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
+SAT  <~ sat1  + sat2  + sat3  + sat4
+VAL  <~ val1  + val2  + val3  + val4
+"
+```
+
+Calling the `csem`-function in this case and setting the argument `.disattenuate` equal to `FALSE` will produce an error. 
+
+For a model like the specified one, i.e. with at least one construct of composite type, estimation will be done using IGSCA:
+
+```{r}
+results3 <- csem(
+  satisfaction,
+  cf_cmp_model,
+  .approach_weights = "GSCA",
+  .disattenuate = TRUE,
+  .conv_criterion = "sum_diff_absolute",
+  .GSCA_modes = "CCMP"
+)
+```
+
+```{r}
+results3$Estimates$Path_estimates["EXPE","IMAG"]
+results3$Estimates$Loading_estimates["EXPE", "expe1"]
+```
+
+# References

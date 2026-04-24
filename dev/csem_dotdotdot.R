@@ -17,6 +17,8 @@
 #'   [calculateWeightsGSCA()], [calculateWeightsGSCAm()]}
 #' \item{.PLS_modes, .PLS_ignore_structural_model, .PLS_weight_scheme_inner, .PLS_approach_cf}{
 #'   Accepted by/Passed down to: [calculateWeightsPLS()]}
+#' \item{.GSCA_modes}{
+#'  Passed to (I-)GSCA estimating functions in [cSEM::calculateWeightsGSCA()] or [cSEM::calculateWeightsIGSCA()].}
 #' \item{.tolerance}{Accepted by/Passed down to: [calculateWeightsPLS()],
 #'   [calculateWeightsGSCA()], [calculateWeightsGSCAm()], [calculateWeightsUnit()]}
 #' }
@@ -28,7 +30,7 @@
 
 args_csem_dotdotdot <- function(
   .approach_cor_robust     = c("none", "mcd", "spearman"),
-  .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative"),
+  .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative", "sum_diff_absolute", "mean_diff_absolute"),
   .dominant_indicators     = NULL,
   .estimate_structural     = TRUE,
   .iter_max                = 100,

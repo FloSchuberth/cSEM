@@ -1,5 +1,3 @@
-context("verify")
-
 source("test-main.R")
 
 test_that("Verify work for all cSEMResults classes and subclasses", {
