@@ -1,0 +1,66 @@
+term,op,type,estimate
+Competence ~ Quality,~,,0.357
+Competence ~ Performance,~,,0.443
+Competence ~ CorpSocResp,~,,0.009
+Competence ~ Attractiveness,~,,0.125
+Likeability ~ Quality,~,,0.417
+Likeability ~ Performance,~,,0.148
+Likeability ~ CorpSocResp,~,,0.197
+Likeability ~ Attractiveness,~,,0.172
+CustomerSatisfaction ~ Competence,~,,0.027
+CustomerSatisfaction ~ Likeability,~,,0.555
+CustomerLoyality ~ Competence,~,,-0.109
+CustomerLoyality ~ Likeability,~,,0.516
+CustomerLoyality ~ CustomerSatisfaction,~,,0.491
+Quality =~ qual_1,=~,Composite,0.742
+Quality =~ qual_2,=~,Composite,0.669
+Quality =~ qual_3,=~,Composite,0.81
+Quality =~ qual_4,=~,Composite,0.764
+Quality =~ qual_5,=~,Composite,0.797
+Quality =~ qual_6,=~,Composite,0.788
+Quality =~ qual_7,=~,Composite,0.708
+Quality =~ qual_8,=~,Composite,0.597
+Performance =~ perf_1,=~,Composite,0.772
+Performance =~ perf_2,=~,Composite,0.765
+Performance =~ perf_3,=~,Composite,0.612
+Performance =~ perf_4,=~,Composite,0.688
+Performance =~ perf_5,=~,Composite,0.683
+CorpSocResp =~ csor_1,=~,Composite,0.742
+CorpSocResp =~ csor_2,=~,Composite,0.726
+CorpSocResp =~ csor_3,=~,Composite,0.797
+CorpSocResp =~ csor_4,=~,Composite,0.746
+CorpSocResp =~ csor_5,=~,Composite,0.784
+Attractiveness =~ attr_1,=~,Composite,0.786
+Attractiveness =~ attr_2,=~,Composite,0.671
+Attractiveness =~ attr_3,=~,Composite,0.777
+Competence =~ comp_1,=~,Common factor,0.66
+Competence =~ comp_2,=~,Common factor,0.745
+Competence =~ comp_3,=~,Common factor,0.85
+Likeability =~ like_1,=~,Common factor,0.809
+Likeability =~ like_2,=~,Common factor,0.812
+Likeability =~ like_3,=~,Common factor,0.753
+CustomerSatisfaction =~ cusa,=~,Common factor,1
+CustomerLoyality =~ cusl_1,=~,Common factor,0.712
+CustomerLoyality =~ cusl_2,=~,Common factor,0.948
+CustomerLoyality =~ cusl_3,=~,Common factor,0.732
+Quality <~ qual_1,<~,Composite,0.173
+Quality <~ qual_2,<~,Composite,0.143
+Quality <~ qual_3,<~,Composite,0.184
+Quality <~ qual_4,<~,Composite,0.161
+Quality <~ qual_5,<~,Composite,0.179
+Quality <~ qual_6,<~,Composite,0.193
+Quality <~ qual_7,<~,Composite,0.177
+Quality <~ qual_8,<~,Composite,0.142
+Performance <~ perf_1,<~,Composite,0.301
+Performance <~ perf_2,<~,Composite,0.313
+Performance <~ perf_3,<~,Composite,0.243
+Performance <~ perf_4,<~,Composite,0.285
+Performance <~ perf_5,<~,Composite,0.268
+CorpSocResp <~ csor_1,<~,Composite,0.252
+CorpSocResp <~ csor_2,<~,Composite,0.252
+CorpSocResp <~ csor_3,<~,Composite,0.282
+CorpSocResp <~ csor_4,<~,Composite,0.258
+CorpSocResp <~ csor_5,<~,Composite,0.27
+Attractiveness <~ attr_1,<~,Composite,0.469
+Attractiveness <~ attr_2,<~,Composite,0.404
+Attractiveness <~ attr_3,<~,Composite,0.463

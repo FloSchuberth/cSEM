@@ -17,7 +17,7 @@ checkConvergence(
 \item{.W_old}{A (J x K) matrix of weights.}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
-One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
+One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
 to "\emph{diff_absolute}".}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
@@ -38,6 +38,13 @@ smaller than a given tolerance.}
 \item{\code{diff_relative}}{Checks if the largest elementwise absolute rate of change
 (new - old / new) for two matrices \code{.W_new}
 and \code{W.old} is smaller than a given tolerance.}
+\item{\code{sum_diff_absolute}}{Checks if the sum of the element-wise absolute
+difference between two matrices \code{.W_new} and \code{W.old} is smaller than a
+given tolerance}
+\item{\code{mean_diff_absolute}}{Checks if the mean of the element-wise absolute
+difference between two matrices \code{.W_new} and \code{W.old} is smaller than a
+given tolerance
+}
 }
 }
 \keyword{internal}

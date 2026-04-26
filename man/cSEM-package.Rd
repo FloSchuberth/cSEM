@@ -40,6 +40,7 @@ Other contributors:
   \item Theo K. Dijkstra [contributor]
   \item Jörg Henseler (\href{https://orcid.org/0000-0002-9736-3048}{ORCID}) [contributor]
   \item Gloria Pietropolli (\href{https://orcid.org/0000-0001-7623-8419}{ORCID}) [contributor]
+  \item Michael S. Truong \email{emstruonger@gmail.com} (\href{https://orcid.org/0009-0006-4521-6528}{ORCID}) [contributor]
 }
 
 }

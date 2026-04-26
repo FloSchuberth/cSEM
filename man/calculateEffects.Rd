@@ -21,7 +21,7 @@ A matrix or a data frame of effects.
 }
 \description{
 The direct effects are equal to the estimated coefficients. The total effect
-equals (I-B)^-1 Gamma. The indirect effect equals the difference between
+equals \eqn{(I-B)^{-1}\Gamma}. The indirect effect equals the difference between
 the total effect and the indirect effect. In addition, the variance accounted
 for (VAF) is calculated. The VAF is defined as the ratio of a variables
 indirect effect to its total effect. Helper for generic functions \code{\link[=summarize]{summarize()}} and \code{\link[=assess]{assess()}}.

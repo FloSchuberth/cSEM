@@ -1,7 +1,5 @@
-context("testMGD")
+source(testthat::test_path("test-main.R"))
 
-source("test-main.R")
-# source("tests/testthat/test-main.R") 
 # ==============================================================================
 # Tests 
 # ==============================================================================
