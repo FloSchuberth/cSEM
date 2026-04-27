@@ -122,15 +122,18 @@ plot.cSEMNonlinearEffects <- function(
           yaxis = list(title = paste('Standardized ',x$Information$moderator)),
           zaxis = list(title = x$Information$dependent)
         ))%>% plotly::hide_colorbar()
+    # browser()
+    # save current viewer settings. 
+    viewer_old <- getOption("viewer")
     
-    # save current viewer settings. Set to null that figure is opened in browser
-    op=options()
-    viewer_old <- op$viewer
+    on.exit(options(viewer = viewer_old), add = TRUE)
+    # Set to null that figure is opened in browser
     options(viewer = NULL)
     # Create plot
-    return(plot1)
-    # Restore viewer settings
-    options(viewer = viewer_old)
+    print(plot1)
+    # Exit the function silently
+    invisible(plot1)
+
   }
   
   if(.plot_package == 'persp'){
