@@ -1,0 +1,9 @@
+# Compiled Stan executable (rebuilt by cmdstanr on demand)
+composite_ho
+composite_ho.exe
+*.o
+*.hpp
+# CmdStan output csv files (transient; results go in *.rds)
+*-output-*.csv
+*.csv
+.cmdstanr/
