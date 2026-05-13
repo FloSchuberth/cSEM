@@ -121,6 +121,258 @@ not a SEM/Wishart fit. But the user's intuition that PGM-vs-covariance is
 a deep modelling distinction for **linear Gaussian** composite indicators
 is overstated.
 
+## Debugging journey (pedagogical)
+
+The "final" Stan model above did not work on the first three tries. Each
+broken intermediate is informative — it surfaces a different identification
+pathology that composite-with-common-factor models routinely exhibit and
+that quietly disappears in CB-SEM software because the software imposes the
+constraints silently. The point of writing this section is *not* to confess
+that the author iterated; it is to make the bugs and their symptoms visible
+so a reader can recognize them in their own models.
+
+### Pathology 1 — Sign of η is free (no `λ[1] > 0`)
+
+**The buggy code (excerpt).** No constraint on any element of `λ`; η was an
+explicit per-observation latent at this point.
+
+```stan
+parameters {
+  real<lower=0> w_raw_head;          // w[1] > 0  → fixes sign of c
+  vector[K-1] w_raw_tail;
+  vector[M] lambda;                  // ← no sign constraint
+  vector<lower=0>[M] sigma_y;
+  real beta;
+  real<lower=0> sigma_eta;
+  vector[N] eta;
+}
+model {
+  eta ~ normal(beta * composite, sigma_eta);
+  for (j in 1:M) y[, j] ~ normal(lambda[j] * eta, sigma_y[j]);
+}
+```
+
+**Observed symptom.** R-hat ≈ 2 on `β, λ, η`. Posterior densities for `β`
+and `λ` look like two superposed bell curves centered at ±truth; posterior
+means consequently collapse to near 0.
+
+```
+   variable    mean   median      sd    q5     q95   rhat
+   beta        0.028  -0.010      0.32  -0.38  0.53  2.18
+   lambda[1]  -0.061  -0.024      1.67  -2.31  2.54  2.33
+   lambda[2]  -0.057  -0.016      1.51  -2.08  2.28  2.32
+   lambda[3]  -0.069  -0.006      1.82  -2.52  2.73  2.36
+```
+
+**Why.** The likelihood is invariant under the joint relabeling
+`η → −η, λ → −λ, β → −β`. The signs of `c` are already pinned by
+`w[1] > 0`, but the signs of `η` are not pinned anywhere. So there are two
+posterior modes related by this flip and the chains visit both, producing
+"average ≈ 0" posteriors. The R-hat ≈ 2 is the textbook signature of two
+equally-weighted modes.
+
+**Fix.** Pin `λ[1] > 0`.
+
+**Pedagogical takeaway.** Any latent variable that enters the likelihood
+*only through products of two parameters* (here `β λ_j` and `λ_j λ_k`)
+carries a sign symmetry that has to be broken by some external rule. The
+rule has to nail down each latent's sign with one constraint — typically
+"fix the sign of one loading per factor."
+
+### Pathology 2 — Boundary trap from a hard `<lower=0>` constraint
+
+**The buggy code (excerpt).** Same as above but with `lambda_head` declared
+as `<lower=0>`. Random inits.
+
+```stan
+parameters {
+  ...
+  real<lower=0> lambda_head;
+  vector[M-1] lambda_tail;
+  ...
+}
+```
+
+**Observed symptom.** Chains still report R-hat > 1.7 on `β, λ`. The
+posterior for `λ[1]` is pressed against zero (q5 ≈ 0.0004); `λ[2], λ[3]`
+are bimodal across positive and negative. `β` straddles ±0.
+
+```
+   variable    mean   median      sd    q5      q95   rhat
+   lambda[1]   0.42   0.36       0.42   0.00    0.89   1.73
+   lambda[2]  -0.01   0.02       0.76  -0.83    0.81   1.73
+   lambda[3]   0.01   0.05       0.90  -0.96    0.96   1.73
+```
+
+**Why (two compounding reasons).**
+
+1. *Hard constraint at an active mode.* Stan's `real<lower=0>` uses a log
+   transform internally. If the data could prefer `λ[1] ≈ 0` (as a way to
+   "decouple" `y_1` from the rest of the model), the chain piles up at the
+   boundary and produces a half-spike. This is what you see in the q5 ≈ 0.
+
+2. *The constraint is not strong enough to break the symmetry alone.* If
+   `λ[1]` is small, the sign-flip symmetry on `(β, λ_2, λ_3)` is almost
+   unbroken — flipping all of them costs almost nothing in likelihood
+   because `λ[1] ≈ 0` makes `y_1` nearly orthogonal to η. So the chains
+   still find two modes in `(β, λ_2, λ_3)`.
+
+   Why does the chain even visit `λ[1] ≈ 0` in the first place? Because of
+   **Pathology 3** below: the scale of η is non-identified, so the model
+   *can* shrink all of `λ` toward 0 while inflating `σ_η` and `β` in
+   compensation, without affecting any observable moment.
+
+**Fix.** Address Pathology 3 (next) and use informed initial values
+(below) so chains do not start near the degenerate corner.
+
+**Pedagogical takeaway.** A `<lower=0>` constraint is a *tie-breaker*, not
+a *prior*. It only does its job if the posterior under the full model
+clearly prefers one sign. When some other identification problem makes
+both signs equally palatable, the constraint just creates a half-normal
+posterior squashed against the boundary, and you cannot distinguish "the
+constraint did its job" from "the model is broken."
+
+### Pathology 3 — Continuous non-identification of the η scale
+
+**The buggy code (excerpt).**
+
+```stan
+parameters {
+  ...
+  real beta;
+  real<lower=0> sigma_eta;     // ← σ_η free
+  ...
+}
+```
+
+**Observed symptom.** Even with `w[1] > 0` *and* `λ[1] > 0` *and*
+truth-near initial values, the magnitudes of `(β, σ_η, λ)` drift. With
+truth-init the posterior settled at
+`β = 0.33, σ_η = 0.65, λ ≈ (1.40, 1.27, 1.54)` vs the truth
+`β = 0.50, σ_η = 0.87, λ ≈ (0.80, 0.70, 0.90)`.
+
+Notice the ratios: posterior `λ` is inflated by ≈ 1.75; posterior
+`σ_η` deflated by ≈ 0.75; posterior `β` deflated by ≈ 0.66. The
+products `λ_j · √(β² + σ_η²)` and `β · λ_j` are essentially preserved.
+
+**Why.** The structural+reflective block has a continuous one-parameter
+family of indistinguishable parameterizations. Define the rescaling
+`(β, σ_η, λ) → (αβ, ασ_η, λ/α)`. Then:
+
+- `Cov(y_j, c) = β λ_j` → `αβ · λ_j/α = β λ_j` (unchanged)
+- `Cov(y_j, y_k) = (β² + σ_η²) λ_j λ_k` →
+  `(α²β² + α²σ_η²)(λ_j λ_k / α²)` = unchanged
+- `Var(y_j) = (β² + σ_η²) λ_j² + σ_{y,j}²` → unchanged
+- `Var(c) = 1` → unchanged
+
+Every observable moment is invariant under the rescaling, so the
+likelihood is *flat* along this one-dimensional ridge. HMC can wander
+along it indefinitely, producing wide marginals on each of `β, σ_η, λ`
+even though the products and ratios are pinned. Random inits make the
+problem dramatic — different chains slide to different points on the
+ridge and never meet.
+
+This is the kind of bug that **does not show up** in lavaan / CB-SEM
+because those tools impose `Var(η) = 1` by default in the standardized
+parameterization.
+
+**Fix.** Adopt the same convention: pin `Var(η) = 1`, i.e. let
+`σ_η² = 1 − β²` with `|β| < 1`. The ridge collapses to a point.
+
+```stan
+parameters {
+  real<lower=-1, upper=1> beta;
+}
+transformed parameters {
+  real<lower=0> sigma_eta = sqrt(1 - square(beta));
+}
+```
+
+**Pedagogical takeaway.** Before fitting *any* latent-variable model in
+Stan, write out the change-of-variables that would leave the joint
+likelihood invariant and check that you have enough hard constraints to
+break each one. Sign symmetries need ≥ 1 sign constraint per latent.
+Scale symmetries need ≥ 1 scale constraint per latent. Rotation
+symmetries (e.g. between multiple excrescent factors of a composite, or
+between multiple common factors in a CFA) need (K−1)(K−2)/2 zero
+constraints. The number of hard constraints needed equals the dimension
+of the symmetry group acting on the parameters.
+
+### Pathology 4 — η as explicit per-observation latent mixes poorly
+
+**The buggy code (excerpt).** Centered parameterization, with `η` as
+a vector of free parameters.
+
+```stan
+parameters { ...
+  vector[N] eta;
+}
+model { ...
+  eta ~ normal(beta * composite, sigma_eta);
+  for (j in 1:M) y[, j] ~ normal(lambda[j] * eta, sigma_y[j]);
+}
+```
+
+**Observed symptom.** "E-BFMI < 0.3" warning on every chain. ESS for
+hyperparameters (`β, σ_η, λ`) much lower than for the η's. Treedepth
+saturations possible.
+
+**Why.** The centered parameterization induces a posterior funnel between
+`σ_η` and the η_i. When `σ_η` is small the η_i are tightly constrained
+around `β c_i`; when `σ_η` is large they are loose. HMC needs different
+step sizes in different parts of the joint space.
+
+**Fix (used in final code).** Marginalize η analytically. For linear
+Gaussian the marginal of `y_i | c_i` is also MVN, in closed form:
+
+`y_i | c_i ~ MVN(β λ c_i,  λ λ' σ_η² + diag(σ_y²))`
+
+This removes the funnel and ESS jumps up. The composite c_i remains a
+deterministic transformation of the data (`c_i = w' x_i`), so the
+"PGM"-flavour is preserved on the side where it actually adds value
+(non-Gaussian extensions in y would still slot in as `y_i | η_i` with
+η_i sampled non-marginally; see the closing note in the PGM section).
+
+**Alternative fix.** Non-centered parameterization
+(`η_i = β c_i + σ_η · z_i` with `z_i ~ N(0,1)`) — also correct, slightly
+slower per iteration but generalizable to non-Gaussian y.
+
+**Pedagogical takeaway.** "Use the PGM formulation" sounds principled
+but in practice you should marginalize whatever can be marginalized in
+closed form. The PGM benefits (non-Gaussian indicators, missing data,
+hierarchical structure) accrue from being *able* to write
+`p(y_i | η_i, θ)` explicitly when needed — not from forcing yourself to
+*always* keep `η_i` as a sampled node. Marginalizing a Gaussian latent
+out of a Gaussian likelihood is a free win.
+
+### Diagnostic checklist (the lesson, distilled)
+
+When a Stan latent-variable model produces R-hat ≫ 1.01 and you don't
+see an obvious code bug, run through:
+
+1. **Sign symmetries.** For every latent factor, is there exactly one
+   "anchor" loading constrained `> 0`?
+2. **Scale symmetries.** For every latent factor, is exactly one of
+   `Var(factor) = 1` or `λ_anchor = 1` imposed?
+3. **Rotation symmetries.** If you have several latent factors that load
+   on the same indicators, do you have enough zero loadings to make the
+   loading matrix uniquely defined?
+4. **Boundary traps.** Are any of your `<lower=0>` constraints active in
+   the posterior? If so, you may have a deeper identification problem
+   underneath.
+5. **Funnels.** Are any variance parameters strongly correlated with
+   per-observation latents in the posterior? If yes, marginalize the
+   latents or switch to non-centered.
+6. **Initialization.** Is the random-init region of parameter space
+   regular for your model? If not, use a moment-based estimator
+   (e.g. PLS for composite SEMs, OLS for measurement models) as a
+   starting point.
+
+In the model in this repo the *first three* are textbook structural
+fixes, the *fourth and fifth* are HMC fixes, and the *sixth* is a
+practical fix that does not affect the posterior — only how easily the
+sampler finds it.
+
 ## Skeptic notes on the brief
 
 1. *"Unbiased parameter estimates"*: Bayesian point estimates are typically
