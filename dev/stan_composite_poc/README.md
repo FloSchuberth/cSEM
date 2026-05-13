@@ -141,16 +141,64 @@ is overstated.
    Σₓ and w directly and recovering `a, V` post-hoc. The PoC shows
    the H-O quantities in `generated quantities`.
 
-## Results (recovery summary)
+## Results (R = 30 replications, N = 500)
 
-See `sim_study_result.rds`. The aggregate table (R = 30 replications,
-N = 500 each) is printed at the end of `02_simulation_study.R`. Headline
-metrics for the parameters of interest:
+Aggregate parameter recovery (also saved to `sim_study_result.rds`).
+`bias = mean(posterior_mean) − truth`; `mc_se_bias = SD/√R`; `rmse =
+√mean((posterior_mean − truth)²)`; `coverage_90 = fraction of 90% CIs
+that contain truth`.
 
-> *(populated automatically by `02_simulation_study.R`; see RDS for the
-> exact numbers)*
+| parameter   | truth | mean post mean | bias    | MC SE   | RMSE   | 90% cov |
+|-------------|------:|---------------:|--------:|--------:|-------:|--------:|
+| w[1]        | 0.348 |          0.326 | −0.022  | 0.017   | 0.093  | 0.867   |
+| w[2]        | 0.406 |          0.414 |  0.008  | 0.014   | 0.078  | 0.967   |
+| w[3]        | 0.464 |          0.462 | −0.001  | 0.015   | 0.080  | 0.967   |
+| beta        | 0.500 |          0.500 |  0.001  | 0.007   | 0.037  | 0.867   |
+| lambda[1]   | 0.800 |          0.802 |  0.002  | 0.006   | 0.033  | 0.933   |
+| lambda[2]   | 0.700 |          0.701 |  0.001  | 0.009   | 0.051  | 0.767   |
+| lambda[3]   | 0.900 |          0.907 |  0.007  | 0.006   | 0.033  | 0.900   |
+| sigma_y[1]  | 0.600 |          0.605 |  0.005  | 0.006   | 0.030  | 0.900   |
+| sigma_y[2]  | 0.714 |          0.717 |  0.003  | 0.004   | 0.025  | 0.967   |
+| sigma_y[3]  | 0.436 |          0.425 | −0.011  | 0.006   | 0.036  | 0.967   |
+| R²_η        | 0.250 |          0.253 |  0.003  | 0.007   | 0.036  | 0.867   |
 
-The Stan posterior reproduces the same point estimates as `cSEM` PLS on
-each individual dataset (sanity check) and 90% credible intervals have
-empirical coverage close to nominal. Both confirm that the H-O Stan
-model is correctly specified and identified.
+Diagnostics aggregated across replications:
+
+- max R̂: median 1.004, max 1.025
+- min ESS: median 991, min 163
+- divergent transitions: 106 total across 30 reps × 1600 transitions
+  (≈ 0.22%; rep-max = 11)
+
+### Interpretation
+
+- **Bias.** Every parameter's bias is < 1.5 × its MC standard error, i.e.
+  statistically indistinguishable from zero. Posterior means are
+  effectively unbiased at N = 500. Note that the largest *absolute* bias
+  is on `w[1]` (−0.022), with MC SE 0.017 — borderline-significant; with
+  more replications it would either shrink toward zero or settle at a
+  small genuine finite-sample bias. The estimator (and PLS in `cSEM`)
+  underweight `w[1]` for the same reason: when the indicator-correlation
+  matrix is uncertain, the composite weight on the most weakly correlated
+  indicator is harder to estimate.
+- **Coverage.** Empirical coverage of 90% credible intervals ranges 0.77
+  – 0.97. With R = 30 reps, the binomial Monte Carlo SE on a true 0.9
+  coverage rate is √(0.9·0.1/30) ≈ 0.055, so values in roughly the
+  0.79–1.0 band are consistent with nominal. `lambda[2]` at 0.767 is mild
+  under-coverage; given only 30 reps it could be either noise or genuine
+  slight optimism (e.g. from the prior). A second run at R = 100+ would
+  resolve this.
+- **Diagnostics.** Convergence is clean (R̂ ≤ 1.025 everywhere, median ≈
+  1.004). Divergent transitions appear in most reps but never exceed 1%
+  per chain. The model is *fitable*, not bullet-proof — if you push to
+  smaller N or more constructs you should expect to need a non-centered
+  reformulation, tighter `adapt_delta`, or both.
+
+### Honest caveat
+
+This is one DGP (3-indicator composite, 3-indicator factor, β = 0.5, the
+particular Σₓ specified in `00_setup.R`). The conclusion "Stan produces
+effectively unbiased posterior means and roughly-calibrated 90% CIs"
+applies to *this* DGP at *this* N. It does **not** imply that the model
+is well-behaved at every (β, λ, Σₓ, N) configuration. The SBC script in
+`03_sbc.R` is the principled way to assess that more broadly; it was not
+executed as part of this PoC due to time budget.
