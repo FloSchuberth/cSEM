@@ -24,3 +24,6 @@ RhpcBLASctl::blas_set_num_threads(2)
 
 
 #' devtools::test_active_file()
+
+# How to see source code of method
+# getAnywhere('t.test.default')
