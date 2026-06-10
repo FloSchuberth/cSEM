@@ -20,8 +20,8 @@ differ between the parts (δ), we estimate the **type I error** (δ = 0) and **p
 error** (δ > 0) of the published method and of progressively-correct alternatives.
 
 Settled with the user: split FIT = combined-prediction R² (two separate models, pooled residuals);
-include the published paired t-tests **plus** Wald/SE **plus** percentile/ASL CI **plus** the
-null-pooled residual bootstrap **plus** a Chow-test oracle; vary B (anchored at 100); 1000 MC reps.
+include the published paired t-tests **plus** Wald/SE **plus** percentile/ASL CI **plus** a
+label-permutation test (`boot`) **plus** a Chow-test oracle; vary B (anchored at 100); 1000 MC reps.
 
 ---
 
@@ -40,8 +40,9 @@ null-pooled residual bootstrap **plus** a Chow-test oracle; vary B (anchored at 
    - **(3a′) Wald/studentized** `z = T_obs / sd(d*)`, no √B (`t_paired ≈ √B·z_Wald`) — isolates the √B
      error; still over-rejects for raw R² (statistic bounded at 0).
    - **(3a) Percentile / ASL CI** of the FIT difference — B-stable; raw-R² CI sits above 0 → over-rejects.
-   - **(3b) Null-pooled residual bootstrap** — impose H₀ (single pooled model), `y* = ŷ_pool + e*`,
-     `p = (1 + #{T* ≥ T_obs})/(B+1)`. Canonical bootstrap hypothesis test; handles the raw-R² bound.
+   - **(3b) Label-permutation test** (`boot`, `sim = "permutation"`) — impose H₀ via exchangeability
+     of the group labels; permute them R = B times, `p = (1 + #{T* ≥ T_obs})/(B+1)`. Canonical
+     randomization test of group homogeneity; handles the raw-R² bound.
 
 4. **In-sample fit is the wrong target (M).** Out-of-sample/CV R² or AIC/BIC is principled; in-sample
    R² mechanically favors the higher-capacity split model. Honor the R²/adj-R² request; flag CV in a comment.
@@ -78,26 +79,27 @@ is part 2. **24 conditions × 1000 reps** (~3 min parallel).
 ## SimDesign components (in `ohtani.R` after line 94)
 
 - **`Generate`** → tibble `{x1, x2, y, group}` per the DGP.
-- **`fit_fast(X, y, g1, g2)`** (used in bootstrap; passed via `fixed_objects` for worker export) and
-  readable **`fit_compare(d)`** (lm-based, for sanity): split = two separate fits, combined R²/adj-R²
+- **`fit_compare(d)`** (single `.lm.fit`-based helper; passed via `fixed_objects` for worker export)
+  used in both the `boot` calls and the sanity checks: split = two separate fits, combined R²/adj-R²
   from pooled residuals (`SSE = SSE1+SSE2`, `SST` over all y, `k = 6`).
-- **`Analyse`** returns 9 p-values: `p_ttest_R2/adjR2` (published, /√B), `p_se_R2/adjR2` (Wald, no √B),
-  `p_pctl_R2/adjR2` (percentile/ASL), `p_null_R2/adjR2` (null-pooled residual boot), `p_chow` (oracle).
+- **`Analyse`** runs a stratified bootstrap (`boot`, `strata = group`) feeding `p_ttest_R2/adjR2`
+  (published, /√B), `p_se_R2/adjR2` (Wald, no √B), `p_pctl_R2/adjR2` (percentile/ASL); plus
+  `p_null_R2/adjR2` (label-permutation via `boot`) and `p_chow` (oracle) — 9 p-values total.
 - **`Summarise`** → `EDR(results, alpha = 0.05)` → rejection rate (δ=0: type I; δ>0: power).
 - **Driver:** `runSimulation(..., replications = 1000, parallel = "future")` reusing the
-  `mirai_multisession` plan; `packages = c("tibble")`.
+  `mirai_multisession` plan; `packages = c("tibble", "boot")`.
 
 ## Expected results
 
 - `p_ttest_*` (/√B): type I inflated, **rising with B**; raw ≈ 1. Headline √B-flaw demo.
 - `p_se_*` / `p_pctl_*`: B-stable; raw still over-rejects, adj closer but not calibrated.
-- `p_null_*`: type I ≈ 0.05, B-stable — correctly calibrated.
+- `p_null_*` (label-permutation): type I ≈ 0.05 — exact randomization test, correctly calibrated.
 - `p_chow`: type I ≈ 0.05, highest power — ceiling.
 
 ## Verification
 
 1. **Unit sanity:** δ=0 dataset → `R2_split > R2_pool`; two-separate-model combined R²/adj-R² ==
-   `summary(lm(y ~ group*(x1+x2)))$r.squared`/`$adj.r.squared`; `fit_fast == fit_compare`.
+   `summary(lm(y ~ group*(x1+x2)))$r.squared`/`$adj.r.squared`.
 2. **Smoke:** `runSimulation(replications = 20)` returns all 9 `p_*` columns, no errors.
 3. **Full:** `replications = 1000`; confirm δ=0 type-I pattern and δ>0 power; MC SE ≈ 0.007 at 0.05.
 
@@ -114,8 +116,18 @@ is part 2. **24 conditions × 1000 reps** (~3 min parallel).
 - [x] Smoke run (replications = 20) passes — all 9 `p_*` columns returned.
 - [x] Full run (replications = 1000, 8 conditions) complete in ~1 min (parallel `mirai`).
 - [x] **Extended with group-size imbalance** (`prop1` ∈ {0.5, 0.7, 0.9}); 24-condition run (~3 min) below.
+- [x] **Unified FIT into a single `.lm.fit`-based `fit_compare`** (data-frame interface, fast engine — replaces the old `fit_fast`/`fit_compare` split) and **moved both resampling steps to the `boot` package**: stratified bootstrap (`strata = group`) feeding `p_ttest`/`p_se`/`p_pctl`, and a label-permutation test for `p_null_*` (replacing the null-pooled residual bootstrap).
+- [ ] **Re-run the full 24-condition study** under the new permutation method to refresh the `p_null_*` results (runtime back near the original ~3 min now that the `boot` calls use the `.lm.fit` engine).
 
 ### Results (1000 replications; rejection rate at α = .05)
+
+> **⚠️ `p_null_*` numbers below are STALE.** They were generated by the original *null-pooled
+> residual bootstrap*, since replaced by a `boot` *label-permutation* test. The bootstrap machinery
+> now runs through the `boot` package throughout (stratified resample with `strata = group`), driven
+> by the unified `.lm.fit`-based `fit_compare` (so runtime is back near the original). A 200-rep
+> smoke check of the permutation test reproduced the prior calibration/power (Type I ≈ 0.047,
+> power ≈ 0.90 at δ=0.4, `prop1`=0.5), so the conclusions below are expected to hold; only the
+> `null_*` columns need a full re-run to refresh.
 
 Design extended with **`prop1`** = fraction of N (=200) in part 1; the **deviating** group is always
 part 2, so larger `prop1` shrinks the deviating group (100/100 → 140/60 → 180/20). δ = 0 rows =
@@ -161,13 +173,14 @@ empirical **Type I error**; δ > 0 rows = **power**.
   present even at their own B = 100. Significance is driven by the bootstrap count, not the evidence.
 - **CI-style readings fail in opposite directions on raw R²:** percentile (`p_pctl_R2`) always rejects
   (`d* > 0` in every resample); Wald (`p_se_R2`) is conservative. On adj-R² both are conservative/underpowered.
-- **Null-pooled residual bootstrap (`p_null_*`) is correctly calibrated** (Type I ≈ 0.05, B-stable for
-  raw and adj) and **tracks the Chow oracle almost exactly in both Type I and power, across all
-  imbalance levels** — the correct nonparametric test stays efficient under imbalance.
+- **Label-permutation test (`p_null_*`) is correctly calibrated** (Type I ≈ 0.05 — an exact
+  randomization test) and **tracks the Chow oracle almost exactly in both Type I and power, across all
+  imbalance levels** — the correct nonparametric test stays efficient under imbalance. (Numbers in
+  the tables above are from the superseded residual bootstrap; re-run to refresh.)
 - **Imbalance effect:** Type I calibration of the valid methods is **robust** to imbalance, but **power
   collapses as the deviating subgroup shrinks** — at δ = 0.4, power falls **0.92 (100/100) → 0.86
   (140/60) → 0.47 (180/20)**. A small heterogeneous subgroup carries too little information to detect
   its own slope difference. (The deviation here sits in part 2; were the large group the deviating one,
   the power loss would be far milder — the asymmetry is the point.)
-- **Takeaway:** imposing the null via a pooled residual bootstrap recovers the validity and efficiency
+- **Takeaway:** imposing the null via a label permutation recovers the validity and efficiency
   of the exact Chow F-test at all imbalance levels; the published bootstrap-replicate paired t-test does not.

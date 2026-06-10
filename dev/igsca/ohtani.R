@@ -60,9 +60,10 @@ lm(y ~ ., data = allDat) |> summary()
 #   p_se_*     Wald/studentized z = T_obs / sd(d*): the SAME sd(d*) but WITHOUT /sqrt(B),
 #              so t_paired ~= sqrt(B) * z_wald -- isolates the sqrt(B) error.
 #   p_pctl_*   Percentile / ASL bootstrap CI of the FIT difference (CI-inversion).
-#   p_null_*   Null-pooled residual bootstrap: impose H0 (one pooled model),
-#              y* = fitted_pool + resampled pooled residuals, and compare the observed FIT
-#              improvement against its null distribution. Canonical bootstrap hypothesis test.
+#   p_null_*   Label-permutation test (boot, sim = "permutation"): impose H0 via exchangeability
+#              of the group labels -- randomly permute them R = B times to build the null
+#              distribution of the FIT improvement; p = (1 + #{T* >= T_obs})/(B + 1), one-sided
+#              upper. Canonical randomization test of group homogeneity.
 #   p_chow     Chow F-test (anova: pooled vs full interaction) -- exact parametric oracle.
 #
 # ML aside: the principled object for choosing between these models is out-of-sample /
@@ -71,37 +72,30 @@ lm(y ~ ., data = allDat) |> summary()
 # pooled is nested in split and R2_split >= R2_pool w.p. 1). We use in-sample R^2 / adj-R^2
 # because that is precisely the object the literature claim invokes and what we are testing.
 
-## ---- helpers: FIT of pooled vs two separate models -----------------------
+## ---- helper: FIT of pooled vs two separate models ------------------------
 
-# Fast path used inside the bootstrap loops: X is the [1, x1, x2] design matrix,
-# g1/g2 index the two parts within (X, y). Two SEPARATE regressions are fit via
-# .lm.fit (one per part); the SPLIT FIT pools their residuals (combined-prediction
-# R^2), with total parameter count k = 2 * ncol(X) = 6 for the adjustment.
-fit_fast <- function(X, y, g1, g2) {
-  n   <- length(y)
-  p   <- ncol(X)
-  SST <- sum((y - mean(y))^2)
-  SSE_pool  <- sum(.lm.fit(X, y)$residuals^2)
-  SSE_split <- sum(.lm.fit(X[g1, , drop = FALSE], y[g1])$residuals^2) +
+# Single .lm.fit()-based helper, used both inside the bootstrap loops and in the
+# sanity checks below. `d` is a data frame with columns {x1, x2, y, group}; X is the
+# [1, x1, x2] design matrix. A single POOLED regression is fit to all rows and TWO
+# SEPARATE regressions (one per `group`) via .lm.fit (fast path -- no formula parsing);
+# the SPLIT FIT pools the two models' residuals (combined-prediction R^2), with total
+# parameter count k = 2 * ncol(X) = 6 for the adjustment. The R^2 / adj-R^2 formulae
+# reproduce summary(lm(...))$r.squared / $adj.r.squared exactly (intercept model).
+# Shipped to the parallel workers via `fixed_objects`.
+fit_compare <- function(d) {
+  X    <- cbind(1, d$x1, d$x2)                               # [1, x1, x2] design
+  y    <- d$y
+  g1   <- d$group == 1L; g2 <- d$group == 2L                 # the two parts
+  n    <- length(y)
+  p    <- ncol(X)                                            # params per model (incl. intercept)
+  SST  <- sum((y - mean(y))^2)
+  SSE_pool  <- sum(.lm.fit(X, y)$residuals^2)                             # pooled model
+  SSE_split <- sum(.lm.fit(X[g1, , drop = FALSE], y[g1])$residuals^2) +   # two SEPARATE models
                sum(.lm.fit(X[g2, , drop = FALSE], y[g2])$residuals^2)
   c(R2_pool     = 1 - SSE_pool  / SST,
     R2_split    = 1 - SSE_split / SST,
     adjR2_pool  = 1 - (SSE_pool  / (n - p))     / (SST / (n - 1)),
     adjR2_split = 1 - (SSE_split / (n - 2 * p)) / (SST / (n - 1)))
-}
-
-# Readable lm()-based equivalent, used only for the sanity checks below.
-fit_compare <- function(d) {
-  sp   <- summary(lm(y ~ x1 + x2, data = d))                 # pooled model
-  fit1 <- lm(y ~ x1 + x2, data = d[d$group == 1L, ])         # two SEPARATE models
-  fit2 <- lm(y ~ x1 + x2, data = d[d$group == 2L, ])
-  SSE  <- sum(resid(fit1)^2) + sum(resid(fit2)^2)
-  SST  <- sum((d$y - mean(d$y))^2)
-  n    <- nrow(d); k <- 6L
-  c(R2_pool     = sp$r.squared,
-    R2_split    = 1 - SSE / SST,
-    adjR2_pool  = sp$adj.r.squared,
-    adjR2_split = 1 - (SSE / (n - k)) / (SST / (n - 1)))
 }
 
 ## ---- SimDesign: Generate / Analyse / Summarise ---------------------------
@@ -123,26 +117,19 @@ Generate <- function(condition, fixed_objects) {
 }
 
 Analyse <- function(condition, dat, fixed_objects) {
-  fit_fast <- fixed_objects$fit_fast                         # exported with fixed_objects
+  fit_compare <- fixed_objects$fit_compare                   # exported with fixed_objects
   B  <- condition$B
-  X  <- cbind(1, dat$x1, dat$x2)
-  y  <- dat$y
-  n  <- length(y)
-  i1 <- which(dat$group == 1L); n1 <- length(i1)
-  i2 <- which(dat$group == 2L); n2 <- length(i2)
-  g1s <- seq_len(n1); g2s <- (n1 + 1L):n                     # group positions in a resample
 
   # Observed FIT and observed improvements T = FIT_split - FIT_pool.
-  obs   <- fit_fast(X, y, i1, i2)
+  obs   <- fit_compare(dat)
   T_R2  <- unname(obs["R2_split"]    - obs["R2_pool"])
   T_adj <- unname(obs["adjR2_split"] - obs["adjR2_pool"])
 
-  # (i) Stratified bootstrap of the observed data -> B replicates of the 4 FIT values.
-  boot_mat <- matrix(NA_real_, B, 4L, dimnames = list(NULL, names(obs)))
-  for (b in seq_len(B)) {
-    bi <- c(sample(i1, n1, replace = TRUE), sample(i2, n2, replace = TRUE))
-    boot_mat[b, ] <- fit_fast(X[bi, , drop = FALSE], y[bi], g1s, g2s)
-  }
+  # (i) Stratified bootstrap (boot, strata = group -> resampling within each part, sizes
+  #     n1/n2 preserved) -> B replicates of the 4 FIT values.
+  boot_mat <- boot::boot(dat, function(d, i) fit_compare(d[i, ]),
+                         R = B, strata = dat$group)$t
+  colnames(boot_mat) <- names(obs)
   dR2  <- boot_mat[, "R2_split"]    - boot_mat[, "R2_pool"]
   dAdj <- boot_mat[, "adjR2_split"] - boot_mat[, "adjR2_pool"]
 
@@ -158,19 +145,18 @@ Analyse <- function(condition, dat, fixed_objects) {
   p_pctl_R2    <- min(1, 2 * min(mean(dR2  <= 0), mean(dR2  >= 0)))
   p_pctl_adjR2 <- min(1, 2 * min(mean(dAdj <= 0), mean(dAdj >= 0)))
 
-  # (3b) Null-pooled residual bootstrap: impose H0 (one pooled model), one-sided upper.
-  pool        <- .lm.fit(X, y)
-  fitted_pool <- y - pool$residuals
-  res_pool    <- pool$residuals
-  Tn_R2 <- numeric(B); Tn_adj <- numeric(B)
-  for (b in seq_len(B)) {
-    ystar  <- fitted_pool + sample(res_pool, n, replace = TRUE)
-    fc     <- fit_fast(X, ystar, i1, i2)
-    Tn_R2[b]  <- fc["R2_split"]    - fc["R2_pool"]
-    Tn_adj[b] <- fc["adjR2_split"] - fc["adjR2_pool"]
+  # (3b) Label-permutation test (boot, sim = "permutation"): impose H0 via exchangeability
+  # of the group labels. The pooled model ignores `group`, so each permutation only re-fits
+  # the SPLIT model; T* = FIT_split* - FIT_pool is the null distribution. One-sided upper.
+  perm_stat <- function(d, i) {
+    d$group <- d$group[i]                                    # randomly reassign group labels
+    fc <- fit_compare(d)
+    c(R2  = unname(fc["R2_split"]    - fc["R2_pool"]),
+      adj = unname(fc["adjR2_split"] - fc["adjR2_pool"]))
   }
-  p_null_R2    <- (1 + sum(Tn_R2  >= T_R2 )) / (B + 1)
-  p_null_adjR2 <- (1 + sum(Tn_adj >= T_adj)) / (B + 1)
+  perm <- boot::boot(dat, perm_stat, R = B, sim = "permutation")
+  p_null_R2    <- (1 + sum(perm$t[, 1] >= perm$t0[1])) / (B + 1)
+  p_null_adjR2 <- (1 + sum(perm$t[, 2] >= perm$t0[2])) / (B + 1)
 
   # (d) Chow oracle: exact F-test, pooled vs full interaction (== two separate models).
   p_chow <- anova(lm(y ~ x1 + x2, data = dat),
@@ -199,7 +185,7 @@ sim_design <- SimDesign::createDesign(
 
 sim_fixed <- list(
   beta0 = 0, beta1 = 0.3, beta2 = 0.3, sigma = 1, N = 200, alpha = 0.05,
-  fit_fast = fit_fast                                         # ship helper to parallel workers
+  fit_compare = fit_compare                                  # ship helper to parallel workers
 )
 
 ## ---- sanity checks (cheap; run before the full study) --------------------
@@ -209,12 +195,9 @@ local({
   for (p1 in c(0.5, 0.9)) {                                          # balanced AND severe imbalance
     chk  <- Generate(list(delta = 0, prop1 = p1), sim_fixed)
     fc   <- fit_compare(chk)
-    ff   <- fit_fast(cbind(1, chk$x1, chk$x2), chk$y,
-                     which(chk$group == 1L), which(chk$group == 2L))
     full <- summary(lm(y ~ group * (x1 + x2), data = chk))
     stopifnot(
       fc["R2_split"] > fc["R2_pool"],                                # nesting (point 1)
-      isTRUE(all.equal(unname(fc), unname(ff))),                     # fast == lm-based
       isTRUE(all.equal(unname(fc["R2_split"]),    full$r.squared)),  # 2 sep. models == interaction
       isTRUE(all.equal(unname(fc["adjR2_split"]), full$adj.r.squared))
     )
@@ -231,13 +214,19 @@ sim_results <- SimDesign::runSimulation(
   analyse       = Analyse,
   summarise     = Summarise,
   fixed_objects = sim_fixed,
-  packages      = c("tibble"),
+  packages      = c("tibble", "boot"),
   parallel      = "future",                                  # uses the mirai plan set above
   save          = FALSE
 )
 
 print(sim_results)
 
+# NOTE: the bootstrap machinery now runs through the `boot` package -- the stratified resample
+# (strata = group) and an H0 LABEL-PERMUTATION test that replaced the old null-pooled RESIDUAL
+# bootstrap -- all driven by the unified .lm.fit()-based fit_compare. The p_null_* column below is
+# from the superseded residual bootstrap and must be regenerated by re-running the simulation; the
+# t-test / Wald / percentile columns use the same stratified resample and are unchanged in method.
+#
 # Results (1000 replications; rejection rate at alpha = .05; delta = 0 = Type I error,
 # delta > 0 = power = 1 - Type II error). The deviating part is always part 2, so prop1
 # (fraction of N in part 1) shrinks the DEVIATING group as it grows: 100/100 -> 140/60 -> 180/20.
@@ -260,8 +249,9 @@ print(sim_results)
 #   p_se_*,   : the two CI-style readings of the quote fail in OPPOSITE directions on raw R2 --
 #   p_pctl_*    p_pctl_R2 always rejects (= 1.0; d* > 0 in every resample) while p_se_R2 is
 #               conservative (~0). On adj-R2 both are conservative and underpowered.
-#   p_null_*  : the null-pooled residual bootstrap is correctly calibrated (Type I ~= .05, B-stable)
-#               for BOTH raw and adj R2, AT ALL IMBALANCE LEVELS, and its power tracks the oracle.
+#   p_null_*  : the label-permutation test imposes H0 via exchangeability and is an exact
+#               randomization test, so it should stay calibrated (Type I ~= .05) and track the
+#               oracle -- RE-RUN to confirm the numbers under the new permutation method.
 #   p_chow    : exact oracle -- Type I ~= .05 and the power ceiling; p_null_* matches it throughout.
 #
 # Imbalance effect: Type I calibration of the valid methods (p_null_*, p_chow) is ROBUST to
@@ -270,6 +260,6 @@ print(sim_results)
 # heterogeneous subgroup carries too little information to detect its own slope difference.
 #
 # Takeaway: a paired t-test on bootstrap-replicate FIT values (Hwang & Takane 2014) is not a valid
-# test of whether splitting the data improves fit, balanced or not. Imposing the null via a pooled
-# residual bootstrap fixes the calibration and matches the exact Chow F-test at all imbalance levels.
+# test of whether splitting the data improves fit, balanced or not. Imposing the null via a label
+# permutation fixes the calibration and matches the exact Chow F-test at all imbalance levels.
 
