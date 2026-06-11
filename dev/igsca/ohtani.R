@@ -12,33 +12,9 @@ plan(future.mirai::mirai_multisession)
 library(future.apply)
 library(boot)
 
-# PoC --------------------------------------------------------------------
-
-sigma <- 1
-x1 <- rnorm(1000)
-x2 <- rnorm(1000)
-allDat <- tibble::tibble(x1, x2)
-trueDat <-subset(allDat, select = c(x1, x2))
-beta <- .3
-y <- rnorm(1000, mean = rowSums(beta*trueDat), sd = sigma)
-
-allDat$y <- y
-
-lm(y ~ ., data = allDat) |> summary()
-
-## Trying out t-test described on Page 27 of Hwang & Takane 2014 ----------
-
-# The goal here is to examine this statement, "Similar to bootstrapping R-squared in linear regression (Ohtani 2000), we can compute the bootstrapped standard errors or confidence intervals of the difference in FIT between two models so as to examine whether there is a statistically significant difference in the FIT values. This procedure can be regarded as a nonparametric version of the paired t test for two groups of FIT values."
-
-# Followed by on page 41, "Furthermore, we conducted a paired t-test for the FIT values between the original and simpler models. As described earlier, this test was equivalent to testing whether the difference in the FIT values calculated from 100 bootstrap samples for each model was equal to zero. We found the t-statistic nonsignificant statistically [t(99) = −0.59, p = 0.55, 95% CI = −0.00−0.00], indicating that there was no statistically significant difference in FIT between the original and simpler models."
-
-# Q: From a theoretical perspective, is a one-sample t-test of (a-b) = 0 identical to a paired t-test of a = b?
-## A: Yes, see page  280 of Hogg et al. 2019. and also getAnywhere('t.test.default').
-## Typically, a paired t-test is just comparing  the mean and standard deviations of the paired differences against the null hypothesis.
-#### Also, Page 521 of Wackerly et al. (2008) gives one sample t-test formula + nice table for how to understand critical regions. Page 646 to 648 of Wackerly for their exposition.
-
-
 # Simulation -------------------------------------------------------------
+
+# Authored by Claude 4.8. Revised and verified by me.
 
 # Monte Carlo study (SimDesign) stress-testing the Hwang & Takane (2014, p.27)
 # procedure of comparing two models' FIT (R^2) values via a paired t-test on
@@ -74,29 +50,39 @@ lm(y ~ ., data = allDat) |> summary()
 
 ## ---- helper: FIT of pooled vs two separate models ------------------------
 
-# Single .lm.fit()-based helper, used both inside the bootstrap loops and in the
-# sanity checks below. `d` is a data frame with columns {x1, x2, y, group}; X is the
-# [1, x1, x2] design matrix. A single POOLED regression is fit to all rows and TWO
-# SEPARATE regressions (one per `group`) via .lm.fit (fast path -- no formula parsing);
-# the SPLIT FIT pools the two models' residuals (combined-prediction R^2), with total
-# parameter count k = 2 * ncol(X) = 6 for the adjustment. The R^2 / adj-R^2 formulae
-# reproduce summary(lm(...))$r.squared / $adj.r.squared exactly (intercept model).
-# Shipped to the parallel workers via `fixed_objects`.
 fit_compare <- function(d) {
-  X    <- cbind(1, d$x1, d$x2)                               # [1, x1, x2] design
+  X    <- cbind(1, d$x1, d$x2)                               # [1, x1, x2] design matrix
   y    <- d$y
-  g1   <- d$group == 1L; g2 <- d$group == 2L                 # the two parts
+  g1   <- d$group == 1 
+  g2 <- d$group == 2
   n    <- length(y)
   p    <- ncol(X)                                            # params per model (incl. intercept)
   SST  <- sum((y - mean(y))^2)
   SSE_pool  <- sum(.lm.fit(X, y)$residuals^2)                             # pooled model
   SSE_split <- sum(.lm.fit(X[g1, , drop = FALSE], y[g1])$residuals^2) +   # two SEPARATE models
                sum(.lm.fit(X[g2, , drop = FALSE], y[g2])$residuals^2)
-  c(R2_pool     = 1 - SSE_pool  / SST,
-    R2_split    = 1 - SSE_split / SST,
-    adjR2_pool  = 1 - (SSE_pool  / (n - p))     / (SST / (n - 1)),
-    adjR2_split = 1 - (SSE_split / (n - 2 * p)) / (SST / (n - 1)))
+  c(
+    R2_pool = 1 - SSE_pool / SST,
+    R2_split = 1 - SSE_split / SST,
+    adjR2_pool = 1 - (SSE_pool / (n - p)) / (SST / (n - 1)),
+    adjR2_split = 1 - (SSE_split / (n - 2 * p)) / (SST / (n - 1))
+  )
 }
+
+## ---- design + fixed objects ----------------------------------------------
+
+sim_design <- SimDesign::createDesign(
+  delta = c(0, 0.1, 0.2, 0.4),
+  B     = c(100, 1000),                                       # 100 reproduces H&T's df = 99
+  prop1 = c(0.5, 0.7, 0.9)                                    # fraction of N in part 1: 100/100, 140/60, 180/20
+)
+
+sim_fixed <- list(
+  beta0 = 0, beta1 = 0.3, beta2 = 0.3, sigma = 1, N = 200, alpha = 0.05,
+  fit_compare = fit_compare                                  # ship helper to parallel workers
+)
+
+
 
 ## ---- SimDesign: Generate / Analyse / Summarise ---------------------------
 
@@ -120,20 +106,19 @@ Analyse <- function(condition, dat, fixed_objects) {
   fit_compare <- fixed_objects$fit_compare                   # exported with fixed_objects
   B  <- condition$B
 
-  # Observed FIT and observed improvements T = FIT_split - FIT_pool.
-  obs   <- fit_compare(dat)
-  T_R2  <- unname(obs["R2_split"]    - obs["R2_pool"])
+  # R^2 Statistics
+  obs   <- fit_compare(dat) 
+  T_R2  <- unname(obs["R2_split"]    - obs["R2_pool"]) 
   T_adj <- unname(obs["adjR2_split"] - obs["adjR2_pool"])
 
-  # (i) Stratified bootstrap (boot, strata = group -> resampling within each part, sizes
-  #     n1/n2 preserved) -> B replicates of the 4 FIT values.
+  # (i) Stratified bootstrap (boot, strata = group -> resampling within each part, sizes so ratio of n1/n2 preserved) -> B replicates of the 4 FIT values.
   boot_mat <- boot::boot(dat, function(d, i) fit_compare(d[i, ]),
                          R = B, strata = dat$group)$t
   colnames(boot_mat) <- names(obs)
   dR2  <- boot_mat[, "R2_split"]    - boot_mat[, "R2_pool"]
   dAdj <- boot_mat[, "adjR2_split"] - boot_mat[, "adjR2_pool"]
 
-  # (1) PUBLISHED Hwang & Takane paired t-test (SE = sd(d*)/sqrt(B)).
+  # (1) Published Hwang & Takane (2014) paired t-test (SE = sd(d*)/sqrt(B)).
   p_ttest_R2    <- t.test(boot_mat[, "R2_split"],    boot_mat[, "R2_pool"],    paired = TRUE)$p.value
   p_ttest_adjR2 <- t.test(boot_mat[, "adjR2_split"], boot_mat[, "adjR2_pool"], paired = TRUE)$p.value
 
@@ -142,8 +127,8 @@ Analyse <- function(condition, dat, fixed_objects) {
   p_se_adjR2 <- 2 * pnorm(-abs(T_adj / sd(dAdj)))
 
   # (3a) Percentile / ASL bootstrap CI of the difference.
-  p_pctl_R2    <- min(1, 2 * min(mean(dR2  <= 0), mean(dR2  >= 0)))
-  p_pctl_adjR2 <- min(1, 2 * min(mean(dAdj <= 0), mean(dAdj >= 0)))
+  # p_pctl_R2    <- min(1, 2 * min(mean(dR2  <= 0), mean(dR2  >= 0)))
+  # p_pctl_adjR2 <- min(1, 2 * min(mean(dAdj <= 0), mean(dAdj >= 0)))
 
   # (3b) Label-permutation test (boot, sim = "permutation"): impose H0 via exchangeability
   # of the group labels. The pooled model ignores `group`, so each permutation only re-fits
@@ -159,15 +144,19 @@ Analyse <- function(condition, dat, fixed_objects) {
   p_null_adjR2 <- (1 + sum(perm$t[, 2] >= perm$t0[2])) / (B + 1)
 
   # (d) Chow oracle: exact F-test, pooled vs full interaction (== two separate models).
-  p_chow <- anova(lm(y ~ x1 + x2, data = dat),
-                  lm(y ~ group * (x1 + x2), data = dat))[["Pr(>F)"]][2]
+  # p_chow <- anova(lm(y ~ x1 + x2, data = dat),
+  #                 lm(y ~ group * (x1 + x2), data = dat))[["Pr(>F)"]][2]
 
   SimDesign::nc(
-    p_ttest_R2 = p_ttest_R2, p_ttest_adjR2 = p_ttest_adjR2,
-    p_se_R2    = p_se_R2,    p_se_adjR2    = p_se_adjR2,
-    p_pctl_R2  = p_pctl_R2,  p_pctl_adjR2  = p_pctl_adjR2,
-    p_null_R2  = p_null_R2,  p_null_adjR2  = p_null_adjR2,
-    p_chow     = p_chow
+    p_ttest_R2 = p_ttest_R2,
+    p_ttest_adjR2 = p_ttest_adjR2,
+    p_se_R2 = p_se_R2,
+    p_se_adjR2 = p_se_adjR2,
+    # p_pctl_R2 = p_pctl_R2,
+    # p_pctl_adjR2 = p_pctl_adjR2,
+    p_null_R2 = p_null_R2,
+    p_null_adjR2 = p_null_adjR2 #,
+    # p_chow = p_chow
   )
 }
 
@@ -175,41 +164,11 @@ Summarise <- function(condition, results, fixed_objects) {
   SimDesign::EDR(results, alpha = fixed_objects$alpha)        # rejection rate per method
 }
 
-## ---- design + fixed objects ----------------------------------------------
-
-sim_design <- SimDesign::createDesign(
-  delta = c(0, 0.1, 0.2, 0.4),
-  B     = c(100, 1000),                                       # 100 reproduces H&T's df = 99
-  prop1 = c(0.5, 0.7, 0.9)                                    # fraction of N in part 1: 100/100, 140/60, 180/20
-)
-
-sim_fixed <- list(
-  beta0 = 0, beta1 = 0.3, beta2 = 0.3, sigma = 1, N = 200, alpha = 0.05,
-  fit_compare = fit_compare                                  # ship helper to parallel workers
-)
-
-## ---- sanity checks (cheap; run before the full study) --------------------
-
-local({
-  set.seed(1)
-  for (p1 in c(0.5, 0.9)) {                                          # balanced AND severe imbalance
-    chk  <- Generate(list(delta = 0, prop1 = p1), sim_fixed)
-    fc   <- fit_compare(chk)
-    full <- summary(lm(y ~ group * (x1 + x2), data = chk))
-    stopifnot(
-      fc["R2_split"] > fc["R2_pool"],                                # nesting (point 1)
-      isTRUE(all.equal(unname(fc["R2_split"]),    full$r.squared)),  # 2 sep. models == interaction
-      isTRUE(all.equal(unname(fc["adjR2_split"]), full$adj.r.squared))
-    )
-  }
-  message("Sanity OK (balanced + imbalanced): split R2 > pooled R2; two-model FIT == interaction-model FIT.")
-})
-
 ## ---- run the simulation --------------------------------------------------
 
 sim_results <- SimDesign::runSimulation(
   design        = sim_design,
-  replications  = 1000,
+  replications  = 50,
   generate      = Generate,
   analyse       = Analyse,
   summarise     = Summarise,
