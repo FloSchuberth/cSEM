@@ -180,6 +180,53 @@ sim_results <- SimDesign::runSimulation(
 
 print(sim_results)
 
+## ---- plot Type I / power curves ------------------------------------------
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+# TODO: Fix up this code.
+
+plot_df <- sim_results |>
+  as.data.frame() |>
+  # keep only design + EDR rejection-rate columns
+  select(delta, B, prop1, starts_with("p_")) |>
+  pivot_longer(
+    starts_with("p_"),
+    names_to = ".name", values_to = "reject"
+  ) |>
+  # p_<method>_<metric>  ->  method, metric
+  tidyr::extract(.name, c("method", "metric"),
+                 regex = "^p_(.*)_(R2|adjR2)$") |>
+  mutate(
+    method = recode(method,
+                    ttest = "H&T paired t (/\u221AB)",
+                    se    = "Wald / SE",
+                    null  = "Label permutation"),
+    metric = recode(metric, R2 = "R\u00B2", adjR2 = "adj-R\u00B2"),
+    B      = factor(B,     labels = paste0("B = ", sort(unique(B)))),
+    prop1  = factor(prop1, labels = paste0("prop1 = ", sort(unique(prop1))))
+  )
+
+ggplot(plot_df, aes(delta, reject, colour = method, linetype = metric)) +
+  geom_hline(yintercept = sim_fixed$alpha,            # alpha reference (Type I target)
+             linetype = "dotted", colour = "grey50") +
+  geom_line(linewidth = 0.7) +
+  geom_point(size = 1.6) +
+  facet_grid(B ~ prop1) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.25)) +
+  scale_x_continuous(breaks = sort(unique(plot_df$delta))) +
+  labs(
+    x = expression(delta ~ "(slope difference; " * delta == 0 * " = Type I)"),
+    y = "Rejection rate",
+    colour = "Method", linetype = "Metric",
+    title = "Type I error (\u03B4 = 0) and power (\u03B4 > 0) by method",
+    caption = "Dotted line = nominal \u03B1"
+  ) +
+  theme_bw(base_size = 11) +
+  theme(legend.position = "bottom")
+
+
 # NOTE: the bootstrap machinery now runs through the `boot` package -- the stratified resample
 # (strata = group) and an H0 LABEL-PERMUTATION test that replaced the old null-pooled RESIDUAL
 # bootstrap -- all driven by the unified .lm.fit()-based fit_compare. The p_null_* column below is
