@@ -279,6 +279,27 @@ Looking at Type I error rate and statistical power.
 
 == Results
 
+// TODO: Have to check accuracy of LLM-generated caption
+
+#figure(
+  image("ohtani_curves.png", width: 100%),
+  caption: [
+    Rejection rates over 1000 Monte Carlo replications at $alpha = 0.05$, as a
+    function of the between-group slope difference $delta$. The leftmost point of
+    each curve ($delta = 0$) is the empirical *Type I error rate*; points at
+    $delta > 0$ give *power*. Columns vary the group-size imbalance (`prop1`, the
+    fraction of $N$ in part 1: balanced 100/100 to severe 180/20); rows separate
+    raw $R^2$ from adjusted $R^2$. Line type distinguishes the number of bootstrap
+    resamples $B$. The dotted line marks the nominal $alpha$. The Hwang and Takane
+    (2014) paired $t$-test (red) rejects almost always even at $delta = 0$ --- on
+    raw $R^2$ its Type I error is $1.0$ at every condition, and on adjusted $R^2$ it
+    rises with $B$ (dotted above solid), exposing the $sqrt(B)$ artifact. The
+    label-permutation test (green) and Wald statistic (blue) stay calibrated at
+    $delta = 0$ and gain power as $delta$ grows, while power collapses as the
+    deviating subgroup shrinks (rightmost column).
+  ],
+) <fig-mlr-curves>
+
 Ignore:
 
 + pctl method
