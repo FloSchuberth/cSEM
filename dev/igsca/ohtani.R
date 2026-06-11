@@ -11,6 +11,10 @@ library(future.mirai)
 plan(future.mirai::mirai_multisession)
 library(future.apply)
 library(boot)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(here)
 
 # Simulation -------------------------------------------------------------
 
@@ -181,9 +185,6 @@ sim_results <- SimDesign::runSimulation(
 print(sim_results)
 
 ## ---- plot Type I / power curves ------------------------------------------
-library(ggplot2)
-library(dplyr)
-library(tidyr)
 
 # Reshape the wide EDR result to long, splitting each p_<method>_<metric> column
 # into its method and metric. NOTE: do not name the names_to column ".name" --
@@ -194,22 +195,30 @@ plot_df <- sim_results |>
   select(delta, B, prop1, starts_with("p_")) |>
   pivot_longer(
     starts_with("p_"),
-    names_to = "stat", values_to = "reject"
+    names_to = "stat",
+    values_to = "reject"
   ) |>
   # p_<method>_<metric>  ->  method, metric
-  tidyr::extract(stat, c("method", "metric"),
-                 regex = "^p_(.*)_(R2|adjR2)$") |>
+  tidyr::extract(stat, c("method", "metric"), regex = "^p_(.*)_(R2|adjR2)$") |>
   mutate(
-    method = recode(method,
-                    ttest = "H&T paired t (/\u221AB)",
-                    se    = "Wald / SE",
-                    null  = "Label permutation"),
+    method = recode(
+      method,
+      ttest = "H&T paired t (/\u221AB)",
+      se = "Wald / SE",
+      null = "Label permutation"
+    ),
     metric = recode(metric, R2 = "R\u00B2", adjR2 = "adj-R\u00B2"),
     # factor versions for facet/linetype labels; keep delta numeric for the x-axis
-    Bf     = factor(B, levels = sort(unique(B)),
-                    labels = paste0("B = ", sort(unique(B)))),
-    prop1f = factor(prop1, levels = sort(unique(prop1)),
-                    labels = paste0("prop1 = ", sort(unique(prop1))))
+    Bf = factor(
+      B,
+      levels = sort(unique(B)),
+      labels = paste0("B = ", sort(unique(B)))
+    ),
+    prop1f = factor(
+      prop1,
+      levels = sort(unique(prop1)),
+      labels = paste0("prop1 = ", sort(unique(prop1)))
+    )
   )
 
 # Facets: metric (rows) separates the scale-crushing raw R2 from adj-R2; prop1
@@ -236,7 +245,14 @@ p_curves <- ggplot(plot_df, aes(delta, reject, colour = method, linetype = Bf)) 
 print(p_curves)
 
 # Save for the Typst write-up (dev/igsca/ohtani.typ embeds this in the Results section).
-ggsave("ohtani_curves.png", p_curves, width = 9, height = 6, dpi = 300)
+
+ggsave(
+  here::here("dev/igsca/ohtani_curves.png"),
+  p_curves,
+  width = 9,
+  height = 6,
+  dpi = 300
+)
 
 
 # NOTE: the bootstrap machinery now runs through the `boot` package -- the stratified resample
