@@ -7,6 +7,11 @@
 #show quote: set pad(x: 5em)
 #show quote: it => emph(it)
 #set math.equation(numbering: "(1)")
+// Full-justify figure/table captions (default is centred), full width, no first-line indent.
+#show figure.caption: it => block(width: 100%)[
+  #set par(justify: true, first-line-indent: 0pt)
+  #it
+]
 #import "@preview/codly:1.3.0": *
 #import "@preview/codly-languages:0.1.1": *
 #show: codly-init.with()
@@ -299,6 +304,10 @@ Looking at Type I error rate and statistical power.
     deviating subgroup shrinks (rightmost column).
   ],
 ) <fig-mlr-curves>
+
+The same rejection rates are tabulated in @tbl-results.
+
+#include "ohtani_results_table.typ"
 
 Ignore:
 
