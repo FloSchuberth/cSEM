@@ -25,6 +25,37 @@
   ("(", "[", "{"), (")", "]", "}"),
   iridis.iridis-palette,
 )
+// Table figures: "Table N  Title" on one line above, table body below.
+#show figure.where(kind: table): fig => context {
+  v(1em, weak: true)
+  align(left)[#set par(first-line-indent: 0pt); *#fig.supplement #fig.counter.display(fig.numbering)* #h(1em) #emph(fig.caption.body)]
+  v(0.3em, weak: true)
+  align(center, fig.body)
+  v(1em, weak: true)
+}
+// Custom figure: "Figure N  Title" on one line above image, long description below.
+#let _fig-title = state("titled-fig-title", [])
+#let titled-fig(title: [], caption: none, body) = {
+  _fig-title.update(title)
+  figure(body, kind: "titled", supplement: [Figure], caption: caption)
+}
+#show figure.where(kind: "titled"): fig => context {
+  let title = _fig-title.get()
+  v(1em, weak: true)
+  block(breakable: false)[
+    #align(left)[#set par(first-line-indent: 0pt); *#fig.supplement #fig.counter.display(fig.numbering)* #h(1em) #emph(title)]
+    #v(0.3em, weak: true)
+    #align(center, fig.body)
+    #if fig.caption != none {
+      pad(x: 1em)[
+        #set par(justify: true, first-line-indent: 0pt)
+        _Note._ #fig.caption.body
+      ]
+    }
+  ]
+  v(1em, weak: true)
+}
+
 
 #align(center)[
   *Different Ways of Using Variance Explained in Model Comparison*
@@ -36,6 +67,7 @@
 
 ]
 
+// Preamble end
 
 This document discusses different ways of using variance explained $(R^2)$ as a means of model comparison. The primary aim is to reproduce and evaluate the model comparison procedure described in Hwang and Takane (2014) using the toy example of multiple linear regression (MLR). The secondary aim is to compare the replicated procedure against other potential approaches in terms of Type I error rates and statistical. 
 
@@ -138,6 +170,23 @@ Generate <- function(condition, fixed_objects) {
   tibble::tibble(x1 = x1, x2 = x2, y = y, group = group)
 }
 ```
+
+// $
+//   y_(i g) = beta_(0 i) + (beta_(1 i g) + delta_(i g)) x_(1 i) + (beta_(2 i g) + delta_(i g)) x_(2 i) + epsilon_(i),
+//   quad "where" quad
+//   delta_(i g) = cases(
+//     0 & "if" g = 1,
+//     delta_("condition") & "if" g = 2
+//   )
+// $
+
+// Claude improved version of my notation is below
+$
+  y_i &= beta_0 + (beta_1 + delta d_i) x_(1 i) + (beta_2 + delta d_i) x_(2 i) + epsilon_i \
+  quad epsilon_i &tilde.op cal(N)(0, sigma^2) \
+  quad d_i &= cases(0 & "if" g(i) = 1, 1 & "if" g(i) = 2)
+$
+
 
 === Model Comparison Technique
 
@@ -286,8 +335,8 @@ Looking at Type I error rate and statistical power.
 
 // TODO: Have to check accuracy of LLM-generated caption
 
-#figure(
-  image("ohtani_curves.png", width: 100%),
+#titled-fig(
+  title: [Monte Carlo rejection rates across simulation conditions],
   caption: [
     Rejection rates over 1000 Monte Carlo replications at $alpha = 0.05$, as a
     function of the between-group slope difference $delta$. The leftmost point of
@@ -303,7 +352,7 @@ Looking at Type I error rate and statistical power.
     $delta = 0$ and gain power as $delta$ grows, while power collapses as the
     deviating subgroup shrinks (rightmost column).
   ],
-) <fig-mlr-curves>
+)[#image("ohtani_curves.png", width: 100%)] <fig-mlr-curves>
 
 The same rejection rates are tabulated in @tbl-results.
 

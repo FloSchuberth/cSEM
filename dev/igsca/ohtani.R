@@ -127,8 +127,8 @@ Analyse <- function(condition, dat, fixed_objects) {
   p_ttest_adjR2 <- t.test(boot_mat[, "adjR2_split"], boot_mat[, "adjR2_pool"], paired = TRUE)$p.value
 
   # (3a') Wald / studentized: z = T_obs / sd(d*)  (no /sqrt(B)).
-  # p_se_R2    <- 2 * pnorm(-abs(T_R2  / sd(dR2)))
-  # p_se_adjR2 <- 2 * pnorm(-abs(T_adj / sd(dAdj)))
+  p_se_R2    <- 2 * pnorm(-abs(T_R2  / sd(dR2)))
+  p_se_adjR2 <- 2 * pnorm(-abs(T_adj / sd(dAdj)))
 
   # (3a) Percentile / ASL bootstrap CI of the difference.
   # p_pctl_R2    <- min(1, 2 * min(mean(dR2  <= 0), mean(dR2  >= 0)))
@@ -154,8 +154,8 @@ Analyse <- function(condition, dat, fixed_objects) {
   SimDesign::nc(
     p_ttest_R2 = p_ttest_R2,
     p_ttest_adjR2 = p_ttest_adjR2,
-    # p_se_R2 = p_se_R2,
-    # p_se_adjR2 = p_se_adjR2,
+    p_se_R2 = p_se_R2,
+    p_se_adjR2 = p_se_adjR2,
     # p_pctl_R2 = p_pctl_R2,
     # p_pctl_adjR2 = p_pctl_adjR2,
     p_null_R2 = p_null_R2,
@@ -201,7 +201,7 @@ plot_df <- sim_results |>
       method,
       ttest = "H&T",
       # ttest = "H&T paired t (/\u221AB)",
-      # se = "Wald / SE",
+      se = "Wald",
       null = "Permutation"
     ),
     metric = dplyr::recode(metric, R2 = "R\u00B2", adjR2 = "adj-R\u00B2"),
@@ -247,7 +247,7 @@ print(p_curves)
 ggsave(
   here::here("dev/igsca/ohtani_curves.png"),
   p_curves,
-  width = 5,
+  width = 8,
   height = 6,
   dpi = 300
 )
