@@ -1,4 +1,5 @@
-library(cSEM)
+# library(cSEM)
+devtools::load_all()
 model_Bergami_Bagozzi_Hwang = "
 # Measurement models
 OrgPres =~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 
@@ -11,6 +12,15 @@ OrgIden ~ OrgPres
 AffLove ~ OrgIden
 AffJoy  ~ OrgIden"
 
+out_Hwang_single <- csem(
+  .data = BergamiBagozzi2000,
+  .model = model_Bergami_Bagozzi_Hwang,
+  .approach_weights = "GSCA",
+  .tolerance = 1e-06
+)
+
+calculateFIT(out_Hwang_single)
+
 out_Hwang <- csem(
   .data = BergamiBagozzi2000,
   .model = model_Bergami_Bagozzi_Hwang,
@@ -19,27 +29,31 @@ out_Hwang <- csem(
   .tolerance = 1e-06
 )
 
-assess(
-  out_Hwang,
-  .quality_criterion = c(
-    'dg',
-    'dl',
-    'dml',
-    'df',
-    'chi_square',
-    'chi_square_df',
-    'cfi',
-    'gfi',
-    'cn',
-    'ifi',
-    'nfi',
-    'nnfi',
-    'rmsea',
-    'rms_theta',
-    'srmr',
-    'FIT',
-    'FIT_m',
-    'FIT_s',
-    'gof'
-  )
-)
+
+calculateFIT(out_Hwang)
+
+
+# assess(
+#   out_Hwang,
+#   .quality_criterion = c(
+#     'dg',
+#     'dl',
+#     'dml',
+#     'df',
+#     'chi_square',
+#     'chi_square_df',
+#     'cfi',
+#     'gfi',
+#     'cn',
+#     'ifi',
+#     'nfi',
+#     'nnfi',
+#     'rmsea',
+#     'rms_theta',
+#     'srmr',
+#     'FIT',
+#     'FIT_m',
+#     'FIT_s',
+#     'gof'
+#   )
+# )

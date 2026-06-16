@@ -2011,7 +2011,19 @@ calculateSRMR <- function(
 #' @describeIn fit_measures The measure of overall FIT for GSCA/I-GSCA models (FIT)
 #' @export
 calculateFIT <- function(.object = NULL) {
-  
+
+  # For multigroup models, block diagonalize each part (Z, Gamma, C, ...) so
+  # that the single-group algebra below yields one overall FIT for the model.
+  if(inherits(.object, "cSEMResults_multi")) {
+    if(inherits(.object, "cSEMResults_2ndorder")) {
+      stop2(
+        "The following error occured in the calculateFIT() function:\n",
+        "FIT statistics are not supported for second-order multigroup models."
+      )
+    }
+    .object <- bdiagonalizeMultiGroupIgscaEstimates(.object)
+  }
+
   # As shown in the GSCA_m publication (Hwang et al., 2017)
   Gamma <- .object$Estimates$Construct_scores
   Psi <- cbind(.object$Information$Data, Gamma)
@@ -2050,7 +2062,19 @@ calculateFIT <- function(.object = NULL) {
 #' @describeIn fit_measures The measure of measurement model fit for GSCA/I-GSCA models (FIT_m)
 #' @export
 calculateFIT_m <- function(.object = NULL) {
-  
+
+  # For multigroup models, block diagonalize each part (Z, Gamma, C, ...) so
+  # that the single-group algebra below yields one overall FIT_m for the model.
+  if(inherits(.object, "cSEMResults_multi")) {
+    if(inherits(.object, "cSEMResults_2ndorder")) {
+      stop2(
+        "The following error occured in the calculateFIT_m() function:\n",
+        "FIT statistics are not supported for second-order multigroup models."
+      )
+    }
+    .object <- bdiagonalizeMultiGroupIgscaEstimates(.object)
+  }
+
   Z <- .object$Information$Data
   Gamma <- .object$Estimates$Construct_scores
   C <- .object$Estimates$Loading_estimates
@@ -2075,7 +2099,19 @@ calculateFIT_m <- function(.object = NULL) {
 #' @describeIn fit_measures The measure of structural model FIT for GSCA/I-GSCA models (FIT_s)
 #' @export
 calculateFIT_s <- function(.object = NULL) {
-  
+
+  # For multigroup models, block diagonalize each part (Gamma, B, ...) so
+  # that the single-group algebra below yields one overall FIT_s for the model.
+  if(inherits(.object, "cSEMResults_multi")) {
+    if(inherits(.object, "cSEMResults_2ndorder")) {
+      stop2(
+        "The following error occured in the calculateFIT_s() function:\n",
+        "FIT statistics are not supported for second-order multigroup models."
+      )
+    }
+    .object <- bdiagonalizeMultiGroupIgscaEstimates(.object)
+  }
+
   Gamma <- .object$Estimates$Construct_scores
   # I am fairly confident the transpose of B is what's needed
   # See Gamma[1,] %*% t(B)
