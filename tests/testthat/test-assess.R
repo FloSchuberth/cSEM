@@ -238,7 +238,7 @@ AffJoy  ~ OrgIden"
     .tolerance = 1e-06
   )
 
-  # Reference values from gesca package
+  # Reference values from gesca package (1.0.5)
   expect_equal(calculateFIT(out_Hwang_single_GSCA), 0.5241052)
   expect_equal(calculateAFIT(out_Hwang_single_GSCA), 0.5205684)
   expect_equal(calculateFIT_m(out_Hwang_single_GSCA), 0.6576439)
@@ -289,10 +289,15 @@ AffJoy  ~ OrgIden"
     .tolerance = 1e-06
   )
 
+  # Reference values from gesca package (1.0.5)
   expect_equal(calculateFIT(out_Hwang_mg_GSCA), 0.5219425)
   expect_equal(calculateAFIT(out_Hwang_mg_GSCA), 0.5147835)
-  expect_equal(calculateFIT_m(out_Hwang_mg_GSCA), 0.6544089)
-  expect_equal(calculateFIT_s(out_Hwang_mg_GSCA), 0.1245432)
+  expect_equal(calculateFIT_m(out_Hwang_mg_GSCA), 0.6544081)
+  expect_equal(calculateFIT_s(out_Hwang_mg_GSCA), 0.1245455)
+
+  expect_true(
+    calculateFIT(out_Hwang_mg_GSCA) > calculateAFIT(out_Hwang_mg_GSCA)
+  )
 
   calculateFIT(out_Hwang_mg_GSCA)
   calculateFIT(out_Hwang_mg_GSCAM)
