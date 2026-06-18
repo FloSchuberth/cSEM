@@ -178,3 +178,133 @@ test_that("Test that calculateGFI returns the correct output:", {
   expect_length(calculateGFI(res_single_2ndorder, .type = "ULS"), 1)
   
 })
+
+
+test_that("FIT indices work for single and multigroup GSCA models:", {
+  model_GSCA = "
+# Measurement models
+OrgPres <~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 
+OrgIden <~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6
+AffJoy <~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7
+AffLove  <~ orgcmt5 + orgcmt6 + orgcmt8
+
+# Structural model 
+OrgIden ~ OrgPres 
+AffLove ~ OrgIden
+AffJoy  ~ OrgIden"
+
+  model_GSCAM = "
+# Measurement models
+OrgPres =~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 
+OrgIden =~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6
+AffJoy =~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7
+AffLove  =~ orgcmt5 + orgcmt6 + orgcmt8
+
+# Structural model 
+OrgIden ~ OrgPres 
+AffLove ~ OrgIden
+AffJoy  ~ OrgIden"
+
+  model_IGSCA = "
+# Measurement models
+OrgPres =~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 
+OrgIden <~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6
+AffJoy <~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7
+AffLove  <~ orgcmt5 + orgcmt6 + orgcmt8
+
+# Structural model 
+OrgIden ~ OrgPres 
+AffLove ~ OrgIden
+AffJoy  ~ OrgIden"
+
+  # Single Group -----------------------------------------------------------
+  out_Hwang_single_GSCA <- csem(
+    .data = BergamiBagozzi2000,
+    .model = model_GSCA,
+    .approach_weights = "GSCA"
+  )
+
+  out_Hwang_single_GSCAM <- csem(
+    .data = BergamiBagozzi2000,
+    .model = model_GSCAM,
+    .approach_weights = "GSCA",
+    .tolerance = 1e-06
+  )
+
+  out_Hwang_single_IGSCA <- csem(
+    .data = BergamiBagozzi2000,
+    .model = model_IGSCA,
+    .approach_weights = "GSCA",
+    .tolerance = 1e-06
+  )
+
+  # Reference values from gesca package
+  expect_equal(calculateFIT(out_Hwang_single_GSCA), 0.5241052)
+  expect_equal(calculateAFIT(out_Hwang_single_GSCA), 0.5205684)
+  expect_equal(calculateFIT_m(out_Hwang_single_GSCA), 0.6576439)
+  expect_equal(calculateFIT_s(out_Hwang_single_GSCA), 0.123489)
+
+  expect_true(calculateFIT(out_Hwang_single_GSCA) > calculateAFIT(out_Hwang_single_GSCA))
+
+  calculateFIT(out_Hwang_single_GSCA)
+  calculateFIT(out_Hwang_single_GSCAM)
+  calculateFIT(out_Hwang_single_IGSCA)
+
+  calculateAFIT(out_Hwang_single_GSCA)
+  calculateAFIT(out_Hwang_single_GSCAM)
+  calculateAFIT(out_Hwang_single_IGSCA)
+
+  calculateFIT_m(out_Hwang_single_GSCA)
+  calculateFIT_m(out_Hwang_single_GSCAM)
+  calculateFIT_m(out_Hwang_single_IGSCA)
+
+  calculateFIT_s(out_Hwang_single_GSCA)
+  calculateFIT_s(out_Hwang_single_GSCAM)
+  calculateFIT_s(out_Hwang_single_IGSCA)
+
+  # Multigroup -------------------------------------------------------------
+  out_Hwang_mg_GSCA <- csem(
+    .data = BergamiBagozzi2000,
+    .model = model_GSCA,
+    .approach_weights = "GSCA",
+    .id = "gender",
+    .tolerance = 1e-06
+  )
+
+  out_Hwang_mg_GSCAM <- csem(
+    .data = BergamiBagozzi2000,
+    .model = model_GSCAM,
+    .approach_weights = "GSCA",
+    .id = "gender",
+    .tolerance = 1e-06
+  )
+
+  out_Hwang_mg_IGSCA <- csem(
+    .data = BergamiBagozzi2000,
+    .model = model_IGSCA,
+    .approach_weights = "GSCA",
+    .id = "gender",
+    .tolerance = 1e-06
+  )
+
+  expect_equal(calculateFIT(out_Hwang_mg_GSCA), 0.5219425)
+  expect_equal(calculateAFIT(out_Hwang_mg_GSCA), 0.5147835)
+  expect_equal(calculateFIT_m(out_Hwang_mg_GSCA), 0.6544089)
+  expect_equal(calculateFIT_s(out_Hwang_mg_GSCA), 0.1245432)
+
+  calculateFIT(out_Hwang_mg_GSCA)
+  calculateFIT(out_Hwang_mg_GSCAM)
+  calculateFIT(out_Hwang_mg_IGSCA)
+
+  calculateAFIT(out_Hwang_mg_GSCA)
+  calculateAFIT(out_Hwang_mg_GSCAM)
+  calculateAFIT(out_Hwang_mg_IGSCA)
+
+  calculateFIT_m(out_Hwang_mg_GSCA)
+  calculateFIT_m(out_Hwang_mg_GSCAM)
+  calculateFIT_m(out_Hwang_mg_IGSCA)
+
+  calculateFIT_s(out_Hwang_mg_GSCA)
+  calculateFIT_s(out_Hwang_mg_GSCAM)
+  calculateFIT_s(out_Hwang_mg_IGSCA)
+})

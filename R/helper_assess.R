@@ -2027,6 +2027,8 @@ calculateFIT <- function(.object = NULL) {
     .object <- bdiagGSCA(.object)
   } else if (.object$Information$Arguments$.approach_weights != "GSCA") {
     return(NA)
+  } else {
+    .object$Estimates$Unique_loading_estimates <- diag(.object$Estimates$Unique_loading_estimates)
   }
 
   # As shown in Equation 4 and 6 the GSCA_m publication (Hwang et al., 2017)
@@ -2133,6 +2135,8 @@ calculateFIT_m <- function(.object = NULL) {
     .object <- bdiagGSCA(.object)
   } else if (.object$Information$Arguments$.approach_weights != "GSCA") {
     return(NA)
+  } else {
+    .object$Estimates$Unique_loading_estimates <- diag(.object$Estimates$Unique_loading_estimates)
   }
 
   Z <- .object$Information$Data
