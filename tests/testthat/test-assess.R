@@ -244,7 +244,9 @@ AffJoy  ~ OrgIden"
   expect_equal(calculateFIT_m(out_Hwang_single_GSCA), 0.6576439)
   expect_equal(calculateFIT_s(out_Hwang_single_GSCA), 0.123489)
 
-  expect_true(calculateFIT(out_Hwang_single_GSCA) > calculateAFIT(out_Hwang_single_GSCA))
+  expect_true(
+    calculateFIT(out_Hwang_single_GSCA) > calculateAFIT(out_Hwang_single_GSCA)
+  )
 
   calculateFIT(out_Hwang_single_GSCA)
   calculateFIT(out_Hwang_single_GSCAM)
