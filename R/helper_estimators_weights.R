@@ -598,23 +598,32 @@ bdiagGSCA <- function(.object) {
     Weight_estimates = "Weight_estimates",
     Construct_scores = "Construct_scores",
     Unique_scores = "Unique_scores",
+    Unique_loading_estimates = "Unique_loading_estimates",
     Data = "Data"
   )
 
   bdiaged_list <- lapply(matrices_to_be_extracted, function(estName) {
-    if  (estName != "Data") {
-      extraction <- lapply(.object, function(group) group[["Estimates"]][[estName]])
+    if (estName != "Data") {
+      extraction <- lapply(.object, function(group) {
+        group[["Estimates"]][[estName]]
+      })
+
+      if (estName == "Unique_loading_estimates") {
+        extraction <- lapply(extraction, diag)
+      }
     } else if (estName == "Data") {
-      extraction <- lapply(.object, function(group) group[["Information"]][[estName]])
+      extraction <- lapply(.object, function(group) {
+        group[["Information"]][[estName]]
+      })
     }
 
     if (all(unlist(lapply(extraction, is.null)))) {
       return(base::as.matrix(NA))
     }
-    
-    extraction_rownames <- lapply(extraction, rownames) |> 
+
+    extraction_rownames <- lapply(extraction, rownames) |>
       unlist()
-    extraction_colnames <- lapply(extraction, colnames) |> 
+    extraction_colnames <- lapply(extraction, colnames) |>
       unlist()
     bdiaged <- Matrix::bdiag(extraction)
     rownames(bdiaged) <- extraction_rownames

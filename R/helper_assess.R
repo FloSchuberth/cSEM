@@ -2008,7 +2008,7 @@ calculateSRMR <- function(
   sqrt(sum(C_diff[lower.tri(C_diff, diag = T)]^2) / sum(lower.tri(C_diff, diag = T)))
 } 
 
-#' @describeIn fit_measures The measure of overall FIT for GSCA/I-GSCA models (FIT)
+#' @describeIn fit_measures The measure of overall FIT for GSCA models (FIT)
 #' @export
 calculateFIT <- function(.object = NULL) {
 
@@ -2029,42 +2029,91 @@ calculateFIT <- function(.object = NULL) {
     return(NA)
   }
 
-  # As shown in the GSCA_m publication (Hwang et al., 2017)
+  # As shown in Equation 4 and 6 the GSCA_m publication (Hwang et al., 2017)
   Gamma <- .object$Estimates$Construct_scores
-  Psi <- cbind(.object$Information$Data, Gamma)
-  # I am fairly confident the transpose of B is what's needed
+  Z <- .object$Information$Data
+  Psi <- cbind(Z, Gamma)
+  # TODO: Confirm whether transpose of Path_estimates is or is not needed
   # See Gamma[1,] %*% t(...$Path_estimates)
-  if (!is.null(.object$Estimates$Path_estimates)) {
+  if (!all(is.na(.object$Estimates$Path_estimates))) {
     # If there's a structural model
     A <- cbind(.object$Estimates$Loading_estimates,
                t(.object$Estimates$Path_estimates))
   }
-  else if (is.null(.object$Estimates$Path_estimates) | (!exists(".object$Estimates$Path_estimates"))) {
-    # If no structural model
+  else if (all(is.na(.object$Estimates$Path_estimates))) {
+    # The rows of the Loading estimates correspond to the construct names
     A <- cbind(.object$Estimates$Loading_estimates,
                matrix(data = 0,
-                      nrow = nrow(.object$Estimates$Loading_estimates),
+                      nrow = nrow(.object$Estimates$Loading_estimates), 
                       ncol = nrow(.object$Estimates$Loading_estimates))
                       )
   }
   
-  if (!is.null(.object$Estimates$Unique_scores)) {
-    S <- cbind(.object$Estimates$Unique_scores, matrix(data = 0, nrow = nrow(Gamma), ncol = ncol(Gamma)))
-    
-  } else if (is.null(.object$Estimates$Unique_scores)) {
-    # Unique_scores should be NULL when GSCA and not GSCA_m/I-GSCA is run 
-    S <- matrix(data = 0, nrow(Psi), ncol = ncol(Psi))  
-    
+  if (!all(is.na(.object$Estimates$Unique_scores))) {
+    # TODO: Verify that the dimensions of this extraction are correct and that the matrix multiplication is correct
+    S <- cbind(
+      .object$Estimates$Unique_scores %*%
+        .object$Estimates$Unique_loading_estimates,
+      matrix(data = 0, nrow = nrow(Gamma), ncol = ncol(Gamma))
+    )
+  } else if (all(is.na(.object$Estimates$Unique_scores))) {
+    # Unique_scores should be NULL when GSCA and not GSCA_m/I-GSCA is run
+    S <- cbind(
+      matrix(data = 0, nrow(Z), ncol = ncol(Z)),
+      matrix(data = 0, nrow(Gamma), ncol = ncol(Gamma))
+    )
   }
   
-  SS_unexplained_variance <- sum(diag(t(Psi - Gamma %*% A - S) %*% (Psi - Gamma %*% A - S)))
+  SS_unexplained_variance <- sum(diag(t(Psi - (Gamma %*% A) - S) %*% (Psi - (Gamma %*% A) - S)))
   SS_total_variance <- sum(diag(t(Psi) %*% (Psi)))
   FIT <- 1 - (SS_unexplained_variance / SS_total_variance)
   
   return(FIT)
 }
 
-#' @describeIn fit_measures The measure of measurement model fit for GSCA/I-GSCA models (FIT_m)
+#' @describeIn fit_measures The measure of overall adjusted-FIT for GSCA models (AFIT)
+#' 
+#' AFIT counts the number of path, loading, weight and unique loading estimates (per-group) as the total number of parameters. 
+#' @export
+calculateAFIT <- function(.object = NULL) {
+
+  # For efficiency, calculateAFIT does not repeat the safety checks done by calculateFIT().
+  FIT <- calculateFIT(.object)
+
+  # For multigroup models, block diagonalize each part (Z, Gamma, C, ...) so
+  # that the single-group algebra below yields one overall FIT for the model.
+  if (inherits(.object, "cSEMResults_multi")) {
+    .objectBDIAG <- bdiagGSCA(.object)
+    # Hwang, De Sarbo and Takane (2014) make it clear that the number of degrees of freedom is counted on a 'per group/cluster' basis. 
+    d_0 <- nrow(.objectBDIAG$Information$Data) * length(.object[[1]]$Information$Model$indicators)
+
+    nPath <- sum(.object[[1]]$Information$Model$structural)
+    nLoadings <- sum(.object[[1]]$Information$Model$measurement)
+    nWeights <- nLoadings 
+    nUniqueLoadings <- sum(.object[[1]]$Information$Model$construct_type == "Common factor")
+
+    npar <- nPath + nLoadings + nWeights + nUniqueLoadings
+
+    d_1 <- d_0 - npar 
+  } else {
+    d_0 <- nrow(.object$Information$Data) * length(.object$Information$Model$indicators)
+
+    nPath <- sum(.object$Information$Model$structural)
+    nLoadings <- sum(.object$Information$Model$measurement)
+    nWeights <- nLoadings 
+    nUniqueLoadings <- sum(.object$Information$Model$construct_type == "Common factor")
+
+    npar <- nPath + nLoadings + nWeights + nUniqueLoadings
+    d_1 <- d_0 - npar 
+  }
+
+  # Page 27 of Hwang & Takane (2014)
+  AFIT <- 1 - ((1 - FIT) * (d_0 / d_1))
+
+  return(AFIT)
+}
+
+#' @describeIn fit_measures The measure of measurement model fit for GSCA models (FIT_m)
 #' @export
 calculateFIT_m <- function(.object = NULL) {
 
@@ -2088,17 +2137,16 @@ calculateFIT_m <- function(.object = NULL) {
   Z <- .object$Information$Data
   Gamma <- .object$Estimates$Construct_scores
   C <- .object$Estimates$Loading_estimates
-  if (!is.null(.object$Estimates$Unique_scores)) {
-    DU <- .object$Estimates$Unique_scores
+  if (!all(is.na(.object$Estimates$Unique_scores))) {
+    UD <- .object$Estimates$Unique_scores %*% .object$Estimates$Unique_loading_estimates
     
-  } else if (is.null(.object$Estimates$Unique_scores)) {
-    # Unique_scores should be NULL when GSCA and not GSCA_m/I-GSCA is run 
-    DU <- matrix(data = 0, nrow(Z), ncol = ncol(Z))  
-    
+  } else if (all(is.na(.object$Estimates$Unique_scores))) {
+    # Unique_scores should be NA when GSCA and not GSCA_m/I-GSCA is run 
+    UD <- matrix(data = 0, nrow(Z), ncol = ncol(Z))  
   }
   
   
-  SS_unexplained_indicator_variance <- sum(diag(t(Z - Gamma %*% C - DU) %*% (Z - Gamma %*% C - DU)))
+  SS_unexplained_indicator_variance <- sum(diag(t(Z - (Gamma %*% C) - UD) %*% (Z - (Gamma %*% C) - UD)))
   SS_total_indicator_variance <- sum(diag(t(Z) %*% Z)) 
   
   FIT_m <- 1 - (SS_unexplained_indicator_variance / SS_total_indicator_variance)
@@ -2106,7 +2154,7 @@ calculateFIT_m <- function(.object = NULL) {
   return(FIT_m)
 }
 
-#' @describeIn fit_measures The measure of structural model FIT for GSCA/I-GSCA models (FIT_s)
+#' @describeIn fit_measures The measure of structural model FIT for GSCA models (FIT_s)
 #' @export
 calculateFIT_s <- function(.object = NULL) {
 
@@ -2128,17 +2176,18 @@ calculateFIT_s <- function(.object = NULL) {
   }
 
   Gamma <- .object$Estimates$Construct_scores
+  # TODO: Verify what part of the path estimates matrix is needed
   # I am fairly confident the transpose of B is what's needed
   # See Gamma[1,] %*% t(B)
-  if (!is.null(.object$Estimates$Path_estimates)) {
+  if (!all(is.null(.object$Estimates$Path_estimates))) {
     B <- t(.object$Estimates$Path_estimates)
   }
-  else if (is.null(.object$Estimates$Path_estimates)) {
+  else if (all(is.null(.object$Estimates$Path_estimates))) {
     B <- matrix(data = 0, nrow = ncol(Gamma), ncol = ncol(Gamma))
   }
   
   
-  SS_unexplained_construct_variance <- sum(diag(t(Gamma - Gamma %*% B) %*% (Gamma - Gamma %*% B)))
+  SS_unexplained_construct_variance <- sum(diag(t(Gamma - (Gamma %*% B)) %*% (Gamma - (Gamma %*% B))))
   SS_total_construct_variance <- sum(diag(t(Gamma) %*% (Gamma)))
   
   FIT_s <- 1 - (SS_unexplained_construct_variance / SS_total_construct_variance)
