@@ -2073,7 +2073,7 @@ calculateFIT <- function(.object = NULL) {
 
 #' @describeIn fit_measures The measure of overall adjusted-FIT for GSCA models (AFIT)
 #' 
-#' AFIT counts the number of path, loading, weight and unique loading estimates (per-group) as the total number of parameters. 
+#' AFIT counts the number of path, loading, weight and unique loading estimates multiplied by the number of groups as the total number of parameters. 
 #' @export
 calculateAFIT <- function(.object = NULL) {
 
@@ -2084,15 +2084,16 @@ calculateAFIT <- function(.object = NULL) {
   # that the single-group algebra below yields one overall FIT for the model.
   if (inherits(.object, "cSEMResults_multi")) {
     .objectBDIAG <- bdiagGSCA(.object)
-    # Hwang, De Sarbo and Takane (2014) make it clear that the number of degrees of freedom is counted on a 'per group/cluster' basis. 
+
     d_0 <- nrow(.objectBDIAG$Information$Data) * length(.object[[1]]$Information$Model$indicators)
 
+    # Hwang, De Sarbo and Takane (2014); combined with the gesca.mg function from the gesca package (June 18/2026) make it clear that the number of parameters is multiplied by the number of groups. This makes sense, or else there would be no penalty for fitting a multigroup model over a single-group one.
     nPath <- sum(.object[[1]]$Information$Model$structural)
     nLoadings <- sum(.object[[1]]$Information$Model$measurement)
     nWeights <- nLoadings 
     nUniqueLoadings <- sum(.object[[1]]$Information$Model$construct_type == "Common factor")
 
-    npar <- nPath + nLoadings + nWeights + nUniqueLoadings
+    npar <- (nPath + nLoadings + nWeights + nUniqueLoadings) * length(.object)
 
     d_1 <- d_0 - npar 
   } else {

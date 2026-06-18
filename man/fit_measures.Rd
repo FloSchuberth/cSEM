@@ -14,6 +14,7 @@
 \alias{calculateRMSTheta}
 \alias{calculateSRMR}
 \alias{calculateFIT}
+\alias{calculateAFIT}
 \alias{calculateFIT_m}
 \alias{calculateFIT_s}
 \title{Model fit measures}
@@ -47,6 +48,8 @@ calculateSRMR(
 )
 
 calculateFIT(.object = NULL)
+
+calculateAFIT(.object = NULL)
 
 calculateFIT_m(.object = NULL)
 
@@ -108,10 +111,14 @@ for details on the implementation.
 
 \item \code{calculateSRMR()}: The standardized root mean square residual (SRMR).
 
-\item \code{calculateFIT()}: The measure of overall FIT for GSCA/I-GSCA models (FIT)
+\item \code{calculateFIT()}: The measure of overall FIT for GSCA models (FIT)
 
-\item \code{calculateFIT_m()}: The measure of measurement model fit for GSCA/I-GSCA models (FIT_m)
+\item \code{calculateAFIT()}: The measure of overall adjusted-FIT for GSCA models (AFIT)
 
-\item \code{calculateFIT_s()}: The measure of structural model FIT for GSCA/I-GSCA models (FIT_s)
+AFIT counts the number of path, loading, weight and unique loading estimates multiplied by the number of groups as the total number of parameters.
+
+\item \code{calculateFIT_m()}: The measure of measurement model fit for GSCA models (FIT_m)
+
+\item \code{calculateFIT_s()}: The measure of structural model FIT for GSCA models (FIT_s)
 
 }}
