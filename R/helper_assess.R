@@ -2024,7 +2024,7 @@ calculateFIT <- function(.object = NULL) {
     if (.object[[1]]$Information$Arguments$.approach_weights != "GSCA") {
       return(NA)
     }
-    .object <- bdiagonalizeMultiGroupIgscaEstimates(.object)
+    .object <- bdiagGSCA(.object)
   } else if (.object$Information$Arguments$.approach_weights != "GSCA") {
     return(NA)
   }
@@ -2080,7 +2080,7 @@ calculateFIT_m <- function(.object = NULL) {
     if (.object[[1]]$Information$Arguments$.approach_weights != "GSCA") {
       return(NA)
     }
-    .object <- bdiagonalizeMultiGroupIgscaEstimates(.object)
+    .object <- bdiagGSCA(.object)
   } else if (.object$Information$Arguments$.approach_weights != "GSCA") {
     return(NA)
   }
@@ -2122,7 +2122,7 @@ calculateFIT_s <- function(.object = NULL) {
     if (.object[[1]]$Information$Arguments$.approach_weights != "GSCA") {
       return(NA)
     }
-    .object <- bdiagonalizeMultiGroupIgscaEstimates(.object)
+    .object <- bdiagGSCA(.object)
   } else if (.object$Information$Arguments$.approach_weights != "GSCA") {
     return(NA)
   }

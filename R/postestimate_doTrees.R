@@ -445,7 +445,7 @@ calculateFITForSplit <- function(data,
         .conv_criterion = .conv_criterion
       )
       
-      mg_fit <- bdiagonalizeMultiGroupIgscaEstimates(mg_mod) |>
+      mg_fit <- bdiagGSCA(mg_mod) |>
         calculateFIT()
       
       names(mg_fit) <- .id
@@ -463,7 +463,7 @@ calculateFITForSplit <- function(data,
           .conv_criterion = .conv_criterion
         )
         
-        mg_fit <- bdiagonalizeMultiGroupIgscaEstimates(mg_mod) |>
+        mg_fit <- bdiagGSCA(mg_mod) |>
           calculateFIT()
         names(mg_fit) <- .id_iter
         

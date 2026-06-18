@@ -579,98 +579,56 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
   return(list("U" = U, "D" = D))
 } 
 
-#' Block Diagonalize Estimated Parameter Matrices to Facilitate Computation of FIT Statistics
+#' Block Diagonalize GSCA Parameter Estimates and Scores
 #'
 #' Block diagonalizes the estimated paramater matrices as shown on Equations
-#' 3.28-3.29 on page 111 of \insertCite{Hwang2014;textual}{cSEM}.
+#' 3.28-3.29 on page 111 of \insertCite{Hwang2014;textual}{cSEM}. This is used to compute a single FIT-type statistic given a multigroup GSCA-type model.
 #'
+#' This function should be called through calculateFIT, calculateFIT_s, etc... and is not intended to be user-facing.
+#' 
 #' @inheritParams csem_arguments
 #'
 #' @return Single group cSEMResults of Block diagonalized path estimates, loadingestimates, weight estaimes, construct scores and unique scores for GSCA type models.
 #' @importFrom Matrix bdiag
-bdiagonalizeMultiGroupIgscaEstimates <- function(.object) {
+bdiagGSCA <- function(.object) {
   
-  ## Extract Matrices ------------------------------------------------------
-  # Extract Estimated Matrices
-
-  estimates_to_be_extracted <- list(
-    "Path_estimates",
-    "Loading_estimates",
-    "Weight_estimates",
-    "Construct_scores",
-    "Unique_scores"
+  matrices_to_be_extracted <- list(
+    Path_estimates = "Path_estimates",
+    Loading_estimates = "Loading_estimates",
+    Weight_estimates = "Weight_estimates",
+    Construct_scores = "Construct_scores",
+    Unique_scores = "Unique_scores",
+    Data = "Data"
   )
 
-  names(estimates_to_be_extracted) <- unlist(estimates_to_be_extracted)
+  bdiaged_list <- lapply(matrices_to_be_extracted, function(estName) {
+    if  (estName != "Data") {
+      extraction <- lapply(.object, function(group) group[["Estimates"]][[estName]])
+    } else if (estName == "Data") {
+      extraction <- lapply(.object, function(group) group[["Information"]][[estName]])
+    }
 
-  extraction <- lapply(
-    X = estimates_to_be_extracted,
-    function(matrix_name, multigroup_output) {
-      extraction <- lapply(
-        multigroup_output,
-        function(onegroup_output, matrix_name) {
-          return(onegroup_output[["Estimates"]][[matrix_name]])
-        },
-        matrix_name = matrix_name
-      )
-      return(extraction)
-    },
-    multigroup_output = x
-  )
+    if (all(unlist(lapply(extraction, is.null)))) {
+      return(base::as.matrix(NA))
+    }
+    
+    extraction_rownames <- lapply(extraction, rownames) |> 
+      unlist()
+    extraction_colnames <- lapply(extraction, colnames) |> 
+      unlist()
+    bdiaged <- Matrix::bdiag(extraction)
+    rownames(bdiaged) <- extraction_rownames
+    colnames(bdiaged) <- extraction_colnames
 
-  # Extract Data
-  extraction$Data <- lapply(x, function(onegroup_output) {
-    return(onegroup_output[["Information"]][["Data"]])
+    return(base::as.matrix(bdiaged))
   })
-
-  # Remove Null Matrices
-  extracts_to_remove <- lapply(extraction, \(x) {
-    lapply(x, is.null) |> unlist() |> all()
-  })
-
-  extraction <- extraction[which(
-    !unlist(lapply(extraction, \(x) lapply(x, is.null) |> unlist() |> all()))
-  )]
-
-  extraction <- mapply(
-    function(extract, extract_name) {
-      # We don't keep it as a sparse matrix because that might break
-      # functionality with other functions unless much more of Matrix is
-      # imported
-
-      bdiaged <- Matrix::bdiag(extract)
-      colnames(bdiaged) <- rep(
-        colnames(extract[[1]]),
-        times = length(extract)
-      )
-      if (!(extract_name %in% c("Data", "Construct_scores", "Unique_scores"))) {
-        rownames(bdiaged) <- rep(
-          rownames(extract[[1]]),
-          times = length(extract)
-        )
-      }
-
-      return(as.matrix(bdiaged))
-    },
-    extract = extraction,
-    extract_name = names(extraction),
-    SIMPLIFY = FALSE
-  )
 
   ## Create Surrogate Output -----------------------------------------------
-  surrogate_out <- list()
-  # Insert the diagonalized matrices into the surrogate
-  ## It's not simple to take x[[1]] as the surrogate structure because it has
-  ## many estimatates (such as reliabilities) that are specific to the group
-  ## model
+  out <- list()
 
-  for (extract_name in names(extraction)[which(
-    names(extraction) != "Data"
-  )]) {
-    surrogate_out[["Estimates"]][[extract_name]] <- extraction[[extract_name]]
-  }
+  out[["Estimates"]] <- bdiaged_list[names(bdiaged_list) != "Data"]
 
-  surrogate_out[["Information"]][["Data"]] <- extraction[["Data"]]
+  out[["Information"]] <- bdiaged_list["Data"]
 
-  return(surrogate_out)
+  return(out)
 }
