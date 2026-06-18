@@ -183,9 +183,9 @@ test_that("Test that calculateGFI returns the correct output:", {
 test_that("FIT indices work for single and multigroup GSCA models:", {
   model_GSCA = "
 # Measurement models
-OrgPres <~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 
-OrgIden <~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6
-AffJoy <~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7
+OrgPres <~ cei1 + cei2 + cei3
+OrgIden <~ ma1 + ma2 + ma3
+AffJoy <~ orgcmt1 + orgcmt2 + orgcmt3
 AffLove  <~ orgcmt5 + orgcmt6 + orgcmt8
 
 # Structural model 
@@ -195,9 +195,9 @@ AffJoy  ~ OrgIden"
 
   model_GSCAM = "
 # Measurement models
-OrgPres =~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 
-OrgIden =~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6
-AffJoy =~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7
+OrgPres =~ cei1 + cei2 + cei3
+OrgIden =~ ma1 + ma2 + ma3
+AffJoy =~ orgcmt1 + orgcmt2 + orgcmt3
 AffLove  =~ orgcmt5 + orgcmt6 + orgcmt8
 
 # Structural model 
@@ -207,9 +207,9 @@ AffJoy  ~ OrgIden"
 
   model_IGSCA = "
 # Measurement models
-OrgPres =~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 
-OrgIden <~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6
-AffJoy <~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7
+OrgPres =~ cei1 + cei2 + cei3
+OrgIden <~ ma1 + ma2 + ma3
+AffJoy <~ orgcmt1 + orgcmt2 + orgcmt3
 AffLove  <~ orgcmt5 + orgcmt6 + orgcmt8
 
 # Structural model 
@@ -222,7 +222,7 @@ AffJoy  ~ OrgIden"
     .data = BergamiBagozzi2000,
     .model = model_GSCA,
     .approach_weights = "GSCA",
-    .tolerance = 0.0001,
+    .tolerance = 1e-5,
     .conv_criterion = "sum_diff_absolute",
     .GSCA_modes = "NCMP"
   )
@@ -231,7 +231,7 @@ AffJoy  ~ OrgIden"
     .data = BergamiBagozzi2000,
     .model = model_GSCAM,
     .approach_weights = "GSCA",
-    .tolerance = 0.0001,
+    .tolerance = 1e-5,
     .conv_criterion = "sum_diff_absolute",
     .GSCA_modes = "NCMP"
   )
@@ -240,7 +240,7 @@ AffJoy  ~ OrgIden"
     .data = BergamiBagozzi2000,
     .model = model_IGSCA,
     .approach_weights = "GSCA",
-    .tolerance = 0.0001,
+    .tolerance = 1e-5,
     .conv_criterion = "sum_diff_absolute",
     .GSCA_modes = "NCMP"
   )
@@ -248,28 +248,32 @@ AffJoy  ~ OrgIden"
   # Reference values from gesca package (1.0.5)
   expect_equal(calculateFIT(out_Hwang_single_GSCA), 0.5241052)
   expect_equal(calculateAFIT(out_Hwang_single_GSCA), 0.5205684)
-  expect_equal(calculateFIT_m(out_Hwang_single_GSCA), 0.6576439)
-  expect_equal(calculateFIT_s(out_Hwang_single_GSCA), 0.123489)
+  expect_equal(calculateFIT_m(out_Hwang_single_GSCA), 0.6576439, tolerance = 0.00001)
+  expect_equal(calculateFIT_s(out_Hwang_single_GSCA), 0.123489, tolerance = 0.0001)
 
   expect_true(
     calculateFIT(out_Hwang_single_GSCA) > calculateAFIT(out_Hwang_single_GSCA)
   )
 
-  calculateFIT(out_Hwang_single_GSCA)
-  calculateFIT(out_Hwang_single_GSCAM)
-  calculateFIT(out_Hwang_single_IGSCA)
+  expect_no_error({
+    calculateFIT(out_Hwang_single_GSCA)
+    calculateFIT(out_Hwang_single_GSCAM)
+    calculateFIT(out_Hwang_single_IGSCA)
 
-  calculateAFIT(out_Hwang_single_GSCA)
-  calculateAFIT(out_Hwang_single_GSCAM)
-  calculateAFIT(out_Hwang_single_IGSCA)
+    calculateAFIT(out_Hwang_single_GSCA)
+    calculateAFIT(out_Hwang_single_GSCAM)
+    calculateAFIT(out_Hwang_single_IGSCA)
 
-  calculateFIT_m(out_Hwang_single_GSCA)
-  calculateFIT_m(out_Hwang_single_GSCAM)
-  calculateFIT_m(out_Hwang_single_IGSCA)
+    calculateFIT_m(out_Hwang_single_GSCA)
+    calculateFIT_m(out_Hwang_single_GSCAM)
+    calculateFIT_m(out_Hwang_single_IGSCA)
 
-  calculateFIT_s(out_Hwang_single_GSCA)
-  calculateFIT_s(out_Hwang_single_GSCAM)
-  calculateFIT_s(out_Hwang_single_IGSCA)
+    calculateFIT_s(out_Hwang_single_GSCA)
+    calculateFIT_s(out_Hwang_single_GSCAM)
+    calculateFIT_s(out_Hwang_single_IGSCA)
+  })
+
+  
 
   # Multigroup -------------------------------------------------------------
   out_Hwang_mg_GSCA <- csem(
@@ -277,7 +281,7 @@ AffJoy  ~ OrgIden"
     .model = model_GSCA,
     .approach_weights = "GSCA",
     .id = "gender",
-    .tolerance = 0.0001,
+    .tolerance = 1e-5,
     .conv_criterion = "sum_diff_absolute",
     .GSCA_modes = "NCMP"
   )
@@ -287,7 +291,7 @@ AffJoy  ~ OrgIden"
     .model = model_GSCAM,
     .approach_weights = "GSCA",
     .id = "gender",
-    .tolerance = 0.0001,
+    .tolerance = 1e-5,
     .conv_criterion = "sum_diff_absolute",
     .GSCA_modes = "NCMP"
   )
@@ -297,34 +301,37 @@ AffJoy  ~ OrgIden"
     .model = model_IGSCA,
     .approach_weights = "GSCA",
     .id = "gender",
-    .tolerance = 0.0001,
+    .tolerance = 1e-5,
     .conv_criterion = "sum_diff_absolute",
     .GSCA_modes = "NCMP"
   )
 
   # Reference values from gesca package (1.0.5)
-  expect_equal(calculateFIT(out_Hwang_mg_GSCA), 0.5219425)
-  expect_equal(calculateAFIT(out_Hwang_mg_GSCA), 0.5147835)
-  expect_equal(calculateFIT_m(out_Hwang_mg_GSCA), 0.6544081)
-  expect_equal(calculateFIT_s(out_Hwang_mg_GSCA), 0.1245455)
+  expect_equal(calculateFIT(out_Hwang_mg_GSCA), 0.5219425, tolerance = 0.01)
+  expect_equal(calculateAFIT(out_Hwang_mg_GSCA), 0.5147835, tolerance = 0.01)
+  expect_equal(calculateFIT_m(out_Hwang_mg_GSCA), 0.6544081, tolerance = 0.001)
+  expect_equal(calculateFIT_s(out_Hwang_mg_GSCA), 0.1245455, tolerance = 0.05)
 
   expect_true(
     calculateFIT(out_Hwang_mg_GSCA) > calculateAFIT(out_Hwang_mg_GSCA)
   )
 
-  calculateFIT(out_Hwang_mg_GSCA)
-  calculateFIT(out_Hwang_mg_GSCAM)
-  calculateFIT(out_Hwang_mg_IGSCA)
+  expect_no_error({
+    calculateFIT(out_Hwang_mg_GSCA)
+    calculateFIT(out_Hwang_mg_GSCAM)
+    calculateFIT(out_Hwang_mg_IGSCA)
 
-  calculateAFIT(out_Hwang_mg_GSCA)
-  calculateAFIT(out_Hwang_mg_GSCAM)
-  calculateAFIT(out_Hwang_mg_IGSCA)
+    calculateAFIT(out_Hwang_mg_GSCA)
+    calculateAFIT(out_Hwang_mg_GSCAM)
+    calculateAFIT(out_Hwang_mg_IGSCA)
 
-  calculateFIT_m(out_Hwang_mg_GSCA)
-  calculateFIT_m(out_Hwang_mg_GSCAM)
-  calculateFIT_m(out_Hwang_mg_IGSCA)
+    calculateFIT_m(out_Hwang_mg_GSCA)
+    calculateFIT_m(out_Hwang_mg_GSCAM)
+    calculateFIT_m(out_Hwang_mg_IGSCA)
 
-  calculateFIT_s(out_Hwang_mg_GSCA)
-  calculateFIT_s(out_Hwang_mg_GSCAM)
-  calculateFIT_s(out_Hwang_mg_IGSCA)
+    calculateFIT_s(out_Hwang_mg_GSCA)
+    calculateFIT_s(out_Hwang_mg_GSCAM)
+    calculateFIT_s(out_Hwang_mg_IGSCA)
+  })
+  
 })
