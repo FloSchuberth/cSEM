@@ -18,3 +18,5 @@
 ^CRAN-SUBMISSION$
 ^LICENSE\.md$
 ^revdep$
+^\.positai$
+^\.claude$
