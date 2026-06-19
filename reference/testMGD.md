@@ -333,6 +333,7 @@ only a subset of parameters provide the parameters in [lavaan model
 syntax](https://rdrr.io/pkg/lavaan/man/model.syntax.html) just like the
 model to estimate. Take the simple model:
 
+
     model_to_estimate <- "
     Structural model
     eta2 ~ eta1
@@ -346,6 +347,7 @@ model to estimate. Take the simple model:
 
 If only the path from eta1 to eta3 and the loadings of eta1 are to be
 compared across groups, write:
+
 
     to_compare <- "
     Structural parameters to compare

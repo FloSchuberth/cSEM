@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Postestimation: Assessing a model • cSEM</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Postestimation: Assessing a model">
 </head>
@@ -65,7 +65,7 @@
                         <h4 data-toc-skip class="author">Manuel
 Rademaker</h4>
             
-            <h4 data-toc-skip class="date">Last edited: 2026-04-23</h4>
+            <h4 data-toc-skip class="date">Last edited: 2026-06-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/master/vignettes/Using-assess.Rmd" class="external-link"><code>vignettes/Using-assess.Rmd</code></a></small>
       <div class="d-none name"><code>Using-assess.Rmd</code></div>
@@ -148,7 +148,7 @@ KR-20.</li>
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mtext mathvariant="normal">RMS</mtext><mi>θ</mi></msub><annotation encoding="application/x-tex">\text{RMS}_{\theta}</annotation></semantics></math>)</li>
 </ul>
 </li>
-<li>The <strong>Goodness-of-Fit</strong> (GoF) proposed by <span class="citation">Tenenhaus, Amanto, and Vinzi (2004)</span>.</li>
+<li>The <strong>Goodness-of-Fit</strong> (GoF) proposed by <span class="citation">Tenenhaus et al. (2004)</span>.</li>
 <li>The <strong>variance inflation factors</strong> (VIF) for the
 structural equations as well as for Mode B regression equations (if
 <code>.approach_weights = "PLS-PM"</code>).</li>
@@ -348,11 +348,11 @@ meaning.</p>
 </h4>
 <p>Using the results and notation derived and defined in the <a href="https://floschuberth.github.io/cSEM/articles/Notation.html">Notation</a>
 help file, the AVE for a generic construct is:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mi>V</mi><mi>E</mi><mo>=</mo><mfrac><mtext mathvariant="normal">Sum indicator true score variances</mtext><mtext mathvariant="normal">Sum indicator variances</mtext></mfrac><mo>=</mo><mfrac><mrow><mo>∑</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>η</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mo>∑</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>=</mo><mfrac><mrow><mo>∑</mo><msubsup><mi>λ</mi><mi>k</mi><mn>2</mn></msubsup></mrow><mrow><mo>∑</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>λ</mi><mi>k</mi><mn>2</mn></msubsup><mo>+</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ε</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex"> AVE = \frac{\text{Sum indicator true score variances}}{\text{Sum indicator variances}} =  \frac{\sum Var(\eta_k)}{\sum Var(x_k)} = \frac{\sum\lambda^2_k}{\sum(\lambda^2_k + Var(\varepsilon_k))}</annotation></semantics></math>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mi>V</mi><mi>E</mi><mo>=</mo><mfrac><mtext mathvariant="normal">Sum indicator true score variances</mtext><mtext mathvariant="normal">Sum indicator variances</mtext></mfrac><mo>=</mo><mfrac><mrow><mo>∑</mo><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>η</mi><mi>k</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><mrow><mo>∑</mo><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>x</mi><mi>k</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow></mfrac><mo>=</mo><mfrac><mrow><mo>∑</mo><msubsup><mi>λ</mi><mi>k</mi><mn>2</mn></msubsup></mrow><mrow><mo>∑</mo><mo stretchy="false" form="prefix">(</mo><msubsup><mi>λ</mi><mi>k</mi><mn>2</mn></msubsup><mo>+</mo><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>ε</mi><mi>k</mi></msub><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex"> AVE = \frac{\text{Sum indicator true score variances}}{\text{Sum indicator variances}} =  \frac{\sum Var(\eta_k)}{\sum Var(x_k)} = \frac{\sum\lambda^2_k}{\sum(\lambda^2_k + Var(\varepsilon_k))}</annotation></semantics></math>
 If
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mi>k</mi></msub><annotation encoding="application/x-tex">x_k</annotation></semantics></math>
 is standardized (i.e.,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">Var(x_k) = 1</annotation></semantics></math>)
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>x</mi><mi>k</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">Var(x_k) = 1</annotation></semantics></math>)
 the denominator reduces to
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>
 and the AVE for a generic construct is:
@@ -411,7 +411,7 @@ maximum likelihood estimation of the same model.</p>
 <div class="section level4">
 <h4 id="formulae-1">Formulae<a class="anchor" aria-label="anchor" href="#formulae-1"></a>
 </h4>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mtext mathvariant="normal">df</mtext></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mrow><mrow><mtext mathvariant="normal"># non-redundant off-diagonal elements of the empirical indicator correlation matrix </mtext><mspace width="0.333em"></mspace></mrow><mi>𝐒</mi></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>−</mo><mtext mathvariant="normal"># model parameters</mtext></mtd></mtr></mtable><annotation encoding="application/x-tex"> 
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right; padding-right: 0"><mtext mathvariant="normal">df</mtext></mtd><mtd columnalign="left" style="text-align: left; padding-left: 0"><mo>=</mo><mrow><mrow><mtext mathvariant="normal"># non-redundant off-diagonal elements of the empirical indicator correlation matrix </mtext><mspace width="0.333em"></mspace></mrow><mi>𝐒</mi></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right; padding-right: 0"></mtd><mtd columnalign="left" style="text-align: left; padding-left: 0"><mi>−</mi><mtext mathvariant="normal"># model parameters</mtext></mtd></mtr></mtable><annotation encoding="application/x-tex"> 
 \begin{align} 
 \text{df} &amp;= \text{# non-redundant off-diagonal elements of the empirical indicator correlation matrix $\boldsymbol{\mathbf{S}}$} \\
       &amp;- \text{# model parameters}
@@ -538,21 +538,21 @@ applicability, intuition, and interpretability in the context of models
 containing constructs modeled as composites or for models estimated
 using a composite-based approach.</p>
 <p>Independent of the approach and model used, a particularly
-controversial issue are cutoff values for fit indices <span class="citation">(e.g., Marsh, Hau, and Wen 2004)</span>. In
-factor-based SEM cutoff values are rather popular. The basis for these
-are numerous simulation studies, most notably <span class="citation">Hu
-and Bentler (1999)</span>. In contrast for composite models - for better
-or worse - no cutoff values have been suggested.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;There are some cutoffs such as e.g., the SRMR should be
+controversial issue are cutoff values for fit indices <span class="citation">(e.g., Marsh et al. 2004)</span>. In factor-based SEM
+cutoff values are rather popular. The basis for these are numerous
+simulation studies, most notably <span class="citation">Hu and Bentler
+(1999)</span>. In contrast for composite models - for better or worse -
+no cutoff values have been suggested.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;There are some cutoffs such as e.g., the SRMR should be
 less than 0.08 or 0.1, however, these values are essentially arbitrary
 as they have never been formally motivated. Reference is usually done to
 &lt;span class="citation"&gt;Hu and Bentler (1999)&lt;/span&gt; which based the
-cut-off on a simulation using factor-based SEM.&lt;/p&gt;'><sup>1</sup></a> Using
-<code><a href="../reference/assess.html">assess()</a></code> to calculate fit indices, the user should always
-keep in mind that the value of a fit index is just <em>some</em>
-indication of good or bad fit. Other aspects related to model fit must
-be considered as well. It is unreasonable to make a binary decision
-about rejection or non-rejection of a model by solely comparing the
-value of a fit index with a (more or less) arbitrary cutoff value.</p>
+cut-off on a simulation using factor-based SEM.&lt;/p&gt;'><sup>1</sup></a> Using <code><a href="../reference/assess.html">assess()</a></code> to calculate
+fit indices, the user should always keep in mind that the value of a fit
+index is just <em>some</em> indication of good or bad fit. Other aspects
+related to model fit must be considered as well. It is unreasonable to
+make a binary decision about rejection or non-rejection of a model by
+solely comparing the value of a fit index with a (more or less)
+arbitrary cutoff value.</p>
 <p>The definitions of fit indices calculated by <code><a href="../reference/assess.html">assess()</a></code>
 are given in the following:</p>
 <ul>
@@ -626,7 +626,7 @@ limitations of fit indices in mind.</p>
 </h4>
 <p>The exact formulae of the fit indices as implemented in
 <strong>cSEM</strong> are given in the following. The term
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mo>=</mo><mi>F</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐒</mi><mo>,</mo><mi>𝚺</mi><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>𝛉</mi><mo accent="true">̂</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>F</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐒</mi><mo>,</mo><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F = F(\boldsymbol{\mathbf{S}}, \boldsymbol{\mathbf{\Sigma}}(\hat{\boldsymbol{\mathbf{\theta}}})) = F(\boldsymbol{\mathbf{S}}, \hat{\boldsymbol{\mathbf{\Sigma}}})</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mo>=</mo><mi>F</mi><mo stretchy="false" form="prefix">(</mo><mi>𝐒</mi><mo>,</mo><mi>𝚺</mi><mo stretchy="false" form="prefix">(</mo><mover><mi>𝛉</mi><mo accent="true">̂</mo></mover><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>F</mi><mo stretchy="false" form="prefix">(</mo><mi>𝐒</mi><mo>,</mo><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">F = F(\boldsymbol{\mathbf{S}}, \boldsymbol{\mathbf{\Sigma}}(\hat{\boldsymbol{\mathbf{\theta}}})) = F(\boldsymbol{\mathbf{S}}, \hat{\boldsymbol{\mathbf{\Sigma}}})</annotation></semantics></math>
 stands for the value of the maximum likelihood fitting function
 evaluated at
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐒</mi><annotation encoding="application/x-tex">\boldsymbol{\mathbf{S}}</annotation></semantics></math>
@@ -645,12 +645,11 @@ value of the maximum likelihood fitting function is computed by
 <p>The
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>χ</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\chi^2</annotation></semantics></math>-<strong>statistic</strong>
 is defined as:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>χ</mi><mn>2</mn></msup><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mi>F</mi></mrow><annotation encoding="application/x-tex"> \chi^2 = (N-1)\cdot F</annotation></semantics></math>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>χ</mi><mn>2</mn></msup><mo>=</mo><mo stretchy="false" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><mo>⋅</mo><mi>F</mi></mrow><annotation encoding="application/x-tex"> \chi^2 = (N-1)\cdot F</annotation></semantics></math>
 where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
 is the sample size.</p>
-<p>Main reference: <span class="citation">K. G. Jöreskog
-(1969)</span></p>
+<p>Main reference: <span class="citation">Jöreskog (1969)</span></p>
 </div>
 <div class="section level5">
 <h5 id="the-chi2textdf-ratio">The
@@ -659,14 +658,13 @@ is the sample size.</p>
 <p>The
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>χ</mi><mn>2</mn></msup><mi>/</mi><mtext mathvariant="normal">df</mtext></mrow><annotation encoding="application/x-tex">\chi^2/\text{df}</annotation></semantics></math>-<strong>statistic</strong>
 is defined as:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>χ</mi><mn>2</mn></msup><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mi>F</mi><mi>/</mi><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub></mrow><annotation encoding="application/x-tex"> \chi^2 = (N-1)\cdot F/\text{df}_M</annotation></semantics></math>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>χ</mi><mn>2</mn></msup><mo>=</mo><mo stretchy="false" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><mo>⋅</mo><mi>F</mi><mi>/</mi><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub></mrow><annotation encoding="application/x-tex"> \chi^2 = (N-1)\cdot F/\text{df}_M</annotation></semantics></math>
 where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
 the sample size and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub><annotation encoding="application/x-tex">\text{df}_M</annotation></semantics></math>
 the degrees of freedom of the estimated model.</p>
-<p>Main reference: <span class="citation">K. G. Jöreskog
-(1969)</span></p>
+<p>Main reference: <span class="citation">Jöreskog (1969)</span></p>
 </div>
 <div class="section level5">
 <h5 id="the-goodness-of-fit-index-gfi">The goodness-of-fit index (GFI)<a class="anchor" aria-label="anchor" href="#the-goodness-of-fit-index-gfi"></a>
@@ -681,7 +679,7 @@ and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\hat{\boldsymbol{\mathbf{\Sigma}}}</annotation></semantics></math>)
 relative to the weighted total variance (SST; the variance of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐒</mi><annotation encoding="application/x-tex">\boldsymbol{\mathbf{S}}</annotation></semantics></math>):
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mi>F</mi><mi>I</mi><mo>=</mo><mn>1</mn><mo>−</mo><mfrac><mrow><mtext mathvariant="normal">trace</mtext><mrow><mo stretchy="true" form="prefix">{</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>𝐖</mi><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><mo stretchy="false" form="prefix">[</mo><mi>𝐒</mi><mo>−</mo><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover><mo stretchy="false" form="postfix">]</mo><msup><mi>𝐖</mi><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo stretchy="true" form="postfix">}</mo></mrow></mrow><mrow><mtext mathvariant="normal">trace</mtext><mrow><mo stretchy="true" form="prefix">{</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>𝐖</mi><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><mi>𝐒</mi><msup><mi>𝐖</mi><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo stretchy="true" form="postfix">}</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex"> GFI = 1 - \frac{\text{trace}\left\{\left(\boldsymbol{\mathbf{W}}^{-\frac{1}{2}}\lbrack\boldsymbol{\mathbf{S}} - \hat{\boldsymbol{\mathbf{\Sigma}}}\rbrack\boldsymbol{\mathbf{W}}^{-\frac{1}{2}}\right)^2\right\}}{\text{trace}\left\{\left(\boldsymbol{\mathbf{W}}^{-\frac{1}{2}}\boldsymbol{\mathbf{S}}\boldsymbol{\mathbf{W}}^{-\frac{1}{2}}\right)^2\right\}} </annotation></semantics></math>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mi>F</mi><mi>I</mi><mo>=</mo><mn>1</mn><mo>−</mo><mfrac><mrow><mtext mathvariant="normal">trace</mtext><mrow><mo stretchy="true" form="prefix">{</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>𝐖</mi><mrow><mi>−</mi><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><mo stretchy="false" form="prefix">[</mo><mi>𝐒</mi><mo>−</mo><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover><mo stretchy="false" form="postfix">]</mo><msup><mi>𝐖</mi><mrow><mi>−</mi><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo stretchy="true" form="postfix">}</mo></mrow></mrow><mrow><mtext mathvariant="normal">trace</mtext><mrow><mo stretchy="true" form="prefix">{</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>𝐖</mi><mrow><mi>−</mi><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><mi>𝐒</mi><msup><mi>𝐖</mi><mrow><mi>−</mi><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo stretchy="true" form="postfix">}</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex"> GFI = 1 - \frac{\text{trace}\left\{\left(\boldsymbol{\mathbf{W}}^{-\frac{1}{2}}\lbrack\boldsymbol{\mathbf{S}} - \hat{\boldsymbol{\mathbf{\Sigma}}}\rbrack\boldsymbol{\mathbf{W}}^{-\frac{1}{2}}\right)^2\right\}}{\text{trace}\left\{\left(\boldsymbol{\mathbf{W}}^{-\frac{1}{2}}\boldsymbol{\mathbf{S}}\boldsymbol{\mathbf{W}}^{-\frac{1}{2}}\right)^2\right\}} </annotation></semantics></math>
 The matrix
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐖</mi><annotation encoding="application/x-tex">\boldsymbol{\mathbf{W}}</annotation></semantics></math>
 is a weight matrix. Depending on the estimation technique used to obtain
@@ -703,8 +701,8 @@ the GFI is based on SSE and the SST from a unweighted least squares
 (ULS) estimation.</li>
 </ol>
 <p>Note that for any quadratic matrix , we have:
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">trace</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>𝐗</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mo>∑</mo><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub><msubsup><mi>x</mi><mi>i</mi><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">\text{trace}(\boldsymbol{\mathbf{X}}^2) = \sum_{i,j} x^2_i</annotation></semantics></math>.</p>
-<p>Main references: <span class="citation">Karl G. Jöreskog and Sörbom
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">trace</mtext><mo stretchy="false" form="prefix">(</mo><msup><mi>𝐗</mi><mn>2</mn></msup><mo stretchy="false" form="postfix">)</mo><mo>=</mo><msub><mo>∑</mo><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub><msubsup><mi>x</mi><mi>i</mi><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">\text{trace}(\boldsymbol{\mathbf{X}}^2) = \sum_{i,j} x^2_i</annotation></semantics></math>.</p>
+<p>Main references: <span class="citation">Jöreskog and Sörbom
 (1982)</span>, <span class="citation">Mulaik et al. (1989)</span> and
 <span class="citation">Tanaka and Huba (1985)</span></p>
 </div>
@@ -712,7 +710,7 @@ the GFI is based on SSE and the SST from a unweighted least squares
 <h5 id="the-standardized-root-mean-square-residual-srmr">The standardized root mean square residual (SRMR)<a class="anchor" aria-label="anchor" href="#the-standardized-root-mean-square-residual-srmr"></a>
 </h5>
 <p>The SRMR is defined as
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">SRMR</mtext><mo>=</mo><msqrt><mrow><mn>2</mn><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></munderover><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>j</mi></munderover><mfrac><mrow><mo stretchy="false" form="prefix">[</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>s</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>−</mo><msub><mover><mi>σ</mi><mo accent="true">̂</mo></mover><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>s</mi><mrow><mi>i</mi><mi>i</mi></mrow></msub><msub><mi>s</mi><mrow><mi>j</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mn>1</mn><mi>/</mi><mn>2</mn></mrow></msup><msup><mo stretchy="false" form="postfix">]</mo><mn>2</mn></msup></mrow><mrow><mi>K</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>K</mi><mo>+</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow></msqrt></mrow><annotation encoding="application/x-tex">  \text{SRMR} = \sqrt{2 \sum_{j=1}^{K} \sum_{i=1}^{j} \frac{ \lbrack (s_{ij} - \hat{\sigma}_{ij})/(s_{ii} s_{jj})^{1/2} \rbrack^{2}}{K (K+1)}} </annotation></semantics></math>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">SRMR</mtext><mo>=</mo><msqrt><mrow><mn>2</mn><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></munderover><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>j</mi></munderover><mfrac><mrow><mo stretchy="false" form="prefix">[</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>s</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>−</mo><msub><mover><mi>σ</mi><mo accent="true">̂</mo></mover><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="false" form="postfix">)</mo><mi>/</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>s</mi><mrow><mi>i</mi><mi>i</mi></mrow></msub><msub><mi>s</mi><mrow><mi>j</mi><mi>j</mi></mrow></msub><msup><mo stretchy="false" form="postfix">)</mo><mrow><mn>1</mn><mi>/</mi><mn>2</mn></mrow></msup><msup><mo stretchy="false" form="postfix">]</mo><mn>2</mn></msup></mrow><mrow><mi>K</mi><mo stretchy="false" form="prefix">(</mo><mi>K</mi><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo></mrow></mfrac></mrow></msqrt></mrow><annotation encoding="application/x-tex">  \text{SRMR} = \sqrt{2 \sum_{j=1}^{K} \sum_{i=1}^{j} \frac{ \lbrack (s_{ij} - \hat{\sigma}_{ij})/(s_{ii} s_{jj})^{1/2} \rbrack^{2}}{K (K+1)}} </annotation></semantics></math>
 where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>
 stands for the number of indicators,
@@ -729,16 +727,15 @@ the model. Therefore, smaller values are associated with a better fit.
 If data is standardized,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>s</mi><mrow><mi>i</mi><mi>i</mi></mrow></msub><mo>=</mo><msub><mi>s</mi><mrow><mi>j</mi><mi>j</mi></mrow></msub><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">s_{ii} = s_{jj} = 1</annotation></semantics></math>
 holds, and the formula reduces to:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">SRMR</mtext><mo>=</mo><msqrt><mrow><mn>2</mn><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></munderover><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>j</mi></munderover><mfrac><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>s</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>−</mo><msub><mover><mi>σ</mi><mo accent="true">̂</mo></mover><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mrow><mi>K</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>K</mi><mo>+</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow></msqrt></mrow><annotation encoding="application/x-tex">  \text{SRMR} = \sqrt{2 \sum_{j=1}^{K} \sum_{i=1}^{j} \frac{(s_{ij} - \hat{\sigma}_{ij})^2}{K(K+1)}} </annotation></semantics></math></p>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">SRMR</mtext><mo>=</mo><msqrt><mrow><mn>2</mn><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></munderover><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>j</mi></munderover><mfrac><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>s</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>−</mo><msub><mover><mi>σ</mi><mo accent="true">̂</mo></mover><mrow><mi>i</mi><mi>j</mi></mrow></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow><mrow><mi>K</mi><mo stretchy="false" form="prefix">(</mo><mi>K</mi><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo></mrow></mfrac></mrow></msqrt></mrow><annotation encoding="application/x-tex">  \text{SRMR} = \sqrt{2 \sum_{j=1}^{K} \sum_{i=1}^{j} \frac{(s_{ij} - \hat{\sigma}_{ij})^2}{K(K+1)}} </annotation></semantics></math></p>
 <p>Main reference: <span class="citation">Bentler (2006)</span></p>
 </div>
 <div class="section level5">
 <h5 id="the-root-mean-square-error-of-approximation-rmsea">The root mean square error of approximation (RMSEA)<a class="anchor" aria-label="anchor" href="#the-root-mean-square-error-of-approximation-rmsea"></a>
 </h5>
-<p>The RMSEA is defined as <span class="math display">$$ \hat{\epsilon}
-= \sqrt{\frac{\hat{F}_0}{\text{df}_{M}}} \quad \text{where} \quad
-\hat{F}_{0} = \max \Bigl( 0, F - \frac{\text{df}_{M}}{N-1} \Bigr)
-$$</span> In this formula,
+<p>The RMSEA is defined as
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>ϵ</mi><mo accent="true">̂</mo></mover><mo>=</mo><msqrt><mfrac><msub><mover><mi>F</mi><mo accent="true">̂</mo></mover><mn>0</mn></msub><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub></mfrac></msqrt><mspace width="1.0em"></mspace><mtext mathvariant="normal">where</mtext><mspace width="1.0em"></mspace><msub><mover><mi>F</mi><mo accent="true">̂</mo></mover><mn>0</mn></msub><mo>=</mo><mrow><mi mathvariant="normal">max</mi><mo>⁡</mo></mrow><mo minsize="180%" maxsize="180%" stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mi>F</mi><mo>−</mo><mfrac><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub><mrow><mi>N</mi><mo>−</mo><mn>1</mn></mrow></mfrac><mo minsize="180%" maxsize="180%" stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex"> \hat{\epsilon} = \sqrt{\frac{\hat{F}_0}{\text{df}_{M}}} \quad \text{where} \quad \hat{F}_{0} = \max \Bigl( 0, F - \frac{\text{df}_{M}}{N-1} \Bigr) </annotation></semantics></math>
+In this formula,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub><annotation encoding="application/x-tex">\text{df}_{M}</annotation></semantics></math>
 stands for the degrees of freedom of the specified model (see the <a href="#df">Degrees of Freedom</a> section for details on how the degrees
 of freedom are calculated). The term
@@ -755,7 +752,7 @@ freedom.</p>
 <p>The fit indices NFI and NNFI were among the first fit indices to be
 introduced <span class="citation">(Bentler and Bonett 1980)</span>. They
 are defined as:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">NFI</mtext><mo>=</mo><mfrac><mrow><msub><mi>F</mi><mi>B</mi></msub><mo>−</mo><msub><mi>F</mi><mi>M</mi></msub></mrow><msub><mi>F</mi><mi>B</mi></msub></mfrac><mspace width="1.0em"></mspace><mtext mathvariant="normal">and</mtext><mspace width="1.0em"></mspace><mtext mathvariant="normal">NNFI</mtext><mo>=</mo><mfrac><mrow><msub><mi>F</mi><mi>B</mi></msub><mi>/</mi><msub><mtext mathvariant="normal">df</mtext><mi>B</mi></msub><mo>−</mo><msub><mi>F</mi><mi>M</mi></msub><mi>/</mi><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub></mrow><mrow><msub><mi>F</mi><mi>B</mi></msub><mi>/</mi><msub><mtext mathvariant="normal">df</mtext><mi>B</mi></msub><mo>−</mo><mn>1</mn><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \text{NFI} = \frac{F_{B} - F_{M}}{F_{B}} \quad \text{and} \quad \text{NNFI} = \frac{F_{B}/\text{df}_{B} - F_{M}/\text{df}_{M}}{F_{B}/\text{df}_{B} - 1/(N-1)} </annotation></semantics></math>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">NFI</mtext><mo>=</mo><mfrac><mrow><msub><mi>F</mi><mi>B</mi></msub><mo>−</mo><msub><mi>F</mi><mi>M</mi></msub></mrow><msub><mi>F</mi><mi>B</mi></msub></mfrac><mspace width="1.0em"></mspace><mtext mathvariant="normal">and</mtext><mspace width="1.0em"></mspace><mtext mathvariant="normal">NNFI</mtext><mo>=</mo><mfrac><mrow><msub><mi>F</mi><mi>B</mi></msub><mi>/</mi><msub><mtext mathvariant="normal">df</mtext><mi>B</mi></msub><mo>−</mo><msub><mi>F</mi><mi>M</mi></msub><mi>/</mi><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub></mrow><mrow><msub><mi>F</mi><mi>B</mi></msub><mi>/</mi><msub><mtext mathvariant="normal">df</mtext><mi>B</mi></msub><mo>−</mo><mn>1</mn><mi>/</mi><mo stretchy="false" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \text{NFI} = \frac{F_{B} - F_{M}}{F_{B}} \quad \text{and} \quad \text{NNFI} = \frac{F_{B}/\text{df}_{B} - F_{M}/\text{df}_{M}}{F_{B}/\text{df}_{B} - 1/(N-1)} </annotation></semantics></math>
 The term
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>F</mi><mi>B</mi></msub><annotation encoding="application/x-tex">F_{B}</annotation></semantics></math>
 refers to the value of the fitting function in the null model,
@@ -779,7 +776,7 @@ normed and can take values larger than
 <h5 id="the-comparative-fit-index-cfi">The comparative fit index (CFI)<a class="anchor" aria-label="anchor" href="#the-comparative-fit-index-cfi"></a>
 </h5>
 <p>The CFI is defined as:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">CFI</mtext><mo>=</mo><mn>1</mn><mo>−</mo><mfrac><mrow><mo>max</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>F</mi><mi>M</mi></msub><mo>−</mo><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mo>max</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>F</mi><mi>M</mi></msub><mo>−</mo><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub><mo>,</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>F</mi><mi>B</mi></msub><mo>−</mo><msub><mtext mathvariant="normal">df</mtext><mi>B</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \text{CFI} = 1 - \frac{\max(0, (N-1) F_{M}-\text{df}_{M})}{\max(0, (N-1) F_{M}-\text{df}_{M}, (N-1)F_{B}-\text{df}_{B})} </annotation></semantics></math>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">CFI</mtext><mo>=</mo><mn>1</mn><mo>−</mo><mfrac><mrow><mrow><mi mathvariant="normal">max</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><mn>0</mn><mo>,</mo><mo stretchy="false" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><msub><mi>F</mi><mi>M</mi></msub><mo>−</mo><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><mrow><mrow><mi mathvariant="normal">max</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><mn>0</mn><mo>,</mo><mo stretchy="false" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><msub><mi>F</mi><mi>M</mi></msub><mo>−</mo><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub><mo>,</mo><mo stretchy="false" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><msub><mi>F</mi><mi>B</mi></msub><mo>−</mo><msub><mtext mathvariant="normal">df</mtext><mi>B</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \text{CFI} = 1 - \frac{\max(0, (N-1) F_{M}-\text{df}_{M})}{\max(0, (N-1) F_{M}-\text{df}_{M}, (N-1)F_{B}-\text{df}_{B})} </annotation></semantics></math>
 Like the RMSEA, the CFI is a non-centrality based index. It measures the
 increase in fit (that is to say the reduction in non-centrality) when
 specifying the model under consideration relative to the fit of the null
@@ -794,11 +791,11 @@ estimators.</p>
 <h5 id="the-incremental-fit-index-ifi">The incremental fit index (IFI)<a class="anchor" aria-label="anchor" href="#the-incremental-fit-index-ifi"></a>
 </h5>
 <p>The IFI is defined as:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">IFI</mtext><mo>=</mo><mfrac><mrow><msub><mi>F</mi><mi>B</mi></msub><mo>−</mo><msub><mi>F</mi><mi>M</mi></msub></mrow><mrow><msub><mi>F</mi><mi>B</mi></msub><mo>−</mo><mi>d</mi><msub><mi>f</mi><mi>M</mi></msub><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \text{IFI} = \frac{F_{B} - F_{M}}{F_{B} - df_{M}/(N-1)} </annotation></semantics></math>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">IFI</mtext><mo>=</mo><mfrac><mrow><msub><mi>F</mi><mi>B</mi></msub><mo>−</mo><msub><mi>F</mi><mi>M</mi></msub></mrow><mrow><msub><mi>F</mi><mi>B</mi></msub><mo>−</mo><mi>d</mi><msub><mi>f</mi><mi>M</mi></msub><mi>/</mi><mo stretchy="false" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \text{IFI} = \frac{F_{B} - F_{M}}{F_{B} - df_{M}/(N-1)} </annotation></semantics></math>
 The rationale underlying the IFI is that the term
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mi>B</mi></msub><mo>−</mo><msub><mi>F</mi><mi>M</mi></msub></mrow><annotation encoding="application/x-tex">F_{B} - F_{M}</annotation></semantics></math>
 (in the numerator) is compared with its expectation
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mi>B</mi></msub><mo>−</mo><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_{B} - \text{df}_{M}/(N-1)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mi>B</mi></msub><mo>−</mo><msub><mtext mathvariant="normal">df</mtext><mi>M</mi></msub><mi>/</mi><mo stretchy="false" form="prefix">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">F_{B} - \text{df}_{M}/(N-1)</annotation></semantics></math>
 (in the denominator).</p>
 <p>Main reference: <span class="citation">Bollen (1989)</span></p>
 </div>
@@ -873,12 +870,12 @@ and <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html">Term
 help files, reliability of a generic measurement is defined as:</p>
 <ol style="list-style-type: decimal">
 <li>The amount of proxy true score variance,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>η</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Var(\bar\eta)</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><mover><mi>η</mi><mo accent="true">‾</mo></mover><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">Var(\bar\eta)</annotation></semantics></math>,
 relative to the the proxy or test score variance,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>η</mi><mo accent="true">̂</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Var(\hat\eta)</annotation></semantics></math>.</li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><mover><mi>η</mi><mo accent="true">̂</mo></mover><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">Var(\hat\eta)</annotation></semantics></math>.</li>
 <li>This is identical to the squared correlation between the common
 factor and its proxy/composite or test score:
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>ρ</mi><mrow><mi>η</mi><mo>,</mo><mover><mi>η</mi><mo accent="true">̂</mo></mover></mrow><mn>2</mn></msubsup><mo>=</mo><mi>C</mi><mi>o</mi><mi>r</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>η</mi><mo>,</mo><mover><mi>η</mi><mo accent="true">̂</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\rho_{\eta, \hat\eta}^2 = Cor(\eta, \hat\eta)^2</annotation></semantics></math>.</li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>ρ</mi><mrow><mi>η</mi><mo>,</mo><mover><mi>η</mi><mo accent="true">̂</mo></mover></mrow><mn>2</mn></msubsup><mo>=</mo><mi>C</mi><mi>o</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><mi>η</mi><mo>,</mo><mover><mi>η</mi><mo accent="true">̂</mo></mover><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\rho_{\eta, \hat\eta}^2 = Cor(\eta, \hat\eta)^2</annotation></semantics></math>.</li>
 </ol>
 <p>This “kind” of reliability is commonly referred to as
 <strong>internal consistency reliability</strong>.</p>
@@ -893,17 +890,17 @@ measure:</p>
 <strong>Parallel</strong> – Assumption:
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>η</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>η</mi><mi>j</mi></msub><mo>→</mo><msub><mi>λ</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>λ</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">\eta_{kj} = \eta_j \longrightarrow \lambda_{kj} = \lambda_j</annotation></semantics></math>
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ε</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ε</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Var(\varepsilon_{kj}) = Var(\varepsilon_j)</annotation></semantics></math>.</li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>ε</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>ε</mi><mi>j</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">Var(\varepsilon_{kj}) = Var(\varepsilon_j)</annotation></semantics></math>.</li>
 <li>
 <strong>Tau-equivalent</strong> – Assumption:
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>η</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>η</mi><mi>j</mi></msub><mo>→</mo><msub><mi>λ</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>λ</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">\eta_{kj} = \eta_j \longrightarrow \lambda_{kj} = \lambda_j</annotation></semantics></math>
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ε</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>≠</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ε</mi><mrow><mi>l</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Var(\varepsilon_{kj}) \neq Var(\varepsilon_{lj})</annotation></semantics></math>.</li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>ε</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo stretchy="false" form="postfix">)</mo><mo>≠</mo><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>ε</mi><mrow><mi>l</mi><mi>j</mi></mrow></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">Var(\varepsilon_{kj}) \neq Var(\varepsilon_{lj})</annotation></semantics></math>.</li>
 <li>
 <strong>Congeneric</strong> – Assumption:
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>η</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>λ</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><msub><mi>η</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">\eta_{kj} = \lambda_{kj}\eta_j</annotation></semantics></math>
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ε</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>≠</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ε</mi><mrow><mi>l</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Var(\varepsilon_{kj}) \neq Var(\varepsilon_{lj})</annotation></semantics></math>.</li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>ε</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo stretchy="false" form="postfix">)</mo><mo>≠</mo><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>ε</mi><mrow><mi>l</mi><mi>j</mi></mrow></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">Var(\varepsilon_{kj}) \neq Var(\varepsilon_{lj})</annotation></semantics></math>.</li>
 </ol>
 <p>In principal the test score
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>η</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\hat\eta</annotation></semantics></math>
@@ -934,46 +931,46 @@ to the original name.</p>
 </h4>
 <p>The most general formula for reliability is the <strong>(weighted)
 congeneric reliability</strong>:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mrow><mi>C</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext></mrow></msub><mo>=</mo><mfrac><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>η</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>η</mi><mo accent="true">̂</mo></mover><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>=</mo><mfrac><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mi>𝛌</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mrow><mi>𝐰</mi><mi>′</mi><mi>𝚺</mi><mi>𝐰</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \rho_{C; \text{weighted}} = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\lambda}})^2}{\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\Sigma}}\boldsymbol{\mathbf{w}}}</annotation></semantics></math>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mrow><mi>C</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext></mrow></msub><mo>=</mo><mfrac><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><mover><mi>η</mi><mo accent="true">‾</mo></mover><mo stretchy="false" form="postfix">)</mo></mrow><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>η</mi><mo accent="true">̂</mo></mover><mi>k</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow></mfrac><mo>=</mo><mfrac><mrow><mo stretchy="false" form="prefix">(</mo><msup><mi>𝐰</mi><mo>′</mo></msup><mi>𝛌</mi><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow><mrow><msup><mi>𝐰</mi><mo>′</mo></msup><mi>𝚺</mi><mi>𝐰</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \rho_{C; \text{weighted}} = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\lambda}})^2}{\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\Sigma}}\boldsymbol{\mathbf{w}}}</annotation></semantics></math>
 Assuming
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐰</mi><mo>=</mo><mi>𝛊</mi></mrow><annotation encoding="application/x-tex">\boldsymbol{\mathbf{w}} = \boldsymbol{\mathbf{\iota}}</annotation></semantics></math>,
 i.e., unit weights, the “classical” formula for congeneric reliability
 (i.e., Jöreskog’s
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ρ</mi><annotation encoding="application/x-tex">\rho</annotation></semantics></math>),
 follows:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mi>C</mi></msub><mo>=</mo><mfrac><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>η</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>η</mi><mo accent="true">̂</mo></mover><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>=</mo><mfrac><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>λ</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mrow><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>λ</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>+</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>ε</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \rho_C = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{\left(\sum\lambda_k\right)^2}{\left(\sum\lambda_k\right)^2 + Var(\bar\varepsilon)}</annotation></semantics></math>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mi>C</mi></msub><mo>=</mo><mfrac><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><mover><mi>η</mi><mo accent="true">‾</mo></mover><mo stretchy="false" form="postfix">)</mo></mrow><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>η</mi><mo accent="true">̂</mo></mover><mi>k</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow></mfrac><mo>=</mo><mfrac><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>λ</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mrow><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>λ</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>+</mo><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><mover><mi>ε</mi><mo accent="true">‾</mo></mover><mo stretchy="false" form="postfix">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \rho_C = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{\left(\sum\lambda_k\right)^2}{\left(\sum\lambda_k\right)^2 + Var(\bar\varepsilon)}</annotation></semantics></math>
 Using the assumptions imposed by the tau-equivalent measurement model we
 obtain the <strong>(weighted) tau-equivalent reliability, i.e.,
 (weighted) Cronbach’s alpha)</strong>:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mrow><mi>T</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext></mrow></msub><mo>=</mo><mfrac><mrow><msup><mi>λ</mi><mn>2</mn></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow><mrow><msup><mi>λ</mi><mn>2</mn></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>+</mo><mo>∑</mo><msubsup><mi>w</mi><mi>k</mi><mn>2</mn></msubsup><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ε</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>=</mo><mfrac><mrow><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow><mrow><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>−</mo><mo>∑</mo><msubsup><mi>w</mi><mi>k</mi><mn>2</mn></msubsup><mo stretchy="true" form="postfix">]</mo></mrow><mo>+</mo><mo>∑</mo><msubsup><mi>w</mi><mi>k</mi><mn>2</mn></msubsup><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \rho_{T; \text{weighted}}  = \frac{\lambda^2(\sum w_k)^2}{\lambda^2(\sum w_k)^2 + \sum w_k^2Var(\varepsilon_k)}
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mrow><mi>T</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext></mrow></msub><mo>=</mo><mfrac><mrow><msup><mi>λ</mi><mn>2</mn></msup><mo stretchy="false" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow><mrow><msup><mi>λ</mi><mn>2</mn></msup><mo stretchy="false" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup><mo>+</mo><mo>∑</mo><msubsup><mi>w</mi><mi>k</mi><mn>2</mn></msubsup><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>ε</mi><mi>k</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow></mfrac><mo>=</mo><mfrac><mrow><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><mo stretchy="false" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow><mrow><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><mo stretchy="false" form="prefix">[</mo><mo stretchy="false" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup><mo>−</mo><mo>∑</mo><msubsup><mi>w</mi><mi>k</mi><mn>2</mn></msubsup><mo stretchy="false" form="postfix">]</mo><mo>+</mo><mo>∑</mo><msubsup><mi>w</mi><mi>k</mi><mn>2</mn></msubsup><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>x</mi><mi>k</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \rho_{T; \text{weighted}}  = \frac{\lambda^2(\sum w_k)^2}{\lambda^2(\sum w_k)^2 + \sum w_k^2Var(\varepsilon_k)}
  = \frac{\bar\sigma_x(\sum w_k)^2}{\bar\sigma_x[(\sum w_k)^2 - \sum w_k^2] + \sum w_k^2Var(x_k)}</annotation></semantics></math>
 where we used the fact that if
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mi>k</mi></msub><mo>=</mo><mi>λ</mi></mrow><annotation encoding="application/x-tex">\lambda_k = \lambda</annotation></semantics></math>
 (tau-equivalence),
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>λ</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\lambda^2</annotation></semantics></math>
 equals the average covariance between indicators:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><mo>=</mo><mfrac><mn>1</mn><mrow><mi>K</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>K</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><munderover><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></munderover><munderover><mo>∑</mo><mrow><mi>l</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></munderover><msub><mi>σ</mi><mrow><mi>k</mi><mi>l</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\bar\sigma_x = \frac{1}{K(K-1)}\sum^K_{k=1}\sum^K_{l=1} \sigma_{kl}</annotation></semantics></math>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><mo>=</mo><mfrac><mn>1</mn><mrow><mi>K</mi><mo stretchy="false" form="prefix">(</mo><mi>K</mi><mo>−</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo></mrow></mfrac><munderover><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></munderover><munderover><mo>∑</mo><mrow><mi>l</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></munderover><msub><mi>σ</mi><mrow><mi>k</mi><mi>l</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\bar\sigma_x = \frac{1}{K(K-1)}\sum^K_{k=1}\sum^K_{l=1} \sigma_{kl}</annotation></semantics></math>
 Again, assuming
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mi>k</mi></msub><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">w_k = 1</annotation></semantics></math>,
 i.e., unit weights, the “classical” formula for tau-equivalent
 reliability (Cronbach’s
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>)
 follows:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mi>T</mi></msub><mo>=</mo><mfrac><mrow><msup><mi>λ</mi><mn>2</mn></msup><msup><mi>K</mi><mn>2</mn></msup></mrow><mrow><msup><mi>λ</mi><mn>2</mn></msup><msup><mi>K</mi><mn>2</mn></msup><mo>+</mo><mo>∑</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>ε</mi><mo accent="true">‾</mo></mover><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>=</mo><mfrac><mrow><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><msup><mi>K</mi><mn>2</mn></msup></mrow><mrow><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><msup><mi>K</mi><mn>2</mn></msup><mo>−</mo><mi>K</mi><mo stretchy="true" form="postfix">]</mo></mrow><mo>+</mo><mi>K</mi><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \rho_T = \frac{\lambda^2K^2}{\lambda^2K^2 + \sum Var(\bar\varepsilon_k)}
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mi>T</mi></msub><mo>=</mo><mfrac><mrow><msup><mi>λ</mi><mn>2</mn></msup><msup><mi>K</mi><mn>2</mn></msup></mrow><mrow><msup><mi>λ</mi><mn>2</mn></msup><msup><mi>K</mi><mn>2</mn></msup><mo>+</mo><mo>∑</mo><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>ε</mi><mo accent="true">‾</mo></mover><mi>k</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow></mfrac><mo>=</mo><mfrac><mrow><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><msup><mi>K</mi><mn>2</mn></msup></mrow><mrow><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><mo stretchy="false" form="prefix">[</mo><msup><mi>K</mi><mn>2</mn></msup><mo>−</mo><mi>K</mi><mo stretchy="false" form="postfix">]</mo><mo>+</mo><mi>K</mi><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>x</mi><mi>k</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \rho_T = \frac{\lambda^2K^2}{\lambda^2K^2 + \sum Var(\bar\varepsilon_k)}
  = \frac{\bar\sigma_xK^2}{\bar\sigma_x[K^2 - K] + K Var(x_k)}</annotation></semantics></math>
 Using the assumptions imposed by the parallel measurement model we
 obtain the <strong>parallel reliability</strong>:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mi>P</mi></msub><mo>=</mo><mfrac><mrow><msup><mi>λ</mi><mn>2</mn></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow><mrow><msup><mi>λ</mi><mn>2</mn></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>+</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>ε</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>∑</mo><msubsup><mi>w</mi><mi>k</mi><mn>2</mn></msubsup></mrow></mfrac><mo>=</mo><mfrac><mrow><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow><mrow><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>−</mo><mo>∑</mo><msubsup><mi>w</mi><mi>k</mi><mn>2</mn></msubsup><mo stretchy="true" form="postfix">]</mo></mrow><mo>+</mo><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>∑</mo><msubsup><mi>w</mi><mi>k</mi><mn>2</mn></msubsup></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \rho_P = \frac{\lambda^2(\sum w_k)^2}{\lambda^2(\sum w_k)^2 + Var(\varepsilon)\sum w_k^2} = 
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mi>P</mi></msub><mo>=</mo><mfrac><mrow><msup><mi>λ</mi><mn>2</mn></msup><mo stretchy="false" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow><mrow><msup><mi>λ</mi><mn>2</mn></msup><mo stretchy="false" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup><mo>+</mo><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><mi>ε</mi><mo stretchy="false" form="postfix">)</mo><mo>∑</mo><msubsup><mi>w</mi><mi>k</mi><mn>2</mn></msubsup></mrow></mfrac><mo>=</mo><mfrac><mrow><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><mo stretchy="false" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow><mrow><msub><mover><mi>σ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><mo stretchy="false" form="prefix">[</mo><mo stretchy="false" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup><mo>−</mo><mo>∑</mo><msubsup><mi>w</mi><mi>k</mi><mn>2</mn></msubsup><mo stretchy="false" form="postfix">]</mo><mo>+</mo><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo stretchy="false" form="postfix">)</mo><mo>∑</mo><msubsup><mi>w</mi><mi>k</mi><mn>2</mn></msubsup></mrow></mfrac></mrow><annotation encoding="application/x-tex"> \rho_P = \frac{\lambda^2(\sum w_k)^2}{\lambda^2(\sum w_k)^2 + Var(\varepsilon)\sum w_k^2} = 
  \frac{\bar\sigma_x(\sum w_k)^2}{\bar\sigma_x[(\sum w_k)^2 - \sum w_k^2] + Var(x)\sum w_k^2} </annotation></semantics></math></p>
 <p>In <strong>cSEM</strong> indicators are always standardized and
 weights are chosen such that
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>η</mi><mo accent="true">̂</mo></mover><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">Var(\hat\eta_k) = 1</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>η</mi><mo accent="true">̂</mo></mover><mi>k</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">Var(\hat\eta_k) = 1</annotation></semantics></math>.
 This is done by scaling the weight vector
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐰</mi><annotation encoding="application/x-tex">\boldsymbol{\mathbf{w}}</annotation></semantics></math>
 by
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mi>𝚺</mi><mi>𝐰</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\Sigma}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msup><mi>𝐰</mi><mo>′</mo></msup><mi>𝚺</mi><mi>𝐰</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup></mrow><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\Sigma}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}</annotation></semantics></math>.
 This simplifies the formulae:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>ρ</mi><mrow><mi>C</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><msub><mi>λ</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mi>𝛌</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>ρ</mi><mrow><mi>T</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext></mrow></msub><mo>=</mo><msub><mi>ρ</mi><mrow><mi>P</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msub><mover><mi>ρ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd></mtr></mtable><annotation encoding="application/x-tex">
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right; padding-right: 0"><msub><mi>ρ</mi><mrow><mi>C</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext></mrow></msub></mtd><mtd columnalign="left" style="text-align: left; padding-left: 0"><mo>=</mo><mo stretchy="false" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><msub><mi>λ</mi><mi>k</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup><mo>=</mo><mo stretchy="false" form="prefix">(</mo><msup><mi>𝐰</mi><mo>′</mo></msup><mi>𝛌</mi><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right; padding-right: 0"><msub><mi>ρ</mi><mrow><mi>T</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext></mrow></msub><mo>=</mo><msub><mi>ρ</mi><mrow><mi>P</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext></mrow></msub></mtd><mtd columnalign="left" style="text-align: left; padding-left: 0"><mo>=</mo><msub><mover><mi>ρ</mi><mo accent="true">‾</mo></mover><mi>x</mi></msub><mo stretchy="false" form="prefix">(</mo><mo>∑</mo><msub><mi>w</mi><mi>k</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right; padding-right: 0"></mtd></mtr></mtable><annotation encoding="application/x-tex">
 \begin{align}
 \rho_{C; \text{weighted}} &amp;= (\sum w_k\lambda_k)^2 = (\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\lambda}})^2 \\
 \rho_{T; \text{weighted}} = \rho_{P; \text{weighted}} &amp;=  \bar\rho_x(\sum w_k)^2 \\
@@ -996,11 +993,11 @@ and
 are generally not equal. The practical implication is that if
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mi>C</mi></msub><annotation encoding="application/x-tex">\rho_{C}</annotation></semantics></math>
 is computed as
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mi>𝛌</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\lambda}})^2</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msup><mi>𝐰</mi><mo>′</mo></msup><mi>𝛌</mi><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\lambda}})^2</annotation></semantics></math>
 using unit weights the weights can in fact be scaled by both
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mi>𝐒</mi><mi>𝐰</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{S}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msup><mi>𝐰</mi><mo>′</mo></msup><mi>𝐒</mi><mi>𝐰</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup></mrow><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{S}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}</annotation></semantics></math>
 or
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover><mi>𝐰</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\hat{\boldsymbol{\mathbf{\Sigma}}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}</annotation></semantics></math>!
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msup><mi>𝐰</mi><mo>′</mo></msup><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover><mi>𝐰</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup></mrow><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\hat{\boldsymbol{\mathbf{\Sigma}}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}</annotation></semantics></math>!
 Similarly,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mrow><mi>C</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext></mrow></msub><annotation encoding="application/x-tex">\rho_{C; \text{weighted}}</annotation></semantics></math>
 can be computed using weights scaled using either
@@ -1010,33 +1007,33 @@ or
 Consequently there are in fact four types of congeneric reliability
 depending the type of weight and the type of scaling for the weights.
 Hence, the calculation is of “the” congeneric reliability is always:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mi>𝛌</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\lambda}})^2</annotation></semantics></math>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msup><mi>𝐰</mi><mo>′</mo></msup><mi>𝛌</mi><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{\lambda}})^2</annotation></semantics></math>
 where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐰</mi><annotation encoding="application/x-tex">\boldsymbol{\mathbf{w}}</annotation></semantics></math>
 can be:</p>
 <ol style="list-style-type: decimal">
 <li>a vector of unit weights scaled by
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover><mi>𝐰</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\hat{\boldsymbol{\mathbf{\Sigma}}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msup><mi>𝐰</mi><mo>′</mo></msup><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover><mi>𝐰</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup></mrow><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\hat{\boldsymbol{\mathbf{\Sigma}}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}</annotation></semantics></math>.
 This is typically what people refer to as <em>the</em> congeneric
 reliability (Jöreskog’s
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ρ</mi><annotation encoding="application/x-tex">\rho</annotation></semantics></math>).
 We label this type of reliability estimate
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mi>C</mi></msub><annotation encoding="application/x-tex">\rho_C</annotation></semantics></math>.</li>
 <li>a vector of unit weights scaled by
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mi>𝐒</mi><mi>𝐰</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{S}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msup><mi>𝐰</mi><mo>′</mo></msup><mi>𝐒</mi><mi>𝐰</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup></mrow><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{S}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}</annotation></semantics></math>.
 This has no known name. Its usefulness is an open question. We label
 this type of reliability estimate
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mrow><mi>C</mi><mo>;</mo><mi>m</mi><mi>m</mi></mrow></msub><annotation encoding="application/x-tex">\rho_{C;mm}</annotation></semantics></math>.</li>
 <li>a vector of weights obtained using a composite-based estimator
 (e.g. PLS-PM) scaled by
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mi>𝐒</mi><mi>𝐰</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{S}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msup><mi>𝐰</mi><mo>′</mo></msup><mi>𝐒</mi><mi>𝐰</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup></mrow><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\boldsymbol{\mathbf{S}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}</annotation></semantics></math>.
 This is Dijkstra Henseler’s
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mi>A</mi></msub><annotation encoding="application/x-tex">\rho_A</annotation></semantics></math>.
 We label this type of reliability estimate
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mrow><mi>C</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext></mrow></msub><annotation encoding="application/x-tex">\rho_{C;\text{weighted}}</annotation></semantics></math>.</li>
 <li>a vector of weights obtained using a composite-based estimator
 (e.g. PLS-PM) scaled by
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mi>′</mi><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover><mi>𝐰</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\hat{\boldsymbol{\mathbf{\Sigma}}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msup><mi>𝐰</mi><mo>′</mo></msup><mover><mi>𝚺</mi><mo accent="true">̂</mo></mover><mi>𝐰</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></msup></mrow><annotation encoding="application/x-tex">(\boldsymbol{\mathbf{w}}'\hat{\boldsymbol{\mathbf{\Sigma}}}\boldsymbol{\mathbf{w}})^{-\frac{1}{2}}</annotation></semantics></math>.
 This has no known name. Its usefulness is an open question. We label
 this type of reliability estimate
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mrow><mi>C</mi><mo>;</mo><mtext mathvariant="normal">weighted</mtext><mo>;</mo><mi>m</mi><mi>m</mi></mrow></msub><annotation encoding="application/x-tex">\rho_{C;\text{weighted};mm}</annotation></semantics></math>
@@ -1132,9 +1129,9 @@ reliability coefficient, Dillon-Goldstein’s
 <div class="section level5">
 <h5 id="closed-form-confidence-interval">Closed-form confidence interval<a class="anchor" aria-label="anchor" href="#closed-form-confidence-interval"></a>
 </h5>
-<p><span class="citation">Trinchera, Marie, and Marcoulides
-(2018)</span> proposed a closed-form confidence interval (CI) for the
-tau-equivalent reliability (Cronbach’s alpha). To compute the CI, set
+<p><span class="citation">Trinchera et al. (2018)</span> proposed a
+closed-form confidence interval (CI) for the tau-equivalent reliability
+(Cronbach’s alpha). To compute the CI, set
 <code>.closed_form_ci = TRUE</code> when calling <code><a href="../reference/assess.html">assess()</a></code>
 or invoke <code>calculateRhoT(..., .closed_form_ci = TRUE)</code>
 directly. The level of the CI can be changed by supplying a single value
@@ -1154,9 +1151,9 @@ or a vector of values to <code>.alpha</code>.</p>
 <div class="section level4">
 <h4 id="definition-4">Definition<a class="anchor" aria-label="anchor" href="#definition-4"></a>
 </h4>
-<p>Calculate the Goodness of Fit (GoF) proposed by <span class="citation">Tenenhaus, Amanto, and Vinzi (2004)</span>. Note that,
-contrary to what the name suggests, the GoF is <strong>not</strong> a
-measure of (overall) model fit in a
+<p>Calculate the Goodness of Fit (GoF) proposed by <span class="citation">Tenenhaus et al. (2004)</span>. Note that, contrary to
+what the name suggests, the GoF is <strong>not</strong> a measure of
+(overall) model fit in a
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>χ</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\chi^2</annotation></semantics></math>-fit
 test sense. See e.g. <span class="citation">Henseler and Sarstedt
 (2012)</span> for a discussion.</p>
@@ -1191,14 +1188,14 @@ equation of the structural model.</p>
 <h4 id="definition-5">Definition<a class="anchor" aria-label="anchor" href="#definition-5"></a>
 </h4>
 <p>The heterotrait-monotrait ratio of correlations (HTMT) was first
-proposed by<br><span class="citation">Henseler, Ringle, and Sarstedt (2015)</span> to
-assess convergent and discriminant validity.</p>
+proposed by<br><span class="citation">Henseler et al. (2015)</span> to assess
+convergent and discriminant validity.</p>
 </div>
 <div class="section level4">
 <h4 id="formulae-5">Formulae<a class="anchor" aria-label="anchor" href="#formulae-5"></a>
 </h4>
-<p>See: <span class="citation">Henseler, Ringle, and Sarstedt
-(2015)</span> on page 121 (equation (6))</p>
+<p>See: <span class="citation">Henseler et al. (2015)</span> on page 121
+(equation (6))</p>
 </div>
 <div class="section level4">
 <h4 id="implementation-5">Implementation<a class="anchor" aria-label="anchor" href="#implementation-5"></a>
@@ -1215,15 +1212,15 @@ assess convergent and discriminant validity.</p>
 <!-- Spearman-Brown formulae/prophecy, standarized alpha. In `cSEM` parallel  -->
 <!-- reliability is always identical to tau-equivalent reliability as indicators -->
 <!-- are always standardized. Hence, only $\rho_T$ is reported. -->
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Bentler1990" class="csl-entry">
 Bentler, Peter M. 1990. <span>“Comparative Fit Indexes in Structural
 Models.”</span> <em>Psychological Bulletin</em> 107 (2): 238–46.
 </div>
 <div id="ref-Bentler2006" class="csl-entry">
-———. 2006. <em>EQS 6 <span>Structural</span> <span>Equations</span>
-<span>Program</span> <span>Manual</span></em> (version 6). Encino, CA:
-Multivariate Software, Inc.
+Bentler, Peter M. 2006. <em>EQS 6 <span>Structural</span>
+<span>Equations</span> <span>Program</span> <span>Manual</span></em>.
+Version 6. Encino, CA: Multivariate Software, Inc.
 </div>
 <div id="ref-Bentler1980" class="csl-entry">
 Bentler, Peter M., and Douglas G. Bonett. 1980. <span>“Significance
@@ -1307,8 +1304,8 @@ Structure Models Under Arbitrary <span>GLS</span> Estimation.”</span>
 <div id="ref-Tenenhaus2004" class="csl-entry">
 Tenenhaus, Michel, Silvano Amanto, and Vincenzo Esposito Vinzi. 2004.
 <span>“A Global Goodness-of-Fit Index for <span>PLS</span> Structural
-Equation Modelling.”</span> In <em>Proceedings of the <span>XLII
-SIS</span> Scientific Meeting</em>, 739–42.
+Equation Modelling.”</span> <em>Proceedings of the <span>XLII SIS</span>
+Scientific Meeting</em>, 739–42.
 </div>
 <div id="ref-Trinchera2018" class="csl-entry">
 Trinchera, Laura, Nicolas Marie, and George A. Marcoulides. 2018.

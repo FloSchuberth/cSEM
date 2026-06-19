@@ -37,6 +37,7 @@ Properties of Various Simultaneous Equation Estimators.” *Econometrica*,
 ## Examples
 
 ``` r
+
 require(cSEM)
 
 model <- "

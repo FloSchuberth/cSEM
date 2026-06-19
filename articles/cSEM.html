@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Introduction to cSEM • cSEM</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Introduction to cSEM">
 </head>
@@ -63,7 +63,7 @@
                         <h4 data-toc-skip class="author">Manuel
 Rademaker</h4>
             
-            <h4 data-toc-skip class="date">Last edited: 2026-04-23</h4>
+            <h4 data-toc-skip class="date">Last edited: 2026-06-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/master/vignettes/cSEM.Rmd" class="external-link"><code>vignettes/cSEM.Rmd</code></a></small>
       <div class="d-none name"><code>cSEM.Rmd</code></div>
@@ -174,9 +174,9 @@ or factor-based</a> literature <a href="https://floschuberth.github.io/cSEM/arti
 <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html">construct</a>,
 <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html">latent
 variable</a> and its representation the <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html">common
-factor</a> have often been used interchangeably <span class="citation">(Rigdon 2012, 2016; Rigdon, Becker, and Sarstedt
-2019)</span>. This will not be the case in <strong>cSEM</strong> and
-readers are explicitly made aware of the fact that <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html">concepts</a>
+factor</a> have often been used interchangeably <span class="citation">(Rigdon 2012, 2016; Rigdon et al. 2019)</span>. This
+will not be the case in <strong>cSEM</strong> and readers are explicitly
+made aware of the fact that <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html">concepts</a>
 are the abstract entity which <em>may</em> be modeled by a <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html">common
 factor</a>, however, no assertion as to the correctness of this approach
 in terms of “closeness of the <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html">common
@@ -693,7 +693,7 @@ object to <code><a href="../reference/resamplecSEMResults.html">resamplecSEMResu
 <span><span class="co">##  Number of admissible results       = 499</span></span>
 <span><span class="co">##  Approach to handle inadmissibles   = "drop"</span></span>
 <span><span class="co">##  Sign change option                 = "none"</span></span>
-<span><span class="co">##  Random seed                        = -1469721784</span></span>
+<span><span class="co">##  Random seed                        = 281374750</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##  Construct details:</span></span>
 <span><span class="co">##  ------------------</span></span>
@@ -709,37 +709,37 @@ object to <code><a href="../reference/resamplecSEMResults.html">resamplecSEMResu
 <span><span class="co">## ============================</span></span>
 <span><span class="co">##                                                              CI_percentile   </span></span>
 <span><span class="co">##   Path           Estimate  Std. error   t-stat.   p-value         95%        </span></span>
-<span><span class="co">##   eta2 ~ eta1      0.6713      0.0431   15.5773    0.0000 [ 0.5852; 0.7496 ] </span></span>
-<span><span class="co">##   eta3 ~ eta1      0.4585      0.0820    5.5926    0.0000 [ 0.2969; 0.6267 ] </span></span>
-<span><span class="co">##   eta3 ~ eta2      0.3052      0.0844    3.6162    0.0003 [ 0.1436; 0.4780 ] </span></span>
+<span><span class="co">##   eta2 ~ eta1      0.6713      0.0395   16.9920    0.0000 [ 0.5947; 0.7432 ] </span></span>
+<span><span class="co">##   eta3 ~ eta1      0.4585      0.0847    5.4154    0.0000 [ 0.2965; 0.6128 ] </span></span>
+<span><span class="co">##   eta3 ~ eta2      0.3052      0.0880    3.4678    0.0005 [ 0.1359; 0.4774 ] </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Estimated loadings:</span></span>
 <span><span class="co">## ===================</span></span>
 <span><span class="co">##                                                              CI_percentile   </span></span>
 <span><span class="co">##   Loading        Estimate  Std. error   t-stat.   p-value         95%        </span></span>
-<span><span class="co">##   eta1 =~ y11      0.6631      0.0413   16.0711    0.0000 [ 0.5742; 0.7367 ] </span></span>
-<span><span class="co">##   eta1 =~ y12      0.6493      0.0374   17.3537    0.0000 [ 0.5715; 0.7169 ] </span></span>
-<span><span class="co">##   eta1 =~ y13      0.7613      0.0332   22.9053    0.0000 [ 0.6929; 0.8207 ] </span></span>
-<span><span class="co">##   eta2 =~ y21      0.5165      0.0511   10.1104    0.0000 [ 0.4137; 0.6080 ] </span></span>
-<span><span class="co">##   eta2 =~ y22      0.7554      0.0353   21.3913    0.0000 [ 0.6769; 0.8166 ] </span></span>
-<span><span class="co">##   eta2 =~ y23      0.7997      0.0374   21.3563    0.0000 [ 0.7273; 0.8677 ] </span></span>
-<span><span class="co">##   eta3 =~ y31      0.8223      0.0333   24.7046    0.0000 [ 0.7620; 0.8890 ] </span></span>
-<span><span class="co">##   eta3 =~ y32      0.6581      0.0428   15.3886    0.0000 [ 0.5758; 0.7377 ] </span></span>
-<span><span class="co">##   eta3 =~ y33      0.7474      0.0374   20.0073    0.0000 [ 0.6704; 0.8229 ] </span></span>
+<span><span class="co">##   eta1 =~ y11      0.6631      0.0406   16.3125    0.0000 [ 0.5805; 0.7353 ] </span></span>
+<span><span class="co">##   eta1 =~ y12      0.6493      0.0417   15.5682    0.0000 [ 0.5596; 0.7225 ] </span></span>
+<span><span class="co">##   eta1 =~ y13      0.7613      0.0317   24.0462    0.0000 [ 0.7012; 0.8230 ] </span></span>
+<span><span class="co">##   eta2 =~ y21      0.5165      0.0517    9.9842    0.0000 [ 0.4034; 0.6044 ] </span></span>
+<span><span class="co">##   eta2 =~ y22      0.7554      0.0366   20.6639    0.0000 [ 0.6795; 0.8168 ] </span></span>
+<span><span class="co">##   eta2 =~ y23      0.7997      0.0396   20.2149    0.0000 [ 0.7254; 0.8825 ] </span></span>
+<span><span class="co">##   eta3 =~ y31      0.8223      0.0331   24.8323    0.0000 [ 0.7550; 0.8867 ] </span></span>
+<span><span class="co">##   eta3 =~ y32      0.6581      0.0404   16.2987    0.0000 [ 0.5716; 0.7267 ] </span></span>
+<span><span class="co">##   eta3 =~ y33      0.7474      0.0388   19.2474    0.0000 [ 0.6718; 0.8200 ] </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Estimated weights:</span></span>
 <span><span class="co">## ==================</span></span>
 <span><span class="co">##                                                              CI_percentile   </span></span>
 <span><span class="co">##   Weight         Estimate  Std. error   t-stat.   p-value         95%        </span></span>
-<span><span class="co">##   eta1 &lt;~ y11      0.3956      0.0215   18.3823    0.0000 [ 0.3540; 0.4349 ] </span></span>
-<span><span class="co">##   eta1 &lt;~ y12      0.3873      0.0192   20.1286    0.0000 [ 0.3470; 0.4229 ] </span></span>
-<span><span class="co">##   eta1 &lt;~ y13      0.4542      0.0202   22.4463    0.0000 [ 0.4153; 0.4955 ] </span></span>
-<span><span class="co">##   eta2 &lt;~ y21      0.3058      0.0266   11.5113    0.0000 [ 0.2503; 0.3549 ] </span></span>
-<span><span class="co">##   eta2 &lt;~ y22      0.4473      0.0209   21.4174    0.0000 [ 0.4104; 0.4934 ] </span></span>
-<span><span class="co">##   eta2 &lt;~ y23      0.4735      0.0214   22.1736    0.0000 [ 0.4361; 0.5204 ] </span></span>
-<span><span class="co">##   eta3 &lt;~ y31      0.4400      0.0187   23.5196    0.0000 [ 0.4079; 0.4797 ] </span></span>
-<span><span class="co">##   eta3 &lt;~ y32      0.3521      0.0195   18.0268    0.0000 [ 0.3150; 0.3874 ] </span></span>
-<span><span class="co">##   eta3 &lt;~ y33      0.3999      0.0189   21.1502    0.0000 [ 0.3631; 0.4336 ] </span></span>
+<span><span class="co">##   eta1 &lt;~ y11      0.3956      0.0220   17.9962    0.0000 [ 0.3542; 0.4377 ] </span></span>
+<span><span class="co">##   eta1 &lt;~ y12      0.3873      0.0211   18.3913    0.0000 [ 0.3434; 0.4250 ] </span></span>
+<span><span class="co">##   eta1 &lt;~ y13      0.4542      0.0202   22.5044    0.0000 [ 0.4202; 0.4983 ] </span></span>
+<span><span class="co">##   eta2 &lt;~ y21      0.3058      0.0272   11.2275    0.0000 [ 0.2466; 0.3547 ] </span></span>
+<span><span class="co">##   eta2 &lt;~ y22      0.4473      0.0218   20.5548    0.0000 [ 0.4044; 0.4928 ] </span></span>
+<span><span class="co">##   eta2 &lt;~ y23      0.4735      0.0214   22.1725    0.0000 [ 0.4326; 0.5193 ] </span></span>
+<span><span class="co">##   eta3 &lt;~ y31      0.4400      0.0183   24.0188    0.0000 [ 0.4057; 0.4773 ] </span></span>
+<span><span class="co">##   eta3 &lt;~ y32      0.3521      0.0187   18.8265    0.0000 [ 0.3157; 0.3880 ] </span></span>
+<span><span class="co">##   eta3 &lt;~ y33      0.3999      0.0197   20.2982    0.0000 [ 0.3600; 0.4357 ] </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ------------------------------------ Effects -----------------------------------</span></span>
 <span><span class="co">## </span></span>
@@ -747,15 +747,15 @@ object to <code><a href="../reference/resamplecSEMResults.html">resamplecSEMResu
 <span><span class="co">## ========================</span></span>
 <span><span class="co">##                                                               CI_percentile   </span></span>
 <span><span class="co">##   Total effect    Estimate  Std. error   t-stat.   p-value         95%        </span></span>
-<span><span class="co">##   eta2 ~ eta1       0.6713      0.0431   15.5773    0.0000 [ 0.5852; 0.7496 ] </span></span>
-<span><span class="co">##   eta3 ~ eta1       0.6634      0.0392   16.9387    0.0000 [ 0.5906; 0.7404 ] </span></span>
-<span><span class="co">##   eta3 ~ eta2       0.3052      0.0844    3.6162    0.0003 [ 0.1436; 0.4780 ] </span></span>
+<span><span class="co">##   eta2 ~ eta1       0.6713      0.0395   16.9920    0.0000 [ 0.5947; 0.7432 ] </span></span>
+<span><span class="co">##   eta3 ~ eta1       0.6634      0.0396   16.7564    0.0000 [ 0.5754; 0.7368 ] </span></span>
+<span><span class="co">##   eta3 ~ eta2       0.3052      0.0880    3.4678    0.0005 [ 0.1359; 0.4774 ] </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Estimated indirect effects:</span></span>
 <span><span class="co">## ===========================</span></span>
 <span><span class="co">##                                                                  CI_percentile   </span></span>
 <span><span class="co">##   Indirect effect    Estimate  Std. error   t-stat.   p-value         95%        </span></span>
-<span><span class="co">##   eta3 ~ eta1          0.2049      0.0575    3.5601    0.0004 [ 0.0976; 0.3303 ] </span></span>
+<span><span class="co">##   eta3 ~ eta1          0.2049      0.0598    3.4263    0.0006 [ 0.0907; 0.3164 ] </span></span>
 <span><span class="co">## ________________________________________________________________________________</span></span></code></pre>
 <p>Or directly via <code><a href="../reference/infer.html">infer()</a></code></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
@@ -763,17 +763,17 @@ object to <code><a href="../reference/resamplecSEMResults.html">resamplecSEMResu
 <span><span class="va">ii</span><span class="op">$</span><span class="va">Path_estimates</span></span></code></pre></div>
 <pre><code><span><span class="co">## $CI_standard_z</span></span>
 <span><span class="co">##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2</span></span>
-<span><span class="co">## 99%L   0.5599159   0.2477588   0.0873684</span></span>
-<span><span class="co">## 99%U   0.7819358   0.6701163   0.5220879</span></span>
-<span><span class="co">## 95%L   0.5864577   0.2982504   0.1393378</span></span>
-<span><span class="co">## 95%U   0.7553940   0.6196247   0.4701185</span></span>
+<span><span class="co">## 99%L   0.5692004   0.2392036  0.07859322</span></span>
+<span><span class="co">## 99%U   0.7727357   0.6753782  0.53192271</span></span>
+<span><span class="co">## 95%L   0.5935325   0.2913469  0.13278740</span></span>
+<span><span class="co">## 95%U   0.7484037   0.6232348  0.47772853</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $CI_percentile</span></span>
 <span><span class="co">##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2</span></span>
-<span><span class="co">## 99%L   0.5469331   0.2747222  0.09353949</span></span>
-<span><span class="co">## 99%U   0.7681851   0.6632118  0.51241079</span></span>
-<span><span class="co">## 95%L   0.5851984   0.2968898  0.14359272</span></span>
-<span><span class="co">## 95%U   0.7496087   0.6267330  0.47802682</span></span></code></pre>
+<span><span class="co">## 99%L   0.5721537   0.2480776  0.09419688</span></span>
+<span><span class="co">## 99%U   0.7587224   0.6507539  0.51770786</span></span>
+<span><span class="co">## 95%L   0.5947144   0.2964672  0.13592806</span></span>
+<span><span class="co">## 95%U   0.7431547   0.6127767  0.47736262</span></span></code></pre>
 <p>Both bootstrap and jackknife resampling support platform-independent
 multiprocessing as well as random seeds via the <a href="https://github.com/futureverse/future/" class="external-link">future framework</a>. For
 multiprocessing simply set <code>.eval_plan = "multiprocess"</code> in
@@ -865,7 +865,7 @@ e.g., the one described in <span class="citation">Klesel et al.
 </dd>
 <dt><code><a href="../reference/testMICOM.html">testMICOM()</a></code></dt>
 <dd>
-<p>Test of measurement invariance of composites proposed by <span class="citation">Henseler, Ringle, and Sarstedt (2016)</span></p>
+<p>Test of measurement invariance of composites proposed by <span class="citation">Henseler et al. (2016)</span></p>
 </dd>
 </dl>
 </div>
@@ -885,8 +885,9 @@ analysis as described in e.g., <span class="citation">Spiller et al.
 </dd>
 <dt><code><a href="../reference/doRedundancyAnalysis.html">doRedundancyAnalysis()</a></code></dt>
 <dd>
-<p>Performs a redundancy analysis (RA) as proposed by <span class="citation">(<strong>Hair2016?</strong>)</span> with reference to
-<span class="citation">Chin (1998)</span>.</p>
+Performs a redundancy analysis (RA) as proposed by <span class="citation">(<strong>Hair2016?</strong>)</span> with reference to
+<ol class="example" style="list-style-type: decimal"><li>
+</li></ol>
 </dd>
 </dl>
 <p>Technically, postestimation functions are generic function with
@@ -1039,7 +1040,7 @@ scheme in its core.&lt;/p&gt;"><sup>1</sup></a> In
 <div class="section level2">
 <h2 class="unnumbered" id="literature">Literature<a class="anchor" aria-label="anchor" href="#literature"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Beran1985" class="csl-entry">
 Beran, Rudolf, and Muni S. Srivastava. 1985. <span>“Bootstrap Tests and
 Confidence Regions for Functions of a Covariance Matrix.”</span> <em>The
@@ -1048,10 +1049,6 @@ Annals of Statistics</em> 13 (1): 95–115. <a href="https://doi.org/10.1214/aos
 <div id="ref-Bollen1989" class="csl-entry">
 Bollen, Kenneth A. 1989. <em>Structural Equations with Latent
 Variables</em>. Wiley-Interscience.
-</div>
-<div id="ref-Chin1998" class="csl-entry">
-Chin, W. W. 1998. <span>“Modern Methods for Business Research.”</span>
-In, edited by G. A. Marcoulides, 295–358. Mahwah, NJ: Lawrence Erlbaum.
 </div>
 <div id="ref-Dijkstra2015" class="csl-entry">
 Dijkstra, Theo K., and Jörg Henseler. 2015. <span>“Consistent and
@@ -1082,9 +1079,9 @@ Modeling: In Praise of Simple Methods.”</span> <em>Long Range
 Planning</em> 45 (5-6): 341–58. <a href="https://doi.org/10.1016/j.lrp.2012.09.010" class="external-link">https://doi.org/10.1016/j.lrp.2012.09.010</a>.
 </div>
 <div id="ref-Rigdon2016" class="csl-entry">
-———. 2016. <span>“Choosing <span>PLS</span> Path Modeling as Analytical
-Method in European Management Research: A Realist Perspective.”</span>
-<em>European Management Journal</em> 34 (6). <a href="https://doi.org/10.1016/j.emj.2016.05.006" class="external-link">https://doi.org/10.1016/j.emj.2016.05.006</a>.
+Rigdon, Edward E. 2016. <span>“Choosing <span>PLS</span> Path Modeling
+as Analytical Method in European Management Research: A Realist
+Perspective.”</span> <em>European Management Journal</em> 34 (6). <a href="https://doi.org/10.1016/j.emj.2016.05.006" class="external-link">https://doi.org/10.1016/j.emj.2016.05.006</a>.
 </div>
 <div id="ref-Rigdon2019" class="csl-entry">
 Rigdon, Edward E., Jan-Michael Becker, and Marko Sarstedt. 2019.

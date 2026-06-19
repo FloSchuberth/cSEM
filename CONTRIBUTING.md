@@ -50,6 +50,7 @@ following exceptions/additions:
     if this help with readability.
 
 ``` r
+
 ## Both ok but second is prefered in this case
 calculateInnerWeightsPLS <- function(.S                           = NULL,
                                      .W                           = NULL,
@@ -76,9 +77,9 @@ calculateInnerWeightsPLS <- function(
   are in columns, no matter if they are indicators, proxies, errors or
   anything else.
 - Covariance matrices: indicators **always** belong to columns and
-  proxies to rows, i.e., the matrix of weights $W$ for PLS is therefore
-  $(J \times K)$ where $J$ is the number of proxies and $K$ the number
-  of indicators.
+  proxies to rows, i.e., the matrix of weights $`W`$ for PLS is
+  therefore $`(J \times K)`$ where $`J`$ is the number of proxies and
+  $`K`$ the number of indicators.
 - Naming: matrices within the package should be named according to the
   naming schemes of the related SEM literature.
 

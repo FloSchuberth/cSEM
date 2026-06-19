@@ -122,4 +122,4 @@ of indicators.
 Wold H (1975). “Path models with latent variables: The NIPALS approach.”
 In Blalock HM, Aganbegian A, Borodkin FM, Boudon R, Capecchi V (eds.),
 *Quantitative Sociology*, International Perspectives on Mathematical and
-Statistical Modeling, 307–357. Academic Press, New York.
+Statistical Modeling, chapter 11, 307–357. Academic Press, New York.

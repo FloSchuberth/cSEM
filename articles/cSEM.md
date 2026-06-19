@@ -85,17 +85,17 @@ may not be adequate within the realm of the other approach.
 #### The classical latent variable or common factor model
 
 Assuming a researcher identifies
-$J$[concepts](https://floschuberth.github.io/cSEM/articles/Terminology.html)
-and $K$ indicators, the fundamental feature of the latent variable model
-is the assumption of the existence of a set of $J$[latent variables
-(common
+$`J`$[concepts](https://floschuberth.github.io/cSEM/articles/Terminology.html)
+and $`K`$ indicators, the fundamental feature of the latent variable
+model is the assumption of the existence of a set of $`J`$[latent
+variables (common
 factors)](https://floschuberth.github.io/cSEM/articles/Terminology.html)
 that each serve as a representation of one of the
-$J$[concepts](https://floschuberth.github.io/cSEM/articles/Terminology.html)
+$`J`$[concepts](https://floschuberth.github.io/cSEM/articles/Terminology.html)
 to be studied in a sense that each [latent
 variable](https://floschuberth.github.io/cSEM/articles/Terminology.html)
 is causally responsible for the manifestations of a set of
-$K_{j}$[indicators](https://floschuberth.github.io/cSEM/articles/Terminology.html)
+$`K_j`$[indicators](https://floschuberth.github.io/cSEM/articles/Terminology.html)
 which are supposed to measure the
 [concept](https://floschuberth.github.io/cSEM/articles/Terminology.html)
 in question. The entirety of these measurement relations is captured by
@@ -125,9 +125,9 @@ literature
 variable](https://floschuberth.github.io/cSEM/articles/Terminology.html)
 and its representation the [common
 factor](https://floschuberth.github.io/cSEM/articles/Terminology.html)
-have often been used interchangeably (Rigdon 2012, 2016; Rigdon, Becker,
-and Sarstedt 2019). This will not be the case in **cSEM** and readers
-are explicitly made aware of the fact that
+have often been used interchangeably (Rigdon 2012, 2016; Rigdon et al.
+2019). This will not be the case in **cSEM** and readers are explicitly
+made aware of the fact that
 [concepts](https://floschuberth.github.io/cSEM/articles/Terminology.html)
 are the abstract entity which *may* be modeled by a [common
 factor](https://floschuberth.github.io/cSEM/articles/Terminology.html),
@@ -262,6 +262,7 @@ three steps:
     and the model as its second argument:
 
     ``` r
+
     csem(.data = my_data, .model = my_model)
     ```
 
@@ -364,6 +365,7 @@ Currently the following data types/structures are accepted:
     Assuming the following simple model is to be estimated:
 
     ``` r
+
     model <- "
     # Structural model
     EXPE ~ IMAG
@@ -374,15 +376,15 @@ Currently the following data types/structures are accepted:
     "
     ```
 
-    To estimate the model a data frame with $N$ rows (the observations)
-    and $K = 4$ columns with column names `expe1`, `imag1`, `expe2`,
-    `imag2` is required. The order of the columns in the dataset is
-    irrelevant. In **cSEM** the order is defined by the order in which
-    the names appear in the measurement or composite model equations in
-    the model description. In this case any resulting matrix or vector
-    whose (row/column) names contain the indicator names would have the
-    order `expe1`, `expe2`, `imag1`, `imag2`. More one model
-    specification below.
+    To estimate the model a data frame with $`N`$ rows (the
+    observations) and $`K = 4`$ columns with column names `expe1`,
+    `imag1`, `expe2`, `imag2` is required. The order of the columns in
+    the dataset is irrelevant. In **cSEM** the order is defined by the
+    order in which the names appear in the measurement or composite
+    model equations in the model description. In this case any resulting
+    matrix or vector whose (row/column) names contain the indicator
+    names would have the order `expe1`, `expe2`, `imag1`, `imag2`. More
+    one model specification below.
 
 2.  A `matrix` with column names matching the indicator names used in
     the lavaan model description of the measurement model or composite
@@ -421,6 +423,7 @@ tutorial](https://lavaan.ugent.be/tutorial/syntax1.html).
 A typical linear model would look like this:
 
 ``` r
+
 model <- "
 # Structural model
 EXPE ~ IMAG
@@ -467,6 +470,7 @@ e.g., `x_1^3 = x1.x1.x1`. Currently the following terms are allowed
 A simple example would look like this:
 
 ``` r
+
 model <- "
 # Structural model
 EXPE ~ IMAG + IMAG.IMAG
@@ -483,6 +487,7 @@ Currently only second-order models are supported. Specification of the
 second-order construct takes place in the measurement/composite model.
 
 ``` r
+
 model <- "
 # Structural model
 SAT ~ QUAL
@@ -535,6 +540,7 @@ The simplest possible call to
 involves a data set and a model:
 
 ``` r
+
 require(cSEM)
 
 model <- "
@@ -584,6 +590,7 @@ a
 This is equivalent to:
 
 ``` r
+
 csem(
    .data                        = threecommonfactors,
    .model                       = model,
@@ -648,6 +655,7 @@ confidence intervals.
     [`infer()`](https://floschuberth.github.io/cSEM/reference/infer.md).
 
 ``` r
+
 b1 <- csem(.data = threecommonfactors, .model = model, .resample_method = "bootstrap")
 b2 <- resamplecSEMResults(a)
 ```
@@ -655,6 +663,7 @@ b2 <- resamplecSEMResults(a)
 Several confidence intervals are implemented, see `?infer()`:
 
 ``` r
+
 summarize(b1)
 ```
 
@@ -680,7 +689,7 @@ summarize(b1)
     ##  Number of admissible results       = 499
     ##  Approach to handle inadmissibles   = "drop"
     ##  Sign change option                 = "none"
-    ##  Random seed                        = -1469721784
+    ##  Random seed                        = 281374750
     ## 
     ##  Construct details:
     ##  ------------------
@@ -696,37 +705,37 @@ summarize(b1)
     ## ============================
     ##                                                              CI_percentile   
     ##   Path           Estimate  Std. error   t-stat.   p-value         95%        
-    ##   eta2 ~ eta1      0.6713      0.0431   15.5773    0.0000 [ 0.5852; 0.7496 ] 
-    ##   eta3 ~ eta1      0.4585      0.0820    5.5926    0.0000 [ 0.2969; 0.6267 ] 
-    ##   eta3 ~ eta2      0.3052      0.0844    3.6162    0.0003 [ 0.1436; 0.4780 ] 
+    ##   eta2 ~ eta1      0.6713      0.0395   16.9920    0.0000 [ 0.5947; 0.7432 ] 
+    ##   eta3 ~ eta1      0.4585      0.0847    5.4154    0.0000 [ 0.2965; 0.6128 ] 
+    ##   eta3 ~ eta2      0.3052      0.0880    3.4678    0.0005 [ 0.1359; 0.4774 ] 
     ## 
     ## Estimated loadings:
     ## ===================
     ##                                                              CI_percentile   
     ##   Loading        Estimate  Std. error   t-stat.   p-value         95%        
-    ##   eta1 =~ y11      0.6631      0.0413   16.0711    0.0000 [ 0.5742; 0.7367 ] 
-    ##   eta1 =~ y12      0.6493      0.0374   17.3537    0.0000 [ 0.5715; 0.7169 ] 
-    ##   eta1 =~ y13      0.7613      0.0332   22.9053    0.0000 [ 0.6929; 0.8207 ] 
-    ##   eta2 =~ y21      0.5165      0.0511   10.1104    0.0000 [ 0.4137; 0.6080 ] 
-    ##   eta2 =~ y22      0.7554      0.0353   21.3913    0.0000 [ 0.6769; 0.8166 ] 
-    ##   eta2 =~ y23      0.7997      0.0374   21.3563    0.0000 [ 0.7273; 0.8677 ] 
-    ##   eta3 =~ y31      0.8223      0.0333   24.7046    0.0000 [ 0.7620; 0.8890 ] 
-    ##   eta3 =~ y32      0.6581      0.0428   15.3886    0.0000 [ 0.5758; 0.7377 ] 
-    ##   eta3 =~ y33      0.7474      0.0374   20.0073    0.0000 [ 0.6704; 0.8229 ] 
+    ##   eta1 =~ y11      0.6631      0.0406   16.3125    0.0000 [ 0.5805; 0.7353 ] 
+    ##   eta1 =~ y12      0.6493      0.0417   15.5682    0.0000 [ 0.5596; 0.7225 ] 
+    ##   eta1 =~ y13      0.7613      0.0317   24.0462    0.0000 [ 0.7012; 0.8230 ] 
+    ##   eta2 =~ y21      0.5165      0.0517    9.9842    0.0000 [ 0.4034; 0.6044 ] 
+    ##   eta2 =~ y22      0.7554      0.0366   20.6639    0.0000 [ 0.6795; 0.8168 ] 
+    ##   eta2 =~ y23      0.7997      0.0396   20.2149    0.0000 [ 0.7254; 0.8825 ] 
+    ##   eta3 =~ y31      0.8223      0.0331   24.8323    0.0000 [ 0.7550; 0.8867 ] 
+    ##   eta3 =~ y32      0.6581      0.0404   16.2987    0.0000 [ 0.5716; 0.7267 ] 
+    ##   eta3 =~ y33      0.7474      0.0388   19.2474    0.0000 [ 0.6718; 0.8200 ] 
     ## 
     ## Estimated weights:
     ## ==================
     ##                                                              CI_percentile   
     ##   Weight         Estimate  Std. error   t-stat.   p-value         95%        
-    ##   eta1 <~ y11      0.3956      0.0215   18.3823    0.0000 [ 0.3540; 0.4349 ] 
-    ##   eta1 <~ y12      0.3873      0.0192   20.1286    0.0000 [ 0.3470; 0.4229 ] 
-    ##   eta1 <~ y13      0.4542      0.0202   22.4463    0.0000 [ 0.4153; 0.4955 ] 
-    ##   eta2 <~ y21      0.3058      0.0266   11.5113    0.0000 [ 0.2503; 0.3549 ] 
-    ##   eta2 <~ y22      0.4473      0.0209   21.4174    0.0000 [ 0.4104; 0.4934 ] 
-    ##   eta2 <~ y23      0.4735      0.0214   22.1736    0.0000 [ 0.4361; 0.5204 ] 
-    ##   eta3 <~ y31      0.4400      0.0187   23.5196    0.0000 [ 0.4079; 0.4797 ] 
-    ##   eta3 <~ y32      0.3521      0.0195   18.0268    0.0000 [ 0.3150; 0.3874 ] 
-    ##   eta3 <~ y33      0.3999      0.0189   21.1502    0.0000 [ 0.3631; 0.4336 ] 
+    ##   eta1 <~ y11      0.3956      0.0220   17.9962    0.0000 [ 0.3542; 0.4377 ] 
+    ##   eta1 <~ y12      0.3873      0.0211   18.3913    0.0000 [ 0.3434; 0.4250 ] 
+    ##   eta1 <~ y13      0.4542      0.0202   22.5044    0.0000 [ 0.4202; 0.4983 ] 
+    ##   eta2 <~ y21      0.3058      0.0272   11.2275    0.0000 [ 0.2466; 0.3547 ] 
+    ##   eta2 <~ y22      0.4473      0.0218   20.5548    0.0000 [ 0.4044; 0.4928 ] 
+    ##   eta2 <~ y23      0.4735      0.0214   22.1725    0.0000 [ 0.4326; 0.5193 ] 
+    ##   eta3 <~ y31      0.4400      0.0183   24.0188    0.0000 [ 0.4057; 0.4773 ] 
+    ##   eta3 <~ y32      0.3521      0.0187   18.8265    0.0000 [ 0.3157; 0.3880 ] 
+    ##   eta3 <~ y33      0.3999      0.0197   20.2982    0.0000 [ 0.3600; 0.4357 ] 
     ## 
     ## ------------------------------------ Effects -----------------------------------
     ## 
@@ -734,38 +743,39 @@ summarize(b1)
     ## ========================
     ##                                                               CI_percentile   
     ##   Total effect    Estimate  Std. error   t-stat.   p-value         95%        
-    ##   eta2 ~ eta1       0.6713      0.0431   15.5773    0.0000 [ 0.5852; 0.7496 ] 
-    ##   eta3 ~ eta1       0.6634      0.0392   16.9387    0.0000 [ 0.5906; 0.7404 ] 
-    ##   eta3 ~ eta2       0.3052      0.0844    3.6162    0.0003 [ 0.1436; 0.4780 ] 
+    ##   eta2 ~ eta1       0.6713      0.0395   16.9920    0.0000 [ 0.5947; 0.7432 ] 
+    ##   eta3 ~ eta1       0.6634      0.0396   16.7564    0.0000 [ 0.5754; 0.7368 ] 
+    ##   eta3 ~ eta2       0.3052      0.0880    3.4678    0.0005 [ 0.1359; 0.4774 ] 
     ## 
     ## Estimated indirect effects:
     ## ===========================
     ##                                                                  CI_percentile   
     ##   Indirect effect    Estimate  Std. error   t-stat.   p-value         95%        
-    ##   eta3 ~ eta1          0.2049      0.0575    3.5601    0.0004 [ 0.0976; 0.3303 ] 
+    ##   eta3 ~ eta1          0.2049      0.0598    3.4263    0.0006 [ 0.0907; 0.3164 ] 
     ## ________________________________________________________________________________
 
 Or directly via
 [`infer()`](https://floschuberth.github.io/cSEM/reference/infer.md)
 
 ``` r
+
 ii <- infer(b1, .quantity = c("CI_standard_z", "CI_percentile"), .alpha = c(0.01, 0.05))
 ii$Path_estimates
 ```
 
     ## $CI_standard_z
     ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-    ## 99%L   0.5599159   0.2477588   0.0873684
-    ## 99%U   0.7819358   0.6701163   0.5220879
-    ## 95%L   0.5864577   0.2982504   0.1393378
-    ## 95%U   0.7553940   0.6196247   0.4701185
+    ## 99%L   0.5692004   0.2392036  0.07859322
+    ## 99%U   0.7727357   0.6753782  0.53192271
+    ## 95%L   0.5935325   0.2913469  0.13278740
+    ## 95%U   0.7484037   0.6232348  0.47772853
     ## 
     ## $CI_percentile
     ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-    ## 99%L   0.5469331   0.2747222  0.09353949
-    ## 99%U   0.7681851   0.6632118  0.51241079
-    ## 95%L   0.5851984   0.2968898  0.14359272
-    ## 95%U   0.7496087   0.6267330  0.47802682
+    ## 99%L   0.5721537   0.2480776  0.09419688
+    ## 99%U   0.7587224   0.6507539  0.51770786
+    ## 95%L   0.5947144   0.2964672  0.13592806
+    ## 95%U   0.7431547   0.6127767  0.47736262
 
 Both bootstrap and jackknife resampling support platform-independent
 multiprocessing as well as random seeds via the [future
@@ -780,6 +790,7 @@ generally not be faster compared to sequential (single core) processing
 would look like this:
 
 ``` r
+
 b <- csem(
   .data            = satisfaction,
   .model           = model,
@@ -852,8 +863,8 @@ There are 5 major postestimation function and 4 test-family functions:
 
 - [`testMICOM()`](https://floschuberth.github.io/cSEM/reference/testMICOM.md):
 
-  Test of measurement invariance of composites proposed by Henseler,
-  Ringle, and Sarstedt (2016)
+  Test of measurement invariance of composites proposed by Henseler et
+  al. (2016)
 
 ##### The `do_*` family of postestimation functions
 
@@ -869,7 +880,9 @@ There are 5 major postestimation function and 4 test-family functions:
 - [`doRedundancyAnalysis()`](https://floschuberth.github.io/cSEM/reference/doRedundancyAnalysis.md):
 
   Performs a redundancy analysis (RA) as proposed by (**Hair2016?**)
-  with reference to Chin (1998).
+  with reference to
+
+  1.  
 
 Technically, postestimation functions are generic function with methods
 for objects of class `cSEMResults_default`, `cSEMResults_multi`,
@@ -928,6 +941,7 @@ Disattenuation is controlled by the `.disattenuate` argument of
 **Example**
 
 ``` r
+
 model <- "
 ## Structural model
 eta2 ~ eta1
@@ -973,10 +987,11 @@ partial least squares path modeling (PLS-PM) and generalized structured
 component analysis (GSCA) are - contrary to common belief - best
 exclusively understood as prescriptions for forming linear compounds
 based on observables, i.e., as weighting approaches. Not more, not
-less.[¹](#fn1) In **cSEM** this is reflected by the fact that `"PLS"`
-and `"GSCA"` are choices of the `.approach_weights` argument.
+less.[^1] In **cSEM** this is reflected by the fact that `"PLS"` and
+`"GSCA"` are choices of the `.approach_weights` argument.
 
 ``` r
+
 model <- "
 ## Structural model
 eta2 ~ eta1
@@ -1018,9 +1033,6 @@ Statistics* 13 (1): 95–115. <https://doi.org/10.1214/aos/1176346579>.
 Bollen, Kenneth A. 1989. *Structural Equations with Latent Variables*.
 Wiley-Interscience.
 
-Chin, W. W. 1998. “Modern Methods for Business Research.” In, edited by
-G. A. Marcoulides, 295–358. Mahwah, NJ: Lawrence Erlbaum.
-
 Dijkstra, Theo K., and Jörg Henseler. 2015. “Consistent and
 Asymptotically Normal PLS Estimators for Linear Structural Equations.”
 *Computational Statistics & Data Analysis* 81: 10–23.
@@ -1044,9 +1056,9 @@ Rigdon, Edward E. 2012. “Rethinking Partial Least Squares Path Modeling:
 In Praise of Simple Methods.” *Long Range Planning* 45 (5-6): 341–58.
 <https://doi.org/10.1016/j.lrp.2012.09.010>.
 
-———. 2016. “Choosing PLS Path Modeling as Analytical Method in European
-Management Research: A Realist Perspective.” *European Management
-Journal* 34 (6). <https://doi.org/10.1016/j.emj.2016.05.006>.
+Rigdon, Edward E. 2016. “Choosing PLS Path Modeling as Analytical Method
+in European Management Research: A Realist Perspective.” *European
+Management Journal* 34 (6). <https://doi.org/10.1016/j.emj.2016.05.006>.
 
 Rigdon, Edward E., Jan-Michael Becker, and Marko Sarstedt. 2019. “Factor
 Indeterminacy as Metrological Uncertainty: Implications for Advancing
@@ -1063,9 +1075,7 @@ Mcclelland. 2013. “Spotlights, Floodlights, and the Magic Number Zero:
 Simple Effects Tests in Moderated Regression.” *Journal of Marketing
 Research* 50 (2): 277–88. <https://doi.org/10.1509/jmr.12.0420>.
 
-------------------------------------------------------------------------
-
-1.  In fact, labels such as PLS-PM and even more so PLS-SEM are
+[^1]: In fact, labels such as PLS-PM and even more so PLS-SEM are
     misleading as they create the impression that PLS(-PM) is somehow
     capable of more than other composite-based approaches. While among
     composite-based approaches, methodological research surrounding

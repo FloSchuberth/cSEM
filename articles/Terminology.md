@@ -99,8 +99,9 @@ methods centered around the use of [common factors](#commonfactor) as
 statistical [proxies](#proxy) for the [concepts](#concept) under
 investigation. Factor-based methods are also called covariance-based
 methods as focal parameters are retrieved such that the difference
-between the model-implied $\mathbf{\Sigma}(\theta)$ and the empirical
-indicator covariance matrix $\mathbf{S}$ is minimized.
+between the model-implied $`\boldsymbol{\mathbf{\Sigma}}(\theta)`$ and
+the empirical indicator covariance matrix $`\boldsymbol{\mathbf{S}}`$ is
+minimized.
 
 ### Indicator
 
@@ -183,9 +184,9 @@ true score and an error score. The term is closely linked to the [latent
 variable/common factor](#commonfactor) model in that the true score of a
 set of indicators are linear functions of some underlying common factor.
 Mathematically speaking, the correspondence is
-$\eta_{jk} = \lambda_{jk}\eta_{j}$  
-where $\eta_{jk}$ is the true score, $\eta_{j}$ the underlying latent
-variable and $\lambda_{jk}$ the loading. Despite some differences, the
+$`\eta_{jk} = \lambda_{jk}\eta_j`$  
+where $`\eta_{jk}`$ is the true score, $`\eta_j`$ the underlying latent
+variable and $`\lambda_{jk}`$ the loading. Despite some differences, the
 term true score can generally be used synonymously to the terms common
 factor and latent variable in **cSEM** without risking a
 misunderstanding.

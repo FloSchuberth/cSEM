@@ -627,7 +627,7 @@ Equation Modeling, 295–358. Mahwah, NJ: Lawrence Erlbaum.
 Croon MA (2002). “Using predicted latent scores in general latent
 structure models.” In Marcoulides GA, Moustaki I (eds.), *Latent
 Variable and Latent Structure Models*, chapter 10, 195–224. Lawrence
-Erlbaum. ISBN 080584046X, Pagination: 288.  
+Erlbaum. ISBN 080584046X. Pagination: 288.  
   
 Dijkstra TK, Henseler J (2015). “Consistent and Asymptotically Normal
 PLS Estimators for Linear Structural Equations.” *Computational

@@ -46,12 +46,14 @@ groups, etc.).
 The package is available on [CRAN](https://cran.r-project.org/):
 
 ``` r
+
 install.packages("cSEM")
 ```
 
 To install the development version, which is recommended, use:
 
 ``` r
+
 # install.packages("pak")
 pak::pak("FloSchuberth/cSEM")
 ```
@@ -133,6 +135,7 @@ For illustration we use the build-in and well-known `satisfaction`
 dataset.
 
 ``` r
+
 require(cSEM)
     
 ## Note: The operator "<~" tells cSEM that the construct to its left is modeled
@@ -167,6 +170,7 @@ The estimation is conducted using the
 function.
 
 ``` r
+
 # Estimate using defaults
 res <- csem(.data = satisfaction, .model = model)
 res
@@ -206,6 +210,7 @@ res
 This is equal to:
 
 ``` r
+
 csem(
    .data                        = satisfaction,
    .model                       = model,
@@ -244,6 +249,7 @@ The result is always a named list of class `cSEMResults`.
 To access list elements use `$`:
 
 ``` r
+
 res$Estimates$Loading_estimates 
 res$Information$Model
 ```
@@ -254,12 +260,14 @@ to `cSEM` this might be a good way to familiarize yourself with the
 structure of a `cSEMResults` object.
 
 ``` r
+
 listviewer::jsonedit(res, mode = "view") # requires the listviewer package.
 ```
 
 Apply post-estimation functions:
 
 ``` r
+
 ## Get a summary
 summarize(res) 
 ```
@@ -420,6 +428,7 @@ summarize(res)
 ```
 
 ``` r
+
 ## Verify admissibility of the results
 verify(res) 
 ```
@@ -443,6 +452,7 @@ verify(res)
 ```
 
 ``` r
+
 ## Test overall model fit
 testOMF(res)
 ```
@@ -489,6 +499,7 @@ testOMF(res)
 ```
 
 ``` r
+
 ## Assess the model
 assess(res)
 ```
@@ -709,6 +720,7 @@ assess(res)
 ```
 
 ``` r
+
 ## Predict indicator scores of endogenous constructs
 predict(res)
 ```
@@ -779,6 +791,7 @@ estimate standard errors, test statistics, and critical quantiles.
     [`infer()`](https://floschuberth.github.io/cSEM/reference/infer.md).
 
 ``` r
+
 # Setting `.resample_method`
 b1 <- csem(.data = satisfaction, .model = model, .resample_method = "bootstrap")
 # Using resamplecSEMResults()
@@ -790,6 +803,7 @@ The
 function reports the inferential statistics:
 
 ``` r
+
 summarize(b1)
 ```
 
@@ -967,6 +981,7 @@ Several bootstrap-based confidence intervals are implemented, see
 `?infer()`:
 
 ``` r
+
 infer(b1, .quantity = c("CI_standard_z", "CI_percentile")) # no print method yet
 ```
 
@@ -982,6 +997,7 @@ compared to sequential (single core) processing (the default). Seeds are
 set via the `.seed` argument.
 
 ``` r
+
 b <- csem(
   .data            = satisfaction,
   .model           = model, 
