@@ -436,7 +436,7 @@ calculateWeightsGSCA <- function(
   
   
   # Starting Values --------------------------------------------------------
-  if(!is.null(.starting_values)){;
+  if(!is.null(.starting_values)){
     W0 = setStartingValues(.W = W0, .starting_values = .starting_values)
   }
   
