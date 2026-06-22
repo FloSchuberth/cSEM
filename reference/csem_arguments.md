@@ -629,7 +629,7 @@ To list all arguments and their possible choices, use
   [`infer()`](https://floschuberth.github.io/cSEM/reference/infer.md)
   function. Defaults to "*none*".
 
-- \`.resample_object\`:
+- .resample_object:
 
   An R object of class `cSEMResults_resampled` obtained from
   [`resamplecSEMResults()`](https://floschuberth.github.io/cSEM/reference/resamplecSEMResults.md)

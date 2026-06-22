@@ -28,6 +28,9 @@ Useful links:
 
 Authors:
 
+- Florian Schuberth <f.schuberth@utwente.nl>
+  ([ORCID](https://orcid.org/0000-0002-2110-9086))
+
 - Manuel E. Rademaker <manuel-rademaker@outlook.de>
   ([ORCID](https://orcid.org/0000-0002-8902-3561))
 
