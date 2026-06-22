@@ -387,7 +387,7 @@ from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}"
 resampling from each resample is only required for the studentized confidence
 interval ("\emph{CI_t_interval}") computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
 
-\item{`.resample_object`}{An R object of class \code{cSEMResults_resampled}
+\item{.resample_object}{An R object of class \code{cSEMResults_resampled}
 obtained from \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} or by setting \code{.resample_method = "bootstrap"}
 or \code{"jackknife"} when calling \code{\link[=csem]{csem()}}.}
 

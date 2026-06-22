@@ -78,7 +78,6 @@ Imports:
     TruncatedNormal,
     utils
 RdMacros: Rdpack, lifecycle
-RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
 Suggests: 
     DiagrammeR,
@@ -102,3 +101,4 @@ Suggests:
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Language: en-US
+Config/roxygen2/version: 8.0.0
