@@ -270,12 +270,10 @@ test_that("DPG_2ndorder_composites_of_composites is correctly estimated", {
 })
 
 
-# Check against results of cSEM version 0.6.1 ----
+# Compare against the results of cSEM version 0.6.1 ----
+# 2 common factor model ----
 
-
-# Compare against 2 common factor model ----
-
-# Load cSEM 06-01 results 
+# Load cSEM 0.6.1.9999 results 
 load(file = "../data/csem061_linear_2commonfactors.Rdata")
 
 # Estimate model with current csem function 
