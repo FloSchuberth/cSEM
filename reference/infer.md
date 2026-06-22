@@ -187,17 +187,17 @@ a <- csem(satisfaction, model, .resample_method = "bootstrap", .R = 20,
 inf <- infer(a)
 
 inf$Path_estimates$CI_basic
-#>      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL SAT ~ IMAG SAT ~ EXPE
-#> 95%L   0.5855213    1.009722  -4.947204   4.070319 -0.1967608  0.7726276
-#> 95%U   0.7396622    1.064454  -3.155821   5.819201  0.2072731  2.5403919
-#>      SAT ~ QUAL SAT ~ VAL LOY ~ IMAG LOY ~ SAT
-#> 95%L  -3.723057  1.335920 0.02657317 0.3597169
-#> 95%U  -1.394876  2.351827 0.40544686 0.7406718
+#>      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL  SAT ~ IMAG SAT ~ EXPE
+#> 95%L   0.6003737    1.006822  -4.673350   3.876653 -0.28767434 -0.1714058
+#> 95%U   0.7776355    1.055841  -2.946707   5.600499  0.06980527  1.7932869
+#>        SAT ~ QUAL SAT ~ VAL LOY ~ IMAG LOY ~ SAT
+#> 95%L -2.501829147  1.063479 0.05839232 0.3975582
+#> 95%U  0.001329577  1.985935 0.41542558 0.7467941
 inf$Indirect_effect$sd
 #> QUAL ~ IMAG  VAL ~ IMAG  VAL ~ EXPE  SAT ~ IMAG  SAT ~ EXPE  SAT ~ QUAL 
-#>  0.04120217  0.05143746  0.54553744  0.08023875  0.50902229  0.87350747 
+#>  0.05813122  0.06674119  0.55745833  0.09263906  0.51129711  1.10287475 
 #>  LOY ~ IMAG  LOY ~ EXPE  LOY ~ QUAL   LOY ~ VAL 
-#>  0.05147169  0.09784745  0.36668563  0.21067083 
+#>  0.07162907  0.08726063  0.39954605  0.16931641 
 
 ### Compute the bias-corrected and accelerated and/or the studentized t-inverval.
 ## For the studentied t-interval confidence interval a double bootstrap is required.
