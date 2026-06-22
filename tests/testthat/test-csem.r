@@ -277,7 +277,7 @@ test_that("DPG_2ndorder_composites_of_composites is correctly estimated", {
 load(file = "../data/csem061_linear_2commonfactors.Rdata")
 
 # Estimate model with current csem function 
-res_current <-  csem(.data = out$data$data, 
+res_current <-  csem(.data = out$dataclean$data, 
                          .model = out$model$model_Sigma,
                          .resample_method = 'bootstrap',
                          .seed = 1234,
@@ -310,7 +310,7 @@ for (nm in names(out$res_flat$Sigma)) {
 
 ## Comparison Sigma_alt2 ----
 # Estimate model with current csem function 
-res                   <-  csem(.data = out$data$data, 
+res                   <-  csem(.data = out$dataclean$data, 
                               .model = out$model$model_Sigma_alt2,
                               .resample_method = 'bootstrap',
                               .seed = 1234,
@@ -339,7 +339,7 @@ for (nm in names(out$res_flat$Sigma_alt2)) {
 }
 
 # Comparison datasets as list
-  res                   <-  csem(.data = out$data$datalist, 
+  res                   <-  csem(.data = out$dataclean$datalist, 
                                .model = out$model$model_Sigma,
                                .resample_method = 'bootstrap',
                                .seed = 1234,
@@ -368,7 +368,7 @@ for (nm in names(out$res_flat$Sigma_list)) {
 }
 
 # Comparison datasets with categorical grouping variable
-res                   <-  csem(.data = out$data$data_id_cat, 
+res                   <-  csem(.data = out$dataclean$data_id_cat, 
                                .model = out$model$model_Sigma,
                                .resample_method = 'bootstrap',
                                .seed = 1234,
@@ -399,7 +399,7 @@ for (nm in names(out$res_flat$Sigma_list)) {
 
 
 # Comparison datasets with numerical grouping variable
-res                   <-  csem(.data = out$data$data_id_num, 
+res                   <-  csem(.data = out$dataclean$data_id_num, 
                                .model = out$model$model_Sigma,
                                .resample_method = 'bootstrap',
                                .seed = 1234,
