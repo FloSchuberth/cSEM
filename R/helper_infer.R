@@ -158,7 +158,7 @@ BasicCIResample <- function(.first_resample, .bias_corrected, .probs) {
   cl <- 1 - .probs[seq(1, length(.probs), by = 2)]*2
   
   lapply(.first_resample, function(x) {
-    out <- t(matrixStats::colQuantiles(x$Resample, probs = .probs, drop = FALSE))
+    out <- t(matrixStats::colQuantiles(x$Resampled, probs = .probs, drop = FALSE))
     
     theta_star <- if(.bias_corrected) {
       2*x$Original - colMeans(x$Resampled) 
