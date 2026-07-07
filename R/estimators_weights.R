@@ -1169,7 +1169,7 @@ calculateWeightsIGSCA <- function(
       .tolerance = .tolerance,
       .conv_criterion = .conv_criterion
     )) &&
-      (it <= .iter_max)
+      (it < .iter_max)
   ) {
     # Update Counter Variables
     it <- it + 1

@@ -723,7 +723,10 @@ testMGD <- function(
   teststat_Klesel <- teststat$Klesel
   
   # Calculation of p-values
-  pvalue_Klesel <- rowMeans(ref_dist_matrix_Klesel >= teststat_Klesel)
+  # pvalue_Klesel <- rowMeans(ref_dist_matrix_Klesel >= teststat_Klesel)
+  # TODO: Confirm this fix with Flo
+  pvalue_Klesel <- (rowSums(ref_dist_matrix_Klesel >= teststat_Klesel) + 1) /
+    (ncol(ref_dist_matrix_Klesel) + 1)
   
   # Decision 
   # TRUE = p-value > alpha --> not reject
@@ -811,7 +814,10 @@ testMGD <- function(
     ref_dist_matrix_Sarstedt <- do.call(cbind, ref_dist_Sarstedt)
     
     # Calculation of the p-value
-    pvalue_Sarstedt <- rowMeans(ref_dist_matrix_Sarstedt >= teststat_Sarstedt)
+    # pvalue_Sarstedt <- rowMeans(ref_dist_matrix_Sarstedt >= teststat_Sarstedt)
+    # TODO: Confirm this fix with Flo
+    pvalue_Sarstedt <- (rowSums(ref_dist_matrix_Sarstedt >= teststat_Sarstedt) + 1) /
+                   (ncol(ref_dist_matrix_Sarstedt) + 1)
     
     # Adjust pvalues:
     padjusted_Sarstedt<- lapply(as.list(.approach_p_adjust), function(x){
