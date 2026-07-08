@@ -111,7 +111,7 @@ for details on the implementation.
 
 \item \code{calculateSRMR()}: The standardized root mean square residual (SRMR).
 
-\item \code{calculateFIT()}: The measure of overall FIT for GSCA models (FIT)
+\item \code{calculateFIT()}: The measure of overall FIT for GSCA-type models (FIT)
 
 \item \code{calculateAFIT()}: The measure of overall adjusted-FIT for GSCA models (AFIT)
 

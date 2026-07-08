@@ -17,5 +17,5 @@ Block diagonalizes the estimated paramater matrices as shown on Equations
 3.28-3.29 on page 111 of \insertCite{Hwang2014;textual}{cSEM}. This is used to compute a single FIT-type statistic given a multigroup GSCA-type model.
 }
 \details{
-This function should be called through calculateFIT, calculateFIT_s, etc... and is not intended to be user-facing.
+This function should be called through \code{constructGSCAObjectiveParts} and is not intended to be user-facing.
 }
