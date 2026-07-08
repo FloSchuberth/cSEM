@@ -2029,6 +2029,8 @@ calculateFIT <- function(.object = NULL) {
     return(NA)
   } else {
     D <- diag(.object$Estimates$Unique_loading_estimates)
+    rownames(D) <- names(.object$Estimates$Unique_loading_estimates)
+    colnames(D) <- names(.object$Estimates$Unique_loading_estimates)
   }
 
   # As shown in Equation 4 and 6 the GSCA_m publication (Hwang et al., 2017)
@@ -2218,7 +2220,7 @@ calculateFIT_s <- function(.object = NULL) {
   # I am fairly confident the transpose of B is what's needed
   # See Gamma[1,] %*% t(B)
   if (!all(is.null(.object$Estimates$Path_estimates))) {
-    B <- t(.object$Estimates$Path_estimates)
+    B <- .object$Estimates$Path_estimates
   }
   else if (all(is.null(.object$Estimates$Path_estimates))) {
     B <- matrix(
@@ -2230,7 +2232,7 @@ calculateFIT_s <- function(.object = NULL) {
   }
   
   
-  SS_unexplained_construct_variance <- sum(diag(t(Eta - (Eta %*% B)) %*% (Eta - (Eta %*% B))))
+  SS_unexplained_construct_variance <- sum(diag(t(Eta - (Eta %*% t(B))) %*% (Eta - (Eta %*% t(B)))))
   SS_total_construct_variance <- sum(diag(t(Eta) %*% (Eta)))
   
   FIT_s <- 1 - (SS_unexplained_construct_variance / SS_total_construct_variance)
