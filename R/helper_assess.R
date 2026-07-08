@@ -2097,16 +2097,6 @@ calculateFIT_s <- function(.object = NULL) {
   Eta <- parts$Eta
   B <- parts$B
   
-  if (is.null(parts$B)) {
-    B <- matrix(
-      data = 0,
-      nrow = ncol(Eta),
-      ncol = ncol(Eta),
-      dimnames = list(colnames(Eta), colnames(Eta))
-    )
-  }
-  
-  
   SS_unexplained_construct_variance <- sum(diag(t(Eta - (Eta %*% t(B))) %*% (Eta - (Eta %*% t(B)))))
   SS_total_construct_variance <- sum(diag(t(Eta) %*% (Eta)))
   
