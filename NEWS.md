@@ -2,6 +2,11 @@
 
 #  cSEM 0.6.2
 
+- Adjust p-value calculation in testMGD in case of permutation-based tests to prevent that p-values can be exactly 0.
+  Thanks to Michael
+  
+- Fix bug in BasicCIResample(). Thanks to Michael.
+
 - Implement AGAS-PLS. Thanks to Gloria Pietropolli
 
 - Update R dependency (R>= 4.1.0)

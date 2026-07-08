@@ -30,7 +30,12 @@ model fit, test the model fit, compute confidence intervals, compare
 groups, etc.).
 
 ## News (2025-05-15):
-- Implementation of doModelSearch to perform AGAS-PLS. Thanks to Gloria.
+
+- Adjust p-value calculation in testMGD in case of permutation-based tests to prevent that p-values   can be exactly 0. Thanks to Michael
+  
+- Fix bug in BasicCIResample(). Thanks to Michael.
+
+- Implementation of doModelSearch() to perform AGAS-PLS. Thanks to Gloria.
 
 - Release of cSEM version 0.6.1
 
