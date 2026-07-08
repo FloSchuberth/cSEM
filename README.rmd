@@ -35,11 +35,7 @@ groups, etc.).
   
 - Fix bug in BasicCIResample(). Thanks to Michael.
 
-<<<<<<< HEAD
-- Implementation of doModelSearch to perform AGAS-PLS. Thanks to Gloria.
-=======
 - Implementation of doModelSearch() to perform AGAS-PLS. Thanks to Gloria.
->>>>>>> e83c0f28 (Update readme)
 
 - Release of cSEM version 0.6.1
 
