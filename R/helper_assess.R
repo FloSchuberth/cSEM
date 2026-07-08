@@ -2012,95 +2012,12 @@ calculateSRMR <- function(
 #' @export
 calculateFIT <- function(.object = NULL) {
 
-  # For multigroup models, block diagonalize each part (Z, Gamma, C, ...) so
-  # that the single-group algebra below yields one overall FIT for the model.
-  isMULTIGROUP <- FALSE
-  if (inherits(.object, "cSEMResults_multi")) {
-    if (inherits(.object, "cSEMResults_2ndorder")) {
-      stop2(
-        "The following error occured in the calculateFIT() function:\n",
-        "FIT statistics are not supported for second-order multigroup models."
-      )
-    }
-    if (.object[[1]]$Information$Arguments$.approach_weights != "GSCA") {
-      return(NA)
-    }
-    .object <- bdiagGSCA(.object)
-    isMULTIGROUP <- TRUE
-  } else if (.object$Information$Arguments$.approach_weights != "GSCA") {
-    return(NA)
-  }
-
-  # As shown in Equation 4 and 6 the GSCA_m publication (Hwang et al., 2017)
-  Eta <- .object$Estimates$Construct_scores
-  Z <- .object$Information$Data
-  Psi <- cbind(Z, Eta)
-  Lambda <- .object$Estimates$Loading_estimates
-  B <- .object$Estimates$Path_estimates
-  if (!all(is.na(B))) {
-    # Eta[, 1, drop = FALSE] %*% Lambda[1, , drop = FALSE]
-    # Eta[, 1, drop = FALSE] %*% Lambda[1, 1, drop = FALSE] 
-
-    # Eta[,1,drop = FALSE] %*% t(B)[1,2, drop = FALSE]
-    # Eta[,3,drop = FALSE] %*% t(B)[3,4, drop = FALSE]
-
-    # If there's a structural model
-    # Path_estimates is row = to; column = from
-    # t(Path_estimates) is row = from; column = to
-    # Eta[,1, drop = FALSE] * t(B)[1,2]
-    A <- cbind(
-      Lambda,
-      t(B)
-    )
-  }
-  else if (all(is.na(B))) {
-    # The rows of the Loading estimates correspond to the construct names
-    A <- cbind(
-      Lambda,
-      matrix(
-        data = 0,
-        nrow = nrow(Lambda),
-        ncol = nrow(Lambda),
-        dimnames = list(rownames(Lambda), colnames(Lambda))
-      )
-    )
-  }
+  parts <- constructGSCAObjectiveParts(.object)
+  Psi <- parts$Psi
+  Eta <- parts$Eta
+  A <- parts$A
+  S <- parts$S
   
-  if (!all(is.na(.object$Estimates$Unique_scores))) {
-    if (isTRUE(isMULTIGROUP)) {
-      D <- .object$Estimates$Unique_loading_estimates
-    } else {
-      D <- diag(.object$Estimates$Unique_loading_estimates)
-      rownames(D) <- names(.object$Estimates$Unique_loading_estimates)
-      colnames(D) <- names(.object$Estimates$Unique_loading_estimates)
-    }
-
-    S <- cbind(
-      .object$Estimates$Unique_scores %*% D,
-      matrix(
-        data = 0,
-        nrow = nrow(Eta),
-        ncol = ncol(Eta),
-        dimnames = list(rownames(Eta), colnames(Eta))
-      )
-    )
-  } else if (all(is.na(.object$Estimates$Unique_scores))) {
-    # Unique_scores should be NULL when GSCA and not GSCA_m/I-GSCA is run
-    S <- cbind(
-      matrix(
-        data = 0,
-        nrow = nrow(Z),
-        ncol = ncol(Z),
-        dimnames = list(rownames(Z), colnames(Z))
-      ),
-      matrix(
-        data = 0,
-        nrow = nrow(Eta),
-        ncol = ncol(Eta),
-        dimnames = list(rownames(Eta), colnames(Eta))
-      )
-    )
-  }
   # identical(colnames(Psi), colnames(S))
   # identical(colnames(Eta %*% A), colnames(S))
   SS_unexplained_variance <- sum(diag(t(Psi - (Eta %*% A) - S) %*% (Psi - (Eta %*% A) - S)))
@@ -2158,47 +2075,11 @@ calculateAFIT <- function(.object = NULL) {
 #' @export
 calculateFIT_m <- function(.object = NULL) {
 
-  # For multigroup models, block diagonalize each part (Z, Eta, Lambda, ...) so
-  # that the single-group algebra below yields one overall FIT_m for the model.
-  isMULTIGROUP <- FALSE
-  if (inherits(.object, "cSEMResults_multi")) {
-    if (inherits(.object, "cSEMResults_2ndorder")) {
-      stop2(
-        "The following error occured in the calculateFIT_m() function:\n",
-        "FIT statistics are not supported for second-order multigroup models."
-      )
-    }
-    if (.object[[1]]$Information$Arguments$.approach_weights != "GSCA") {
-      return(NA)
-    }
-    .object <- bdiagGSCA(.object)
-    isMULTIGROUP <- TRUE
-  } else if (.object$Information$Arguments$.approach_weights != "GSCA") {
-    return(NA)
-  }
-
-  Z <- .object$Information$Data
-  Eta <- .object$Estimates$Construct_scores
-  Lambda <- .object$Estimates$Loading_estimates
-  if (!all(is.na(.object$Estimates$Unique_scores))) {
-    if (isTRUE(isMULTIGROUP)) {
-      D <- .object$Estimates$Unique_loading_estimates
-    } else {
-      D <- diag(.object$Estimates$Unique_loading_estimates)
-      rownames(D) <- names(.object$Estimates$Unique_loading_estimates)
-      colnames(D) <- names(.object$Estimates$Unique_loading_estimates)
-    }
-    UD <- .object$Estimates$Unique_scores %*% D
-  } else if (all(is.na(.object$Estimates$Unique_scores))) {
-    # Unique_scores should be NA when GSCA and not GSCA_m/I-GSCA is run
-    UD <- matrix(
-      data = 0,
-      nrow = nrow(Z),
-      ncol = ncol(Z),
-      dimnames = list(rownames(Z), colnames(Z))
-    )
-  }
-  
+  parts <- constructGSCAObjectiveParts(.object)
+  Z <- parts$Z
+  Eta <- parts$Eta
+  Lambda <- parts$Lambda
+  UD <- parts$UD
   
   SS_unexplained_indicator_variance <- sum(diag(t(Z - (Eta %*% Lambda) - UD) %*% (Z - (Eta %*% Lambda) - UD)))
   SS_total_indicator_variance <- sum(diag(t(Z) %*% Z)) 
@@ -2212,28 +2093,11 @@ calculateFIT_m <- function(.object = NULL) {
 #' @export
 calculateFIT_s <- function(.object = NULL) {
 
-  # For multigroup models, block diagonalize each part (Gamma, B, ...) so
-  # that the single-group algebra below yields one overall FIT_s for the model.
-  if (inherits(.object, "cSEMResults_multi")) {
-    if (inherits(.object, "cSEMResults_2ndorder")) {
-      stop2(
-        "The following error occured in the calculateFIT_s() function:\n",
-        "FIT statistics are not supported for second-order multigroup models."
-      )
-    }
-    if (.object[[1]]$Information$Arguments$.approach_weights != "GSCA") {
-      return(NA)
-    }
-    .object <- bdiagGSCA(.object)
-  } else if (.object$Information$Arguments$.approach_weights != "GSCA") {
-    return(NA)
-  }
-
-  Eta <- .object$Estimates$Construct_scores
-  # I am fairly confident the transpose of B is what's needed
-  # See Gamma[1,] %*% t(B)
+  parts <- constructGSCAObjectiveParts(.object)
+  Eta <- parts$Eta
+  
   if (!all(is.null(.object$Estimates$Path_estimates))) {
-    B <- .object$Estimates$Path_estimates
+    B <- parts$B
   }
   else if (all(is.null(.object$Estimates$Path_estimates))) {
     B <- matrix(
