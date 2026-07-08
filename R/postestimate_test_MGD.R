@@ -723,7 +723,9 @@ testMGD <- function(
   teststat_Klesel <- teststat$Klesel
   
   # Calculation of p-values
-  pvalue_Klesel <- rowMeans(ref_dist_matrix_Klesel >= teststat_Klesel)
+  # pvalue_Klesel <- rowMeans(ref_dist_matrix_Klesel >= teststat_Klesel)
+  pvalue_Klesel <- (rowSums(ref_dist_matrix_Klesel >= teststat_Klesel) + 1) /
+    (ncol(ref_dist_matrix_Klesel) + 1)
   
   # Decision 
   # TRUE = p-value > alpha --> not reject
@@ -758,11 +760,14 @@ testMGD <- function(
     
     # Calculation of the p-values
     pvalue_Chin <- lapply(1:length(ref_dist_matrices_Chin), function(x) {
-      # Share of values above the positive test statistic
-      rowMeans(ref_dist_matrices_Chin[[x]] >= abs(teststat_Chin[[x]])) +
-        # share of values of the reference distribution below the negative test statistic 
-        rowMeans(ref_dist_matrices_Chin[[x]] <= (-abs(teststat_Chin[[x]])))
-    })
+    # # Share of values above the positive test statistic
+    # rowMeans(ref_dist_matrices_Chin[[x]] >= abs(teststat_Chin[[x]])) +
+    # # share of values of the reference distribution below the negative test statistic
+    # rowMeans(ref_dist_matrices_Chin[[x]] <= (-abs(teststat_Chin[[x]])))
+    # TODO: Confirm with Flo
+    (rowSums(abs(ref_dist_matrices_Chin[[x]]) >= abs(teststat_Chin[[x]])) + 1) /
+      (ncol(ref_dist_matrices_Chin[[x]]) + 1)
+  })
     
     names(pvalue_Chin) <- names(ref_dist_matrices_Chin)
     
@@ -811,7 +816,9 @@ testMGD <- function(
     ref_dist_matrix_Sarstedt <- do.call(cbind, ref_dist_Sarstedt)
     
     # Calculation of the p-value
-    pvalue_Sarstedt <- rowMeans(ref_dist_matrix_Sarstedt >= teststat_Sarstedt)
+    # pvalue_Sarstedt <- rowMeans(ref_dist_matrix_Sarstedt >= teststat_Sarstedt)
+    pvalue_Sarstedt <- (rowSums(ref_dist_matrix_Sarstedt >= teststat_Sarstedt) + 1) /
+                   (ncol(ref_dist_matrix_Sarstedt) + 1)
     
     # Adjust pvalues:
     padjusted_Sarstedt<- lapply(as.list(.approach_p_adjust), function(x){
