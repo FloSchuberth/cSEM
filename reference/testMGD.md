@@ -221,18 +221,21 @@ The following tests are implemented:
   compared, set `.saturated = TRUE`. To measure the distance between the
   model-implied variance-covariance matrices, the geodesic distance (dG)
   and the squared Euclidean distance (dL) are used. If more than two
-  groups are compared, the average distance over all groups is used.
+  groups are compared, the average distance over all groups is used. To
+  calculate the p-value, a correction is applied to ensure that the
+  p-value never equals 0 (Phipson and Smyth 2010) .
 
 - `.approach_mgd = "Sarstedt"`: Approach suggested by Sarstedt et
   al. (2011) :
 
   Groups are compared in terms of parameter differences across groups.
   Sarstedt et al. (2011) tests if parameter k is equal across all
-  groups. If several parameters are tested simultaneously it is
-  recommended to adjust the significance level or the p-values (in cSEM
-  correction is done by p-value). By default no multiple testing
-  correction is done, however, several common adjustments are available
-  via `.approach_p_adjust`. See
+  groups. To calculate the p-value, a correction is applied to ensure
+  that the p-value never equals 0 (Phipson and Smyth 2010) . If several
+  parameters are tested simultaneously it is recommended to adjust the
+  significance level or the p-values (in cSEM correction is done by
+  p-value). By default no multiple testing correction is done, however,
+  several common adjustments are available via `.approach_p_adjust`. See
   [`stats::p.adjust()`](https://rdrr.io/r/stats/p.adjust.html) for
   details. Note: the test has some severe shortcomings. Use with
   caution.
@@ -242,14 +245,16 @@ The following tests are implemented:
 
   Groups are compared in terms of parameter differences across groups.
   Chin and Dibbern (2010) tests if parameter k is equal between two
-  groups. If more than two groups are tested for equality, parameter k
-  is compared between all pairs of groups. In this case, it is
-  recommended to adjust the significance level or the p-values (in cSEM
-  correction is done by p-value) since this is essentially a multiple
-  testing setup. If several parameters are tested simultaneously,
-  correction is by group and number of parameters. By default no
-  multiple testing correction is done, however, several common
-  adjustments are available via `.approach_p_adjust`. See
+  groups. To calculate the p-value, a correction is applied to ensure
+  that the p-value never equals 0 (Phipson and Smyth 2010) . If more
+  than two groups are tested for equality, parameter k is compared
+  between all pairs of groups. In this case, it is recommended to adjust
+  the significance level or the p-values (in cSEM correction is done by
+  p-value) since this is essentially a multiple testing setup. If
+  several parameters are tested simultaneously, correction is by group
+  and number of parameters. By default no multiple testing correction is
+  done, however, several common adjustments are available via
+  `.approach_p_adjust`. See
   [`stats::p.adjust()`](https://rdrr.io/r/stats/p.adjust.html) for
   details.
 
@@ -410,6 +415,11 @@ Multigroup Comparison Using Partial Least Squares Path Modeling.”
 Nitzl C (2010). “Eine anwenderorientierte Einfuehrung in die Partial
 Least Square (PLS)-Methode.” In *Arbeitspapier*, number 21. Universitaet
 Hamburg, Institut fuer Industrielles Management, Hamburg.  
+  
+Phipson B, Smyth GK (2010). “Permutation P-values Should Never Be Zero:
+Calculating Exact P-values When Permutations Are Randomly Drawn.”
+*Statistical Applications in Genetics and Molecular Biology*, **9**(1).
+[doi:10.2202/1544-6115.1585](https://doi.org/10.2202/1544-6115.1585) .  
   
 Sarstedt M, Henseler J, Ringle CM (2011). “Multigroup Analysis in
 Partial Least Squares (PLS) Path Modeling: Alternative Methods and
