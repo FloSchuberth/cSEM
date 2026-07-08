@@ -2008,7 +2008,7 @@ calculateSRMR <- function(
   sqrt(sum(C_diff[lower.tri(C_diff, diag = T)]^2) / sum(lower.tri(C_diff, diag = T)))
 } 
 
-#' @describeIn fit_measures The measure of overall FIT for GSCA models (FIT)
+#' @describeIn fit_measures The measure of overall FIT for GSCA-type models (FIT)
 #' @export
 calculateFIT <- function(.object = NULL) {
 
@@ -2028,45 +2028,75 @@ calculateFIT <- function(.object = NULL) {
   } else if (.object$Information$Arguments$.approach_weights != "GSCA") {
     return(NA)
   } else {
-    .object$Estimates$Unique_loading_estimates <- diag(.object$Estimates$Unique_loading_estimates)
+    D <- diag(.object$Estimates$Unique_loading_estimates)
   }
 
   # As shown in Equation 4 and 6 the GSCA_m publication (Hwang et al., 2017)
-  Gamma <- .object$Estimates$Construct_scores
+  Eta <- .object$Estimates$Construct_scores
   Z <- .object$Information$Data
-  Psi <- cbind(Z, Gamma)
-  # TODO: Confirm whether transpose of Path_estimates is or is not needed
-  # See Gamma[1,] %*% t(...$Path_estimates)
-  if (!all(is.na(.object$Estimates$Path_estimates))) {
+  Psi <- cbind(Z, Eta)
+  Lambda <- .object$Estimates$Loading_estimates
+  B <- .object$Estimates$Path_estimates
+  if (!all(is.na(B))) {
+    # Eta[, 1, drop = FALSE] %*% Lambda[1, , drop = FALSE]
+    # Eta[, 1, drop = FALSE] %*% Lambda[1, 1, drop = FALSE] 
+
+    # Eta[,1,drop = FALSE] %*% t(B)[1,2, drop = FALSE]
+    # Eta[,3,drop = FALSE] %*% t(B)[3,4, drop = FALSE]
+
     # If there's a structural model
-    A <- cbind(.object$Estimates$Loading_estimates,
-               t(.object$Estimates$Path_estimates))
+    # Path_estimates is row = to; column = from
+    # t(Path_estimates) is row = from; column = to
+    # Eta[,1, drop = FALSE] * t(B)[1,2]
+    A <- cbind(
+      Lambda,
+      t(B)
+    )
   }
-  else if (all(is.na(.object$Estimates$Path_estimates))) {
+  else if (all(is.na(B))) {
     # The rows of the Loading estimates correspond to the construct names
-    A <- cbind(.object$Estimates$Loading_estimates,
-               matrix(data = 0,
-                      nrow = nrow(.object$Estimates$Loading_estimates), 
-                      ncol = nrow(.object$Estimates$Loading_estimates))
-                      )
+    A <- cbind(
+      Lambda,
+      matrix(
+        data = 0,
+        nrow = nrow(Lambda),
+        ncol = nrow(Lambda),
+        dimnames = list(rownames(Lambda), colnames(Lambda))
+      )
+    )
   }
   
   if (!all(is.na(.object$Estimates$Unique_scores))) {
     # TODO: Verify that the dimensions of this extraction are correct and that the matrix multiplication is correct
     S <- cbind(
-      .object$Estimates$Unique_scores %*%
-        .object$Estimates$Unique_loading_estimates,
-      matrix(data = 0, nrow = nrow(Gamma), ncol = ncol(Gamma))
+      .object$Estimates$Unique_scores %*% D,
+      matrix(
+        data = 0,
+        nrow = nrow(Eta),
+        ncol = ncol(Eta),
+        dimnames = list(rownames(Eta), colnames(Eta))
+      )
     )
   } else if (all(is.na(.object$Estimates$Unique_scores))) {
     # Unique_scores should be NULL when GSCA and not GSCA_m/I-GSCA is run
     S <- cbind(
-      matrix(data = 0, nrow(Z), ncol = ncol(Z)),
-      matrix(data = 0, nrow(Gamma), ncol = ncol(Gamma))
+      matrix(
+        data = 0,
+        nrow = nrow(Z),
+        ncol = ncol(Z),
+        dimnames = list(rownames(Z), colnames(Z))
+      ),
+      matrix(
+        data = 0,
+        nrow = nrow(Eta),
+        ncol = ncol(Eta),
+        dimnames = list(rownames(Eta), colnames(Eta))
+      )
     )
   }
   
-  SS_unexplained_variance <- sum(diag(t(Psi - (Gamma %*% A) - S) %*% (Psi - (Gamma %*% A) - S)))
+  SS_unexplained_variance <- sum(diag(t(Psi - (Eta %*% A) - S) %*% (Psi - (Eta %*% A) - S)))
+  # The total variance of each (group's) indicator or construct seems to depend on the number of samples (in that group) - 1
   SS_total_variance <- sum(diag(t(Psi) %*% (Psi)))
   FIT <- 1 - (SS_unexplained_variance / SS_total_variance)
   
