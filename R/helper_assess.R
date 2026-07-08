@@ -2123,7 +2123,7 @@ calculateAFIT <- function(.object = NULL) {
     nPath <- sum(.object[[1]]$Information$Model$structural)
     nLoadings <- sum(.object[[1]]$Information$Model$measurement)
     nWeights <- nLoadings 
-    nUniqueLoadings <- sum(.object[[1]]$Information$Model$construct_type == "Common factor")
+    nUniqueLoadings <- sum(.object[[1]]$Information$Model$measurement[.object[[1]]$Information$Model$construct_type == "Common factor", ])
 
     npar <- (nPath + nLoadings + nWeights + nUniqueLoadings) * length(.object)
 
@@ -2134,7 +2134,7 @@ calculateAFIT <- function(.object = NULL) {
     nPath <- sum(.object$Information$Model$structural)
     nLoadings <- sum(.object$Information$Model$measurement)
     nWeights <- nLoadings 
-    nUniqueLoadings <- sum(.object$Information$Model$construct_type == "Common factor")
+    nUniqueLoadings <- sum(.object$Information$Model$measurement[.object$Information$Model$construct_type == "Common factor", ])
 
     npar <- nPath + nLoadings + nWeights + nUniqueLoadings
     d_1 <- d_0 - npar 
