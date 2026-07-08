@@ -2095,11 +2095,9 @@ calculateFIT_s <- function(.object = NULL) {
 
   parts <- constructGSCAObjectiveParts(.object)
   Eta <- parts$Eta
+  B <- parts$B
   
-  if (!all(is.null(.object$Estimates$Path_estimates))) {
-    B <- parts$B
-  }
-  else if (all(is.null(.object$Estimates$Path_estimates))) {
+  if (is.null(parts$B)) {
     B <- matrix(
       data = 0,
       nrow = ncol(Eta),
