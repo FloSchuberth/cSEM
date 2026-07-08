@@ -2075,7 +2075,6 @@ calculateFIT <- function(.object = NULL) {
       colnames(D) <- names(.object$Estimates$Unique_loading_estimates)
     }
 
-    # TODO: Verify that the dimensions of this extraction are correct and that the matrix multiplication is correct
     S <- cbind(
       .object$Estimates$Unique_scores %*% D,
       matrix(
