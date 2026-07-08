@@ -2150,7 +2150,7 @@ calculateAFIT <- function(.object = NULL) {
 #' @export
 calculateFIT_m <- function(.object = NULL) {
 
-  # For multigroup models, block diagonalize each part (Z, Gamma, C, ...) so
+  # For multigroup models, block diagonalize each part (Z, Eta, Lambda, ...) so
   # that the single-group algebra below yields one overall FIT_m for the model.
   if (inherits(.object, "cSEMResults_multi")) {
     if (inherits(.object, "cSEMResults_2ndorder")) {
@@ -2166,22 +2166,26 @@ calculateFIT_m <- function(.object = NULL) {
   } else if (.object$Information$Arguments$.approach_weights != "GSCA") {
     return(NA)
   } else {
-    .object$Estimates$Unique_loading_estimates <- diag(.object$Estimates$Unique_loading_estimates)
+    D <- diag(.object$Estimates$Unique_loading_estimates)
   }
 
   Z <- .object$Information$Data
-  Gamma <- .object$Estimates$Construct_scores
-  C <- .object$Estimates$Loading_estimates
+  Eta <- .object$Estimates$Construct_scores
+  Lambda <- .object$Estimates$Loading_estimates
   if (!all(is.na(.object$Estimates$Unique_scores))) {
-    UD <- .object$Estimates$Unique_scores %*% .object$Estimates$Unique_loading_estimates
-    
+    UD <- .object$Estimates$Unique_scores %*% D
   } else if (all(is.na(.object$Estimates$Unique_scores))) {
-    # Unique_scores should be NA when GSCA and not GSCA_m/I-GSCA is run 
-    UD <- matrix(data = 0, nrow(Z), ncol = ncol(Z))  
+    # Unique_scores should be NA when GSCA and not GSCA_m/I-GSCA is run
+    UD <- matrix(
+      data = 0,
+      nrow = nrow(Z),
+      ncol = ncol(Z),
+      dimnames = list(rownames(Z), colnames(Z))
+    )
   }
   
   
-  SS_unexplained_indicator_variance <- sum(diag(t(Z - (Gamma %*% C) - UD) %*% (Z - (Gamma %*% C) - UD)))
+  SS_unexplained_indicator_variance <- sum(diag(t(Z - (Eta %*% Lambda) - UD) %*% (Z - (Eta %*% Lambda) - UD)))
   SS_total_indicator_variance <- sum(diag(t(Z) %*% Z)) 
   
   FIT_m <- 1 - (SS_unexplained_indicator_variance / SS_total_indicator_variance)
@@ -2210,20 +2214,24 @@ calculateFIT_s <- function(.object = NULL) {
     return(NA)
   }
 
-  Gamma <- .object$Estimates$Construct_scores
-  # TODO: Verify what part of the path estimates matrix is needed
+  Eta <- .object$Estimates$Construct_scores
   # I am fairly confident the transpose of B is what's needed
   # See Gamma[1,] %*% t(B)
   if (!all(is.null(.object$Estimates$Path_estimates))) {
     B <- t(.object$Estimates$Path_estimates)
   }
   else if (all(is.null(.object$Estimates$Path_estimates))) {
-    B <- matrix(data = 0, nrow = ncol(Gamma), ncol = ncol(Gamma))
+    B <- matrix(
+      data = 0,
+      nrow = ncol(Eta),
+      ncol = ncol(Eta),
+      dimnames = list(colnames(Eta), colnames(Eta))
+    )
   }
   
   
-  SS_unexplained_construct_variance <- sum(diag(t(Gamma - (Gamma %*% B)) %*% (Gamma - (Gamma %*% B))))
-  SS_total_construct_variance <- sum(diag(t(Gamma) %*% (Gamma)))
+  SS_unexplained_construct_variance <- sum(diag(t(Eta - (Eta %*% B)) %*% (Eta - (Eta %*% B))))
+  SS_total_construct_variance <- sum(diag(t(Eta) %*% (Eta)))
   
   FIT_s <- 1 - (SS_unexplained_construct_variance / SS_total_construct_variance)
   
