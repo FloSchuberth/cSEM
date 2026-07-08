@@ -588,7 +588,11 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
 #'
 #' @return List of Psi, Z, Eta, A, Lambda, B, S and UD matrices 
 constructGSCAObjectiveParts <- function(.object) {
-  
+  if (all(.object$Information$Model$structural == 0)) {
+    HasStructural <- FALSE
+  } else {
+    HasStructural <- TRUE
+  }
   # For multigroup models, block diagonalize each part (Z, Gamma, C, ...) so
   # that the single-group algebra below yields one overall FIT for the model.
   isMULTIGROUP <- FALSE
@@ -613,8 +617,8 @@ constructGSCAObjectiveParts <- function(.object) {
   Z <- .object$Information$Data
   Psi <- cbind(Z, Eta)
   Lambda <- .object$Estimates$Loading_estimates
-  B <- .object$Estimates$Path_estimates
-  if (!all(is.na(B))) {
+  
+  if (isTRUE(HasStructural)) {
     # Eta[, 1, drop = FALSE] %*% Lambda[1, , drop = FALSE]
     # Eta[, 1, drop = FALSE] %*% Lambda[1, 1, drop = FALSE] 
 
@@ -625,21 +629,23 @@ constructGSCAObjectiveParts <- function(.object) {
     # Path_estimates is row = to; column = from
     # t(Path_estimates) is row = from; column = to
     # Eta[,1, drop = FALSE] * t(B)[1,2]
+    B <- .object$Estimates$Path_estimates
     A <- cbind(
       Lambda,
       t(B)
     )
   }
-  else if (all(is.na(B))) {
+  else {
     # The rows of the Loading estimates correspond to the construct names
-    A <- cbind(
-      Lambda,
-      matrix(
+    B <- matrix(
         data = 0,
         nrow = nrow(Lambda),
         ncol = nrow(Lambda),
         dimnames = list(rownames(Lambda), colnames(Lambda))
       )
+    A <- cbind(
+      Lambda,
+      B
     )
   }
   

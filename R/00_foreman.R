@@ -206,6 +206,10 @@ foreman <- function(
       stop2("cSEM does not support using an .approach_paths other than OLS for GSCA.")
     }
 
+    if (all(csem_model$structural == 0)) {
+      stop2("GSCA in cSEM does not currently support fitting models without a structural model. The estimation routine and associated FIT functions are not guaranteed to be compatible.")
+    }
+
     if (all(csem_model$construct_type == "Common factor")) {
       if (isTRUE(.disattenuate)) {
         W <- calculateWeightsGSCAm(
