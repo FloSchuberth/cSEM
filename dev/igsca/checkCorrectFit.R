@@ -1,0 +1,153 @@
+# GSCA -------------------------------------------------------------------
+gsca_model <- "
+# Composite Model
+NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3
+HonestyHumility <~ Honesty1 + Honesty2 + Honesty3
+
+# Structural Model
+NetworkingBehavior ~ HonestyHumility
+"
+
+data(LeDang2022)
+
+dat <- rbind(
+  subset(LeDang2022, Gender == "Male")[1:10,],
+  subset(LeDang2022, Gender == "Female")[1:10,]
+)
+
+
+gsca <- csem(
+  .data = dat,
+  gsca_model,
+  .approach_weights = "GSCA",
+  .dominant_indicators = NULL,
+  .tolerance = 0.0001,
+  .conv_criterion = "sum_diff_absolute"
+)
+
+gsca_mg <- csem(
+  .data = dat,
+  gsca_model,
+  .approach_weights = "GSCA",
+  .dominant_indicators = NULL,
+  .tolerance = 0.0001,
+  .conv_criterion = "sum_diff_absolute",
+  .id = "Gender"
+)
+
+# debugonce(calculateFIT)
+calculateFIT(gsca)
+# debugonce(calculateFIT)
+calculateFIT(gsca_mg)
+
+# debugonce(calculateAFIT)
+calculateAFIT(gsca)
+# debugonce(calculateAFIT)
+calculateAFIT(gsca_mg)
+
+# debugonce(calculateFIT_m)
+calculateFIT_m(gsca)
+# debugonce(calculateFIT_m)
+calculateFIT_m(gsca_mg)
+
+# debugonce(calculateFIT_s)
+calculateFIT_s(gsca)
+# debugonce(calculateFIT_s)
+calculateFIT_s(gsca_mg)
+
+# GSCAM ------------------------------------------------------------------
+gscam_model <- "
+# Latent Varible Model
+NetworkingBehavior =~ Behavior1 + Behavior2 + Behavior3
+HonestyHumility =~ Honesty1 + Honesty2 + Honesty3
+
+# Structural Model
+NetworkingBehavior ~ HonestyHumility
+"
+
+gscam <- csem(
+  .data = dat,
+  gscam_model,
+  .approach_weights = "GSCA",
+  .dominant_indicators = NULL,
+  .tolerance = 0.0001,
+  .conv_criterion = "sum_diff_absolute"
+)
+
+gscam_mg <- csem(
+  .data = dat,
+  gscam_model,
+  .approach_weights = "GSCA",
+  .dominant_indicators = NULL,
+  .tolerance = 0.0001,
+  .conv_criterion = "sum_diff_absolute",
+  .id = "Gender"
+)
+
+# debugonce(calculateFIT)
+calculateFIT(gscam)
+# debugonce(calculateFIT)
+# debugonce(bdiagGSCA)
+calculateFIT(gscam_mg)
+
+# debugonce(calculateAFIT)
+calculateAFIT(gscam)
+# debugonce(calculateAFIT)
+calculateAFIT(gscam_mg)
+
+# debugonce(calculateFIT_m)
+calculateFIT_m(gscam)
+# debugonce(calculateFIT_m)
+calculateFIT_m(gscam_mg)
+
+# debugonce(calculateFIT_s)
+calculateFIT_s(gscam)
+calculateFIT_s(gscam_mg)
+
+# IGSCA ------------------------------------------------------------------
+igsca_model <- "
+# Composite Model
+NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3
+
+# Latent Variable Model
+HonestyHumility =~ Honesty1 + Honesty2 + Honesty3
+
+# Structural Model
+NetworkingBehavior ~ HonestyHumility
+"
+
+igsca <- csem(
+  .data = dat,
+  igsca_model,
+  .approach_weights = "GSCA",
+  .dominant_indicators = NULL,
+  .tolerance = 0.0001,
+  .conv_criterion = "sum_diff_absolute"
+)
+
+igsca_mg <- csem(
+  .data = dat,
+  igsca_model,
+  .approach_weights = "GSCA",
+  .dominant_indicators = NULL,
+  .tolerance = 0.0001,
+  .conv_criterion = "sum_diff_absolute",
+  .id = "Gender"
+)
+
+# debugonce(calculateFIT)
+calculateFIT(igsca)
+calculateFIT(igsca_mg)
+
+# debugonce(calculateAFIT)
+calculateAFIT(igsca)
+# debugonce(calculateAFIT)
+calculateAFIT(igsca_mg)
+
+debugonce(calculateFIT_m)
+calculateFIT_m(igsca)
+calculateFIT_m(igsca_mg)
+
+debugonce(calculateFIT_s)
+calculateFIT_s(igsca)
+calculateFIT_s(igsca_mg)
