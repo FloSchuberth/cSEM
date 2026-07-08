@@ -1062,12 +1062,20 @@ calculateWeightsIGSCA <- function(
   b_index <- which(c(B0) == 1)
 
   ### Initial Values ------------------------------------
+  # When the model has no structural paths (b_index is empty), plain GSCA in
+  # canonical mode (CCMP, the composite default) cannot supply starting
+  # values: a CCMP composite's loadings are fixed to zero, so with B = 0 its
+  # weights drop out of the GSCA criterion entirely and the weight update
+  # degenerates to 0/0 = NaN. Requesting NCMP keeps the measurement (loading)
+  # block in the criterion, which yields well-defined starting weights
+  # (essentially each block's first principal component). This only affects
+  # the starting values, not the modes used in the IGSCA iterations.
   GSCA_starting_values <- calculateWeightsGSCA(
     .X = .data,
     .S = .S,
     .csem_model = .csem_model,
     .conv_criterion = .conv_criterion,
-    .GSCA_modes = .GSCA_modes,
+    .GSCA_modes = if (length(b_index) == 0) "NCMP" else .GSCA_modes,
     .iter_max = 10,
     .tolerance = .tolerance,
     .starting_values = .starting_values

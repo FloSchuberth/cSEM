@@ -219,16 +219,21 @@ resampleData <- function(
   # Save old seed and restore on exit! This is important since users may have
   # set a seed before, in which case the global seed would be
   # overwritten if not explicitly restored
+  # Note: .Random.seed does not exist in a fresh R session until the RNG has
+  #       been used at least once (e.g. in testthat subprocesses). Drawing one
+  #       random number initializes it. Only done when missing so that an
+  #       existing user seed is left untouched.
+  if(!exists(".Random.seed", envir = globalenv())) runif(1)
   old_seed <- .Random.seed
   on.exit({.Random.seed <<- old_seed})
-  
+
   ## Create seed if not already set
   if(is.null(.seed)) {
     set.seed(seed = NULL)
     # Note (08.12.2019): Its crucial to call set.seed(seed = NULL) before
     # drawing a random seed out of .Random.seed. If set.seed(seed = NULL) is not
     # called sample(.Random.seed, 1) would result in the same random seed as
-    # long as .Random.seed remains unchanged. By resetting the seed we make 
+    # long as .Random.seed remains unchanged. By resetting the seed we make
     # sure that sample draws a different element everytime it is called.
     .seed <- sample(.Random.seed, 1)
   }

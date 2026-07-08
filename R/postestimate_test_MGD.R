@@ -592,6 +592,10 @@ testMGD <- function(
     # Save old seed and restore on exit! This is important since users may have
     # set a seed before, in which case the global seed would be
     # overwritten if not explicitly restored
+    # Note: .Random.seed does not exist until the RNG has been used at least
+    #       once in the session. Drawing one random number initializes it.
+    #       Only done when missing so an existing user seed is left untouched.
+    if(!exists(".Random.seed", envir = globalenv())) runif(1)
     old_seed <- .Random.seed
     on.exit({.Random.seed <<- old_seed})
     

@@ -206,8 +206,40 @@ foreman <- function(
       stop2("cSEM does not support using an .approach_paths other than OLS for GSCA.")
     }
 
+    # Models without a structural model are only a problem for canonical
+    # (CCMP-mode) composites: with no structural paths their weights do not
+    # enter the GSCA/IGSCA least-squares criterion at all (their loadings are
+    # fixed to zero, so their block of A = cbind(Lambda, B) is entirely zero)
+    # and are therefore not identified. Common factors (GSCA_M) and NCMP-mode
+    # composites remain identified through their loadings.
     if (all(csem_model$structural == 0)) {
-      stop2("GSCA in cSEM does not currently support fitting models without a structural model. The estimation routine and associated FIT functions are not guaranteed to be compatible.")
+      # Effective mode of each composite: CCMP by default, possibly
+      # overridden via .GSCA_modes (mirrors the resolution in
+      # calculateWeightsGSCA()).
+      composite_modes <- rep(
+        "CCMP",
+        sum(csem_model$construct_type == "Composite")
+      )
+      names(composite_modes) <-
+        names(csem_model$construct_type)[csem_model$construct_type == "Composite"]
+
+      if (!is.null(.GSCA_modes)) {
+        if (length(names(.GSCA_modes)) != 0) {
+          overridden <- intersect(names(.GSCA_modes), names(composite_modes))
+          composite_modes[overridden] <- unlist(.GSCA_modes[overridden])
+        } else {
+          composite_modes[] <- unlist(.GSCA_modes)
+        }
+      }
+
+      if (any(composite_modes == "CCMP")) {
+        stop2(
+          "The weights of canonical (CCMP-mode) composites are not identified ",
+          "in models without a structural model, since they do not enter the ",
+          "GSCA/IGSCA estimation criterion. Either give each composite at ",
+          "least one structural path or set .GSCA_modes = 'NCMP'."
+        )
+      }
     }
 
     if (all(csem_model$construct_type == "Common factor")) {
