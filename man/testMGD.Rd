@@ -132,21 +132,25 @@ matrix based on a saturated structural model should be compared, set \code{.satu
 To measure the distance between the model-implied variance-covariance matrices,
 the geodesic distance (dG) and the squared Euclidean distance (dL) are used.
 If more than two groups are compared, the average distance over all groups
-is used.}
+is used.
+To calculate the p-value, a correction is applied to ensure that the p-value never equals 0 \insertCite{Phipson2010}{cSEM}.}
 \item{\code{.approach_mgd = "Sarstedt"}: Approach suggested by \insertCite{Sarstedt2011;textual}{cSEM}}{
 Groups are compared in terms of parameter differences across groups.
 \insertCite{Sarstedt2011;textual}{cSEM} tests if parameter k is equal
-across all groups. If several parameters are tested simultaneously
-it is recommended to adjust the significance  level or the p-values (in \pkg{cSEM} correction is
-done by p-value). By default
-no multiple testing correction is done, however, several common
-adjustments are available via \code{.approach_p_adjust}. See
+across all groups. To calculate the p-value, a correction is applied to
+ensure that the p-value never equals 0 \insertCite{Phipson2010}{cSEM}.
+If several parameters are tested simultaneously it is recommended to adjust
+the significance  level or the p-values (in \pkg{cSEM} correction is
+done by p-value). By default no multiple testing correction is done, however,
+several common adjustments are available via \code{.approach_p_adjust}. See
 \code{\link[stats:p.adjust]{stats::p.adjust()}} for details. Note: the
 test has some severe shortcomings. Use with caution.}
 \item{\code{.approach_mgd = "Chin"}: Approach suggested by \insertCite{Chin2010;textual}{cSEM}}{
 Groups are compared in terms of parameter differences across groups.
 \insertCite{Chin2010;textual}{cSEM} tests if parameter k is equal
-between two groups. If more than two groups are tested for equality, parameter
+between two groups. To calculate the p-value, a correction is applied
+to ensure that the p-value never equals 0 \insertCite{Phipson2010}{cSEM}.
+If more than two groups are tested for equality, parameter
 k is compared between all pairs of groups. In this case, it is recommended
 to adjust the significance  level or the p-values (in \pkg{cSEM} correction is
 done by p-value) since this is essentially a multiple testing setup.
