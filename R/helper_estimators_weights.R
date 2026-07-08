@@ -588,13 +588,10 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
 #'
 #' @return List of Psi, Z, Eta, A, Lambda, B, S and UD matrices 
 constructGSCAObjectiveParts <- function(.object) {
-  if (all(.object$Information$Model$structural == 0)) {
-    HasStructural <- FALSE
-  } else {
-    HasStructural <- TRUE
-  }
+  
   # For multigroup models, block diagonalize each part (Z, Gamma, C, ...) so
   # that the single-group algebra below yields one overall FIT for the model.
+  HasStructural <- TRUE
   isMULTIGROUP <- FALSE
   if (inherits(.object, "cSEMResults_multi")) {
     if (inherits(.object, "cSEMResults_2ndorder")) {
@@ -606,11 +603,16 @@ constructGSCAObjectiveParts <- function(.object) {
     if (.object[[1]]$Information$Arguments$.approach_weights != "GSCA") {
       return(NA)
     }
+    if (all(.object[[1]]$Information$Model$structural == 0)) {
+      HasStructural <- FALSE
+    } 
     .object <- bdiagGSCA(.object)
     isMULTIGROUP <- TRUE
   } else if (.object$Information$Arguments$.approach_weights != "GSCA") {
     return(NA)
-  }
+  } else if (all(.object$Information$Model$structural == 0)) {
+    HasStructural <- FALSE
+  } 
 
   # As shown in Equation 4 and 6 the GSCA_m publication (Hwang et al., 2017)
   Eta <- .object$Estimates$Construct_scores
@@ -641,7 +643,7 @@ constructGSCAObjectiveParts <- function(.object) {
         data = 0,
         nrow = nrow(Lambda),
         ncol = nrow(Lambda),
-        dimnames = list(rownames(Lambda), colnames(Lambda))
+        dimnames = list(rownames(Lambda), rownames(Lambda))
       )
     A <- cbind(
       Lambda,
