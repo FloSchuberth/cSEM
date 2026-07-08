@@ -2014,6 +2014,7 @@ calculateFIT <- function(.object = NULL) {
 
   # For multigroup models, block diagonalize each part (Z, Gamma, C, ...) so
   # that the single-group algebra below yields one overall FIT for the model.
+  isMULTIGROUP <- FALSE
   if (inherits(.object, "cSEMResults_multi")) {
     if (inherits(.object, "cSEMResults_2ndorder")) {
       stop2(
@@ -2025,12 +2026,9 @@ calculateFIT <- function(.object = NULL) {
       return(NA)
     }
     .object <- bdiagGSCA(.object)
+    isMULTIGROUP <- TRUE
   } else if (.object$Information$Arguments$.approach_weights != "GSCA") {
     return(NA)
-  } else {
-    D <- diag(.object$Estimates$Unique_loading_estimates)
-    rownames(D) <- names(.object$Estimates$Unique_loading_estimates)
-    colnames(D) <- names(.object$Estimates$Unique_loading_estimates)
   }
 
   # As shown in Equation 4 and 6 the GSCA_m publication (Hwang et al., 2017)
@@ -2069,6 +2067,14 @@ calculateFIT <- function(.object = NULL) {
   }
   
   if (!all(is.na(.object$Estimates$Unique_scores))) {
+    if (isTRUE(isMULTIGROUP)) {
+      D <- .object$Estimates$Unique_loading_estimates
+    } else {
+      D <- diag(.object$Estimates$Unique_loading_estimates)
+      rownames(D) <- names(.object$Estimates$Unique_loading_estimates)
+      colnames(D) <- names(.object$Estimates$Unique_loading_estimates)
+    }
+
     # TODO: Verify that the dimensions of this extraction are correct and that the matrix multiplication is correct
     S <- cbind(
       .object$Estimates$Unique_scores %*% D,
@@ -2096,7 +2102,8 @@ calculateFIT <- function(.object = NULL) {
       )
     )
   }
-  
+  # identical(colnames(Psi), colnames(S))
+  # identical(colnames(Eta %*% A), colnames(S))
   SS_unexplained_variance <- sum(diag(t(Psi - (Eta %*% A) - S) %*% (Psi - (Eta %*% A) - S)))
   # The total variance of each (group's) indicator or construct seems to depend on the number of samples (in that group) - 1
   SS_total_variance <- sum(diag(t(Psi) %*% (Psi)))
@@ -2154,6 +2161,7 @@ calculateFIT_m <- function(.object = NULL) {
 
   # For multigroup models, block diagonalize each part (Z, Eta, Lambda, ...) so
   # that the single-group algebra below yields one overall FIT_m for the model.
+  isMULTIGROUP <- FALSE
   if (inherits(.object, "cSEMResults_multi")) {
     if (inherits(.object, "cSEMResults_2ndorder")) {
       stop2(
@@ -2165,16 +2173,22 @@ calculateFIT_m <- function(.object = NULL) {
       return(NA)
     }
     .object <- bdiagGSCA(.object)
+    isMULTIGROUP <- TRUE
   } else if (.object$Information$Arguments$.approach_weights != "GSCA") {
     return(NA)
-  } else {
-    D <- diag(.object$Estimates$Unique_loading_estimates)
   }
 
   Z <- .object$Information$Data
   Eta <- .object$Estimates$Construct_scores
   Lambda <- .object$Estimates$Loading_estimates
   if (!all(is.na(.object$Estimates$Unique_scores))) {
+    if (isTRUE(isMULTIGROUP)) {
+      D <- .object$Estimates$Unique_loading_estimates
+    } else {
+      D <- diag(.object$Estimates$Unique_loading_estimates)
+      rownames(D) <- names(.object$Estimates$Unique_loading_estimates)
+      colnames(D) <- names(.object$Estimates$Unique_loading_estimates)
+    }
     UD <- .object$Estimates$Unique_scores %*% D
   } else if (all(is.na(.object$Estimates$Unique_scores))) {
     # Unique_scores should be NA when GSCA and not GSCA_m/I-GSCA is run

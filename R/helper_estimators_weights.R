@@ -609,7 +609,12 @@ bdiagGSCA <- function(.object) {
       })
 
       if (estName == "Unique_loading_estimates") {
-        extraction <- lapply(extraction, diag)
+        extraction <- lapply(extraction, function(x) {
+          mx <- diag(x)
+          rownames(mx) <- names(x)
+          colnames(mx) <- names(x)
+          return(mx)
+        })
       }
     } else if (estName == "Data") {
       extraction <- lapply(.object, function(group) {
