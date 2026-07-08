@@ -1123,3 +1123,108 @@ CustomerLoyality ~ CustomerSatisfaction + Competence + Likeability'
 #   expect_true(res$Information$Weight_info$Convergence_status)
 #   expect_equal(rownames(res$Estimates$Weight_estimates), c("eta1", "eta2", "eta3"))
 # })
+# calculateGSCAErrors --------------------------------------------------------
+test_that("calculateGSCAErrors works for single and multigroup GSCA, GSCA-M and IGSCA models:", {
+  model_GSCA = "
+# Measurement models
+OrgPres <~ cei1 + cei2 + cei3
+OrgIden <~ ma1 + ma2 + ma3
+AffJoy <~ orgcmt1 + orgcmt2 + orgcmt3
+AffLove  <~ orgcmt5 + orgcmt6 + orgcmt8
+
+# Structural model
+OrgIden ~ OrgPres
+AffLove ~ OrgIden
+AffJoy  ~ OrgIden"
+
+  model_GSCAM = "
+# Measurement models
+OrgPres =~ cei1 + cei2 + cei3
+OrgIden =~ ma1 + ma2 + ma3
+AffJoy =~ orgcmt1 + orgcmt2 + orgcmt3
+AffLove  =~ orgcmt5 + orgcmt6 + orgcmt8
+
+# Structural model
+OrgIden ~ OrgPres
+AffLove ~ OrgIden
+AffJoy  ~ OrgIden"
+
+  model_IGSCA = "
+# Measurement models
+OrgPres =~ cei1 + cei2 + cei3
+OrgIden <~ ma1 + ma2 + ma3
+AffJoy <~ orgcmt1 + orgcmt2 + orgcmt3
+AffLove  <~ orgcmt5 + orgcmt6 + orgcmt8
+
+# Structural model
+OrgIden ~ OrgPres
+AffLove ~ OrgIden
+AffJoy  ~ OrgIden"
+
+  models <- list(
+    GSCA = model_GSCA,
+    GSCAM = model_GSCAM,
+    IGSCA = model_IGSCA
+  )
+
+  # Single group and multigroup fits for each GSCA flavor
+  fits_single <- lapply(models, function(m) {
+    csem(
+      .data = BergamiBagozzi2000,
+      .model = m,
+      .approach_weights = "GSCA",
+      .tolerance = 1e-5,
+      .conv_criterion = "sum_diff_absolute",
+      .GSCA_modes = "NCMP"
+    )
+  })
+
+  fits_mg <- lapply(models, function(m) {
+    csem(
+      .data = BergamiBagozzi2000,
+      .model = m,
+      .approach_weights = "GSCA",
+      .id = "gender",
+      .tolerance = 1e-5,
+      .conv_criterion = "sum_diff_absolute",
+      .GSCA_modes = "NCMP"
+    )
+  })
+
+  for (fit in c(fits_single, fits_mg)) {
+    expect_no_error(E <- calculateGSCAErrors(fit))
+
+    parts <- constructGSCAObjectiveParts(fit)
+
+    # Shape: one row per observation, one column per indicator and construct
+    expect_true(is.matrix(E))
+    expect_identical(dim(E), dim(parts$Psi))
+    expect_identical(colnames(E), colnames(parts$Psi))
+
+    # First block = indicator errors, second block = construct errors.
+    # Subset by position: multigroup models block diagonalize each group's
+    # matrices, so column names are duplicated across groups.
+    p <- ncol(parts$Z)
+    q <- ncol(parts$Eta)
+    expect_equal(
+      E[, seq_len(p), drop = FALSE],
+      parts$Z - (parts$Eta %*% parts$Lambda) - parts$UD,
+      ignore_attr = TRUE
+    )
+    expect_equal(
+      E[, p + seq_len(q), drop = FALSE],
+      parts$Eta - (parts$Eta %*% t(parts$B)),
+      ignore_attr = TRUE
+    )
+
+    # Consistency with calculateFIT: FIT = 1 - ||E||^2 / ||Psi||^2
+    expect_equal(
+      1 - sum(E^2) / sum(parts$Psi^2),
+      calculateFIT(fit)
+    )
+  }
+
+  # Non-GSCA objects: constructGSCAObjectiveParts returns NA, so must we
+  fit_pls <- csem(.data = BergamiBagozzi2000, .model = model_GSCA)
+  expect_identical(calculateGSCAErrors(fit_pls), NA)
+})

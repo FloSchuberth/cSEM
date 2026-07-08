@@ -690,7 +690,37 @@ constructGSCAObjectiveParts <- function(.object) {
   }
 
   return(list(Psi = Psi, Z = Z, Eta = Eta, Lambda = Lambda, B = B, A = A, S = S, UD = UD))
-  
+
+}
+
+#' Calculate the matrix of indicator and construct errors for GSCA-type models
+#'
+#' Computes the residual matrix of the GSCA-type least squares objective
+#' function, i.e. `Psi - (Eta %*% A) - S`, based on the output of
+#' `constructGSCAObjectiveParts`. The columns corresponding to the indicators
+#' contain the indicator errors (`Z - Eta %*% Lambda - UD`) and the columns
+#' corresponding to the constructs contain the construct errors
+#' (`Eta - Eta %*% t(B)`). For multigroup models the rows of all groups are
+#' stacked, with the parameter matrices block diagonalized by `bdiagGSCA`.
+#'
+#' This function is not intended to be user-facing.
+#'
+#' @inheritParams csem_arguments
+#'
+#' @return A numeric matrix with one row per observation and one column per
+#'   indicator and construct, or `NA` if `.object` was not estimated with
+#'   `.approach_weights = "GSCA"`.
+#' @keywords internal
+calculateGSCAErrors <- function(.object) {
+
+  parts <- constructGSCAObjectiveParts(.object)
+
+  # constructGSCAObjectiveParts() returns NA for non-GSCA objects
+  if (!is.list(parts)) {
+    return(NA)
+  }
+
+  parts$Psi - (parts$Eta %*% parts$A) - parts$S
 }
 
 #' Block Diagonalize GSCA Parameter Estimates and Scores
