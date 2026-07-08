@@ -26,7 +26,7 @@ The second pass was an _adversarial collaboration_: one agent prosecuted each fi
 
 Findings are split into two tiers:
 - *Tier A (A1--A10):* high-confidence defects where the prosecutor's case survived the defender's cross-examination, or the defender conceded.
-- *Tier B (B1--B14):* lower-confidence concerns #sym.dash.em genuinely dual-sided, intentional-but-fragile, or dependent on usage patterns we could not verify. These are recorded for maintainer review rather than as asserted bugs.
+- *Tier B (B1--B15):* lower-confidence concerns #sym.dash.em genuinely dual-sided, intentional-but-fragile, or dependent on usage patterns we could not verify. These are recorded for maintainer review rather than as asserted bugs.
 
 All line numbers are against branch `gscaBoot` at the HEAD at the time of the audit.
 
@@ -230,6 +230,34 @@ pvalue_Sarstedt <- (rowSums(ref_dist_matrix_Sarstedt >= teststat_Sarstedt) + 1) 
 ```
 
 *Adversarial note.* Defender conceded on sight and agreed the fix is a one-line change. Referee severity: *medium* (results in systematically under-reported p-values near the decision boundary; not a stability hazard but a correctness bug).
+
+=== Status update (2026-07-07) --- fix applied on `gscaBoot`, extended to the Chin p-value
+
+The proposed correction has been applied to the Klesel p-value (`R/postestimate_test_MGD.R:727`), the Sarstedt p-value (`R/postestimate_test_MGD.R:820`) and, additionally, to the Chin & Dibbern p-value (`R/postestimate_test_MGD.R:762--770`), which was not part of the original finding. The Chin case deserves a note because its test statistic is _signed_ (a parameter difference between groups), so the p-value is two-sided, and it is not immediately obvious that the correction preserves the two-sidedness.
+
+*Old code (two-sided, no correction).*
+```r
+rowMeans(ref_dist_matrices_Chin[[x]] >= abs(teststat_Chin[[x]])) +
+  rowMeans(ref_dist_matrices_Chin[[x]] <= (-abs(teststat_Chin[[x]])))
+```
+
+*New code (two-sided, Phipson--Smyth corrected).*
+```r
+(rowSums(abs(ref_dist_matrices_Chin[[x]]) >= abs(teststat_Chin[[x]])) + 1) /
+  (ncol(ref_dist_matrices_Chin[[x]]) + 1)
+```
+
+*Why this is the same two-sided test.* For a reference value $r$ and observed statistic $t$,
+$
+r >= abs(t) quad "or" quad r <= -abs(t) quad <==> quad abs(r) >= abs(t),
+$
+and the two tail events are disjoint, so the old sum of tail counts equals the new single count of $abs(r) >= abs(t)$. The new form is therefore exactly the old two-sided exceedance count with the unbiased $(b + 1)\/(B + 1)$ estimator applied on top. This matches Phipson & Smyth (2010, #sym.section 2), who define the two-sided permutation p-value in precisely this absolute-value form; it is valid here because the permutation null (group-label exchange) is symmetric by exchangeability.
+
+*Bonus edge case fixed.* If a parameter's observed difference is exactly $0$, the old code counted reference values equal to $0$ in _both_ tails (`r >= 0` and `r <= -0` are both true), so the p-value could exceed 1. The new form caps at exactly 1.
+
+*Why Klesel and Sarstedt remain one-sided.* Their statistics (geodesic / squared-Euclidean distances and the F-type statistic) are non-negative by construction, so the one-sided `>=` comparison at lines 727 and 820 is the correct analogue; only Chin needs the `abs()`. The asymmetry between the three fixes is intentional.
+
+*Residual hazard.* The `complete.cases()` row filter feeding `ref_dist_matrices_Chin` can silently misalign the reference matrix with the (unfiltered) test-statistic vector; this predates the fix and is recorded as [B15].
 
 == A8. Unit-variance rescaling of weights has no zero-variance guard
 
@@ -462,6 +490,38 @@ Several aggregation steps pass `na.rm = TRUE` without recording how many resampl
 
 *Adversarial note.* Severity: *low* (reporting), but a genuine pitfall for practitioners.
 
+== B15. Chin reference-distribution row filter can misalign with the test-statistic vector
+
+*Location:* `R/postestimate_test_MGD.R:754--758`
+
+*Problem.* The reference-distribution matrices for the Chin & Dibbern test are assembled and then row-filtered:
+```r
+ref_dist_matrices_Chin <- lapply(ref_dist_Chin_temp, function(x) {
+  temp <- do.call(cbind, x)
+  temp_ind <- stats::complete.cases(temp)
+  temp[temp_ind, , drop = FALSE]
+})
+```
+`complete.cases()` drops any parameter _row_ containing an `NA` across the permutation runs. But the observed test-statistic vector `teststat_Chin[[x]]` is _not_ filtered by the same index, so if any row is actually dropped, the subsequent comparison
+```r
+abs(ref_dist_matrices_Chin[[x]]) >= abs(teststat_Chin[[x]])
+```
+recycles a longer vector against a shorter matrix. Depending on the length mismatch this either throws a "longer object length is not a multiple" warning or #sym.dash.em worse #sym.dash.em silently compares each parameter's reference distribution against the _wrong_ parameter's observed statistic.
+
+*Trigger.* Any permutation run that yields `NA` for a subset of parameters (rather than the whole run, which the earlier `Filter(Negate(anyNA), ref_dist)` at line 709 would already have removed). Whether such partial-`NA` runs can occur depends on `calculateParameterDifference()`; we could not rule it out from the call graph.
+
+*Proposed fix.* Filter the test statistic with the same index, e.g. return both from the `lapply` or align by names:
+```r
+ref_dist_matrices_Chin <- lapply(names(ref_dist_Chin_temp), function(nm) {
+  temp     <- do.call(cbind, ref_dist_Chin_temp[[nm]])
+  temp_ind <- stats::complete.cases(temp)
+  list(ref  = temp[temp_ind, , drop = FALSE],
+       stat = teststat_Chin[[nm]][temp_ind])
+})
+```
+
+*Adversarial note.* Not adjudicated in the original two-pass audit; spotted during the A7 follow-up (see the A7 status update). Because the whole-run `NA` filter at line 709 may make the partial-`NA` case unreachable, this is recorded as Tier B rather than Tier A. Severity: *low-medium* (conditional on reachability; if reachable, produces wrong p-values silently).
+
 #pagebreak()
 
 = Summary of adversarial outcomes
@@ -480,7 +540,7 @@ Several aggregation steps pass `na.rm = TRUE` without recording how many resampl
   [A8  Unit-variance rescale unguarded],        [guilty], [defended],       [medium],
   [A9  Off-by-one `iter_max`],                  [guilty], [dissented],      [low-medium],
   [A10 Non-standard Welch--Satterthwaite],      [guilty], [conceded],       [medium],
-  [B1--B14],                                    [raised], [mostly defended],[low, recorded],
+  [B1--B15],                                    [raised], [mostly defended],[low, recorded],
 )
 
 = Recommended order of fixes
@@ -488,7 +548,7 @@ Several aggregation steps pass `na.rm = TRUE` without recording how many resampl
 1. *A1, A4, A5* --- pure logic bugs, one-line fixes, zero-risk.
 2. *A3* --- restore `^2` and add a regression test covering a nonlinear model with `.Q != 1`.
 3. *A2* --- fix `&&` #sym.arrow.r `&` and add the missing `, , drop = FALSE`.
-4. *A7* --- apply the Phipson--Smyth correction; add a test that `p > 0` for any finite `B`.
+4. *A7* --- apply the Phipson--Smyth correction; add a test that `p > 0` for any finite `B`. _Applied on `gscaBoot` to all three approaches (Klesel, Sarstedt, Chin; see the A7 status update). The B15 alignment hazard remains open._
 5. *A6* --- decide the HTMT$""_2$ policy (error vs. absolute-value fallback) and document.
 6. *A10* --- align with the textbook Welch--Satterthwaite and add a citation in the man-page.
 7. *A8, A9* --- add guards and a comment; these are second-order.
