@@ -109,9 +109,7 @@ test_that(".conv_criterion affects GSCAM", {
   HS.model_csem <- ' visual  =~ x1 + x2 + x3
                 textual =~ x4 + x5 + x6
                 speed   =~ x7 + x8 + x9 
-                visual ~~ textual
-                speed ~~ textual
-                visual ~~ speed'
+                visual ~ textual + speed'
   
   sum_diff_absolute_mod <- cSEM::csem(
     .data = HolzingerSwineford1939,
