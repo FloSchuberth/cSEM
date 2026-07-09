@@ -2020,9 +2020,11 @@ calculateFIT <- function(.object = NULL) {
   
   # identical(colnames(Psi), colnames(S))
   # identical(colnames(Eta %*% A), colnames(S))
-  SS_unexplained_variance <- sum(diag(t(Psi - (Eta %*% A) - S) %*% (Psi - (Eta %*% A) - S)))
+  # SS_unexplained_variance <- sum(diag(t(Psi - (Eta %*% A) - S) %*% (Psi - (Eta %*% A) - S)))
+  SS_unexplained_variance <- sum((Psi - (Eta %*% A) - S)^2)
   # The total variance of each (group's) indicator or construct seems to depend on the number of samples (in that group) - 1
-  SS_total_variance <- sum(diag(t(Psi) %*% (Psi)))
+  # SS_total_variance <- sum(diag(t(Psi) %*% (Psi)))
+  SS_total_variance <- sum(Psi^2)
   FIT <- 1 - (SS_unexplained_variance / SS_total_variance)
   
   return(FIT)
@@ -2081,8 +2083,10 @@ calculateFIT_m <- function(.object = NULL) {
   Lambda <- parts$Lambda
   UD <- parts$UD
   
-  SS_unexplained_indicator_variance <- sum(diag(t(Z - (Eta %*% Lambda) - UD) %*% (Z - (Eta %*% Lambda) - UD)))
-  SS_total_indicator_variance <- sum(diag(t(Z) %*% Z)) 
+  # SS_unexplained_indicator_variance <- sum(diag(t(Z - (Eta %*% Lambda) - UD) %*% (Z - (Eta %*% Lambda) - UD)))
+  # SS_total_indicator_variance <- sum(diag(t(Z) %*% Z)) 
+  SS_unexplained_indicator_variance <- sum((Z - (Eta %*% Lambda) - UD)^2)
+  SS_total_indicator_variance <- sum(Z^2) 
   
   FIT_m <- 1 - (SS_unexplained_indicator_variance / SS_total_indicator_variance)
   
@@ -2097,8 +2101,8 @@ calculateFIT_s <- function(.object = NULL) {
   Eta <- parts$Eta
   B <- parts$B
   
-  SS_unexplained_construct_variance <- sum(diag(t(Eta - (Eta %*% t(B))) %*% (Eta - (Eta %*% t(B)))))
-  SS_total_construct_variance <- sum(diag(t(Eta) %*% (Eta)))
+  SS_unexplained_construct_variance <- sum((Eta - (Eta %*% t(B)))^2)
+  SS_total_construct_variance <- sum(Eta^2)
   
   FIT_s <- 1 - (SS_unexplained_construct_variance / SS_total_construct_variance)
   

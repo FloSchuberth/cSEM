@@ -1219,7 +1219,7 @@ AffJoy  ~ OrgIden"
 
     # Consistency with calculateFIT: FIT = 1 - ||E||^2 / ||Psi||^2
     expect_equal(
-      1 - sum(E^2) / sum(parts$Psi^2),
+      1 - (sum(E^2) / sum(parts$Psi^2)),
       calculateFIT(fit)
     )
   }
