@@ -1,3 +1,4 @@
+Sys.setenv(OMP_NUM_THREADS = "1", OPENBLAS_NUM_THREADS = "1", MKL_NUM_THREADS = "1")
 # Pretty error happening
 library(rlang)
 rlang::global_handle()
@@ -20,7 +21,7 @@ cli::pretty_print_code()
 
 
 library(RhpcBLASctl)
-RhpcBLASctl::blas_set_num_threads(2)
+RhpcBLASctl::blas_set_num_threads(1)
 
 
 #' devtools::test_active_file()
