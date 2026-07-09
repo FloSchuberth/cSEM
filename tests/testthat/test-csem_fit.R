@@ -91,6 +91,65 @@ res_single <- list(
   "GSCA_CCMP"  = res_gsca_ccmp
 )
 
+## Helpers ---------------------------------------------------------------------
+
+# Indicators belonging to GSCA-M-treated (common factor) blocks; under
+# .approach_weights = "GSCA" these are exactly the indicators with unique
+# loadings (z2 in Cho et al. 2022), all others are composite indicators (z1).
+z2_indicators <- function(res) {
+  ct <- res$Information$Model$construct_type
+  M  <- res$Information$Model$measurement
+  colSums(M[names(ct)[ct == "Common factor"], colnames(M), drop = FALSE]) == 1
+}
+
+# Literal, independent implementation of the reproduced covariance matrix of
+# Cho et al. (2022), Appendix 2, Eq. (A-11), used as an oracle for fit():
+#   Sigma = G (I_K - T)^{-1} E(ee') ((I_K - T)^{-1})' G' + E(ss')
+# with T = [0 C; 0 B], G = [I_J, 0], E(ss') = D^2 and the model-implied
+# block-diagonal E(ee'): E(zeta zeta') = blockdiag(Phi_exo, diag(1 - R^2)),
+# E(eps1 eps1') = within-composite-block residual of S, E(eps2 eps2') = 0.
+sigma_cho_A11 <- function(res) {
+  mod   <- res$Information$Model
+  S     <- res$Estimates$Indicator_VCV
+  C     <- t(res$Estimates$Loading_estimates)             # J x P
+  Bfull <- res$Estimates$Path_estimates                   # P x P, to x from
+  Pmat  <- res$Estimates$Construct_VCV
+  J     <- nrow(C); P <- ncol(C); K <- J + P
+  cons  <- colnames(C); inds <- rownames(C)
+
+  d <- res$Estimates$Unique_loading_estimates
+  if(is.null(d)) d <- setNames(rep(0, J), inds)
+  d <- d[inds]; d[is.na(d)] <- 0
+
+  # E(zeta zeta')
+  Ezz <- matrix(0, P, P, dimnames = list(cons, cons))
+  Ezz[mod$cons_exo, mod$cons_exo] <- Pmat[mod$cons_exo, mod$cons_exo]
+  diag(Ezz)[match(mod$cons_endo, cons)] <-
+    1 - rowSums(Bfull * Pmat)[mod$cons_endo]
+
+  # E(eps eps'): block-diagonal for composite blocks, zero elsewhere
+  IBi   <- solve(diag(P) - Bfull)
+  V_eta <- IBi %*% Ezz %*% t(IBi)
+  Eee   <- matrix(0, J, J, dimnames = list(inds, inds))
+  resid <- S - C %*% V_eta %*% t(C)
+  for(p in names(mod$construct_type)[mod$construct_type == "Composite"]) {
+    idx <- inds[mod$measurement[p, inds] == 1]
+    Eee[idx, idx] <- resid[idx, idx]
+  }
+
+  Tmat <- matrix(0, K, K)
+  Tmat[1:J, (J + 1):K]       <- C
+  Tmat[(J + 1):K, (J + 1):K] <- Bfull
+  EeeK <- matrix(0, K, K)
+  EeeK[1:J, 1:J]             <- Eee
+  EeeK[(J + 1):K, (J + 1):K] <- Ezz
+  G    <- cbind(diag(J), matrix(0, J, P))
+  ITi  <- solve(diag(K) - Tmat)
+  out  <- G %*% ITi %*% EeeK %*% t(ITi) %*% t(G) + diag(d^2)
+  dimnames(out) <- dimnames(S)
+  out
+}
+
 test_that("fit(.type_vcv = 'indicator') returns a proper matrix for GSCA-type objects", {
   for(i in names(res_single)) {
     res <- res_single[[i]]
@@ -103,8 +162,45 @@ test_that("fit(.type_vcv = 'indicator') returns a proper matrix for GSCA-type ob
     expect_identical(dimnames(Sigma), dimnames(S))
     # Symmetry
     expect_equal(Sigma, t(Sigma), tolerance = 1e-10)
-    # Unit diagonal convention: implied variances equal the empirical ones
-    expect_equal(diag(Sigma), diag(S), tolerance = 1e-8)
+    # Diagonal convention (Cho et al. 2022, Eq. A-11): within composite
+    # blocks Sigma reproduces S, so composite indicators have unit implied
+    # variances. GSCA-M-treated (effect) indicators have implied variance
+    # lambda_j^2 + d_j^2 < 1 instead (eps2 = 0) -- the indicator variance
+    # left unexplained by the common and unique parts stays visible as
+    # misfit.
+    z2 <- z2_indicators(res)
+    expect_equal(diag(Sigma)[!z2], diag(S)[!z2], tolerance = 1e-12)
+    if(any(z2)) {
+      expect_true(all(diag(Sigma)[z2] < diag(S)[z2]), info = i)
+      # Implied variance of an effect indicator: lambda_j^2 * V(eta_p) + d_j^2
+      # with p the indicator's block (V(eta) is not renormalized to unit
+      # variances for GSCA-type estimates).
+      V       <- fit(res, .saturated = FALSE, .type_vcv = "construct")
+      M       <- res$Information$Model$measurement
+      blk     <- rownames(V)[apply(M[rownames(V), colnames(S)] == 1, 2, which)]
+      lambda2 <- diag(t(res$Estimates$Loading_estimates) %*%
+                        res$Estimates$Loading_estimates)
+      d       <- res$Estimates$Unique_loading_estimates[colnames(S)]
+      expect_equal(diag(Sigma)[z2], (lambda2 * diag(V)[blk] + d^2)[z2],
+                   tolerance = 1e-10)
+    }
+  }
+})
+
+test_that("fit() equals the literal Cho et al. (2022, Eq. A-11) reproduced covariance matrix", {
+  for(i in names(res_single)) {
+    expect_equal(
+      fit(res_single[[i]], .saturated = FALSE, .type_vcv = "indicator"),
+      sigma_cho_A11(res_single[[i]]),
+      tolerance = 1e-12, info = i
+    )
+  }
+  for(g in names(res_igsca_mg)) {
+    expect_equal(
+      fit(res_igsca_mg[[g]], .saturated = FALSE, .type_vcv = "indicator"),
+      sigma_cho_A11(res_igsca_mg[[g]]),
+      tolerance = 1e-12, info = g
+    )
   }
 })
 
@@ -135,14 +231,50 @@ test_that("Saturated implied covariances of common factor indicators follow lamb
   )
 })
 
+test_that("Estimator invariants that fit() relies on hold for GSCA-type objects", {
+  # fit() takes Loading_estimates and Unique_loading_estimates as-is: no CCMP
+  # loading substitution and no reordering/NA-cleaning of the unique
+  # loadings. That is only sound if the estimators guarantee the following.
+  for(i in names(res_single)) {
+    res <- res_single[[i]]
+    L   <- res$Estimates$Loading_estimates
+    W   <- res$Estimates$Weight_estimates
+    d   <- res$Estimates$Unique_loading_estimates
+    ct  <- res$Information$Model$construct_type
+    M   <- res$Information$Model$measurement
+
+    # No loading row of a measured construct is all zero (CCMP rows are
+    # filled with the implied loadings W %*% S, masked to the blocks, at
+    # estimation time).
+    expect_true(all(rowSums(L != 0) > 0 | rowSums(W != 0) == 0), info = i)
+    if(i == "GSCA_CCMP") {
+      expect_equal(L, (W %*% res$Estimates$Indicator_VCV) * M,
+                   tolerance = 1e-12, ignore_attr = TRUE)
+    }
+
+    # Unique loadings: NULL for plain GSCA; for GSCAm/IGSCA complete, named
+    # in indicator order (= colnames(S)), NA-free, and exactly zero for
+    # composite indicators.
+    if(any(ct == "Common factor")) {
+      expect_identical(names(d), colnames(L), label = i)
+      expect_false(anyNA(d))
+      comp_ind <- colSums(M[names(ct)[ct == "Composite"], , drop = FALSE]) == 1
+      expect_true(all(d[comp_ind] == 0), info = i)
+    } else {
+      expect_null(d, info = i)
+    }
+  }
+})
+
 test_that("CCMP plain GSCA: implied cross-block covariances are nonzero and composite blocks equal S", {
   res   <- res_gsca_ccmp
   S     <- res$Estimates$Indicator_VCV
   Sigma <- fit(res, .saturated = FALSE, .type_vcv = "indicator")
 
   # Regression test: CCMP composites must not produce all-zero cross-block
-  # covariances (loading rows fixed to zero during estimation must be
-  # replaced by implied loadings S %*% w restricted to the block).
+  # covariances (their loading rows are fixed to zero during the ALS
+  # iterations; the estimators store the implied loadings S %*% w restricted
+  # to the block at output, and fit() uses those as-is).
   block_OrgPres <- c("cei1", "cei2", "cei3")
   block_OrgIden <- c("ma1", "ma2", "ma3")
   expect_true(all(abs(Sigma[block_OrgPres, block_OrgIden]) > 0))
@@ -163,7 +295,13 @@ test_that("fit(.type_vcv = 'construct') works for GSCA-type objects", {
     expect_identical(dim(vcv_construct), dim(P))
     expect_true(all(rownames(vcv_construct) %in% rownames(P)))
     expect_equal(vcv_construct, t(vcv_construct), tolerance = 1e-10)
-    expect_equal(unname(diag(vcv_construct)), rep(1, nrow(P)), tolerance = 1e-10)
+    # For GSCA-type estimates the implied construct VCV is not renormalized
+    # to unit variances (Cho et al. 2022, Eq. A-11). In these chain models
+    # the implied variances equal 1 whenever the path coefficients are OLS
+    # with respect to Construct_VCV; that holds up to the ALS convergence
+    # tolerance for GSCA/IGSCA and only up to ~1e-2 for GSCAm, whose paths
+    # are estimated in the uniqueness-corrected metric.
+    expect_equal(unname(diag(vcv_construct)), rep(1, nrow(P)), tolerance = 1e-2)
 
     # Saturated case: identical to the estimated construct correlation matrix
     vcv_construct_sat <- fit(res, .saturated = TRUE, .type_vcv = "construct")
@@ -197,10 +335,14 @@ test_that("fit() returns a per-group list of matrices for multigroup GSCA-type o
   expect_identical(names(Sigma_list), names(res_igsca_mg))
 
   for(g in names(Sigma_list)) {
-    S <- res_igsca_mg[[g]]$Estimates$Indicator_VCV
+    S  <- res_igsca_mg[[g]]$Estimates$Indicator_VCV
+    z2 <- z2_indicators(res_igsca_mg[[g]])
     expect_true(is.matrix(Sigma_list[[g]]))
     expect_identical(dim(Sigma_list[[g]]), dim(S))
-    expect_equal(diag(Sigma_list[[g]]), diag(S), tolerance = 1e-8)
+    # Composite indicators reproduce diag(S); GSCA-M-treated ones fall short
+    # of it (Cho et al. 2022, Eq. A-11; see the single-group test above).
+    expect_equal(diag(Sigma_list[[g]])[!z2], diag(S)[!z2], tolerance = 1e-12)
+    expect_true(all(diag(Sigma_list[[g]])[z2] < diag(S)[z2]))
   }
 
   vcv_list <- fit(res_igsca_mg, .saturated = FALSE, .type_vcv = "construct")

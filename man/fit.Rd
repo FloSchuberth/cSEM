@@ -35,21 +35,29 @@ for a saturated structural model (i.e., the VCV of the constructs is replaced
 by their correlation matrix). Hence: V(eta) = WSW' (possibly disattenuated).
 
 For GSCA-type estimates (GSCA, GSCAm, IGSCA; i.e.,
-\code{.approach_weights = "GSCA"}) the model-implied indicator VCV is computed as
-\deqn{\Sigma = \Lambda' V(\eta) \Lambda + D^2 + \Theta_E}
+\code{.approach_weights = "GSCA"}) the model-implied indicator VCV equals the
+reproduced covariance matrix given in Appendix 2, Eq. (A-11) of
+\insertCite{Cho2022;textual}{cSEM},
+\deqn{\Sigma = \Lambda' V(\eta) \Lambda + E(\epsilon\epsilon') + D^2,}
 where \eqn{\Lambda} is the matrix of loadings, \eqn{V(\eta)} the
-(model-implied or saturated) construct VCV, \eqn{D^2} the diagonal matrix of
-squared unique loadings (zero for plain GSCA and for composite indicators),
-and \eqn{\Theta_E = diag(diag(S) - diag(\Lambda' \Lambda) - d^2)} the
-unmodeled residual variance. Since the unique scores in GSCAm/IGSCA are
-orthogonal to the constructs and to each other by construction, the unique
-terms contribute to the diagonal of \eqn{\Sigma} only, and the diagonal of
-\eqn{\Sigma} equals the diagonal of the empirical indicator VCV \eqn{S}
-(the same convention used for PLS-PM). For composites estimated in canonical
-mode (CCMP) no loadings are estimated; if a composite's loading row is
-entirely zero, implied loadings \eqn{\lambda_k = S w_k} (the covariances of
-the block indicators with the unit-variance composite) are used in the
-computation of \eqn{\Sigma}.
+(model-implied or saturated) construct VCV, and \eqn{D^2} the diagonal
+matrix of squared unique loadings (GSCAm/IGSCA; zero for plain GSCA and for
+composite indicators). Following Cho et al. (2022), the common factor model
+is assumed to hold for the GSCA-M-treated (effect) indicators, i.e.
+\eqn{\epsilon_2 = 0}: their implied variances are
+\eqn{\lambda_j^2 v_{pp} + d_j^2} (with \eqn{v_{pp}} the implied variance
+of the corresponding construct) and may fall short of the empirical unit
+variances -- the indicator variance left unexplained by the common and
+unique parts is part of the misfit. The measurement errors of composite
+indicators are assumed to be correlated within blocks (block-diagonal
+\eqn{E(\epsilon_1\epsilon_1')}), hence within-composite-block entries of
+\eqn{\Sigma} (including the diagonal) reproduce the empirical VCV \eqn{S}
+exactly. Unlike for the other estimators, the implied variances of
+endogenous constructs are not normalized to 1 for GSCA-type estimates.
+For composites estimated in canonical mode (CCMP) the loadings stored in
+the object are the implied loadings \eqn{\lambda_k = S w_k} (the
+covariances of the block indicators with the unit-variance composite),
+computed by the estimators at convergence; they enter \eqn{\Sigma} as-is.
 }
 \references{
 \insertAllCited{}

@@ -10,21 +10,29 @@
 #' by their correlation matrix). Hence: V(eta) = WSW' (possibly disattenuated).
 #'
 #' For GSCA-type estimates (GSCA, GSCAm, IGSCA; i.e.,
-#' `.approach_weights = "GSCA"`) the model-implied indicator VCV is computed as
-#' \deqn{\Sigma = \Lambda' V(\eta) \Lambda + D^2 + \Theta_E}
+#' `.approach_weights = "GSCA"`) the model-implied indicator VCV equals the
+#' reproduced covariance matrix given in Appendix 2, Eq. (A-11) of
+#' \insertCite{Cho2022;textual}{cSEM},
+#' \deqn{\Sigma = \Lambda' V(\eta) \Lambda + E(\epsilon\epsilon') + D^2,}
 #' where \eqn{\Lambda} is the matrix of loadings, \eqn{V(\eta)} the
-#' (model-implied or saturated) construct VCV, \eqn{D^2} the diagonal matrix of
-#' squared unique loadings (zero for plain GSCA and for composite indicators),
-#' and \eqn{\Theta_E = diag(diag(S) - diag(\Lambda' \Lambda) - d^2)} the
-#' unmodeled residual variance. Since the unique scores in GSCAm/IGSCA are
-#' orthogonal to the constructs and to each other by construction, the unique
-#' terms contribute to the diagonal of \eqn{\Sigma} only, and the diagonal of
-#' \eqn{\Sigma} equals the diagonal of the empirical indicator VCV \eqn{S}
-#' (the same convention used for PLS-PM). For composites estimated in canonical
-#' mode (CCMP) no loadings are estimated; if a composite's loading row is
-#' entirely zero, implied loadings \eqn{\lambda_k = S w_k} (the covariances of
-#' the block indicators with the unit-variance composite) are used in the
-#' computation of \eqn{\Sigma}.
+#' (model-implied or saturated) construct VCV, and \eqn{D^2} the diagonal
+#' matrix of squared unique loadings (GSCAm/IGSCA; zero for plain GSCA and for
+#' composite indicators). Following Cho et al. (2022), the common factor model
+#' is assumed to hold for the GSCA-M-treated (effect) indicators, i.e.
+#' \eqn{\epsilon_2 = 0}: their implied variances are
+#' \eqn{\lambda_j^2 v_{pp} + d_j^2} (with \eqn{v_{pp}} the implied variance
+#' of the corresponding construct) and may fall short of the empirical unit
+#' variances -- the indicator variance left unexplained by the common and
+#' unique parts is part of the misfit. The measurement errors of composite
+#' indicators are assumed to be correlated within blocks (block-diagonal
+#' \eqn{E(\epsilon_1\epsilon_1')}), hence within-composite-block entries of
+#' \eqn{\Sigma} (including the diagonal) reproduce the empirical VCV \eqn{S}
+#' exactly. Unlike for the other estimators, the implied variances of
+#' endogenous constructs are not normalized to 1 for GSCA-type estimates.
+#' For composites estimated in canonical mode (CCMP) the loadings stored in
+#' the object are the implied loadings \eqn{\lambda_k = S w_k} (the
+#' covariances of the block indicators with the unit-variance composite),
+#' computed by the estimators at convergence; they enter \eqn{\Sigma} as-is.
 #'
 #' @usage fit(
 #'   .object    = NULL, 
@@ -93,44 +101,33 @@ fit.cSEMResults_default <- function(
   S         <- .object$Estimates$Indicator_VCV
   Lambda    <- .object$Estimates$Loading_estimates
 
-  if(isTRUE(.object$Information$Arguments$.approach_weights == "GSCA")) {
+  approach_gsca <- isTRUE(.object$Information$Arguments$.approach_weights == "GSCA")
+
+  if(approach_gsca) {
     ## GSCA-type objects (GSCA, GSCAm, IGSCA)
-    # Composites estimated in canonical mode (CCMP) have no estimated loadings.
-    # If a composite's loading row is entirely zero (but weights exist),
-    # substitute the implied loadings lambda_k = S %*% w_k restricted to the
-    # composite's block, i.e., the covariance of each block indicator with the
-    # (unit-variance) composite -- the same meaning composite loadings have in
-    # PLS-PM. Note: this only affects the computation of the model-implied VCV;
-    # the loadings stored in the object remain untouched.
-    W <- .object$Estimates$Weight_estimates
-    vars_zero_loadings <- rownames(Lambda)[
-      rowSums(Lambda != 0) == 0 & rowSums(W != 0) > 0]
-
-    for(k in vars_zero_loadings) {
-      block_k <- colnames(mod$measurement)[mod$measurement[k, ] == 1]
-      Lambda[k, block_k] <- (S %*% W[k, ])[block_k, 1]
-    }
-
-    # Unique loadings d (GSCAm/IGSCA). They are NULL (or all NA) for plain
-    # GSCA and zero for composite indicators; treat both as zero.
+    # Unique loadings (GSCAm/IGSCA; NULL for plain GSCA). The estimators
+    # return them complete, in indicator order and zero for composite
+    # indicators; composites estimated in canonical mode (CCMP) likewise
+    # already carry their implied loadings S %*% w in Loading_estimates.
+    # Both invariants are pinned by tests/testthat/test-csem_fit.R.
     d <- .object$Estimates$Unique_loading_estimates
-    if(is.null(d) || all(is.na(d))) {
-      d <- rep(0, ncol(Lambda))
-      names(d) <- colnames(Lambda)
-    }
-    d <- d[colnames(Lambda)]
-    d[is.na(d)] <- 0
+    if(is.null(d)) d <- numeric(ncol(Lambda))
 
-    # The unique scores are orthogonal to the constructs and to each other by
-    # construction, hence the unique terms contribute to the diagonal of the
-    # model-implied indicator VCV only:
-    #   Sigma = t(Lambda) %*% V(eta) %*% Lambda + D2 + Theta_E
-    # D2      := diagonal matrix of squared unique loadings.
-    # Theta_E := unmodeled residual variance; keeps diag(Sigma) = diag(S),
-    #            consistent with the PLS-PM convention below.
-    D2      <- diag(d^2)
-    Theta_E <- diag(diag(S) - diag(t(Lambda) %*% Lambda) - d^2)
-    Theta   <- D2 + Theta_E
+    # Reproduced covariance matrix of Cho et al. (2022), Eq. (A-11):
+    #   Sigma = t(Lambda) %*% V(eta) %*% Lambda + E(eps eps') + D2
+    # The common factor model is assumed to hold for the GSCA-M-treated
+    # (effect) indicators, i.e. E(eps2 eps2') = 0. The unique scores are
+    # orthogonal to the constructs and to each other by construction, so the
+    # unique terms contribute D2 (squared unique loadings) to the diagonal
+    # only: the implied variance of an effect indicator is
+    # lambda_j^2 * v_pp + d_j^2, deliberately NOT topped up to diag(S) -- the
+    # indicator variance left unexplained by the common and unique parts is
+    # misfit. Composite indicators instead carry a block-diagonal
+    # E(eps1 eps1') ("as is typically assumed in component-based SEM"), which
+    # the block-wise replacement of within-composite-block entries by S at
+    # the end of this function implements; their implied (co)variances equal
+    # those of S.
+    Theta <- diag(d^2)
   } else {
     Theta   <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
   }
@@ -177,9 +174,13 @@ fit.cSEMResults_default <- function(
     
     ## Correlations between exogenous and endogenous constructs
     Corr_exo_endo <- Phi %*% t(Gamma) %*% t(solve(I-B))
-    ## Correlations between endogenous constructs 
+    ## Correlations between endogenous constructs
     Cor_endo <- solve(I-B) %*% (Gamma %*% Phi %*% t(Gamma) + vcv_zeta) %*% t(solve(I-B))
-    diag(Cor_endo) <- 1
+    # Except for GSCA-type estimates the implied variances of the endogenous
+    # constructs are normalized to 1. For GSCA the raw implied construct VCV
+    # of Cho et al. (2022, Eq. A-11) is used instead: deviations of the
+    # implied construct variances from 1 count as structural misfit there.
+    if(!approach_gsca) diag(Cor_endo) <- 1
     
     vcv_construct <- rbind(
       cbind(Phi, Corr_exo_endo),
