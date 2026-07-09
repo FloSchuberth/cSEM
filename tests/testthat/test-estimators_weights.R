@@ -271,8 +271,8 @@ test_that("Model estimation passes standards", {
 
 
 ## DGP Data ---------------------------------------------------------------
-test_that("Tests pass use of cSEM.DGP", {
-  testthat::skip_if_not_installed(c("cSEM.DGP", "purrr", "dplyr"))
+test_that("Tests pass use of lavaan::simulateData", {
+  testthat::skip_if_not_installed(c("purrr", "dplyr"))
 
   #' Build a data frame of expected population values for a single model
   #'
@@ -377,13 +377,14 @@ test_that("Tests pass use of cSEM.DGP", {
     constructs <- c("xi1", "xi2")
 
     parse_part <- function(part) {
-      count <- sub("[CF]$", "", part)
-      type <- sub(".*([CF])$", "\\1", part)
+      n <- nchar(part)
+      count <- substr(part, 1, n - 1)
+      type <- substr(part, n, n)
       return(list(count = count, type = type))
     }
 
     configs <- lapply(mod_names, function(mn) {
-      parts <- strsplit(mn, "_")[[1]]
+      parts <- strsplit(mn, "_", fixed = TRUE)[[1]]
       stopifnot(length(parts) == 2)
 
       cfg <- list(mod_name = mn, paths = paths)
@@ -420,7 +421,13 @@ test_that("Tests pass use of cSEM.DGP", {
 
   # General Population Values ----------------------------------------------
 
-  # Note: cSEM.DGP assumes canonical weights
+  # Note: lavaan::simulateData() takes fixed parameter values at face value, so
+  # the population models below are written in explicitly standardized form:
+  # composites get canonical weights (unit-variance composite), factor
+  # indicators get residual variances 1 - lambda^2, exogenous factors get unit
+  # variance, and endogenous constructs get residual variance 1 - 0.25. This
+  # reproduces the population indicator correlation matrix that cSEM.DGP
+  # (which standardizes implicitly) used to generate.
 
   # These are the actual weights used to construct the population correlation matrix,
   # from which the data is sampled
@@ -436,6 +443,16 @@ test_that("Tests pass use of cSEM.DGP", {
   (single_indicator_weight <- .4 / sqrt(.4 %*% 1 %*% .4))
   # 1
 
+  # Character version of the canonical weights used to build the lavaan
+  # population model syntax. as.character() keeps ~15 significant digits; the
+  # weight recovery test uses the default expect_equal() tolerance, so rounded
+  # weights would not do.
+  cw <- as.character(cmp_canonical_weights)
+
+  # Composite weight lines shared by the population models below
+  xi1_cw_line <- paste0('xi1 <~ ', cw[1], '*x11 + ', cw[2], '*x12 + ', cw[3], '*x13')
+  xi2_cw_line <- paste0('xi2 <~ ', cw[1], '*x21 + ', cw[2], '*x22 + ', cw[3], '*x23')
+
   # Named population vectors for tests
   xi1_tri_cmp_weights <- setNames(cmp_canonical_weights, c("x11", "x12", "x13"))
   xi2_tri_cmp_weights <- setNames(cmp_canonical_weights, c("x21", "x22", "x23"))
@@ -446,57 +463,86 @@ test_that("Tests pass use of cSEM.DGP", {
   # IGSCA ------------------------------------------------------------------
 
   igsca_pop <- list(
-    uniC_uniF = 'xi1 <~ .4*x11
+    uniC_uniF = 'xi1 <~ 1*x11
 
                xi2 =~ 1*x21
+               x21 ~~ 0*x21
 
-               xi2 ~ .5*xi1',
-    uniC_triF = 'xi1 <~ .4*x11
+               xi2 ~ .5*xi1
+               xi2 ~~ .75*xi2',
+    uniC_triF = 'xi1 <~ 1*x11
 
                xi2=~0.6*x21 + 0.8*x22 + 0.7*x23
+               x21 ~~ 0.64*x21
+               x22 ~~ 0.36*x22
+               x23 ~~ 0.51*x23
 
-               xi2 ~ .5*xi1',
-    triC_uniF = 'xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
+               xi2 ~ .5*xi1
+               xi2 ~~ .75*xi2',
+    triC_uniF = paste0(xi1_cw_line, '
                x11~~0.4*x12 + -0.3*x13
                x12~~0.4*x13
-               
+
                xi2 =~ 1*x21
-               
-               xi2 ~ .5*xi1',
-    triC_triF = 'xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
+               x21 ~~ 0*x21
+
+               xi2 ~ .5*xi1
+               xi2 ~~ .75*xi2'),
+    triC_triF = paste0(xi1_cw_line, '
                x11~~0.4*x12 + -0.3*x13
                x12~~0.4*x13
-               
+
                xi2=~0.6*x21 + 0.8*x22 + 0.7*x23
-               
-               xi2 ~ 0.5*xi1',
+               x21 ~~ 0.64*x21
+               x22 ~~ 0.36*x22
+               x23 ~~ 0.51*x23
+
+               xi2 ~ 0.5*xi1
+               xi2 ~~ .75*xi2'),
     uniF_uniC = 'xi1 =~ 1*x11
+               x11 ~~ 0*x11
+               xi1 ~~ 1*xi1
 
-               xi2 <~ .4*x21
+               xi2 <~ 1*x21
 
                xi2 ~ .5*xi1',
-    uniF_triC = 'xi1 =~ 1*x11
+    uniF_triC = paste0('xi1 =~ 1*x11
+               x11 ~~ 0*x11
+               xi1 ~~ 1*xi1
 
-               xi2<~0.4*x21 + 0.3*x22 + 0.2*x23
+               ', xi2_cw_line, '
                x21~~0.4*x22 + -0.3*x23
                x22~~0.4*x23
 
-               xi2 ~ .5*xi1',
+               xi2 ~ .5*xi1'),
     triF_uniC = 'xi1=~0.6*x11 + 0.8*x12 + 0.7*x13
-               
-               xi2 =~ 1*x21
-               
+               x11 ~~ 0.64*x11
+               x12 ~~ 0.36*x12
+               x13 ~~ 0.51*x13
+               xi1 ~~ 1*xi1
+
+               xi2 <~ 1*x21
+
                xi2 ~ .5*xi1',
-    triF_triC = 'xi1=~0.6*x11 + 0.8*x12 + 0.7*x13
-               
-               xi2<~0.4*x21 + 0.3*x22 + 0.2*x23
+    triF_triC = paste0('xi1=~0.6*x11 + 0.8*x12 + 0.7*x13
+               x11 ~~ 0.64*x11
+               x12 ~~ 0.36*x12
+               x13 ~~ 0.51*x13
+               xi1 ~~ 1*xi1
+
+               ', xi2_cw_line, '
                x21~~0.4*x22 + -0.3*x23
                x22~~0.4*x23
-               
-               xi2 ~ 0.5*xi1'
+
+               xi2 ~ 0.5*xi1')
   )
 
-  igsca_datapop <- lapply(igsca_pop, cSEM.DGP::generateData, .empirical = TRUE)
+  igsca_datapop <- lapply(
+    igsca_pop,
+    lavaan::simulateData,
+    sample.nobs = 200,
+    empirical = TRUE
+  )
 
   igsca_model_spec <- list(
     uniC_uniF = 'xi1 <~ x11
@@ -558,14 +604,16 @@ test_that("Tests pass use of cSEM.DGP", {
     lapply(igsca_mods, function(x) {
       tidy(x) |>
         dplyr::filter(op %in% c('=~', '~', '<~')) |>
-        dplyr::select(term, estimate)
+        dplyr::select(term, op, estimate)
     }) |>
       purrr::list_rbind(names_to = 'mod') |>
+      # Model names follow the "{xi1 part}_{xi2 part}" convention, so the 4th
+      # character gives xi1's type and the last character gives xi2's type
       dplyr::filter(
-        !((grepl('xi2 <~', term, fixed = TRUE) &
-          grepl(pattern = '_...F', x = mod, fixed = FALSE)) &
-          (grepl('xi1 <~', term, fixed = TRUE) &
-            grepl(pattern = '...F_', x = mod, fixed = FALSE)))
+        !((startsWith(term, 'xi2 <~') &
+          endsWith(mod, 'F')) &
+          (startsWith(term, 'xi1 <~') &
+            substr(mod, 4, 4) == 'F'))
       )
   })
 
@@ -599,8 +647,8 @@ test_that("Tests pass use of cSEM.DGP", {
       nrow(igsca_expected),
       info = "All expected terms should be present in tidy output"
     )
-    is_loading <- grepl("=~", igsca_joined$term, fixed = TRUE)
-    is_weight <- grepl("<~", igsca_joined$term, fixed = TRUE)
+    is_loading <- igsca_joined$op == "=~"
+    is_weight <- igsca_joined$op == "<~"
     is_path <- !is_loading & !is_weight
     testthat::expect_equal(
       igsca_joined$estimate[is_weight],
@@ -624,37 +672,42 @@ test_that("Tests pass use of cSEM.DGP", {
   # GSCA -------------------------------------------------------------------
 
   gsca_pops <- list(
-    uniC_uniC = 'xi1 <~ .4*x11
+    uniC_uniC = 'xi1 <~ 1*x11
 
-               xi2 <~ .3*x21
+               xi2 <~ 1*x21
 
                xi2 ~ .5*xi1',
-    uniC_triC = 'xi1 <~ .4*x11
+    uniC_triC = paste0('xi1 <~ 1*x11
 
-               xi2<~0.4*x21 + 0.3*x22 + 0.2*x23
+               ', xi2_cw_line, '
                x21~~0.4*x22 + -0.3*x23
                x22~~0.4*x23
 
-               xi2 ~ .5*xi1',
-    triC_uniC = 'xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
+               xi2 ~ .5*xi1'),
+    triC_uniC = paste0(xi1_cw_line, '
                x11~~0.4*x12 + -0.3*x13
                x12~~0.4*x13
-               
-               xi2 <~ .3*x21
-               
-               xi2 ~ .5*xi1',
-    triC_triC = 'xi1<~0.4*x11 + 0.3*x12 + 0.2*x13
+
+               xi2 <~ 1*x21
+
+               xi2 ~ .5*xi1'),
+    triC_triC = paste0(xi1_cw_line, '
                x11~~0.4*x12 + -0.3*x13
                x12~~0.4*x13
-               
-               xi2<~0.4*x21 + 0.3*x22 + 0.2*x23
+
+               ', xi2_cw_line, '
                x21~~0.4*x22 + -0.3*x23
                x22~~0.4*x23
-               
-               xi2 ~ 0.5*xi1'
+
+               xi2 ~ 0.5*xi1')
   )
 
-  gsca_datapop <- lapply(gsca_pops, cSEM.DGP::generateData, .empirical = TRUE)
+  gsca_datapop <- lapply(
+    gsca_pops,
+    lavaan::simulateData,
+    sample.nobs = 200,
+    empirical = TRUE
+  )
 
   gsca_model_spec <- list(
     uniC_uniC = 'xi1 <~ x11
@@ -727,28 +780,57 @@ test_that("Tests pass use of cSEM.DGP", {
   # GSCA M -----------------------------------------------------------------
   gscam_pop <- list(
     uniF_uniF = 'xi1 =~ 1*x11
+               x11 ~~ 0*x11
+               xi1 ~~ 1*xi1
 
                xi2 =~ 1*x21
+               x21 ~~ 0*x21
 
-               xi2 ~ .5*xi1',
+               xi2 ~ .5*xi1
+               xi2 ~~ .75*xi2',
     uniF_triF = 'xi1 =~ 1*x11
+               x11 ~~ 0*x11
+               xi1 ~~ 1*xi1
 
                xi2=~0.6*x21 + 0.8*x22 + 0.7*x23
+               x21 ~~ 0.64*x21
+               x22 ~~ 0.36*x22
+               x23 ~~ 0.51*x23
 
-               xi2 ~ .5*xi1',
+               xi2 ~ .5*xi1
+               xi2 ~~ .75*xi2',
     triF_uniF = 'xi1=~0.6*x11 + 0.8*x12 + 0.7*x13
-               
+               x11 ~~ 0.64*x11
+               x12 ~~ 0.36*x12
+               x13 ~~ 0.51*x13
+               xi1 ~~ 1*xi1
+
                xi2 =~ 1*x21
-               
-               xi2 ~ .5*xi1',
+               x21 ~~ 0*x21
+
+               xi2 ~ .5*xi1
+               xi2 ~~ .75*xi2',
     triF_triF = 'xi1=~0.6*x11 + 0.8*x12 + 0.7*x13
-               
+               x11 ~~ 0.64*x11
+               x12 ~~ 0.36*x12
+               x13 ~~ 0.51*x13
+               xi1 ~~ 1*xi1
+
                xi2=~0.6*x21 + 0.8*x22 + 0.7*x23
-               
-               xi2 ~ 0.5*xi1'
+               x21 ~~ 0.64*x21
+               x22 ~~ 0.36*x22
+               x23 ~~ 0.51*x23
+
+               xi2 ~ 0.5*xi1
+               xi2 ~~ .75*xi2'
   )
 
-  gscam_datapop <- lapply(gscam_pop, cSEM.DGP::generateData, .empirical = TRUE)
+  gscam_datapop <- lapply(
+    gscam_pop,
+    lavaan::simulateData,
+    sample.nobs = 200,
+    empirical = TRUE
+  )
 
   gscam_model_spec <- list(
     uniF_uniF = 'xi1 =~ x11
@@ -787,7 +869,7 @@ test_that("Tests pass use of cSEM.DGP", {
     lapply(gscam_mods, function(x) {
       tidy(x) |>
         dplyr::filter(op %in% c('=~', '~')) |>
-        dplyr::select(term, estimate)
+        dplyr::select(term, op, estimate)
     }) |>
       purrr::list_rbind(names_to = 'mod')
   })
@@ -818,7 +900,7 @@ test_that("Tests pass use of cSEM.DGP", {
       nrow(gscam_expected),
       info = "All expected terms should be present in tidy output"
     )
-    is_loading <- grepl("=~", gscam_joined$term, fixed = TRUE)
+    is_loading <- gscam_joined$op == "=~"
     is_path <- !is_loading
     testthat::expect_equal(
       gscam_joined$estimate[is_path],
