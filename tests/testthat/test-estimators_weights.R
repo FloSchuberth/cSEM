@@ -1228,3 +1228,171 @@ AffJoy  ~ OrgIden"
   fit_pls <- csem(.data = BergamiBagozzi2000, .model = model_GSCA)
   expect_identical(calculateGSCAErrors(fit_pls), NA)
 })
+
+# hasCompleteStartingValues ---------------------------------------------------
+test_that("hasCompleteStartingValues correctly detects complete/partial/missing starting values", {
+  # Constructs-as-rows 0/1 pattern (P x J), mirroring setStartingValues()'s .W
+  W_pattern <- matrix(
+    c(
+      1, 1, 1, 0, 0, 0,
+      0, 0, 0, 1, 1, 1
+    ),
+    nrow = 2,
+    byrow = TRUE,
+    dimnames = list(c("eta1", "eta2"), c("y11", "y12", "y13", "y21", "y22", "y23"))
+  )
+
+  # Complete: every construct with free weights is present, and each named
+  # vector covers exactly that construct's pattern indicators
+  sv_complete <- list(
+    "eta1" = c("y11" = 0.3, "y12" = 0.3, "y13" = 0.3),
+    "eta2" = c("y21" = 0.3, "y22" = 0.3, "y23" = 0.3)
+  )
+  expect_true(hasCompleteStartingValues(.W = W_pattern, .starting_values = sv_complete))
+
+  # Missing construct: eta2 not specified at all
+  sv_missing_construct <- list(
+    "eta1" = c("y11" = 0.3, "y12" = 0.3, "y13" = 0.3)
+  )
+  expect_false(hasCompleteStartingValues(.W = W_pattern, .starting_values = sv_missing_construct))
+
+  # Missing indicator: eta2's y23 is not specified
+  sv_missing_indicator <- list(
+    "eta1" = c("y11" = 0.3, "y12" = 0.3, "y13" = 0.3),
+    "eta2" = c("y21" = 0.3, "y22" = 0.3)
+  )
+  expect_false(hasCompleteStartingValues(.W = W_pattern, .starting_values = sv_missing_indicator))
+
+  # NULL / non-list starting values
+  expect_false(hasCompleteStartingValues(.W = W_pattern, .starting_values = NULL))
+  expect_false(hasCompleteStartingValues(.W = W_pattern, .starting_values = "not_a_list"))
+})
+
+# IGSCA starting-values bypass ------------------------------------------------
+test_that("Complete starting values bypass the internal plain-GSCA initialization in IGSCA", {
+  model_IGSCA <- "
+# Measurement models
+OrgPres =~ cei1 + cei2 + cei3
+OrgIden <~ ma1 + ma2 + ma3
+AffJoy <~ orgcmt1 + orgcmt2 + orgcmt3
+AffLove  <~ orgcmt5 + orgcmt6 + orgcmt8
+
+# Structural model
+OrgIden ~ OrgPres
+AffLove ~ OrgIden
+AffJoy  ~ OrgIden"
+
+  sv_complete <- list(
+    "OrgPres" = c("cei1" = 0.34, "cei2" = 0.51, "cei3" = 0.38),
+    "OrgIden" = c("ma1" = 0.45, "ma2" = 0.41, "ma3" = 0.39),
+    "AffLove" = c("orgcmt5" = 0.45, "orgcmt6" = 0.40, "orgcmt8" = 0.46),
+    "AffJoy" = c("orgcmt1" = 0.39, "orgcmt2" = 0.41, "orgcmt3" = 0.43)
+  )
+
+  # Only one out of four constructs is specified -> partial
+  sv_partial <- sv_complete["OrgPres"]
+
+  testthat::local_mocked_bindings(
+    calculateWeightsGSCA = function(...) stop("GSCA init called"),
+    .package = "cSEM"
+  )
+
+  # Complete starting values: the plain-GSCA initialization call must be
+  # skipped entirely, so mocking it to error must NOT trigger the error.
+  expect_no_error(
+    csem(
+      .data = BergamiBagozzi2000,
+      .model = model_IGSCA,
+      .approach_weights = "GSCA",
+      .tolerance = 1e-5,
+      .conv_criterion = "sum_diff_absolute",
+      .GSCA_modes = "NCMP",
+      .starting_values = sv_complete
+    )
+  )
+
+  # Partial starting values: old behavior (uses plain-GSCA initialization)
+  # must be retained, so the mock error must be triggered.
+  expect_error(
+    csem(
+      .data = BergamiBagozzi2000,
+      .model = model_IGSCA,
+      .approach_weights = "GSCA",
+      .tolerance = 1e-5,
+      .conv_criterion = "sum_diff_absolute",
+      .GSCA_modes = "NCMP",
+      .starting_values = sv_partial
+    ),
+    "GSCA init called"
+  )
+})
+
+test_that("Single-group IGSCA weights can be passed as complete starting values for a multigroup IGSCA fit", {
+  model_IGSCA <- "
+# Measurement models
+OrgPres =~ cei1 + cei2 + cei3
+OrgIden <~ ma1 + ma2 + ma3
+AffJoy <~ orgcmt1 + orgcmt2 + orgcmt3
+AffLove  <~ orgcmt5 + orgcmt6 + orgcmt8
+
+# Structural model
+OrgIden ~ OrgPres
+AffLove ~ OrgIden
+AffJoy  ~ OrgIden"
+
+  res_single <- csem(
+    .data = BergamiBagozzi2000,
+    .model = model_IGSCA,
+    .approach_weights = "GSCA",
+    .tolerance = 1e-5,
+    .conv_criterion = "sum_diff_absolute",
+    .GSCA_modes = "NCMP"
+  )
+
+  expect_true(res_single$Information$Weight_info$Convergence_status)
+
+  # Convert Weight_estimates (P x J) into a complete .starting_values list:
+  # for each construct, the named vector of its nonzero-pattern indicators
+  W <- res_single$Estimates$Weight_estimates
+  sv <- lapply(rownames(W), function(construct) {
+    w <- W[construct, ]
+    w[w != 0]
+  })
+  names(sv) <- rownames(W)
+
+  # Refit single-group with these starting values: should converge to
+  # (essentially) the same solution
+  res_single_refit <- csem(
+    .data = BergamiBagozzi2000,
+    .model = model_IGSCA,
+    .approach_weights = "GSCA",
+    .tolerance = 1e-5,
+    .conv_criterion = "sum_diff_absolute",
+    .GSCA_modes = "NCMP",
+    .starting_values = sv
+  )
+
+  expect_true(res_single_refit$Information$Weight_info$Convergence_status)
+  expect_equal(
+    res_single_refit$Estimates$Weight_estimates,
+    W,
+    tolerance = 1e-2
+  )
+
+  # Fit multigroup with the same (single-group-derived) starting values
+  res_multi <- csem(
+    .data = BergamiBagozzi2000,
+    .model = model_IGSCA,
+    .approach_weights = "GSCA",
+    .tolerance = 1e-5,
+    .conv_criterion = "sum_diff_absolute",
+    .GSCA_modes = "NCMP",
+    .id = "gender",
+    .starting_values = sv
+  )
+
+  expect_length(res_multi, 2)
+  for (g in res_multi) {
+    expect_true(g$Information$Weight_info$Convergence_status)
+  }
+})

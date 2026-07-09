@@ -378,10 +378,55 @@ setStartingValues = function(.W = args_default()$.W,
     }
     
     .W[i,names(.starting_values[[i]])] = .starting_values[[i]]
-    
+
   }
-  
+
   return(.W)
+}
+
+#' Internal: Check for complete starting values
+#'
+#' Check whether `.starting_values` completely specifies the starting weights,
+#' i.e., whether every construct that has at least one free (nonzero-pattern)
+#' weight is present in `.starting_values`, and, for each such construct, the
+#' named starting-value vector covers exactly (`setequal()`) that construct's
+#' pattern indicators. Partial specification (e.g., missing constructs or
+#' missing indicators within a specified construct) returns `FALSE`.
+#'
+#' @usage hasCompleteStartingValues(
+#'   .W               = args_default()$.W,
+#'   .starting_values = args_default()$.starting_values
+#'   )
+#'
+#' @inheritParams csem_arguments
+#'
+#' @return A single logical.
+#' @keywords internal
+
+hasCompleteStartingValues <- function(.W = args_default()$.W,
+                                       .starting_values = args_default()$.starting_values){
+
+  if(!is.list(.starting_values)) {
+    return(FALSE)
+  }
+
+  # Constructs that have at least one free (nonzero-pattern) weight
+  constructs_with_free_weights <- rownames(.W)[rowSums(.W != 0) > 0]
+
+  if(length(constructs_with_free_weights) == 0) {
+    return(FALSE)
+  }
+
+  if(!all(constructs_with_free_weights %in% names(.starting_values))) {
+    return(FALSE)
+  }
+
+  all(vapply(constructs_with_free_weights, function(i) {
+    pattern_indicators <- colnames(.W)[.W[i, ] != 0]
+    given_indicators   <- names(.starting_values[[i]])
+
+    !is.null(given_indicators) && setequal(pattern_indicators, given_indicators)
+  }, logical(1)))
 }
 
 #' Update Theta for Composite Variables in IGSCA

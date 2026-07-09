@@ -1062,28 +1062,59 @@ calculateWeightsIGSCA <- function(
   b_index <- which(c(B0) == 1)
 
   ### Initial Values ------------------------------------
-  # When the model has no structural paths (b_index is empty), plain GSCA in
-  # canonical mode (CCMP, the composite default) cannot supply starting
-  # values: a CCMP composite's loadings are fixed to zero, so with B = 0 its
-  # weights drop out of the GSCA criterion entirely and the weight update
-  # degenerates to 0/0 = NaN. Requesting NCMP keeps the measurement (loading)
-  # block in the criterion, which yields well-defined starting weights
-  # (essentially each block's first principal component). This only affects
-  # the starting values, not the modes used in the IGSCA iterations.
-  GSCA_starting_values <- calculateWeightsGSCA(
-    .X = .data,
-    .S = .S,
-    .csem_model = .csem_model,
-    .conv_criterion = .conv_criterion,
-    .GSCA_modes = if (length(b_index) == 0) "NCMP" else .GSCA_modes,
-    .iter_max = 10,
-    .tolerance = .tolerance,
+  # Complete .starting_values (i.e., every construct with at least one free
+  # weight is fully specified) bypass the internal plain-GSCA initialization
+  # entirely -- the starting weights are built directly from
+  # `.starting_values`. Partial or NULL starting values keep the existing
+  # behavior (plain-GSCA initialization, optionally nudged by partial
+  # starting values).
+  complete_starting_values <- hasCompleteStartingValues(
+    .W = t(W0),
     .starting_values = .starting_values
   )
 
-  W <- t(GSCA_starting_values$W)
-  B <- t(GSCA_starting_values$B)
-  C <- GSCA_starting_values$C
+  if (complete_starting_values) {
+    # Build starting weights directly from the (complete) .starting_values,
+    # then rescale so the resulting proxy/construct scores have unit
+    # variance -- this is what plain-GSCA initialization would have produced
+    # as well.
+    W <- t(setStartingValues(.W = t(W0), .starting_values = .starting_values))
+    W <- t(scaleWeights(.S = .S, .W = t(W)))
+
+    # C and B are seeded with their (unweighted) 0/1 model patterns. These
+    # are not usable loadings/paths by themselves, but a) the ALS loop's
+    # first weight update needs non-degenerate C/B (all-zero matrices would
+    # make the WW computation below degenerate), and b) updateCB() (used a
+    # few lines down to obtain real starting loadings/paths) relies on the
+    # nonzero pattern of the incoming C/B to determine which
+    # constructs/paths to estimate.
+    C <- C0
+    B <- B0
+  } else {
+    # When the model has no structural paths (b_index is empty), plain GSCA in
+    # canonical mode (CCMP, the composite default) cannot supply starting
+    # values: a CCMP composite's loadings are fixed to zero, so with B = 0 its
+    # weights drop out of the GSCA criterion entirely and the weight update
+    # degenerates to 0/0 = NaN. Requesting NCMP keeps the measurement (loading)
+    # block in the criterion, which yields well-defined starting weights
+    # (essentially each block's first principal component). This only affects
+    # the starting values, not the modes used in the IGSCA iterations.
+    GSCA_starting_values <- calculateWeightsGSCA(
+      .X = .data,
+      .S = .S,
+      .csem_model = .csem_model,
+      .conv_criterion = .conv_criterion,
+      .GSCA_modes = if (length(b_index) == 0) "NCMP" else .GSCA_modes,
+      .iter_max = 10,
+      .tolerance = .tolerance,
+      .starting_values = .starting_values
+    )
+
+    W <- t(GSCA_starting_values$W)
+    B <- t(GSCA_starting_values$B)
+    C <- GSCA_starting_values$C
+  }
+
   V <- cbind(diag(n_indicators), W)
 
   # Create initial values for U and D, using normalized data (Z) and construct scores (Eta) --------------
@@ -1106,8 +1137,11 @@ calculateWeightsIGSCA <- function(
   U <- list_UD[["U"]]
   D <- list_UD[["D"]]
 
-  # if starting values are provided
-  if (!is.null(.starting_values)) {
+  # if (partial) starting values are provided, re-apply them on top of the
+  # plain-GSCA-converged weights. When starting values are complete, W was
+  # already built directly from them above, so re-applying them here would be
+  # redundant.
+  if (!complete_starting_values && !is.null(.starting_values)) {
     W <- setStartingValues(.W = t(W), .starting_values = .starting_values) |>
       t()
   }
@@ -1154,6 +1188,29 @@ calculateWeightsIGSCA <- function(
   # Create c_index which should only exist for nomological composites and common factors
   C0[which(modes == "CCMP"), ] <- 0
   c_index <- which(c(C0) == 1)
+
+  if (complete_starting_values) {
+    # C and B still only hold their (zeroed-for-CCMP) 0/1 patterns at this
+    # point. Obtain real starting loadings/paths with one updateCB() call --
+    # the exact call used inside the ALS loop below -- using the starting
+    # Eta and the U/D initialized above.
+    list_CB_init <- updateCB(
+      X = Z - (U %*% D),
+      Eta = Eta,
+      Lambda = C,
+      B = B,
+      n_indicators = n_indicators,
+      .indicator_type = indicator_type,
+      n_constructs = n_constructs,
+      n_case = n_case,
+      lambda_index = c_index,
+      b_index = b_index,
+      modes = modes
+    )
+
+    C <- list_CB_init[["C"]]
+    B <- list_CB_init[["B"]]
+  }
 
   ## Alternating Least Squares Algorithm -------------------------------------
 
