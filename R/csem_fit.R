@@ -5,9 +5,26 @@
 #' is implemented (including models containing second order constructs).
 #' 
 #' Notation is taken from \insertCite{Bollen1989;textual}{cSEM}.
-#' If `.saturated = TRUE` the model-implied variance-covariance matrix is calculated 
-#' for a saturated structural model (i.e., the VCV of the constructs is replaced 
+#' If `.saturated = TRUE` the model-implied variance-covariance matrix is calculated
+#' for a saturated structural model (i.e., the VCV of the constructs is replaced
 #' by their correlation matrix). Hence: V(eta) = WSW' (possibly disattenuated).
+#'
+#' For GSCA-type estimates (GSCA, GSCAm, IGSCA; i.e.,
+#' `.approach_weights = "GSCA"`) the model-implied indicator VCV is computed as
+#' \deqn{\Sigma = \Lambda' V(\eta) \Lambda + D^2 + \Theta_E}
+#' where \eqn{\Lambda} is the matrix of loadings, \eqn{V(\eta)} the
+#' (model-implied or saturated) construct VCV, \eqn{D^2} the diagonal matrix of
+#' squared unique loadings (zero for plain GSCA and for composite indicators),
+#' and \eqn{\Theta_E = diag(diag(S) - diag(\Lambda' \Lambda) - d^2)} the
+#' unmodeled residual variance. Since the unique scores in GSCAm/IGSCA are
+#' orthogonal to the constructs and to each other by construction, the unique
+#' terms contribute to the diagonal of \eqn{\Sigma} only, and the diagonal of
+#' \eqn{\Sigma} equals the diagonal of the empirical indicator VCV \eqn{S}
+#' (the same convention used for PLS-PM). For composites estimated in canonical
+#' mode (CCMP) no loadings are estimated; if a composite's loading row is
+#' entirely zero, implied loadings \eqn{\lambda_k = S w_k} (the covariances of
+#' the block indicators with the unit-variance composite) are used in the
+#' computation of \eqn{\Sigma}.
 #'
 #' @usage fit(
 #'   .object    = NULL, 
@@ -75,7 +92,48 @@ fit.cSEMResults_default <- function(
   mod       <- .object$Information$Model
   S         <- .object$Estimates$Indicator_VCV
   Lambda    <- .object$Estimates$Loading_estimates
-  Theta     <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
+
+  if(isTRUE(.object$Information$Arguments$.approach_weights == "GSCA")) {
+    ## GSCA-type objects (GSCA, GSCAm, IGSCA)
+    # Composites estimated in canonical mode (CCMP) have no estimated loadings.
+    # If a composite's loading row is entirely zero (but weights exist),
+    # substitute the implied loadings lambda_k = S %*% w_k restricted to the
+    # composite's block, i.e., the covariance of each block indicator with the
+    # (unit-variance) composite -- the same meaning composite loadings have in
+    # PLS-PM. Note: this only affects the computation of the model-implied VCV;
+    # the loadings stored in the object remain untouched.
+    W <- .object$Estimates$Weight_estimates
+    vars_zero_loadings <- rownames(Lambda)[
+      rowSums(Lambda != 0) == 0 & rowSums(W != 0) > 0]
+
+    for(k in vars_zero_loadings) {
+      block_k <- colnames(mod$measurement)[mod$measurement[k, ] == 1]
+      Lambda[k, block_k] <- (S %*% W[k, ])[block_k, 1]
+    }
+
+    # Unique loadings d (GSCAm/IGSCA). They are NULL (or all NA) for plain
+    # GSCA and zero for composite indicators; treat both as zero.
+    d <- .object$Estimates$Unique_loading_estimates
+    if(is.null(d) || all(is.na(d))) {
+      d <- rep(0, ncol(Lambda))
+      names(d) <- colnames(Lambda)
+    }
+    d <- d[colnames(Lambda)]
+    d[is.na(d)] <- 0
+
+    # The unique scores are orthogonal to the constructs and to each other by
+    # construction, hence the unique terms contribute to the diagonal of the
+    # model-implied indicator VCV only:
+    #   Sigma = t(Lambda) %*% V(eta) %*% Lambda + D2 + Theta_E
+    # D2      := diagonal matrix of squared unique loadings.
+    # Theta_E := unmodeled residual variance; keeps diag(Sigma) = diag(S),
+    #            consistent with the PLS-PM convention below.
+    D2      <- diag(d^2)
+    Theta_E <- diag(diag(S) - diag(t(Lambda) %*% Lambda) - d^2)
+    Theta   <- D2 + Theta_E
+  } else {
+    Theta   <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
+  }
   dimnames(Theta) <- dimnames(S)
   
   m         <- mod$structural

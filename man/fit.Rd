@@ -33,6 +33,23 @@ Notation is taken from \insertCite{Bollen1989;textual}{cSEM}.
 If \code{.saturated = TRUE} the model-implied variance-covariance matrix is calculated
 for a saturated structural model (i.e., the VCV of the constructs is replaced
 by their correlation matrix). Hence: V(eta) = WSW' (possibly disattenuated).
+
+For GSCA-type estimates (GSCA, GSCAm, IGSCA; i.e.,
+\code{.approach_weights = "GSCA"}) the model-implied indicator VCV is computed as
+\deqn{\Sigma = \Lambda' V(\eta) \Lambda + D^2 + \Theta_E}
+where \eqn{\Lambda} is the matrix of loadings, \eqn{V(\eta)} the
+(model-implied or saturated) construct VCV, \eqn{D^2} the diagonal matrix of
+squared unique loadings (zero for plain GSCA and for composite indicators),
+and \eqn{\Theta_E = diag(diag(S) - diag(\Lambda' \Lambda) - d^2)} the
+unmodeled residual variance. Since the unique scores in GSCAm/IGSCA are
+orthogonal to the constructs and to each other by construction, the unique
+terms contribute to the diagonal of \eqn{\Sigma} only, and the diagonal of
+\eqn{\Sigma} equals the diagonal of the empirical indicator VCV \eqn{S}
+(the same convention used for PLS-PM). For composites estimated in canonical
+mode (CCMP) no loadings are estimated; if a composite's loading row is
+entirely zero, implied loadings \eqn{\lambda_k = S w_k} (the covariances of
+the block indicators with the unit-variance composite) are used in the
+computation of \eqn{\Sigma}.
 }
 \references{
 \insertAllCited{}
