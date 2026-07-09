@@ -324,7 +324,13 @@ summarize.cSEMResults_default <- function(
     
     ## Weight estimates --------------------------------------------------------
     weight_estimates <- addInfer(infer_out$Weight_estimates, weight_estimates, .ci)
-    
+
+    ## Unique loading estimates --------------------------------------------------
+    if(!is.null(infer_out$Unique_loading_estimates)) {
+      Unique_loading_estimates <- addInfer(infer_out$Unique_loading_estimates,
+                                           Unique_loading_estimates, .ci)
+    }
+
     ## Residual correlation ----------------------------------------------------
     if(!is.null(infer_out$Residual_correlation)) {
       residual_correlation <- addInfer(infer_out$Residual_correlation, 

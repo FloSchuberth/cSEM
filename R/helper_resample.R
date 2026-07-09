@@ -77,9 +77,15 @@ selectAndVectorize <- function(.object) {
     if(nrow(est_temp$Residual_correlation) != 0) {
       # Residual correlation
       x1[["Residual_correlation"]] <- est_temp$Residual_correlation$Estimate
-      names(x1[["Residual_correlation"]]) <- est_temp$Residual_correlation$Name 
+      names(x1[["Residual_correlation"]]) <- est_temp$Residual_correlation$Name
     }
-    
+
+    if(!is.null(est_temp$Unique_loading_estimates) && nrow(est_temp$Unique_loading_estimates) != 0) {
+      # Unique loading estimates (GSCA-M/IGSCA common-factor indicators)
+      x1[["Unique_loading_estimates"]] <- est_temp$Unique_loading_estimates$Estimate
+      names(x1[["Unique_loading_estimates"]]) <- est_temp$Unique_loading_estimates$Name
+    }
+
     if(nrow(est_temp$Indicator_correlation) != 0) {
       # Residual correlation
       x1[["Indicator_correlation"]] <- est_temp$Indicator_correlation$Estimate
