@@ -595,11 +595,52 @@ updateCB <-
 #'
 updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_indicators, Z_normed) {
 
+  # PROPOSED PATCH -- NOT ACTIVE (2026-07-09). The Procrustes problem solved
+  # below is under-determined: because Eta = (Z - UD) W is a linear
+  # combination of the columns of Z - UD, the informative matrix
+  # (I - P_Eta) Z D has rank at most J - P, so P of U's J orthonormal columns
+  # are criterion-flat and the SVD fills them with an arbitrary null-space
+  # completion -- generically NOT orthogonal to the constant vector. The
+  # parameter estimates (W, C, B, D) and the GSCA-M criterion are exactly
+  # invariant to this arbitrariness, but all score-based output picks up
+  # spurious nonzero column means (Construct_scores means ~0.10 std. scale;
+  # Construct_VCV = cor(scores) then disagrees with the uncentered metric in
+  # which the path coefficients are least squares, gap ~1e-2). Both of
+  # Hwang's MATLAB implementations (gsca_m.m 2016; gsca_m_updated.m Oct 2021)
+  # share the indeterminacy; see dev/igsca/updateUD/diagnose_centering.R for
+  # the full diagnosis and validation, and dev/igsca/PLAN_model_ind_VCV.md
+  # ("GSCAm quirk") for the summary.
+  # The fix pins the flat mean direction with the identification constraint
+  # U'1 = 0 (the sample analogue of E(u) = 0 already implicit in the model):
+  # build the orthogonal complement of cbind(1, Eta) instead of Eta, i.e.
+  # replace the three statements below by
+  #
+  #   qr_eta <- qr(cbind(1, Eta_normed))
+  #   svd_mx <- svd(tcrossprod(x = D, y = qr.qty(qr_eta, Z_normed)[(n_constructs + 2):n_case, , drop = FALSE]))
+  #   U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs + 1, n_indicators), tcrossprod(x = svd_mx$v, y = svd_mx$u)))
+  #
+  # Verified effects (diagnose_centering.R, Part D): parameters unchanged to
+  # 1e-15, criterion unchanged, colMeans(U) ~ 1e-18, cor(scores) well-defined
+  # (crossprod of the scores is flat-direction-invariant and the mean is now
+  # pinned), path coefficients consistent with cor(scores) to 3e-9.
+  # Concrete consequences of the unpatched behavior: construct scores,
+  # Construct_VCV, Unique_scores and calculateGSCAErrors() -- and everything
+  # built on them (A-11 reproduced covariances, GFI/SRMR, score exports,
+  # multigroup comparisons of score-based statistics, bootstrap draws, which
+  # each receive their own arbitrary completion) -- are not reproducible
+  # across BLAS/LAPACK builds and are internally inconsistent with the path
+  # coefficients. The contamination scales like sqrt(P/(N - J)) on the
+  # standardized score scale, so it is negligible for large N with few
+  # factor blocks but becomes first-order for small-sample, many-construct,
+  # low-reliability models (e.g. N = 100, J = 24, P = 8 gives score means
+  # ~0.3 and distortions of construct correlations and SRMR/GFI of order
+  # 1e-1 -- enough to flip borderline model-fit decisions).
+
   qr_eta <- qr(Eta_normed)
   # QtZ_null <- qr.qty(qr_eta, Z_normed)[(n_constructs + 1):n_case, , drop = FALSE]
   svd_mx <- svd(tcrossprod(x = D, y = qr.qty(qr_eta, Z_normed)[(n_constructs + 1):n_case, , drop = FALSE]))
   #  svd_mx <- svd(D %*% t(QtZ_null))
-  Utilde <-   # (N-P) × J
+  # Utilde <-   # (N-P) × J
   U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs, n_indicators),  tcrossprod(x= svd_mx$v, y = svd_mx$u)))
   # U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs, n_indicators), svd_mx$v %*% t(svd_mx$u)))
 

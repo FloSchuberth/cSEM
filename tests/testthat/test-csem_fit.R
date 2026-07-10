@@ -299,8 +299,16 @@ test_that("fit(.type_vcv = 'construct') works for GSCA-type objects", {
     # to unit variances (Cho et al. 2022, Eq. A-11). In these chain models
     # the implied variances equal 1 whenever the path coefficients are OLS
     # with respect to Construct_VCV; that holds up to the ALS convergence
-    # tolerance for GSCA/IGSCA and only up to ~1e-2 for GSCAm, whose paths
-    # are estimated in the uniqueness-corrected metric.
+    # tolerance for plain GSCA/IGSCA but only up to ~1e-2 for GSCAm: the
+    # GSCA-M U-update has P criterion-flat directions (the informative
+    # subspace (I - P_Gamma) Z D has rank J - P only) that the SVD fills
+    # arbitrarily, generically not orthogonal to the constant vector, so the
+    # scores (Z - UD) %*% W pick up nonzero column means and the centered
+    # cor(scores) reported as Construct_VCV differs from the uncentered
+    # metric crossprod(Gamma) in which B is exact OLS. Parameters are
+    # invariant to the flat directions; only score-based outputs are
+    # affected. Tolerance-invariant; see
+    # dev/igsca/updateUD/diagnose_centering.R for the full diagnosis.
     expect_equal(unname(diag(vcv_construct)), rep(1, nrow(P)), tolerance = 1e-2)
 
     # Saturated case: identical to the estimated construct correlation matrix
