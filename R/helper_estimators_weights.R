@@ -645,11 +645,11 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
 
   qr_eta <- qr(Eta_normed)
   # QtZ_null <- qr.qty(qr_eta, Z_normed)[(n_constructs + 1):n_case, , drop = FALSE]
+  # svd_mx <- svd(D %*% t(QtZ_null))
   svd_mx <- svd(tcrossprod(x = D, y = qr.qty(qr_eta, Z_normed)[(n_constructs + 1):n_case, , drop = FALSE]))
-  #  svd_mx <- svd(D %*% t(QtZ_null))
-  # Utilde <-   # (N-P) × J
-  U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs, n_indicators),  tcrossprod(x= svd_mx$v, y = svd_mx$u)))
+  # Utilde <- svd_mx$v %*% t(svd_mx$u)  # (N-P) × J
   # U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs, n_indicators), svd_mx$v %*% t(svd_mx$u)))
+  U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs, n_indicators),  tcrossprod(x= svd_mx$v, y = svd_mx$u)))
 
   # Old method based on Hwang et al. (2017) — O(N^2) memory and computation
   # Eta_Q2 <- qr.Q(qr(Eta_normed), complete = TRUE)[,
