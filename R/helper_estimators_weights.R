@@ -595,7 +595,9 @@ updateCB <-
 #'
 updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_indicators, Z_normed) {
 
-  # PROPOSED PATCH -- NOT ACTIVE (2026-07-09). The Procrustes problem solved
+  # PROPOSED PATCH -- NOT ACTIVE (2026-07-09).
+  # Diagnosis and patch author: Claude Fable 5 (Anthropic AI assistant).
+  # The Procrustes problem solved
   # below is under-determined: because Eta = (Z - UD) W is a linear
   # combination of the columns of Z - UD, the informative matrix
   # (I - P_Eta) Z D has rank at most J - P, so P of U's J orthonormal columns
@@ -629,12 +631,17 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
   # multigroup comparisons of score-based statistics, bootstrap draws, which
   # each receive their own arbitrary completion) -- are not reproducible
   # across BLAS/LAPACK builds and are internally inconsistent with the path
-  # coefficients. The contamination scales like sqrt(P/(N - J)) on the
-  # standardized score scale, so it is negligible for large N with few
-  # factor blocks but becomes first-order for small-sample, many-construct,
-  # low-reliability models (e.g. N = 100, J = 24, P = 8 gives score means
-  # ~0.3 and distortions of construct correlations and SRMR/GFI of order
-  # 1e-1 -- enough to flip borderline model-fit decisions).
+  # coefficients. The UNIQUE-score means scale like sqrt(P/(N - J)) on the
+  # standardized scale (~0.32 at N = 100, J = 24, P = 8); the construct-score
+  # means inherit them damped by the d*w aggregation (~0.09-0.10 measured
+  # both in simulation and in the Bergami-Bagozzi data). The largest
+  # distortions of individual construct correlations reach ~1e-2; the
+  # knock-on movement of assess()'s SRMR measured much smaller here (~1e-4
+  # and below, see dev/igsca/updateUD/simulation_updateUD_patch.R) but
+  # scales with how much of the reproduced covariance matrix derives
+  # directly from score correlations. The primary practical damage is to
+  # scores, reported construct correlations, their cross-library
+  # reproducibility, and resampling/multigroup statistics.
 
   qr_eta <- qr(Eta_normed)
   # QtZ_null <- qr.qty(qr_eta, Z_normed)[(n_constructs + 1):n_case, , drop = FALSE]
