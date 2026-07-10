@@ -479,7 +479,82 @@ calculateFITForSplit <- function(data,
   }, error = function(error) {
     return(c("sg_fit" = NA, "mg_fit" = NA))
   })
-  
+
   return(ret)
-  
+
+}
+
+
+#' Block-diagonalized model-implied correlation matrices
+#'
+#' Make it easy to compare the matrix distance between the model-implied
+#' correlation matrix of a single-group model and the model-implied matrices
+#' of a multigroup model: the single-group model's implied matrix is
+#' duplicated block-diagonally a user-chosen number of times, while for a
+#' multigroup model each group's implied matrix is placed along the block
+#' diagonal. The block-diagonal matrices of a single-group model (repeated
+#' as many times as the multigroup model has groups) and of the multigroup
+#' model then have identical dimensions and can be compared with any matrix
+#' distance.
+#'
+#' @usage bdiagFit(
+#'   .object    = NULL,
+#'   .n_blocks  = args_default()$.n_blocks,
+#'   .type_vcv  = args_default()$.type_vcv,
+#'   .saturated = args_default()$.saturated
+#'   )
+#'
+#' @inheritParams csem_arguments
+#'
+#' @return A block-diagonal `matrix`.
+#' @seealso [fit()], [csem()]
+#' @export
+#' @importFrom Matrix bdiag
+bdiagFit <- function(.object    = NULL,
+                     .n_blocks  = args_default()$.n_blocks,
+                     .type_vcv  = args_default()$.type_vcv,
+                     .saturated = args_default()$.saturated) {
+
+## Warning Checks ----------------------------------------------------------
+  stopifnot(
+    '`.n_blocks` must be a single positive whole number' =
+      length(.n_blocks) == 1 && is.numeric(.n_blocks) &&
+      !is.na(.n_blocks) && .n_blocks > 0 && .n_blocks == round(.n_blocks)
+  )
+
+## Multigroup objects -------------------------------------------------------
+  if(inherits(.object, "cSEMResults_multi")) {
+
+    if(.n_blocks != 1) {
+      warning(paste0(".n_blocks is ignored for multigroup objects: the ",
+                     "number of blocks is set to the number of groups."))
+    }
+
+    Sigma_list <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
+
+    Sigma_bdiag <- Matrix::bdiag(Sigma_list) |>
+      as.matrix()
+
+    new_names <- unlist(lapply(names(Sigma_list), function(g) {
+      paste0(rownames(Sigma_list[[g]]), "_", g)
+    }))
+
+    dimnames(Sigma_bdiag) <- list(new_names, new_names)
+
+    return(Sigma_bdiag)
+  }
+
+## Single-group objects (including 2nd-order objects) -----------------------
+  Sigma <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
+
+  Sigma_bdiag <- Matrix::bdiag(replicate(.n_blocks, Sigma, simplify = FALSE)) |>
+    as.matrix()
+
+  new_names <- unlist(lapply(seq_len(.n_blocks), function(i) {
+    paste0(rownames(Sigma), "_", i)
+  }))
+
+  dimnames(Sigma_bdiag) <- list(new_names, new_names)
+
+  return(Sigma_bdiag)
 }

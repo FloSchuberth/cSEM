@@ -265,6 +265,11 @@ Defaults to \code{"all"}.}
 
 \item{.n}{Integer. The number of observations of the original data.}
 
+\item{.n_blocks}{Integer. The number of times the model-implied correlation
+matrix of a single-group model is repeated along the block diagonal by
+\code{\link[=bdiagFit]{bdiagFit()}}. Ignored for multigroup objects, where the number of blocks
+equals the number of groups. Defaults to \code{1}.}
+
 \item{.n_generations}{Integer. Number of generations used in the genetic
 algorithm. Defaults to \code{20}.}
 

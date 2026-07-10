@@ -200,7 +200,11 @@
 #'   of character strings naming the model selection criterion to compute.
 #'   Defaults to `"all"`.
 #' @param .n Integer. The number of observations of the original data.
-#' @param .n_generations Integer. Number of generations used in the genetic 
+#' @param .n_blocks Integer. The number of times the model-implied correlation
+#'   matrix of a single-group model is repeated along the block diagonal by
+#'   [bdiagFit()]. Ignored for multigroup objects, where the number of blocks
+#'   equals the number of groups. Defaults to `1`.
+#' @param .n_generations Integer. Number of generations used in the genetic
 #' algorithm. Defaults to `20`.
 #' @param .n_steps Integer. A value giving the number of steps (the spotlights, i.e.,
 #' values of .moderator in surface analysis or floodlight analysis) 
@@ -538,7 +542,8 @@ args_default <- function(.choices = FALSE) {
     .modes                   = NULL,
     .ms_criterion            = c("all", "aic", "aicc", "aicu", "bic", "fpe", "gm", "hq",
                                  "hqc", "mallows_cp"),
-    .n_generations           = 20,  
+    .n_blocks                = 1,
+    .n_generations           = 20,
     .n_steps                 = 100,
     .normality               = FALSE,
     .nr_comparisons          = NULL,
