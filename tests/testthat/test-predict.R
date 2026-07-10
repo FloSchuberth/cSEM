@@ -17,6 +17,17 @@ test_that("predict() fails for non-linear and 2ndorder models", {
 })
 
 test_that("predict() works for linear models", {
+  # The assignment of observations to cross-validation folds is random; with
+  # unseeded folds an occasional training fold yields an inadmissible
+  # estimation and the test fails spuriously (observed on CI, 2026-07-10:
+  # the same commit passed on windows-latest (4.1) and failed on
+  # windows-latest (release), test-predict.R:27). Fixing the RNG state makes
+  # the folds -- and hence the test -- deterministic without masking real
+  # regressions: predict()'s mechanics are still exercised end-to-end and
+  # .handle_inadmissibles keeps its default, so a deterministic failure
+  # still surfaces. set.seed() is used instead of predict()'s .seed argument
+  # because the latter is deliberately restricted to .r = 1.
+  set.seed(1406)
   expect_s3_class({
     predict(res_single_linear, .cv_folds = 2, .r = 2, .benchmark = "lm", .disattenuate = FALSE)
   }, "cSEMPredict")
@@ -29,6 +40,8 @@ test_that("predict() works for linear models", {
 })
 
 test_that("predict() works with ordinal categorical indicators", {
+  # Seeded for the same reason as in the linear-model test above.
+  set.seed(1406)
   expect_s3_class({
     predict(res_OrdPLS_all_ordinal, .cv_folds = 2, .r = 2, .benchmark = "lm", .disattenuate = FALSE)
   }, "cSEMPredict")
