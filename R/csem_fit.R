@@ -29,10 +29,6 @@
 #' \eqn{\Sigma} (including the diagonal) reproduce the empirical VCV \eqn{S}
 #' exactly. Unlike for the other estimators, the implied variances of
 #' endogenous constructs are not normalized to 1 for GSCA-type estimates.
-#' For composites estimated in canonical mode (CCMP) the loadings stored in
-#' the object are the implied loadings \eqn{\lambda_k = S w_k} (the
-#' covariances of the block indicators with the unit-variance composite),
-#' computed by the estimators at convergence; they enter \eqn{\Sigma} as-is.
 #'
 #' @usage fit(
 #'   .object    = NULL, 
@@ -97,36 +93,15 @@ fit.cSEMResults_default <- function(
       "`fit()` currently not applicable to nonlinear models.")
   }
   
+  approach_gsca <- isTRUE(.object$Information$Arguments$.approach_weights == "GSCA")
+
   mod       <- .object$Information$Model
   S         <- .object$Estimates$Indicator_VCV
   Lambda    <- .object$Estimates$Loading_estimates
 
-  approach_gsca <- isTRUE(.object$Information$Arguments$.approach_weights == "GSCA")
-
   if(approach_gsca) {
-    ## GSCA-type objects (GSCA, GSCAm, IGSCA)
-    # Unique loadings (GSCAm/IGSCA; NULL for plain GSCA). The estimators
-    # return them complete, in indicator order and zero for composite
-    # indicators; composites estimated in canonical mode (CCMP) likewise
-    # already carry their implied loadings S %*% w in Loading_estimates.
-    # Both invariants are pinned by tests/testthat/test-csem_fit.R.
     d <- .object$Estimates$Unique_loading_estimates
     if(is.null(d)) d <- numeric(ncol(Lambda))
-
-    # Reproduced covariance matrix of Cho et al. (2022), Eq. (A-11):
-    #   Sigma = t(Lambda) %*% V(eta) %*% Lambda + E(eps eps') + D2
-    # The common factor model is assumed to hold for the GSCA-M-treated
-    # (effect) indicators, i.e. E(eps2 eps2') = 0. The unique scores are
-    # orthogonal to the constructs and to each other by construction, so the
-    # unique terms contribute D2 (squared unique loadings) to the diagonal
-    # only: the implied variance of an effect indicator is
-    # lambda_j^2 * v_pp + d_j^2, deliberately NOT topped up to diag(S) -- the
-    # indicator variance left unexplained by the common and unique parts is
-    # misfit. Composite indicators instead carry a block-diagonal
-    # E(eps1 eps1') ("as is typically assumed in component-based SEM"), which
-    # the block-wise replacement of within-composite-block entries by S at
-    # the end of this function implements; their implied (co)variances equal
-    # those of S.
     Theta <- diag(d^2)
   } else {
     Theta   <- diag(diag(S) - diag(t(Lambda) %*% Lambda))

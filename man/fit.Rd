@@ -54,10 +54,6 @@ indicators are assumed to be correlated within blocks (block-diagonal
 \eqn{\Sigma} (including the diagonal) reproduce the empirical VCV \eqn{S}
 exactly. Unlike for the other estimators, the implied variances of
 endogenous constructs are not normalized to 1 for GSCA-type estimates.
-For composites estimated in canonical mode (CCMP) the loadings stored in
-the object are the implied loadings \eqn{\lambda_k = S w_k} (the
-covariances of the block indicators with the unit-variance composite),
-computed by the estimators at convergence; they enter \eqn{\Sigma} as-is.
 }
 \references{
 \insertAllCited{}
