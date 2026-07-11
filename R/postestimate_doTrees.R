@@ -127,52 +127,6 @@ csem_fit <- function(.object,
   }
 }
 
-
-#' Calculate I-GSCA's Objective Function
-#' 
-#' Numerator of the fraction of unexplained variance in the data of the FIT statistic for GSCA models.
-#' 
-#' @param .object 
-#'
-#' @return Sum of Squares of Unexplained Variance
-#' @keywords internal
-calculateIgscaObjectiveFunction <- function(.object = NULL) {
-  
-  # As shown in the GSCA_m publication (Hwang et al., 2017)
-  Gamma <- .object$Estimates$Construct_scores
-  Psi <- cbind(.object$Information$Data, Gamma)
-  # I am fairly confident the transpose of B is what's needed
-  # See Gamma[1,] %*% t(...$Path_estimates)
-  if (!is.null(.object$Estimates$Path_estimates)) {
-    # If there's a structural model
-    A <- cbind(.object$Estimates$Loading_estimates,
-               t(.object$Estimates$Path_estimates))
-  }
-  else if (is.null(.object$Estimates$Path_estimates) | (!exists(".object$Estimates$Path_estimates"))) {
-    # If no structural model
-    A <- cbind(.object$Estimates$Loading_estimates,
-               matrix(data = 0,
-                      nrow = nrow(.object$Estimates$Loading_estimates),
-                      ncol = nrow(.object$Estimates$Loading_estimates))
-    )
-  }
-  
-  if (!is.null(.object$Estimates$Unique_scores)) {
-    S <- cbind(.object$Estimates$Unique_scores, matrix(data = 0, nrow = nrow(Gamma), ncol = ncol(Gamma)))
-    
-  } else if (is.null(.object$Estimates$Unique_scores)) {
-    # Unique_scores should be NULL when GSCA and not GSCA_m/I-GSCA is run 
-    S <- matrix(data = 0, nrow(Psi), ncol = ncol(Psi))  
-    
-  }
-  
-  SS_unexplained_variance <- sum(diag(t(Psi - Gamma %*% A - S) %*% (Psi - Gamma %*% A - S)))
-  
-  return(SS_unexplained_variance)
-}
-
-
-
 #' Prune a grown tree from doTrees
 #'
 #' @param .tree Fitted tree
