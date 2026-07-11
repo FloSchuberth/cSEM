@@ -1,4 +1,7 @@
 Sys.setenv(OMP_NUM_THREADS = "1", OPENBLAS_NUM_THREADS = "1", MKL_NUM_THREADS = "1")
+library(RhpcBLASctl)
+RhpcBLASctl::blas_set_num_threads(1)
+
 # Pretty error happening
 library(rlang)
 rlang::global_handle()
@@ -10,7 +13,7 @@ library(lobstr)
 # lobstr::tree()
 
 
-# library(cli)
+library(cli)
 cli::pretty_print_code()
 
 # Test by typing `lm` in the console
@@ -19,12 +22,13 @@ cli::pretty_print_code()
 # For printing something easier to see
 #' tibble::as_tibble()
 
-
-library(RhpcBLASctl)
-RhpcBLASctl::blas_set_num_threads(1)
-
-
 #' devtools::test_active_file()
 
 # How to see source code of method
 # getAnywhere('t.test.default')
+
+
+# For replacing a function quickly 
+# library(testthat)
+# local_mocked_bindings(..., .package = NULL, .env = caller_env())
+# https://testthat.r-lib.org/reference/local_mocked_bindings.html
