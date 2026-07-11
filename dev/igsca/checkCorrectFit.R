@@ -65,6 +65,13 @@ HonestyHumility =~ Honesty1 + Honesty2 + Honesty3
 NetworkingBehavior ~ HonestyHumility
 "
 
+data(LeDang2022)
+
+dat <- rbind(
+  subset(LeDang2022, Gender == "Male")[1:10,],
+  subset(LeDang2022, Gender == "Female")[1:10,]
+)
+
 gscam <- csem(
   .data = dat,
   gscam_model,
