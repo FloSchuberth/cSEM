@@ -93,20 +93,12 @@ fit.cSEMResults_default <- function(
       "`fit()` currently not applicable to nonlinear models.")
   }
   
-  approach_gsca <- isTRUE(.object$Information$Arguments$.approach_weights == "GSCA")
-
   mod       <- .object$Information$Model
   S         <- .object$Estimates$Indicator_VCV
   Lambda    <- .object$Estimates$Loading_estimates
-
-  if(approach_gsca) {
-    d <- .object$Estimates$Unique_loading_estimates
-    if(is.null(d)) d <- numeric(ncol(Lambda))
-    Theta <- diag(d^2)
-  } else {
-    Theta   <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
-  }
+  Theta     <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
   dimnames(Theta) <- dimnames(S)
+  approach_gsca <- isTRUE(.object$Information$Arguments$.approach_weights == "GSCA")
   
   m         <- mod$structural
   if(all(m == 0)) {.saturated <- TRUE}
@@ -151,7 +143,7 @@ fit.cSEMResults_default <- function(
     Corr_exo_endo <- Phi %*% t(Gamma) %*% t(solve(I-B))
     ## Correlations between endogenous constructs
     Cor_endo <- solve(I-B) %*% (Gamma %*% Phi %*% t(Gamma) + vcv_zeta) %*% t(solve(I-B))
-    # Except for GSCA-type estimates the implied variances of the endogenous
+    # Fable: Except for GSCA-type estimates the implied variances of the endogenous
     # constructs are normalized to 1. For GSCA the raw implied construct VCV
     # of Cho et al. (2022, Eq. A-11) is used instead: deviations of the
     # implied construct variances from 1 count as structural misfit there.
@@ -186,7 +178,17 @@ fit.cSEMResults_default <- function(
   ## Calculate model-implied VCV of the indicators
   vcv_ind <- t(Lambda) %*% vcv_construct %*% Lambda
   
-  Sigma <- vcv_ind + Theta
+  if(approach_gsca) {
+    d <- .object$Estimates$Unique_loading_estimates
+    if(is.null(d)) d <- numeric(ncol(Lambda)) # It is only null using plain GSCA
+    D2 <- diag(d^2)
+    dimnames(D2) <- dimnames(S)
+    # Only D2 is needed because the indicators of factors have no errors beyond the unique errors in GSCA(m) and IGSCA. 
+    # On the other hand, the composite indicators are replaced with their corresponding elements of S, as is done in other cSEM models.
+    Sigma <- vcv_ind + D2
+  } else {
+    Sigma <- vcv_ind + Theta
+  }
   
   ## Make symmetric
   Sigma[lower.tri(Sigma)] <- t(Sigma)[lower.tri(Sigma)]
