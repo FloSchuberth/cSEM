@@ -761,3 +761,78 @@ setDominantIndicator <- function(
     ))
   }
 }
+
+#' Internal: Fit GSCA from several starting-value sets and keep the best FIT
+#'
+#' Re-invokes [foreman()] once per candidate starting-value set (each a valid
+#' single `.starting_values` set), scores each admissible fit with
+#' [calculateFIT()], and returns the fit with the highest FIT. Candidates whose
+#' fit errors or yields a non-finite FIT are skipped (with a warning); if the
+#' selected fit is inadmissible a warning is issued. The returned object keeps
+#' the full candidate list in `Information$Arguments$.starting_values` so that
+#' downstream resampling re-runs the multi-start on every replication.
+#' 
+#' @param .args_used The captured `foreman()` argument list to reuse per fit.
+#' 
+#' @inheritParams csem_arguments
+#'
+#' @return A `foreman()` output list (the best-FIT fit) augmented with a
+#'   `Information$Weight_info$Multistart` record.
+#' @keywords internal
+
+selectBestStartingValuesFit <- function(.candidates, .args_used) {
+
+  fits       <- vector("list", length(.candidates))
+  fit_values <- rep(NA_real_, length(.candidates))
+
+  for(i in seq_along(.candidates)) {
+    args_i <- .args_used
+    args_i[[".starting_values"]] <- .candidates[[i]]
+
+    fit_i <- tryCatch(do.call(foreman, args_i), error = function(e) e)
+
+    if(inherits(fit_i, "error")) {
+      next
+    }
+
+    fits[[i]]     <- fit_i
+    fit_values[i] <- tryCatch(calculateFIT(fit_i), error = function(e) NA_real_)
+  }
+
+  ok <- is.finite(fit_values)
+
+  if(!any(ok)) {
+    stop2(
+      "The following error occured in the `foreman()` function:\n",
+      "None of the ", length(.candidates),
+      " starting-value sets produced a valid GSCA fit.")
+  }
+
+  if(!all(ok)) {
+    warning2(
+      "The following issue was encountered in the `foreman()` function:\n",
+      sum(!ok), " of ", length(.candidates),
+      " starting-value sets did not produce a valid fit and were skipped.")
+  }
+
+  best_index <- which.max(fit_values)
+  best       <- fits[[best_index]]
+
+  if(sum(unlist(verify(best))) != 0) {
+    warning2(
+      "The following issue was encountered in the `foreman()` function:\n",
+      "The best-fitting starting-value set produced an inadmissible result.")
+  }
+
+  ## Keep the full candidate list so resampling re-runs the multi-start
+  best$Information$Arguments$.starting_values <- .candidates
+
+  ## Record the multi-start search outcome
+  best$Information$Weight_info$Multistart <- list(
+    FIT_selected   = fit_values[best_index],
+    FIT_candidates = fit_values,
+    n_candidates   = length(.candidates)
+  )
+
+  best
+}

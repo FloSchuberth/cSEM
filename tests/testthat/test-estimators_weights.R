@@ -1478,3 +1478,88 @@ AffJoy  ~ OrgIden"
     expect_true(g$Information$Weight_info$Convergence_status)
   }
 })
+
+# Multi-start starting values -------------------------------------------------
+
+mstart_model <- "
+OrgIden <~ ma1 + ma2 + ma3
+AffJoy  <~ orgcmt1 + orgcmt2 + orgcmt3
+OrgPres =~ cei1 + cei2 + cei3
+OrgIden ~ OrgPres
+AffJoy  ~ OrgIden
+"
+
+test_that("isMultiStartStartingValues detects the multi-start form", {
+  single <- list(OrgIden = c(ma1 = 1, ma2 = 1, ma3 = 1))
+  multi  <- list(single, single)
+  expect_false(isMultiStartStartingValues(single))
+  expect_true(isMultiStartStartingValues(multi))
+  expect_false(isMultiStartStartingValues(NULL))
+  expect_false(isMultiStartStartingValues(list()))
+  expect_false(isMultiStartStartingValues(c(n = 3, min = -1, max = 1)))
+})
+
+test_that("checkRandomStartingSpec validates the random spec", {
+  expect_equal(checkRandomStartingSpec(c(n = 5, min = -1, max = 1)),
+               list(n = 5L, min = -1, max = 1))
+  expect_error(checkRandomStartingSpec(c(5, -1, 1)))                 # unnamed
+  expect_error(checkRandomStartingSpec(c(a = 5, b = -1, c = 1)))     # wrong names
+  expect_error(checkRandomStartingSpec(c(n = 5, min = 1, max = 1)))  # min >= max
+  expect_error(checkRandomStartingSpec(c(n = 0, min = -1, max = 1))) # n < 1
+  expect_error(checkRandomStartingSpec(c(n = 2.5, min = -1, max = 1)))# fractional n
+})
+
+test_that("generateRandomStartingValues produces complete sets matching the weight pattern", {
+  m <- parseModel(mstart_model)
+  sets <- generateRandomStartingValues(m$measurement, .n = 4, .min = -1, .max = 1)
+  expect_length(sets, 4)
+  free_constructs <- rownames(m$measurement)[rowSums(m$measurement != 0) > 0]
+  expect_setequal(names(sets[[1]]), free_constructs)
+  for (cn in free_constructs) {
+    inds <- colnames(m$measurement)[m$measurement[cn, ] != 0]
+    expect_setequal(names(sets[[1]][[cn]]), inds)
+  }
+  expect_true(all(unlist(sets) >= -1 & unlist(sets) <= 1))
+})
+
+test_that("generateRandomStartingValues is reproducible under set.seed()", {
+  m <- parseModel(mstart_model)
+  set.seed(1)
+  x <- generateRandomStartingValues(m$measurement, .n = 3, .min = -1, .max = 1)
+  set.seed(1)
+  y <- generateRandomStartingValues(m$measurement, .n = 3, .min = -1, .max = 1)
+  expect_identical(x, y)
+})
+
+test_that("multi-start GSCA selects the best-FIT starting-value set", {
+  set1 <- list(OrgIden = c(ma1 = 1, ma2 = 1, ma3 = 1),
+               AffJoy  = c(orgcmt1 = 1, orgcmt2 = 1, orgcmt3 = 1),
+               OrgPres = c(cei1 = 1, cei2 = 1, cei3 = 1))
+  set2 <- list(OrgIden = c(ma1 = 1, ma2 = -1, ma3 = 1),
+               AffJoy  = c(orgcmt1 = -1, orgcmt2 = 1, orgcmt3 = 1),
+               OrgPres = c(cei1 = 1, cei2 = 1, cei3 = -1))
+
+  res <- csem(BergamiBagozzi2000, mstart_model,
+              .approach_weights = "GSCA", .GSCA_modes = "NCMP",
+              .starting_values = list(set1, set2))
+
+  ms <- res$Information$Weight_info$Multistart
+  expect_equal(ms$n_candidates, 2)
+  expect_length(ms$FIT_candidates, 2)
+  expect_equal(ms$FIT_selected, max(ms$FIT_candidates, na.rm = TRUE))
+  expect_equal(calculateFIT(res), ms$FIT_selected)
+})
+
+test_that("multi-start skips candidates that fail to fit, with a warning", {
+  good <- list(OrgIden = c(ma1 = 1, ma2 = 1, ma3 = 1))
+  bad  <- list(OrgIden = c(does_not_exist = 1))
+
+  expect_warning(
+    res <- csem(BergamiBagozzi2000, mstart_model,
+                .approach_weights = "GSCA", .GSCA_modes = "NCMP",
+                .starting_values = list(good, bad))
+  )
+  ms <- res$Information$Weight_info$Multistart
+  expect_equal(ms$n_candidates, 2)
+  expect_true(is.na(ms$FIT_candidates[2]))
+})

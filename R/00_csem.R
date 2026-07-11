@@ -412,7 +412,35 @@ csem <- function(
   } else {
     args_needed[[".model"]] <- model_original
   }
-    
+
+  ## Multi-start starting values (GSCA only) -----------------------------------
+  ## Expand the random convenience spec c(n, min, max) into concrete candidate
+  ## sets and guard against non-GSCA approaches. The explicit recursive-list
+  ## form is passed through unchanged; foreman() performs the selection.
+  ## The random draws simply consume from the global RNG stream, so call
+  ## set.seed() before csem() if reproducible random starts are required.
+  if(is.numeric(.starting_values) && !is.list(.starting_values)) {
+    if(.approach_weights != "GSCA") {
+      stop2(
+        "The following error occured in the `csem()` function:\n",
+        "A numeric `.starting_values` (random multi-start) is only supported ",
+        "for `.approach_weights = 'GSCA'`.")
+    }
+    spec <- checkRandomStartingSpec(.starting_values)
+    args_needed[[".starting_values"]] <- generateRandomStartingValues(
+      .measurement = model_original$measurement,
+      .n   = spec$n,
+      .min = spec$min,
+      .max = spec$max
+    )
+  } else if(isMultiStartStartingValues(.starting_values) &&
+            .approach_weights != "GSCA") {
+    stop2(
+      "The following error occured in the `csem()` function:\n",
+      "Multiple starting-value sets are only supported for ",
+      "`.approach_weights = 'GSCA'`.")
+  }
+
   ## Select cases
   if(!is.null(.id) && !inherits(.data, "list")) {
 

@@ -40,10 +40,22 @@ If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights 
 If the algorithm exceeds the specified number, weights of iteration step
 \code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
 
-\item{.starting_values}{A named list of vectors where the
-list names are the construct names whose indicator weights the user
-wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}
-pairs, where \code{value} is the (scaled or unscaled) starting weight. Defaults to \code{NULL}.}
+\item{.starting_values}{Starting weights for the weighting algorithm.
+Accepts one of three forms. \strong{(1) A single set:} a named list of vectors
+where the list names are the construct names whose indicator weights the
+user wishes to set; the vectors must be named vectors of
+\code{"indicator_name" = value} pairs, where \code{value} is the (scaled or unscaled)
+starting weight. \strong{(2) Multiple sets (GSCA only):} a list whose every
+element is itself such a single set. The model is fit from each set and the
+fit with the best overall FIT (see \code{\link[=calculateFIT]{calculateFIT()}}) is returned and used
+for any subsequent resampling, guarding against alternating-least-squares
+local optima. \strong{(3) Random sets (GSCA only):} a named numeric vector of
+length three, \verb{c(n = <number of sets>, min = <lower>, max = <upper>)}, from
+which \code{n} sets of starting weights are sampled via \code{\link[stats:Uniform]{stats::runif()}} over
+\verb{[min, max]}; call \code{\link[=set.seed]{set.seed()}} before \code{csem()} for reproducible draws.
+Forms (2) and (3) require \code{.approach_weights = "GSCA"}; for multigroup data
+the selection of best FIT is performed per group, as opposed to the overall
+multigroup FIT. Defaults to \code{NULL}.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}

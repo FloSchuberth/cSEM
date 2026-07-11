@@ -86,6 +86,7 @@
 #' @param .by_equation Should the criteria be computed for each structural model
 #'   equation separately? Defaults to `TRUE`.
 #' @param .C A (J x J) composite variance-covariance matrix.
+#' @param .candidates A list of `.starting_values` sets (the multi-start form).
 #' @param .check_errors Logical. Should the model to parse be checked for correctness 
 #'   in a sense that all necessary components to estimate the model are given?
 #'   Defaults to `TRUE`.
@@ -338,10 +339,22 @@
 #'   One of "*first*" or "*second*". Defaults to "*first*".
 #' @param .standardized Logical. Should standardized scores be returned? Defaults
 #'   to `TRUE`.
-#' @param .starting_values A named list of vectors where the
-#'   list names are the construct names whose indicator weights the user
-#'   wishes to set. The vectors must be named vectors of `"indicator_name" = value` 
-#'   pairs, where `value` is the (scaled or unscaled) starting weight. Defaults to `NULL`.
+#' @param .starting_values Starting weights for the weighting algorithm.
+#'   Accepts one of three forms. **(1) A single set:** a named list of vectors
+#'   where the list names are the construct names whose indicator weights the
+#'   user wishes to set; the vectors must be named vectors of
+#'   `"indicator_name" = value` pairs, where `value` is the (scaled or unscaled)
+#'   starting weight. **(2) Multiple sets (GSCA only):** a list whose every
+#'   element is itself such a single set. The model is fit from each set and the
+#'   fit with the best overall FIT (see [calculateFIT()]) is returned and used
+#'   for any subsequent resampling, guarding against alternating-least-squares
+#'   local optima. **(3) Random sets (GSCA only):** a named numeric vector of
+#'   length three, `c(n = <number of sets>, min = <lower>, max = <upper>)`, from
+#'   which `n` sets of starting weights are sampled via [stats::runif()] over
+#'   `[min, max]`; call [set.seed()] before `csem()` for reproducible draws.
+#'   Forms (2) and (3) require `.approach_weights = "GSCA"`; for multigroup data
+#'   the selection of best FIT is performed per group, as opposed to the overall
+#'   multigroup FIT. Defaults to `NULL`.
 #' @param .steps_mod A numeric vector. Steps used for the moderator variable in calculating 
 #' the simple effects of an independent variable on the dependent variable. 
 #' Defaults to `NULL`.
@@ -494,6 +507,7 @@ args_default <- function(.choices = FALSE) {
     .bias_corrected          = TRUE,
     .by_equation             = TRUE,
     .C                       = NULL,
+    .candidates              = NULL,
     .check_errors            = TRUE,
     .choices                 = FALSE,
     .ci                      = c("CI_standard_z", "CI_standard_t", "CI_percentile", 

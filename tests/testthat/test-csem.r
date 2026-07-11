@@ -333,3 +333,75 @@ test_that("DPG_2ndorder_composites_of_composites is correctly estimated", {
   expect_equal(weights$Estimate, weights$Pop_value)
 })
 
+# GSCA multi-start starting values --------------------------------------------
+
+mstart_model <- "
+OrgIden <~ ma1 + ma2 + ma3
+AffJoy  <~ orgcmt1 + orgcmt2 + orgcmt3
+OrgPres =~ cei1 + cei2 + cei3
+OrgIden ~ OrgPres
+AffJoy  ~ OrgIden
+"
+
+test_that("random-spec starting values run and select a best fit", {
+  set.seed(123)
+  res <- csem(BergamiBagozzi2000, mstart_model,
+              .approach_weights = "GSCA", .GSCA_modes = "NCMP",
+              .starting_values = c(n = 4, min = -1, max = 1))
+  ms <- res$Information$Weight_info$Multistart
+  expect_equal(ms$n_candidates, 4)
+  expect_equal(ms$FIT_selected, max(ms$FIT_candidates, na.rm = TRUE))
+})
+
+test_that("random-spec multi-start is reproducible under set.seed()", {
+  set.seed(99)
+  r1 <- csem(BergamiBagozzi2000, mstart_model,
+             .approach_weights = "GSCA", .GSCA_modes = "NCMP",
+             .starting_values = c(n = 4, min = -1, max = 1))
+  set.seed(99)
+  r2 <- csem(BergamiBagozzi2000, mstart_model,
+             .approach_weights = "GSCA", .GSCA_modes = "NCMP",
+             .starting_values = c(n = 4, min = -1, max = 1))
+  expect_equal(r1$Estimates$Weight_estimates, r2$Estimates$Weight_estimates)
+})
+
+test_that("multi-start is rejected for non-GSCA approaches", {
+  set1 <- list(OrgIden = c(ma1 = 1, ma2 = 1, ma3 = 1))
+  expect_error(
+    csem(BergamiBagozzi2000, mstart_model,
+         .approach_weights = "PLS-PM",
+         .starting_values = c(n = 4, min = -1, max = 1)))
+  expect_error(
+    csem(BergamiBagozzi2000, mstart_model,
+         .approach_weights = "PLS-PM",
+         .starting_values = list(set1, set1)))
+})
+
+test_that("multi-start GSCA selects per group for multigroup data", {
+  set.seed(7)
+  res <- csem(BergamiBagozzi2000, mstart_model,
+              .approach_weights = "GSCA", .GSCA_modes = "NCMP",
+              .id = "gender",
+              .starting_values = c(n = 3, min = -1, max = 1))
+  expect_s3_class(res, "cSEMResults_multi")
+  expect_true(all(vapply(res, function(g)
+    isTRUE(g$Information$Weight_info$Multistart$n_candidates == 3), logical(1))))
+})
+
+test_that("multi-start GSCA supports bootstrapping (multi-start per resample)", {
+  set1 <- list(OrgIden = c(ma1 = 1, ma2 = 1, ma3 = 1),
+               AffJoy  = c(orgcmt1 = 1, orgcmt2 = 1, orgcmt3 = 1),
+               OrgPres = c(cei1 = 1, cei2 = 1, cei3 = 1))
+  set2 <- list(OrgIden = c(ma1 = 1, ma2 = -1, ma3 = 1),
+               AffJoy  = c(orgcmt1 = -1, orgcmt2 = 1, orgcmt3 = 1),
+               OrgPres = c(cei1 = 1, cei2 = 1, cei3 = -1))
+
+  res <- csem(BergamiBagozzi2000, mstart_model,
+              .approach_weights = "GSCA", .GSCA_modes = "NCMP",
+              .starting_values = list(set1, set2),
+              .resample_method = "bootstrap", .R = 20, .seed = 1)
+
+  expect_true(inherits(res, "cSEMResults_resampled"))
+  expect_true(nrow(res$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled) > 0)
+})
+

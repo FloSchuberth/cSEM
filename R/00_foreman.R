@@ -66,6 +66,21 @@ foreman <- function(
 ) {
   args_used <- c(as.list(environment(), all.names = TRUE))
 
+  ## Multi-start: if several starting-value sets are supplied, fit the model
+  ## from each and return the one with the best GSCA FIT. Both the original fit
+  ## and every resample route through foreman(), so this also gives full
+  ## multi-start on every resample. See selectBestStartingValuesFit().
+  if(isMultiStartStartingValues(.starting_values)) {
+    if(.approach_weights != "GSCA") {
+      stop2(
+        "The following error occured in the `foreman()` function:\n",
+        "Multiple starting-value sets are only supported for ",
+        "`.approach_weights = 'GSCA'`.")
+    }
+    return(selectBestStartingValuesFit(.candidates = .starting_values,
+                                       .args_used  = args_used))
+  }
+
   ### Preprocessing ============================================================
   ## Parse and order model to "cSEMModel" list
   csem_model <- parseModel(.model, .instruments = .instruments)

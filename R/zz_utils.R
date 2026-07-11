@@ -122,7 +122,7 @@ warning2 <- function(...) {
   warning(..., call.= FALSE, immediate. = TRUE)
 }
 
-#' A rule of with 80 
+#' A rule of with 80
 #' @noRd
 #' 
 rule2 <- function(x = "", type = 1, align = "center") {

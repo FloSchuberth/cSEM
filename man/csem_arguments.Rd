@@ -104,6 +104,8 @@ equation separately? Defaults to \code{TRUE}.}
 
 \item{.C}{A (J x J) composite variance-covariance matrix.}
 
+\item{.candidates}{A list of \code{.starting_values} sets (the multi-start form).}
+
 \item{.check_errors}{Logical. Should the model to parse be checked for correctness
 in a sense that all necessary components to estimate the model are given?
 Defaults to \code{TRUE}.}
@@ -458,10 +460,22 @@ One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
 \item{.standardized}{Logical. Should standardized scores be returned? Defaults
 to \code{TRUE}.}
 
-\item{.starting_values}{A named list of vectors where the
-list names are the construct names whose indicator weights the user
-wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}
-pairs, where \code{value} is the (scaled or unscaled) starting weight. Defaults to \code{NULL}.}
+\item{.starting_values}{Starting weights for the weighting algorithm.
+Accepts one of three forms. \strong{(1) A single set:} a named list of vectors
+where the list names are the construct names whose indicator weights the
+user wishes to set; the vectors must be named vectors of
+\code{"indicator_name" = value} pairs, where \code{value} is the (scaled or unscaled)
+starting weight. \strong{(2) Multiple sets (GSCA only):} a list whose every
+element is itself such a single set. The model is fit from each set and the
+fit with the best overall FIT (see \code{\link[=calculateFIT]{calculateFIT()}}) is returned and used
+for any subsequent resampling, guarding against alternating-least-squares
+local optima. \strong{(3) Random sets (GSCA only):} a named numeric vector of
+length three, \verb{c(n = <number of sets>, min = <lower>, max = <upper>)}, from
+which \code{n} sets of starting weights are sampled via \code{\link[stats:Uniform]{stats::runif()}} over
+\verb{[min, max]}; call \code{\link[=set.seed]{set.seed()}} before \code{csem()} for reproducible draws.
+Forms (2) and (3) require \code{.approach_weights = "GSCA"}; for multigroup data
+the selection of best FIT is performed per group, as opposed to the overall
+multigroup FIT. Defaults to \code{NULL}.}
 
 \item{.steps_mod}{A numeric vector. Steps used for the moderator variable in calculating
 the simple effects of an independent variable on the dependent variable.

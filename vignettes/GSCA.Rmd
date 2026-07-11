@@ -269,4 +269,134 @@ results3$Estimates$Path_estimates["EXPE","IMAG"]
 results3$Estimates$Loading_estimates["EXPE", "expe1"]
 ```
 
+### Example 4: Multi-start estimation and reusing starting values {#example4}
+
+<!-- Written by Claude Opus 4.8. -->
+
+Because GSCA-type methods rely on an alternating least squares (ALS) algorithm,
+the returned solution can depend on the starting weights and may reflect a
+*local* optimum. To guard against this, `csem()` can fit a GSCA model from
+several starting-value sets and keep the one with the best overall FIT
+(computed by `calculateFIT()`).
+
+The most convenient way is to ask for a number of random starting points by
+passing a named numeric vector `c(n, min, max)` to `.starting_values`. Each of
+the `n` sets draws starting weights uniformly from `[min, max]`. The draws are
+taken from the ordinary random-number stream, so call `set.seed()` before
+`csem()` if you want them to be reproducible.
+
+```{r}
+set.seed(2024)
+results_ms <- csem(
+  satisfaction,
+  cmp_model,
+  .approach_weights = "GSCA",
+  .disattenuate     = FALSE,
+  .GSCA_modes       = "CCMP",
+  .starting_values  = c(n = 5, min = -1, max = 1)
+)
+```
+
+The FIT of the selected model and the FIT of every candidate are recorded under
+`Information$Weight_info$Multistart`:
+
+```{r}
+results_ms$Information$Weight_info$Multistart$FIT_selected
+results_ms$Information$Weight_info$Multistart$FIT_candidates
+```
+
+Alternatively, an explicit list of starting-value sets can be supplied. Each
+element is itself a `.starting_values` list; only the constructs you wish to
+seed need to be listed:
+
+```{r eval=FALSE}
+sv_sets <- list(
+  list(EXPE = c(expe1 = 1, expe2 = 1, expe3 = 1, expe4 = 1, expe5 = 1)),
+  list(EXPE = c(expe1 = 1, expe2 = -1, expe3 = 1, expe4 = -1, expe5 = 1))
+)
+
+csem(satisfaction, cmp_model, .approach_weights = "GSCA",
+     .disattenuate = FALSE, .GSCA_modes = "CCMP",
+     .starting_values = sv_sets)
+```
+
+If the fitted model is subsequently resampled (e.g., `.resample_method =
+"bootstrap"`), the multi-start search is repeated on every resample, so the
+bootstrap distribution also avoids local optima.
+
+#### Reusing single-group weights as multigroup starting values
+
+The weights of a fitted single-group model are a natural, well-conditioned set
+of starting values for a multigroup fit of the same model. This is especially
+useful for IGSCA (models mixing composites and common factors), where fully
+specified starting values bypass the internal plain-GSCA initialization.
+
+```{r}
+model_igsca <- "
+# Composite measurement models
+OrgIden <~ ma1 + ma2 + ma3
+AffJoy  <~ orgcmt1 + orgcmt2 + orgcmt3
+
+# Common factor measurement model
+OrgPres =~ cei1 + cei2 + cei3
+
+# Structural model
+OrgIden ~ OrgPres
+AffJoy  ~ OrgIden
+"
+
+# Fit the single-group model
+res_single <- csem(BergamiBagozzi2000, model_igsca,
+                   .approach_weights = "GSCA", .GSCA_modes = "NCMP")
+
+# Convert the (construct x indicator) weight matrix into a named list of
+# named vectors: for each construct, the (non-zero) weights of its indicators
+W  <- res_single$Estimates$Weight_estimates
+sv <- lapply(rownames(W), function(construct) {
+  w <- W[construct, ]
+  w[w != 0]
+})
+names(sv) <- rownames(W)
+
+# Fit the multigroup model, reusing the single-group weights as starting values
+res_multi <- csem(BergamiBagozzi2000, model_igsca,
+                  .approach_weights = "GSCA", .GSCA_modes = "NCMP",
+                  .id = "gender",
+                  .starting_values = sv)
+
+verify(res_multi)
+```
+
+#### Multiple starting-value sets with multigroup models
+
+Multi-start also applies when the data are split into groups via `.id` (or when
+a list of data sets is supplied). In that case the selection is performed
+**independently within each group**: the same candidate starting-value sets are
+tried on every group, but each group retains whichever set yields the best FIT
+*for that group*. Different groups may therefore converge from different
+starting-value sets, and each group carries its own multi-start record. The
+choice is made group by group; there is no pooled, across-group FIT criterion.
+
+For the random form, the `n` candidate sets are generated once---call
+`set.seed()` beforehand for reproducible draws---and shared across all groups,
+so every group searches from the same starting points.
+
+```{r}
+set.seed(2024)
+res_mg_ms <- csem(
+  BergamiBagozzi2000, model_igsca,
+  .approach_weights = "GSCA", .GSCA_modes = "NCMP",
+  .id              = "gender",
+  .starting_values = c(n = 5, min = -1, max = 1)
+)
+
+# A multigroup result is a list of per-group cSEMResults objects, each with its
+# own multi-start record:
+sapply(res_mg_ms, function(g) g$Information$Weight_info$Multistart$FIT_selected)
+```
+
+Because the search lives at the level of each group's fit, it also carries over
+to resampling: if `res_mg_ms` is bootstrapped, every resample of every group
+re-runs the multi-start search.
+
 # References

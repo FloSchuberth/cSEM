@@ -429,6 +429,100 @@ hasCompleteStartingValues <- function(.W = args_default()$.W,
   }, logical(1)))
 }
 
+#' Internal: Is `.starting_values` a multi-start specification?
+#'
+#' A multi-start specification is a non-empty list whose every element is
+#' itself a list (i.e., a list of `.starting_values` sets), as opposed to a
+#' single set (a named list of named numeric vectors).
+#'
+#' @inheritParams csem_arguments
+#' @return A single logical.
+#' @keywords internal
+
+isMultiStartStartingValues <- function(.starting_values = args_default()$.starting_values) {
+  is.list(.starting_values) &&
+    length(.starting_values) > 0 &&
+    all(vapply(.starting_values, is.list, logical(1)))
+}
+
+#' Internal: Validate a random multi-start specification
+#'
+#' Checks that `.starting_values` is a named numeric vector of length three with
+#' names `n`, `min` and `max`, a positive integer `n`, finite `min`/`max`, and
+#' `min < max`. Returns the parsed values.
+#'
+#' @inheritParams csem_arguments
+#' @return A list with elements `n` (integer), `min` and `max` (numeric).
+#' @keywords internal
+
+checkRandomStartingSpec <- function(.starting_values = args_default()$.starting_values) {
+
+  x  <- .starting_values
+  nm <- names(x)
+
+  if(length(x) != 3 || is.null(nm) || !setequal(nm, c("n", "min", "max"))) {
+    stop2(
+      "The following error occured in the `csem()` function:\n",
+      "A numeric `.starting_values` must be a named vector of length 3 with names ",
+      "`n`, `min` and `max`, e.g. `c(n = 10, min = -1, max = 1)`.")
+  }
+
+  n  <- x[["n"]]
+  mn <- x[["min"]]
+  mx <- x[["max"]]
+
+  if(!all(is.finite(c(n, mn, mx)))) {
+    stop2(
+      "The following error occured in the `csem()` function:\n",
+      "`n`, `min` and `max` in `.starting_values` must all be finite.")
+  }
+
+  if(n < 1 || n != round(n)) {
+    stop2(
+      "The following error occured in the `csem()` function:\n",
+      "`n` in `.starting_values` must be a positive integer.")
+  }
+
+  if(mn >= mx) {
+    stop2(
+      "The following error occured in the `csem()` function:\n",
+      "`min` must be strictly smaller than `max` in `.starting_values`.")
+  }
+
+  list(n = as.integer(n), min = mn, max = mx)
+}
+
+#' Internal: Generate random starting-value sets
+#'
+#' For every construct in `.measurement` that has at least one free
+#' (nonzero-pattern) weight, sample `runif(., .min, .max)` starting weights for
+#' its pattern indicators. Repeated `.n` times to produce a recursive list of
+#' complete `.starting_values` sets suitable for GSCA multi-start.
+#'
+#' @param .measurement A (construct x indicator) 0/1 pattern matrix
+#'   (`parseModel()$measurement`).
+#' @param .n Integer. Number of random sets to generate.
+#' @param .min Numeric. Lower bound passed to [stats::runif()].
+#' @param .max Numeric. Upper bound passed to [stats::runif()].
+#'
+#' @return A list of length `.n`; each element is a named list of named numeric
+#'   vectors.
+#' @keywords internal
+
+generateRandomStartingValues <- function(.measurement, .n, .min, .max) {
+
+  free_constructs <- rownames(.measurement)[rowSums(.measurement != 0) > 0]
+
+  lapply(seq_len(.n), function(i) {
+    sv <- lapply(free_constructs, function(cn) {
+      inds <- colnames(.measurement)[.measurement[cn, ] != 0]
+      stats::setNames(stats::runif(length(inds), min = .min, max = .max), inds)
+    })
+    names(sv) <- free_constructs
+    sv
+  })
+}
+
 #' Update Theta for Composite Variables in IGSCA
 #' 
 #' It is unintuitive that X is used here, seeing as how X = Z-UD; and we use X to update composite variables. 
