@@ -884,6 +884,54 @@ calculateGSCAErrors <- function(.object) {
   parts$Psi - (parts$Eta %*% parts$A) - parts$S
 }
 
+#' Calculate the degrees of freedom for GSCA-type models
+#'
+#' Computes the number of model parameters (`npar`), the total number of
+#' degrees of freedom (`d_0`) and the residual degrees of freedom
+#' (`d_1 = d_0 - npar`) of a GSCA-type model. Following
+#' \insertCite{Hwang2014;textual}{cSEM} and the `gesca.mg` function of the
+#' gesca package, the number of path, loading, weight and unique loading
+#' estimates is multiplied by the number of groups for multigroup models.
+#'
+#' This function is not intended to be user-facing.
+#'
+#' @inheritParams csem_arguments
+#'
+#' @return A named numeric vector of length 3 with elements `npar`, `d_0` and
+#'   `d_1`.
+#' @keywords internal
+calculateGSCADegreesOfFreedom <- function(.object) {
+
+  if (inherits(.object, "cSEMResults_multi")) {
+    model <- .object[[1]]$Information$Model
+    n_total <- sum(vapply(.object, function(group) {
+      nrow(group$Information$Data)
+    }, numeric(1)))
+    n_groups <- length(.object)
+  } else {
+    model <- .object$Information$Model
+    n_total <- nrow(.object$Information$Data)
+    n_groups <- 1
+  }
+
+  d_0 <- n_total * length(model$indicators)
+
+  # Hwang, De Sarbo and Takane (2014); combined with the gesca.mg function from
+  # the gesca package (June 18/2026) make it clear that the number of
+  # parameters is multiplied by the number of groups. This makes sense, or else
+  # there would be no penalty for fitting a multigroup model over a
+  # single-group one.
+  nPath <- sum(model$structural)
+  nLoadings <- sum(model$measurement)
+  nWeights <- nLoadings
+  nUniqueLoadings <- sum(model$measurement[model$construct_type == "Common factor", ])
+
+  npar <- (nPath + nLoadings + nWeights + nUniqueLoadings) * n_groups
+  d_1 <- d_0 - npar
+
+  c(npar = npar, d_0 = d_0, d_1 = d_1)
+}
+
 #' Block Diagonalize GSCA Parameter Estimates and Scores
 #'
 #' Block diagonalizes the estimated paramater matrices as shown on Equations

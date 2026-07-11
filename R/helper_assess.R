@@ -2039,36 +2039,10 @@ calculateAFIT <- function(.object = NULL) {
   # For efficiency, calculateAFIT does not repeat the safety checks done by calculateFIT().
   FIT <- calculateFIT(.object)
 
-  # For multigroup models, block diagonalize each part (Z, Gamma, C, ...) so
-  # that the single-group algebra below yields one overall FIT for the model.
-  if (inherits(.object, "cSEMResults_multi")) {
-    .objectBDIAG <- bdiagGSCA(.object)
-
-    d_0 <- nrow(.objectBDIAG$Information$Data) * length(.object[[1]]$Information$Model$indicators)
-
-    # Hwang, De Sarbo and Takane (2014); combined with the gesca.mg function from the gesca package (June 18/2026) make it clear that the number of parameters is multiplied by the number of groups. This makes sense, or else there would be no penalty for fitting a multigroup model over a single-group one.
-    nPath <- sum(.object[[1]]$Information$Model$structural)
-    nLoadings <- sum(.object[[1]]$Information$Model$measurement)
-    nWeights <- nLoadings 
-    nUniqueLoadings <- sum(.object[[1]]$Information$Model$measurement[.object[[1]]$Information$Model$construct_type == "Common factor", ])
-
-    npar <- (nPath + nLoadings + nWeights + nUniqueLoadings) * length(.object)
-
-    d_1 <- d_0 - npar 
-  } else {
-    d_0 <- nrow(.object$Information$Data) * length(.object$Information$Model$indicators)
-
-    nPath <- sum(.object$Information$Model$structural)
-    nLoadings <- sum(.object$Information$Model$measurement)
-    nWeights <- nLoadings 
-    nUniqueLoadings <- sum(.object$Information$Model$measurement[.object$Information$Model$construct_type == "Common factor", ])
-
-    npar <- nPath + nLoadings + nWeights + nUniqueLoadings
-    d_1 <- d_0 - npar 
-  }
+  dof <- calculateGSCADegreesOfFreedom(.object)
 
   # Page 27 of Hwang & Takane (2014)
-  AFIT <- 1 - ((1 - FIT) * (d_0 / d_1))
+  AFIT <- 1 - ((1 - FIT) * (dof[["d_0"]] / dof[["d_1"]]))
 
   return(AFIT)
 }
