@@ -1142,7 +1142,8 @@ calculateHTMTcore <- function(
   .object               = NULL,
   .type_htmt            = NULL,
   .absolute             = NULL,
-  .only_common_factors  = NULL
+  .only_common_factors  = NULL,
+  .delta                = FALSE
 ){
   
   if(inherits(.object, "cSEMResults_default")) {
@@ -1226,6 +1227,13 @@ calculateHTMTcore <- function(
     list(monocor1,monocor2,hetcor)
   })
   
+  nthroot <- function(x, n){
+    if(x <0 && n %% 2 == 1 ){
+      sign(x) * abs(x)^(1/n)
+    }else{
+      x^(1/n)
+    }
+  }
 
   if(.type_htmt=='htmt2'){
     # calculate geometric mean of the correlations
@@ -1236,13 +1244,13 @@ calculateHTMTcore <- function(
         warning2("The monotrait-heteromethod correlations show different signs.\n",
         "Hence the HTMT2 cannot be calculated.")
       }
-      temp1 <- exp(mean(log(x[[1]])))
+      temp1 <- nthroot(prod(x[[1]]), length(x[[1]]))
       # monotrait 2
       if(abs(sum(sign(x[[2]]))) != length(x[[2]])){
         warning2("The monotrait-heteromethod correlations show different signs.\n",
         "Hence the HTMT2 cannot be calculated.")
       }
-      temp2 <- exp(mean(log(x[[2]])))
+      temp2 <- nthroot(prod(x[[2]]), length(x[[2]]))
       # heterotrait
       # If all hetertrait correlations are negative take the absolute value
       # and return later the negative htmt value
@@ -1250,7 +1258,11 @@ calculateHTMTcore <- function(
         x[[3]] = abs(x[[3]])
         sign_identification = -1
       }
-      temp3 <- exp(mean(log(x[[3]])))
+      if(prod(x[[3]]) < 0 & length(x[[3]])%%2 == 0){
+        warning2("The heterotrait-heteromethod block could not 
+                 be computed. Hence the HTMT2 cannot be calculated")
+      }
+      temp3 <- nthroot(prod(x[[3]]), length(x[[3]]))
       
       # return the geometric means
       c(temp1,temp2,temp3,sign_identification)
@@ -1285,8 +1297,11 @@ calculateHTMTcore <- function(
       }
       temp3 <- mean(x[[3]])
       
+      n1 <- length(x[[1]])
+      n2 <- length(x[[2]])
+      n3 <- length(x[[3]])
       # return the geometric means
-      c(temp1,temp2,temp3,sign_identification)
+      c(temp1,temp2,temp3,sign_identification, n1, n2, n3)
     })
     }
 
@@ -1295,7 +1310,21 @@ calculateHTMTcore <- function(
     x[3]/sqrt(x[1]*x[2]) * x[4]
   })
   
-
+  if(.delta == TRUE){
+    if(.type_htmt == "htmt"){
+      
+      grhelpls <- Map(c, avg_cor, as.list(htmts))
+      #Gradient: 
+      lapply(grhelpls, function(x){
+        if(x[8])
+        gradientintra1 <- -x[8] * (x[5] * 2 * x[1])^(-1)
+        gradientintra2 <- -x[8] * (x[6] * 2 * x[2])^(-1)
+        gradientinter <- (x[7])^-2 / sqrt(x[1] * x[2])
+        c(gradientintra1, gradientintra2, gradientinter)
+      })
+    }
+  }
+  
   # Sort HTMT values in matrix
   out<-matrix(0,
               nrow=length(names(ind_blocks)),
