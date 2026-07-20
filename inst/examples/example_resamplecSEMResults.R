@@ -62,7 +62,7 @@ identical(boot1, boot1_csem) # only true if .seed was set
 
 ### Inference ---------------------------------------------------------------
 # To get inferencial quanitites such as the estimated standard error or
-# the percentile confidence intervall for each resampled quantity use 
+# the percentile confidence interval for each resampled quantity use 
 # postestimation function infer()
 
 inference <- infer(boot1)
