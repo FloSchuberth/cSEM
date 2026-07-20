@@ -565,7 +565,7 @@ args_default <- function(.choices = FALSE) {
                                  "vifmodeB"),
     
     .quantity                = c("all", "mean", "sd", "bias", "CI_standard_z", "CI_standard_t",
-                                 "CI_percentile", "CI_basic", "CI_bc", "CI_bca", "CI_t_intervall"),
+                                 "CI_percentile", "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
     .Q                       = NULL,
     .r                       = 1,
     .R                       = 499,
