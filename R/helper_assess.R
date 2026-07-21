@@ -1311,6 +1311,9 @@ calculateHTMTcore <- function(
   })
   
   if(.asymptotic == TRUE){
+    if(.type_htmt == "htmt2"){
+      warning2("asymptotic confidence intervals are not available for the htmt2 yet.")
+    }
     if(.type_htmt == "htmt"){
       # Each gradient is returned as a vector aligned with S[lower.tri(S)]
       # (column-major) - the same order the covariance matrix of correlations
@@ -1339,8 +1342,6 @@ calculateHTMTcore <- function(
           ((rows %in% B) & (cols %in% A))] <-  1 / (x[7] * sqrt(x[1] * x[2]))  # inter
         g
       })
-      names(gradients) <- utils::combn(names(ind_blocks), 2,
-                                       FUN = function(z) paste(z, collapse = "__"))
     }
   }
   

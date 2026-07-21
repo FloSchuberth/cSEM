@@ -322,3 +322,69 @@ BcaCIResample <- function(.object, .first_resample, .probs) {
   names(out) <- names(.first_resample)
   out
 }
+
+# =============================================================================
+# Asymptotic (analytic) inference helpers
+# =============================================================================
+
+#' Distribution-free asymptotic covariance matrix of correlations
+#'
+#' Large-sample variance-covariance matrix of the unique sample correlations in
+#' `.S`, using the asymptotically distribution-free (ADF) estimator of Steiger &
+#' Hakstian (1982). It is built from the sample fourth-order moments of the
+#' (standardized) data and is therefore consistent under non-normality; under
+#' multivariate normality it coincides with the Olkin-Siotani / Pearson-Filon
+#' normal-theory covariance, whose diagonal is the familiar `(1 - r^2)^2 / n`.
+#'
+#' The correlations are taken in `.S[lower.tri(.S)]` (column-major) order - the
+#' same order used by the HTMT gradient - so that a gradient vector and this
+#' matrix align by position for a delta-method confidence interval, i.e.
+#' `Var(f) = t(g) %*% calculateCorVCV(.S, .data) %*% g`.
+#'
+#' Valid for Pearson correlations only: `.data` must be the raw data whose Pearson
+#' correlations equal `.S`. For polychoric/polyserial correlations the raw-data
+#' fourth moments are not the correct asymptotic covariance; use the bootstrap in
+#' that case.
+#'
+#' @param .S A `(P x P)` correlation matrix with row-/column names matching the
+#'   columns of `.data`.
+#' @param .data A `(n x P)` matrix or data.frame of indicator data whose columns
+#'   include (and are matched by name to) `rownames(.S)`.
+#'
+#' @return The `(L x L)` asymptotic covariance matrix of the correlations,
+#'   `L = P(P - 1)/2`, in `lower.tri(.S)` order.
+#'
+#' @references
+#'   Steiger, J. H., & Hakstian, A. R. (1982). The asymptotic distribution of
+#'   elements of a correlation matrix: Theory and application. British Journal of
+#'   Mathematical and Statistical Psychology, 35(2), 208-215.
+#'
+#' @keywords internal
+calculateCorVCV <- function(.S, .data) {
+
+  ## Correlations in lower.tri(.S) (column-major) order -----------------------
+  lt <- lower.tri(.S)
+  i  <- row(.S)[lt]                  # first index of each correlation (i > j)
+  j  <- col(.S)[lt]                  # second index
+  r  <- .S[lt]                       # the correlations themselves
+
+  ## Per-observation products of the standardized indicators ------------------
+  z  <- scale(as.matrix(.data)[, rownames(.S), drop = FALSE])
+  n  <- nrow(z)
+  U  <- z[, i, drop = FALSE] * z[, j, drop = FALSE]   # n x L : z_i * z_j
+  V  <- z^2                                           # n x P : z_m^2
+  Uc <- sweep(U, 2, colMeans(U))                      # centered (mean ~ r_ij)
+  Vc <- sweep(V, 2, colMeans(V))                      # centered (mean ~ 1)
+
+  ## (Co)variances of those products = the sample fourth moments --------------
+  G_uu <- crossprod(Uc)     / n      # L x L : Cov(z_i z_j , z_k z_l)
+  G_vu <- crossprod(Vc, Uc) / n      # P x L : Cov(z_m^2   , z_k z_l)
+  G_vv <- crossprod(Vc)     / n      # P x P : Cov(z_m^2   , z_o^2)
+
+  ## Steiger-Hakstian correlation-metric correction ---------------------------
+  ##   (half on each index shared with a variance term, quarter on the pair)
+  Bmat <- 0.5 * sweep(G_vu[i, , drop = FALSE] + G_vu[j, , drop = FALSE], 1, r, "*")
+  Dsum <- G_vv[i, i] + G_vv[i, j] + G_vv[j, i] + G_vv[j, j]
+
+  (G_uu - Bmat - t(Bmat) + 0.25 * outer(r, r) * Dsum) / n
+}
