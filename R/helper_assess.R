@@ -1312,18 +1312,35 @@ calculateHTMTcore <- function(
   
   if(.asymptotic == TRUE){
     if(.type_htmt == "htmt"){
-      grhelpls <- Map(c, avg_cor, as.list(htmts))
-      #Gradient: 
-      gradientvalues <- lapply(grhelpls, function(x){
-        if(!is.finite(x[8])){
-          warning2("The asymptotic confidence interval cannot be calculated 
+      # Each gradient is returned as a vector aligned with S[lower.tri(S)]
+      # (column-major) - the same order the covariance matrix of correlations
+      # will use, so the two line up by position. rows/cols name the two
+      # indicators behind each lower-triangular correlation.
+      lt   <- lower.tri(S)
+      ind  <- rownames(S)
+      rows <- ind[row(S)[lt]]
+      cols <- ind[col(S)[lt]]
+
+      gradients <- lapply(seq_along(block_pairs), function(p){
+        A    <- block_pairs[[p]][[1]]   # indicators of construct 1
+        B    <- block_pairs[[p]][[2]]   # indicators of construct 2
+        x    <- avg_cor[[p]]            # c(a, b, c, sign, n1, n2, n3)
+        htmt <- htmts[p]
+        if(!is.finite(htmt)){
+          warning2("The asymptotic confidence interval cannot be calculated
                    due to a non finite HTMT.")
         }
-        gradientintra1 <- -x[8] * (x[5] * 2 * x[1])^(-1)
-        gradientintra2 <- -x[8] * (x[6] * 2 * x[2])^(-1)
-        gradientinter <-  1/(x[7] * sqrt(x[1]*x[2]))
-        c(gradientintra1, gradientintra2, gradientinter)
+        # A block-average is the mean of its correlations, so its scalar
+        # derivative is shared by each correlation it averages over.
+        g <- numeric(length(rows))
+        g[(rows %in% A) & (cols %in% A)]   <- -htmt / (2 * x[1] * x[5])  # intra 1
+        g[(rows %in% B) & (cols %in% B)]   <- -htmt / (2 * x[2] * x[6])  # intra 2
+        g[((rows %in% A) & (cols %in% B)) |
+          ((rows %in% B) & (cols %in% A))] <-  1 / (x[7] * sqrt(x[1] * x[2]))  # inter
+        g
       })
+      names(gradients) <- utils::combn(names(ind_blocks), 2,
+                                       FUN = function(z) paste(z, collapse = "__"))
     }
   }
   
@@ -1338,6 +1355,14 @@ calculateHTMTcore <- function(
     out <- abs(out)
   }
   diag(out) <- 1
+
+  # Expose the delta-method gradients (named vectors, keyed by correlation) so
+  # downstream code can form Var(HTMT) = t(g) %*% Sigma %*% g. Attached as an
+  # attribute so `out` still behaves as the plain HTMT matrix required by the
+  # bootstrap `.user_funs` path; only set when asymptotic inference is requested.
+  if(.asymptotic == TRUE && .type_htmt == "htmt"){
+    attr(out, "gradients") <- gradients
+  }
   out
 } 
 
