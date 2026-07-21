@@ -1143,7 +1143,7 @@ calculateHTMTcore <- function(
   .type_htmt            = NULL,
   .absolute             = NULL,
   .only_common_factors  = NULL,
-  .delta                = FALSE
+  .asymptotic                = FALSE
 ){
   
   if(inherits(.object, "cSEMResults_default")) {
@@ -1259,8 +1259,8 @@ calculateHTMTcore <- function(
         sign_identification = -1
       }
       if(prod(x[[3]]) < 0 & length(x[[3]])%%2 == 0){
-        warning2("The heterotrait-heteromethod block could not 
-                 be computed. Hence the HTMT2 cannot be calculated")
+        warning2("The heterotrait-heteromethod block could not be computed. \n
+                 Hence the HTMT2 cannot be calculated.")
       }
       temp3 <- nthroot(prod(x[[3]]), length(x[[3]]))
       
@@ -1310,16 +1310,18 @@ calculateHTMTcore <- function(
     x[3]/sqrt(x[1]*x[2]) * x[4]
   })
   
-  if(.delta == TRUE){
+  if(.asymptotic == TRUE){
     if(.type_htmt == "htmt"){
-      
       grhelpls <- Map(c, avg_cor, as.list(htmts))
       #Gradient: 
-      lapply(grhelpls, function(x){
-        if(x[8])
+      gradientvalues <- lapply(grhelpls, function(x){
+        if(!is.finite(x[8])){
+          warning2("The asymptotic confidence interval cannot be calculated 
+                   due to a non finite HTMT.")
+        }
         gradientintra1 <- -x[8] * (x[5] * 2 * x[1])^(-1)
         gradientintra2 <- -x[8] * (x[6] * 2 * x[2])^(-1)
-        gradientinter <- (x[7])^-2 / sqrt(x[1] * x[2])
+        gradientinter <-  1/(x[7] * sqrt(x[1]*x[2]))
         c(gradientintra1, gradientintra2, gradientinter)
       })
     }
