@@ -1446,13 +1446,16 @@ calculateHTMT <- function(
   .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
                             "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
   .inference            = FALSE,
+  .approach             = c("bootstrap", "asymptotic"),
   .only_common_factors  = TRUE,
   .R                    = 499,
   .seed                 = NULL,
   ...
 ){
+  ci_supplied           <- !missing(.ci)  # was .ci set explicitly? (asymptotic guard)
   .ci                   <- match.arg(.ci) # allow only one CI
   .type_htmt            <- match.arg(.type_htmt)
+  .approach             <- match.arg(.approach)
 
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, calculateHTMT,
@@ -1460,6 +1463,7 @@ calculateHTMT <- function(
                   .absolute = .absolute,
                   .alpha                = .alpha,
                   .inference            = .inference,
+                  .approach             = .approach,
                   .only_common_factors  = .only_common_factors,
                   .R                    = .R,
                   .seed                 = .seed
@@ -1470,14 +1474,15 @@ calculateHTMT <- function(
   out <- calculateHTMTcore(.object = .object,
                            .type_htmt = .type_htmt,
                            .absolute =  .absolute,
-                           .only_common_factors = .only_common_factors
-    
+                           .only_common_factors = .only_common_factors,
+                           .asymptotic = (.inference && .approach == "asymptotic" &&
+                                          .type_htmt == "htmt")
   )
   
 # In case of inference
 
-  if(.inference) {
-    
+  if(.inference && .approach == "bootstrap") {
+
     if(.absolute == TRUE){
       warning2("For resampling the HTMT/HTMT2, it is recommended to to set .absolute to FALSE.")
     }
@@ -1515,26 +1520,70 @@ calculateHTMT <- function(
         "Only a single numeric probability accepted. You provided:", paste(.alpha, sep = ", "))
     }
     
+  } else if(.inference && .approach == "asymptotic") {
+
+    if(ci_supplied){
+      warning2("`.ci` is ignored when `.approach = 'asymptotic'`; a Wald (z) ",
+               "interval based on the delta-method standard error is returned.")
+    }
+    if(.absolute == TRUE){
+      warning2("For the asymptotic HTMT confidence interval, it is recommended to set .absolute to FALSE.")
+    }
+    if(.type_htmt == "htmt2"){
+      stop2("The following error occured in the calculateHTMT() function:\n",
+            "Asymptotic confidence intervals are not available for the HTMT2. Use .approach = 'bootstrap'.")
+    }
+    if(!all(.object$Information$Type_of_indicator_correlation == "Pearson")){
+      stop2("The following error occured in the calculateHTMT() function:\n",
+            "Asymptotic (delta-method) confidence intervals require Pearson correlations.\n",
+            "Use .approach = 'bootstrap' instead.")
+    }
+    if(length(.alpha) != 1){
+      stop2("The following error occured in the calculateHTMT() function:\n",
+            "Only a single numeric probability accepted. You provided:", paste(.alpha, sep = ", "))
+    }
+
+    # Delta-method SE per construct pair; gradients (attached by calculateHTMTcore)
+    # are built over the full Indicator_VCV, so they align with calculateCorVCV().
+    se_pairs <- calculateHTMTasymptoticSE(attr(out, "gradients"),
+                                          .object$Estimates$Indicator_VCV,
+                                          .object$Information$Data)
+    attr(out, "gradients") <- NULL          # consumed; keep it off the returned matrix
+    se_mat <- matrix(0, nrow(out), ncol(out), dimnames = dimnames(out))
+    se_mat[lower.tri(se_mat)] <- se_pairs
+
+    # Wald bounds per matrix cell (2 x n^2), same layout as the bootstrap quants
+    zval   <- stats::qnorm(1 - .alpha)
+    quants <- rbind(c(out) - zval * c(se_mat),
+                    c(out) + zval * c(se_mat))
+    cl <- 100 * (1 - 2 * .alpha)
+    rownames(quants) <- c(sprintf("%.6g%%L", cl), sprintf("%.6g%%U", cl))
+    nr_admissible <- NULL
+
+  } else { # no inference
+    quants <- NULL
+    nr_admissible <- NULL
+  }
+
+  # Assemble: point estimates in the lower triangle, the relevant one-sided CI
+  # bound (upper if HTMT >= 0, else lower) in the upper triangle.
+  if(.inference) {
     quants_for_print <- sapply(1:dim(quants)[2],function(x){
       # if HTMT(2) value is negative report the lower bound
       if(c(out)[x]<0){
-        quants[1,x]  
+        quants[1,x]
       } else { #otherwise report the upper bound
-        quants[2,x] 
+        quants[2,x]
       }
     })
 
-    # Assemble output 
     temp_quantiles <- out
-    temp_quantiles[] <- quants_for_print 
-    
+    temp_quantiles[] <- quants_for_print
+
     out_for_print <- out + t(temp_quantiles)
     diag(out_for_print) <- 1
-    
 
-  }else{ #if inference == FALSE
-    quants <- NULL
-    nr_admissible = NULL
+  } else { #if inference == FALSE
     out_for_print <- out
   }
   

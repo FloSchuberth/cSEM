@@ -309,10 +309,16 @@ print.cSEMAssess <- function(x, ...) {
       cat2("\n\n\tHeterotrait-monotrait ratio of correlations matrix (HTMT matrix)\n\n")
 
       if(x$Information$.inference) {
-        cat2("\tValues in the upper triangular part are the ", 
-             paste0(100*(1 - x$Information$.alpha), "%-quantiles of the\n", 
-            "\tbootstrap confidence intervals (using .ci = '", x$Information$.ci, "')\n",
-            "\tbased on ", x$HTMT$nr_admissibles ," valid bootstrap runs.\n\n")) 
+        if(x$Information$.approach == "asymptotic") {
+          cat2("\tValues in the upper triangular part are the ",
+               paste0(100*(1 - x$Information$.alpha), "% limits of the\n",
+                      "\tasymptotic (delta-method) confidence intervals.\n\n"))
+        } else {
+          cat2("\tValues in the upper triangular part are the ",
+               paste0(100*(1 - x$Information$.alpha), "%-quantiles of the\n",
+              "\tbootstrap confidence intervals (using .ci = '", x$Information$.ci, "')\n",
+              "\tbased on ", x$HTMT$nr_admissibles ," valid bootstrap runs.\n\n"))
+        }
       }
       print(x$HTMT$htmts)
     }
