@@ -1259,8 +1259,8 @@ calculateHTMTcore <- function(
         sign_identification = -1
       }
       if(prod(x[[3]]) < 0 & length(x[[3]])%%2 == 0){
-        warning2("The heterotrait-heteromethod block could not be computed. \n
-                 Hence the HTMT2 cannot be calculated.")
+        warning2("The heterotrait-heteromethod block could not be computed.\n",
+                 "Hence the HTMT2 cannot be calculated.")
       }
       temp3 <- nthroot(prod(x[[3]]), length(x[[3]]))
       
