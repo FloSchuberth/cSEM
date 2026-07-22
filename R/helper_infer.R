@@ -388,3 +388,35 @@ calculateCorVCV <- function(.S, .data) {
 
   (G_uu - Bmat - t(Bmat) + 0.25 * outer(r, r) * Dsum) / n
 }
+
+
+#' Delta-method standard errors of the HTMT
+#'
+#' Combines the per-construct-pair HTMT gradients with the asymptotic covariance
+#' matrix of the indicator correlations ([calculateCorVCV()]) into the
+#' delta-method standard error of each HTMT, `sqrt(t(g) %*% Sigma %*% g)`. The
+#' covariance matrix is formed once and reused for every pair. Gradient vectors
+#' and covariance matrix share the `lower.tri(.S)` ordering, so they align by
+#' position (both are built from the same `.S`).
+#'
+#' No lower bound is imposed on the variance: since `Sigma` is positive
+#' semi-definite, `t(g) %*% Sigma %*% g` is non-negative by construction, so a
+#' negative value would signal a genuine problem and is deliberately allowed to
+#' surface as `NaN` (with a warning) rather than being silently clamped to zero.
+#'
+#' @param .gradients A named list of gradient vectors, one per construct pair,
+#'   each aligned with `.S[lower.tri(.S)]`.
+#' @param .S A `(P x P)` indicator correlation matrix.
+#' @param .data A `(n x P)` matrix or data.frame of indicator data.
+#'
+#' @return A named numeric vector of standard errors, one per construct pair.
+#'
+#' @keywords internal
+calculateHTMTasymptoticSE <- function(.gradients, .S, .data) {
+  Sigma <- calculateCorVCV(.S = .S, .data = .data)          # once, reused for all pairs
+  vapply(
+    .gradients,
+    function(g) sqrt(drop(t(g) %*% Sigma %*% g)),           # sqrt( t(g) %*% Sigma %*% g )
+    numeric(1)
+  )
+}

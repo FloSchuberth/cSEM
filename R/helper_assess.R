@@ -1315,14 +1315,12 @@ calculateHTMTcore <- function(
       warning2("asymptotic confidence intervals are not available for the htmt2 yet.")
     }
     if(.type_htmt == "htmt"){
-      # Each gradient is returned as a vector aligned with S[lower.tri(S)]
-      # (column-major) - the same order the covariance matrix of correlations
-      # will use, so the two line up by position. rows/cols name the two
-      # indicators behind each lower-triangular correlation.
-      lt   <- lower.tri(S)
-      ind  <- rownames(S)
-      rows <- ind[row(S)[lt]]
-      cols <- ind[col(S)[lt]]
+      # Build each gradient over the FULL indicator correlation matrix 
+      Sfull <- .object$Estimates$Indicator_VCV
+      lt   <- lower.tri(Sfull)
+      ind  <- rownames(Sfull)
+      rows <- ind[row(Sfull)[lt]]
+      cols <- ind[col(Sfull)[lt]]
 
       gradients <- lapply(seq_along(block_pairs), function(p){
         A    <- block_pairs[[p]][[1]]   # indicators of construct 1
@@ -1342,6 +1340,8 @@ calculateHTMTcore <- function(
           ((rows %in% B) & (cols %in% A))] <-  1 / (x[7] * sqrt(x[1] * x[2]))  # inter
         g
       })
+      names(gradients) <- utils::combn(names(ind_blocks), 2,
+                                       FUN = function(z) paste(z, collapse = "__"))
     }
   }
   
