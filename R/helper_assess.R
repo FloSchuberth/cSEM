@@ -1446,7 +1446,7 @@ calculateHTMT <- function(
   .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
                             "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
   .inference            = FALSE,
-  .approach             = c("bootstrap", "asymptotic"),
+  .approach_inference   = c("bootstrap", "asymptotic"),
   .only_common_factors  = TRUE,
   .R                    = 499,
   .seed                 = NULL,
@@ -1455,7 +1455,7 @@ calculateHTMT <- function(
   ci_supplied           <- !missing(.ci)  # was .ci set explicitly? (asymptotic guard)
   .ci                   <- match.arg(.ci) # allow only one CI
   .type_htmt            <- match.arg(.type_htmt)
-  .approach             <- match.arg(.approach)
+  .approach_inference   <- match.arg(.approach_inference)
 
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, calculateHTMT,
@@ -1463,7 +1463,7 @@ calculateHTMT <- function(
                   .absolute = .absolute,
                   .alpha                = .alpha,
                   .inference            = .inference,
-                  .approach             = .approach,
+                  .approach_inference   = .approach_inference,
                   .only_common_factors  = .only_common_factors,
                   .R                    = .R,
                   .seed                 = .seed
@@ -1475,7 +1475,7 @@ calculateHTMT <- function(
                            .type_htmt = .type_htmt,
                            .absolute =  .absolute,
                            .only_common_factors = .only_common_factors,
-                           .asymptotic = (.inference && .approach == "asymptotic" &&
+                           .asymptotic = (.inference && .approach_inference == "asymptotic" &&
                                           .type_htmt == "htmt")
   )
   
@@ -1520,7 +1520,7 @@ calculateHTMT <- function(
         "Only a single numeric probability accepted. You provided:", paste(.alpha, sep = ", "))
     }
     
-  } else if(.inference && .approach == "asymptotic") {
+  } else if(.inference && .approach_inference == "asymptotic") {
 
     if(ci_supplied){
       warning2("`.ci` is ignored when `.approach = 'asymptotic'`; a Wald (z) ",
@@ -1531,12 +1531,12 @@ calculateHTMT <- function(
     }
     if(.type_htmt == "htmt2"){
       stop2("The following error occured in the calculateHTMT() function:\n",
-            "Asymptotic confidence intervals are not available for the HTMT2. Use .approach = 'bootstrap'.")
+            "Asymptotic confidence intervals are not available for the HTMT2. Use .approach_inference = 'bootstrap'.")
     }
     if(!all(.object$Information$Type_of_indicator_correlation == "Pearson")){
       stop2("The following error occured in the calculateHTMT() function:\n",
             "Asymptotic (delta-method) confidence intervals require Pearson correlations.\n",
-            "Use .approach = 'bootstrap' instead.")
+            "Use .approach_inference = 'bootstrap' instead.")
     }
     if(length(.alpha) != 1){
       stop2("The following error occured in the calculateHTMT() function:\n",

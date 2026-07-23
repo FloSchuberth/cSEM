@@ -9,7 +9,9 @@
 #' @param .alpha An integer or a numeric vector of significance levels. 
 #'   Defaults to `0.05`.
 #' @param .absolute Logical. Should the absolute HTMT values be returned? 
-#'   Defaults to `TRUE` .
+#'   Defaults to `TRUE`
+#' @param .asymptotic Logical. Determines if he calculateHTMTcore function calculates the gradient. 
+#'   Defaults to FALSE.
 #' @param .approach_gcca Character string. The Kettenring approach to use for GCCA. One of 
 #' "*SUMCORR*", "*MAXVAR*", "*SSQCORR*", "*MINVAR*" or "*GENVAR*". Defaults to
 #' "*SUMCORR*".
@@ -27,6 +29,8 @@
 #'   [testOMF()] or [fit()] implicitly assume a continuous  
 #'   indicator correlation matrix (e.g. Bravais-Pearson correlation matrix).
 #'   Only use if you know what you are doing.
+#' @approach_inference inference approach for the htmt function, 
+#'   either asymptotic or bootstrap. Defaults to `bootstrap`.
 #' @param .approach_mgd Character string or a vector of character strings. 
 #'   Approach used for the multi-group comparison. One of: "*all*", "*Klesel*", "*Chin*", 
 #'   "*Sarstedt*", "*Keil*, "*Nitzl*", "*Henseler*", "*CI_para*", or "*CI_overlap*". 
@@ -397,6 +401,7 @@ NULL
 #' list shows which argument is passed to which function:
 #' \describe{
 #' \item{.absolute}{Accepted by/Passed down to: [calculateHTMT()]}
+#' \item{.approach_inference}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.alpha}{Accepted by/Passed down to: [calculateRhoT()], [calculateHTMT()], [calculateCN()]}
 #' \item{.ci}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.closed_form_ci}{Accepted by/Passed down to: [calculateRhoT()]}
@@ -455,10 +460,12 @@ args_default <- function(.choices = FALSE) {
   args <- list(
     .alpha                   = 0.05,
     .absolute                = TRUE,
+    .asymptotic              = FALSE,
     .approach_2ndorder       = c("2stage", "mixed"),
     .approach_alpha_adjust   = c("none", "bonferroni"),
     .approach_cor_robust     = c("none", "mcd", "spearman"),
     .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
+    .approach_inference      = c("bootstrap", "asymptotic"),
     .approach_mgd            = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl", 
                                  "Henseler","CI_para","CI_overlap"),
     .approach_nl             = c("sequential", "replace"),
