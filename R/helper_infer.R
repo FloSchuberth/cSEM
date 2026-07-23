@@ -384,7 +384,8 @@ calculateCorVCV <- function(.S, .data) {
   ## Steiger-Hakstian correlation-metric correction ---------------------------
   ##   (half on each index shared with a variance term, quarter on the pair)
   Bmat <- 0.5 * sweep(G_vu[i, , drop = FALSE] + G_vu[j, , drop = FALSE], 1, r, "*")
-  Dsum <- G_vv[i, i] + G_vv[i, j] + G_vv[j, i] + G_vv[j, j]
+  Dsum <- G_vv[i, i, drop = FALSE] + G_vv[i, j, drop = FALSE] +
+          G_vv[j, i, drop = FALSE] + G_vv[j, j, drop = FALSE]
 
   (G_uu - Bmat - t(Bmat) + 0.25 * outer(r, r) * Dsum) / n
 }
