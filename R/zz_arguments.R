@@ -427,7 +427,8 @@ NULL
 args_assess_dotdotdot <- function(
     .absolute            = TRUE,
     .alpha               = 0.05,
-    .ci                  = c("CI_standard_z", "CI_standard_t", "CI_percentile", 
+    .approach_inference  = c("bootstrap", "asymptotic"),
+    .ci                  = c("CI_standard_z", "CI_standard_t", "CI_percentile",
                              "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
     .closed_form_ci      = FALSE,
     .handle_inadmissibles= c("drop", "ignore", "replace"),
