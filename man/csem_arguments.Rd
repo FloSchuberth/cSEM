@@ -9,7 +9,7 @@
 Defaults to \code{0.05}.}
 
 \item{.absolute}{Logical. Should the absolute HTMT values be returned?
-Defaults to \code{TRUE} .}
+Defaults to \code{TRUE}.}
 
 \item{.approach_gcca}{Character string. The Kettenring approach to use for GCCA. One of
 "\emph{SUMCORR}", "\emph{MAXVAR}", "\emph{SSQCORR}", "\emph{MINVAR}" or "\emph{GENVAR}". Defaults to
@@ -31,6 +31,12 @@ Defaults to "\emph{none}". Note that many postestimation procedures (such as
 \code{\link[=testOMF]{testOMF()}} or \code{\link[=fit]{fit()}} implicitly assume a continuous
 indicator correlation matrix (e.g. Bravais-Pearson correlation matrix).
 Only use if you know what you are doing.}
+
+\item{.approach_inference}{Character string. Approach used to obtain the
+confidence interval for the HTMT. One of: "\emph{bootstrap}" or "\emph{asymptotic}".
+If "\emph{asymptotic}", a Wald interval based on the delta-method standard error
+is computed; only available for \code{.type_htmt = "htmt"}.
+Defaults to "\emph{bootstrap}".}
 
 \item{.approach_mgd}{Character string or a vector of character strings.
 Approach used for the multi-group comparison. One of: "\emph{all}", "\emph{Klesel}", "\emph{Chin}",
@@ -85,6 +91,9 @@ or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
 
 \item{.args_used}{A list of function argument names whose value was modified
 by the user.}
+
+\item{.asymptotic}{Logical. Should \code{\link[=calculateHTMTcore]{calculateHTMTcore()}} additionally return the
+gradients required for the delta-method standard error? Defaults to \code{FALSE}.}
 
 \item{.attrbutes}{Character string. Variables used as attributes in IPMA.}
 
@@ -354,7 +363,7 @@ Defaults to \code{0.5}.}
 \item{.probs}{A vector of probabilities.}
 
 \item{.postestimation_object}{An object resulting from a call to one of cSEM's
-postestimation functions (e.g. \code{\link[=summarize]{summarize()}}).}
+postestimation functions (e.g. \code{\link[dplyr:summarize]{summarize()}}).}
 
 \item{.quality_criterion}{Character string. A single character string or a
 vector of character strings naming the quality criterion to compute. See

@@ -12,6 +12,7 @@ calculateHTMT(
  .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
                            "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
  .inference            = FALSE,
+ .approach_inference   = c("bootstrap", "asymptotic"),
  .only_common_factors  = TRUE,
  .R                    = 499,
  .seed                 = NULL,
@@ -26,7 +27,7 @@ calculated, i.e., the original HTMT ("\emph{htmt}") or the HTMT2 ("\emph{htmt2}"
 Defaults to "\emph{htmt}"}
 
 \item{.absolute}{Logical. Should the absolute HTMT values be returned?
-Defaults to \code{TRUE} .}
+Defaults to \code{TRUE}.}
 
 \item{.alpha}{A numeric value giving the significance level.
 Defaults to \code{0.05}.}
@@ -37,6 +38,12 @@ choices see \code{\link[=infer]{infer()}}. Ignored
 if \code{.inference = FALSE}. Defaults to "\emph{CI_percentile}".}
 
 \item{.inference}{Logical. Should critical values be computed? Defaults to \code{FALSE}.}
+
+\item{.approach_inference}{Character string. Approach used to obtain the
+confidence interval for the HTMT. One of: "\emph{bootstrap}" or "\emph{asymptotic}".
+If "\emph{asymptotic}", a Wald interval based on the delta-method standard error
+is computed; only available for \code{.type_htmt = "htmt"}.
+Defaults to "\emph{bootstrap}".}
 
 \item{.only_common_factors}{Logical. Should only concepts modeled as common
 factors be included when calculating one of the following quality criteria:
@@ -64,6 +71,8 @@ the lower limit if the HTMT/HTMT2 is negative.
 \item the number of admissible bootstrap runs, i.e., the number of HTMT/HTMT2 values
 calculated during bootstrap if \code{.inference = TRUE}; otherwise it is \code{NULL}.
 Note, the HTMT2 is based on the geometric and thus cannot always be calculated.
+\item if .approach_inference is set to "asymptotic" the upper triangular contains
+the upper limit of the 1-2*.alpha\% asymptotic confidence interval.
 }
 }
 \description{

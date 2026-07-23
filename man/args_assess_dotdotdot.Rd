@@ -5,10 +5,16 @@
 \title{Complete list of assess()'s ... arguments}
 \arguments{
 \item{.absolute}{Logical. Should the absolute HTMT values be returned?
-Defaults to \code{TRUE} .}
+Defaults to \code{TRUE}.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
+
+\item{.approach_inference}{Character string. Approach used to obtain the
+confidence interval for the HTMT. One of: "\emph{bootstrap}" or "\emph{asymptotic}".
+If "\emph{asymptotic}", a Wald interval based on the delta-method standard error
+is computed; only available for \code{.type_htmt = "htmt"}.
+Defaults to "\emph{bootstrap}".}
 
 \item{.ci}{A vector of character strings naming the confidence interval to compute.
 For possible choices see \code{\link[=infer]{infer()}}.}
@@ -62,6 +68,7 @@ list shows which argument is passed to which function:
 \describe{
 \item{.absolute}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}
 \item{.alpha}{Accepted by/Passed down to: \code{\link[=calculateRhoT]{calculateRhoT()}}, \code{\link[=calculateHTMT]{calculateHTMT()}}, \code{\link[=calculateCN]{calculateCN()}}}
+\item{.approach_inference}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}
 \item{.ci}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}
 \item{.closed_form_ci}{Accepted by/Passed down to: \code{\link[=calculateRhoT]{calculateRhoT()}}}
 \item{.handle_inadmissibles}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}

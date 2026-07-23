@@ -12,7 +12,7 @@ exportToExcel(
 }
 \arguments{
 \item{.postestimation_object}{An object resulting from a call to one of cSEM's
-postestimation functions (e.g. \code{\link[=summarize]{summarize()}}).}
+postestimation functions (e.g. \code{\link[dplyr:summarize]{summarize()}}).}
 
 \item{.filename}{Character string. The file name.}
 
@@ -24,7 +24,7 @@ to \code{NULL}.}
 }
 \details{
 Export results from postestimation functions \code{\link[=assess]{assess()}}, \code{\link[=predict]{predict()}},
-\code{\link[=summarize]{summarize()}} and \code{\link[=testOMF]{testOMF()}} to an .xlsx (Excel) file. The function uses the \link[openxlsx]{openxlsx}
+\code{\link[dplyr:summarize]{summarize()}} and \code{\link[=testOMF]{testOMF()}} to an .xlsx (Excel) file. The function uses the \link[openxlsx]{openxlsx}
 package which does not depend on Java!
 
 The function is deliberately kept simple: it takes all the
@@ -41,5 +41,5 @@ Note: rerunning \code{\link[=exportToExcel]{exportToExcel()}} without changing \
 overwrites the file!
 }
 \seealso{
-\code{\link[=assess]{assess()}}, \code{\link[=summarize]{summarize()}}, \code{\link[=predict]{predict()}}, \code{\link[=testOMF]{testOMF()}}
+\code{\link[=assess]{assess()}}, \code{\link[dplyr:summarize]{summarize()}}, \code{\link[=predict]{predict()}}, \code{\link[=testOMF]{testOMF()}}
 }

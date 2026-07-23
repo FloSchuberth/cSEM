@@ -268,5 +268,5 @@ identical(boot1, boot2)}
 \insertAllCited{}
 }
 \seealso{
-\link{csem}, \code{\link[=summarize]{summarize()}}, \code{\link[=infer]{infer()}}, \link{cSEMResults}
+\link{csem}, \code{\link[dplyr:summarize]{summarize()}}, \code{\link[=infer]{infer()}}, \link{cSEMResults}
 }
