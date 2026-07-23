@@ -1404,6 +1404,7 @@ calculateHTMTcore <- function(
 #'  .only_common_factors  = TRUE,
 #'  .R                    = 499,
 #'  .seed                 = NULL,
+#'  .approach_inference = c("bootstrap", "asymptotic"), 
 #'  ...
 #' )
 #'
@@ -1427,6 +1428,8 @@ calculateHTMTcore <- function(
 #'  \item the number of admissible bootstrap runs, i.e., the number of HTMT/HTMT2 values
 #'  calculated during bootstrap if `.inference = TRUE`; otherwise it is `NULL`.
 #'  Note, the HTMT2 is based on the geometric and thus cannot always be calculated. 
+#'  \item if .approach_inference is set to "asymptotic" the upper triangular contains 
+#'  the upper limit of the 1-2*.alpha% asymptotic confidence interval. 
 #'  }
 #' 
 #' 
