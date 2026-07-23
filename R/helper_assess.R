@@ -1143,7 +1143,7 @@ calculateHTMTcore <- function(
   .type_htmt            = NULL,
   .absolute             = NULL,
   .only_common_factors  = NULL,
-  .asymptotic                = FALSE
+  .asymptotic           = FALSE
 ){
   
   if(inherits(.object, "cSEMResults_default")) {
@@ -1401,10 +1401,10 @@ calculateHTMTcore <- function(
 #'  .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
 #'                            "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
 #'  .inference            = FALSE,
+#'  .approach_inference   = c("bootstrap", "asymptotic"),
 #'  .only_common_factors  = TRUE,
 #'  .R                    = 499,
 #'  .seed                 = NULL,
-#'  .approach_inference = c("bootstrap", "asymptotic"), 
 #'  ...
 #' )
 #'
@@ -1484,7 +1484,7 @@ calculateHTMT <- function(
   
 # In case of inference
 
-  if(.inference && .approach == "bootstrap") {
+  if(.inference && .approach_inference == "bootstrap") {
 
     if(.absolute == TRUE){
       warning2("For resampling the HTMT/HTMT2, it is recommended to to set .absolute to FALSE.")
@@ -1526,7 +1526,7 @@ calculateHTMT <- function(
   } else if(.inference && .approach_inference == "asymptotic") {
 
     if(ci_supplied){
-      warning2("`.ci` is ignored when `.approach = 'asymptotic'`; a Wald (z) ",
+      warning2("`.ci` is ignored when `.approach_inference = 'asymptotic'`; a Wald (z) ",
                "interval based on the delta-method standard error is returned.")
     }
     if(.absolute == TRUE){

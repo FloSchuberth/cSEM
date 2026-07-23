@@ -8,11 +8,9 @@
 #'
 #' @param .alpha An integer or a numeric vector of significance levels. 
 #'   Defaults to `0.05`.
-#' @param .absolute Logical. Should the absolute HTMT values be returned? 
-#'   Defaults to `TRUE`
-#' @param .asymptotic Logical. Determines if he calculateHTMTcore function calculates the gradient. 
-#'   Defaults to FALSE.
-#' @param .approach_gcca Character string. The Kettenring approach to use for GCCA. One of 
+#' @param .absolute Logical. Should the absolute HTMT values be returned?
+#'   Defaults to `TRUE`.
+#' @param .approach_gcca Character string. The Kettenring approach to use for GCCA. One of
 #' "*SUMCORR*", "*MAXVAR*", "*SSQCORR*", "*MINVAR*" or "*GENVAR*". Defaults to
 #' "*SUMCORR*".
 #' @param .approach_2ndorder Character string. Approach used for models containing
@@ -29,8 +27,11 @@
 #'   [testOMF()] or [fit()] implicitly assume a continuous  
 #'   indicator correlation matrix (e.g. Bravais-Pearson correlation matrix).
 #'   Only use if you know what you are doing.
-#' @approach_inference inference approach for the htmt function, 
-#'   either asymptotic or bootstrap. Defaults to `bootstrap`.
+#' @param .approach_inference Character string. Approach used to obtain the
+#'   confidence interval for the HTMT. One of: "*bootstrap*" or "*asymptotic*".
+#'   If "*asymptotic*", a Wald interval based on the delta-method standard error
+#'   is computed; only available for `.type_htmt = "htmt"`.
+#'   Defaults to "*bootstrap*".
 #' @param .approach_mgd Character string or a vector of character strings. 
 #'   Approach used for the multi-group comparison. One of: "*all*", "*Klesel*", "*Chin*", 
 #'   "*Sarstedt*", "*Keil*, "*Nitzl*", "*Henseler*", "*CI_para*", or "*CI_overlap*". 
@@ -74,9 +75,11 @@
 #'   obtain composite weights. One of: "*PLS-PM*", "*SUMCORR*", "*MAXVAR*",
 #'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*PCA*", "*unit*", "*bartlett*", 
 #'   or "*regression*". Defaults to "*PLS-PM*".
-#' @param .args_used A list of function argument names whose value was modified 
+#' @param .args_used A list of function argument names whose value was modified
 #'   by the user.
-#'   
+#' @param .asymptotic Logical. Should [calculateHTMTcore()] additionally return the
+#'   gradients required for the delta-method standard error? Defaults to `FALSE`.
+#'
 #' @param .attrbutes Character string. Variables used as attributes in IPMA.
 #' @param .benchmark Character string. The procedure to obtain benchmark predictions.
 #'   One of "*lm*", "*unit*", "*PLS-PM*", "*GSCA*", "*PCA*", "*MAXVAR*", or "*NA*".
@@ -401,8 +404,8 @@ NULL
 #' list shows which argument is passed to which function:
 #' \describe{
 #' \item{.absolute}{Accepted by/Passed down to: [calculateHTMT()]}
-#' \item{.approach_inference}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.alpha}{Accepted by/Passed down to: [calculateRhoT()], [calculateHTMT()], [calculateCN()]}
+#' \item{.approach_inference}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.ci}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.closed_form_ci}{Accepted by/Passed down to: [calculateRhoT()]}
 #' \item{.handle_inadmissibles}{Accepted by/Passed down to: [calculateHTMT()]}
@@ -460,7 +463,6 @@ args_default <- function(.choices = FALSE) {
   args <- list(
     .alpha                   = 0.05,
     .absolute                = TRUE,
-    .asymptotic              = FALSE,
     .approach_2ndorder       = c("2stage", "mixed"),
     .approach_alpha_adjust   = c("none", "bonferroni"),
     .approach_cor_robust     = c("none", "mcd", "spearman"),
@@ -477,6 +479,7 @@ args_default <- function(.choices = FALSE) {
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                  "GSCA", "PCA", "unit", "bartlett", "regression"), 
     .arguments               = NULL,
+    .asymptotic              = FALSE,
     .attributes              = NULL,
     .benchmark               = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR","NA"),
     .bias_corrected          = TRUE,

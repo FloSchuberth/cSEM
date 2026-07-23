@@ -507,16 +507,16 @@ assess <- function(
        )}
       
       if(any(.quality_criterion %in% c("all", "htmt2"))){
-        # HTMT2 has no asymptotic CI; drop .approach so it uses its default
+        # HTMT2 has no asymptotic CI; drop .approach_inference so it uses its default
         # (bootstrap) instead of erroring when .inference = TRUE - and tell the user.
         dots_htmt2 <- list(...)
-        if(isTRUE(dots_htmt2[[".approach"]] == "asymptotic") &&
+        if(isTRUE(dots_htmt2[[".approach_inference"]] == "asymptotic") &&
            isTRUE(dots_htmt2[[".inference"]])) {
           warning2("Asymptotic (delta-method) confidence intervals are available for ",
                    "the HTMT only. The HTMT2 is reported with bootstrap confidence ",
                    "intervals instead.")
         }
-        dots_htmt2[[".approach"]] <- NULL
+        dots_htmt2[[".approach_inference"]] <- NULL
         out[["HTMT2"]]  <- do.call(calculateHTMT, c(
           list(.object,
                .only_common_factors = .only_common_factors,
@@ -544,10 +544,10 @@ assess <- function(
         out$Information[[".ci"]] <- "CI_percentile"
       }
 
-      if(any(names(args_htmt) == ".approach")) {
-        out$Information[[".approach"]] <- args_htmt[[".approach"]]
+      if(any(names(args_htmt) == ".approach_inference")) {
+        out$Information[[".approach_inference"]] <- args_htmt[[".approach_inference"]]
       } else {
-        out$Information[[".approach"]] <- "bootstrap"
+        out$Information[[".approach_inference"]] <- "bootstrap"
       }
 
       if(any(names(args_htmt) == ".type_htmt")) {

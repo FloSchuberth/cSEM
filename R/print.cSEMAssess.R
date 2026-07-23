@@ -309,7 +309,7 @@ print.cSEMAssess <- function(x, ...) {
       cat2("\n\n\tHeterotrait-monotrait ratio of correlations matrix (HTMT matrix)\n\n")
 
       if(x$Information$.inference) {
-        if(x$Information$.approach == "asymptotic") {
+        if(x$Information$.approach_inference == "asymptotic") {
           cat2("\tValues in the upper triangular part are the ",
                paste0(100*(1 - x$Information$.alpha), "% limits of the\n",
                       "\tasymptotic (delta-method) confidence intervals.\n\n"))
