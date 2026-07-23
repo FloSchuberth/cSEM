@@ -77,8 +77,9 @@
 #'   or "*regression*". Defaults to "*PLS-PM*".
 #' @param .args_used A list of function argument names whose value was modified
 #'   by the user.
-#' @param .asymptotic Logical. Should [calculateHTMTcore()] additionally return the
-#'   gradients required for the delta-method standard error? Defaults to `FALSE`.
+#' @param .asymptotic Logical. Should the internal function `calculateHTMTcore()`
+#'   additionally return the gradients required for the delta-method standard error?
+#'   Defaults to `FALSE`.
 #'
 #' @param .attrbutes Character string. Variables used as attributes in IPMA.
 #' @param .benchmark Character string. The procedure to obtain benchmark predictions.

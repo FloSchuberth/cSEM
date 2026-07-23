@@ -1142,8 +1142,8 @@ calculateHTMTcore <- function(
   .object               = NULL,
   .type_htmt            = NULL,
   .absolute             = NULL,
-  .only_common_factors  = NULL,
-  .asymptotic           = FALSE
+  .asymptotic           = FALSE,
+  .only_common_factors  = NULL
 ){
   
   if(inherits(.object, "cSEMResults_default")) {
@@ -1398,10 +1398,10 @@ calculateHTMTcore <- function(
 #'  .type_htmt            = c('htmt','htmt2'),
 #'  .absolute             = TRUE,
 #'  .alpha                = 0.05,
-#'  .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
+#'  .approach_inference   = c("bootstrap", "asymptotic"),
+#'  .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t",
 #'                            "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
 #'  .inference            = FALSE,
-#'  .approach_inference   = c("bootstrap", "asymptotic"),
 #'  .only_common_factors  = TRUE,
 #'  .R                    = 499,
 #'  .seed                 = NULL,
@@ -1446,10 +1446,10 @@ calculateHTMT <- function(
   .type_htmt            = c('htmt','htmt2'),
   .absolute             = TRUE,
   .alpha                = 0.05,
-  .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
+  .approach_inference   = c("bootstrap", "asymptotic"),
+  .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t",
                             "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
   .inference            = FALSE,
-  .approach_inference   = c("bootstrap", "asymptotic"),
   .only_common_factors  = TRUE,
   .R                    = 499,
   .seed                 = NULL,
@@ -1462,11 +1462,11 @@ calculateHTMT <- function(
 
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, calculateHTMT,
-                  .type_htmt     = .type_htmt,
-                  .absolute = .absolute,
+                  .type_htmt            = .type_htmt,
+                  .absolute             = .absolute,
                   .alpha                = .alpha,
-                  .inference            = .inference,
                   .approach_inference   = .approach_inference,
+                  .inference            = .inference,
                   .only_common_factors  = .only_common_factors,
                   .R                    = .R,
                   .seed                 = .seed
