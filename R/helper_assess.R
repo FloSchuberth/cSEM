@@ -1227,11 +1227,14 @@ calculateHTMTcore <- function(
     list(monocor1,monocor2,hetcor)
   })
   
-  nthroot <- function(x, n){
-    if(x <0 && n %% 2 == 1 ){
-      sign(x) * abs(x)^(1/n)
-    }else{
-      x^(1/n)
+  # Real n-th root: for negative .x with odd .n the (negative) real root is
+  # returned; for negative .x with even .n no real root exists and the result
+  # is NaN, i.e., the geometric mean cannot be calculated.
+  calculateNthRoot <- function(.x, .n){
+    if(.x < 0 && .n %% 2 == 1){
+      sign(.x) * abs(.x)^(1/.n)
+    } else {
+      .x^(1/.n)
     }
   }
 
@@ -1244,13 +1247,13 @@ calculateHTMTcore <- function(
         warning2("The monotrait-heteromethod correlations show different signs.\n",
         "Hence the HTMT2 cannot be calculated.")
       }
-      temp1 <- nthroot(prod(x[[1]]), length(x[[1]]))
+      temp1 <- calculateNthRoot(prod(x[[1]]), length(x[[1]]))
       # monotrait 2
       if(abs(sum(sign(x[[2]]))) != length(x[[2]])){
         warning2("The monotrait-heteromethod correlations show different signs.\n",
         "Hence the HTMT2 cannot be calculated.")
       }
-      temp2 <- nthroot(prod(x[[2]]), length(x[[2]]))
+      temp2 <- calculateNthRoot(prod(x[[2]]), length(x[[2]]))
       # heterotrait
       # If all hetertrait correlations are negative take the absolute value
       # and return later the negative htmt value
@@ -1258,11 +1261,11 @@ calculateHTMTcore <- function(
         x[[3]] = abs(x[[3]])
         sign_identification = -1
       }
-      if(prod(x[[3]]) < 0 & length(x[[3]])%%2 == 0){
+      if(prod(x[[3]]) < 0 && length(x[[3]]) %% 2 == 0){
         warning2("The heterotrait-heteromethod block could not be computed.\n",
                  "Hence the HTMT2 cannot be calculated.")
       }
-      temp3 <- nthroot(prod(x[[3]]), length(x[[3]]))
+      temp3 <- calculateNthRoot(prod(x[[3]]), length(x[[3]]))
       
       # return the geometric means
       c(temp1,temp2,temp3,sign_identification)
