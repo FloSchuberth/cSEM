@@ -18,6 +18,7 @@
 #'   .disattenuate                = args_default()$.disattenuate,
 #'   .dominant_indicators         = args_default()$.dominant_indicators,
 #'   .estimate_structural         = args_default()$.estimate_structural,
+#'   .handle_missing              = args_default()$.handle_missing,
 #'   .id                          = args_default()$.id,
 #'   .instruments                 = args_default()$.instruments,
 #'   .iter_max                    = args_default()$.iter_max,
@@ -50,6 +51,7 @@ foreman <- function(
   .disattenuate                = args_default()$.disattenuate,
   .dominant_indicators         = args_default()$.dominant_indicators,
   .estimate_structural         = args_default()$.estimate_structural,
+  .handle_missing              = args_default()$.handle_missing,
   .id                          = args_default()$.id,
   .instruments                 = args_default()$.instruments,
   .iter_max                    = args_default()$.iter_max,
@@ -71,7 +73,8 @@ foreman <- function(
   ## Prepare, check, and clean data (a data.frame)
   X_cleaned <- processData(.data = .data, 
                            .model = csem_model,
-                           .instruments = NULL)
+                           .instruments = NULL,
+                           .handle_missing = .handle_missing)
   
   ### Computation ==============================================================
   ## Calculate empirical indicator covariance/correlation matrix
@@ -262,6 +265,7 @@ foreman <- function(
       "Data"          = X,
       "Model"         = csem_model,
       "Arguments"     = args_used,
+      "Missing_data"  = attr(X_cleaned, "missing_info"),
       "Type_of_indicator_correlation" = Cor$cor_type,
       "Threshold_parameter_estimates" = Cor$thres_est,
       "Weight_info"   = list(

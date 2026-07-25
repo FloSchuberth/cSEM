@@ -202,6 +202,14 @@ For "\emph{replace}" resampling continues until there are exactly \code{.R} admi
 Depending on the frequency of inadmissible solutions this may significantly increase
 computing time. Defaults to "\emph{drop}".}
 
+\item{.handle_missing}{Character string. How missing values in \code{.data} should be
+handled? One of: "\emph{none}", "\emph{listwise}", "\emph{mean}", or "\emph{regression}". If
+"\emph{none}", an error is returned if the dataset contains missing values.If
+"\emph{listwise}", rows containing missing values in model indicators are removed
+before estimation. If "\emph{mean}", missing values are replaced by indicator
+means. If "\emph{regression}", missing values are replaced by deterministic
+regression imputation.  Defaults to "\emph{none}".}
+
 \item{.id}{Character string or integer. A character string giving the name or
 an integer of the position of the column of \code{.data} whose levels are used
 to split \code{.data} into groups. Defaults to \code{NULL}.}

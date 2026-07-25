@@ -275,7 +275,9 @@ predict <- function(
         )[[1]]
         
         ## Clean data
-        dat <- lapply(dat, processData, .model = .object$Information$Model)
+        dat <- lapply(dat, processData, 
+                      .model = .object$Information$Model, 
+                      .handle_missing = .object$Information$Missing_data$Approach_missing)
         
         ii <- length(dat)
       } else {

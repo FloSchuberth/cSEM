@@ -155,6 +155,13 @@
 #'   For "*replace*" resampling continues until there are exactly `.R` admissible solutions.
 #'   Depending on the frequency of inadmissible solutions this may significantly increase
 #'   computing time. Defaults to "*drop*".
+#' @param .handle_missing Character string. How missing values in `.data` should be
+#'   handled? One of: "*none*", "*listwise*", "*mean*", or "*regression*". If
+#'    "*none*", an error is returned if the dataset contains missing values.If
+#'   "*listwise*", rows containing missing values in model indicators are removed
+#'   before estimation. If "*mean*", missing values are replaced by indicator
+#'   means. If "*regression*", missing values are replaced by deterministic
+#'   regression imputation.  Defaults to "*none*".
 #' @param .id Character string or integer. A character string giving the name or 
 #'   an integer of the position of the column of `.data` whose levels are used
 #'   to split `.data` into groups. Defaults to `NULL`.
@@ -504,6 +511,7 @@ args_default <- function(.choices = FALSE) {
     .full_output             = TRUE,
     .graph_attrs             = c("rankdir=LR"),
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
+    .handle_missing          = c("none","listwise", "mean", "regression"),
     .H                       = NULL,
     .id                      = NULL,
     .inference               = FALSE,

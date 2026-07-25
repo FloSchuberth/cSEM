@@ -74,6 +74,10 @@ testMICOM <- function(
   # Henseler et al. (2016) - Testing measurement invariance of composites using
   #                          partial least squares
   
+  if(.object[[1]]$Information$Missing_data$Approach_missing != 'none'){
+    stop2("testMICOM() does not support model estimations with missing values.")
+  }
+  
   if(.verbose) {
     cat(rule(center = "Test for measurement invariance based on Henseler et al (2016)",
              line = "bar3"), "\n\n")
@@ -117,13 +121,14 @@ testMICOM <- function(
     # }
     
     # if(.approach_p_adjust != 'none'){
-    #   stop2("P-value adjustment to control the familywise error rate not supported yet.")
+    #   stop2("P-value adjustment to control the family-wise error rate not supported yet.")
     # }
     
     ### Preparation ==============================================================
     ## Get pooled data (potentially unstandardized) 
     X <- .object[[1]]$Information$Data_pooled
-    X <- processData(X, .model = .object[[1]]$Information$Model)
+    X <- processData(X, .model = .object[[1]]$Information$Model,
+                        .handle_missing='none')
     
     ## Remove id column: 
     # If .id has been supplied, delete column with the id name otherwise skip

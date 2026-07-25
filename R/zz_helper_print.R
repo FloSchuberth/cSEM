@@ -16,7 +16,14 @@ printSummarizeOverview <- function(.summarize_object) {
                                                          c(red("Not ok!"), "Use: verify()."))
   )
   cat2(
-    col_align("\n\tNumber of observations", 35), "= ", nrow(x$Arguments$.data),
+    col_align("\n\tOriginal sample size", 35), "= ", ifelse(inherits(.summarize_object, "cSEMSummarize_2ndorder"), 
+                                                            nrow(.summarize_object$First_stage$Information$Arguments$.data),
+                                                            nrow(x$Arguments$.data)),
+    col_align("\n\tNr. of rows with missing values", 35), "= ", ifelse(inherits(.summarize_object, "cSEMSummarize_2ndorder"),
+                                                                  .summarize_object$First_stage$Information$Missing_data$Number_of_rows_missing,
+                                                                  x$Missing_data$Number_of_rows_missing),
+    col_align("\n\tApproach to handle missing data", 35), "= ", '"',x$Missing_data$Approach_missing, '"', 
+    col_align("\n\tUsed sample size", 35), "= ", nrow(x$Data),
     col_align("\n\tWeight estimator", 35), "= ", 
     ifelse(x$Arguments$.approach_weights == "PLS-PM" && 
              !all(x$Type_of_indicator_correlation == 'Pearson'), 
@@ -33,7 +40,7 @@ printSummarizeOverview <- function(.summarize_object) {
     col_align("\n\tType of indicator correlation", 35), "= ", 
     paste0(x$Type_of_indicator_correlation, collapse = ", ")
   )
-  
+
   if(!is.null(x$Model$instruments) && x$Arguments$.approach_paths == "2SLS") {
     tmp <- setdiff(names(which(rowSums(x$Model$structural) != 0)), names(x$Model$instruments))
     cat2(
@@ -68,7 +75,7 @@ printSummarizeOverview <- function(.summarize_object) {
                   if(!is.na(x$Approach_2ndorder)){
                     paste("First stage:", ifelse(.summarize_object$First_stage$Information$Arguments$.disattenuate==TRUE,
                                                  "Yes",
-                                                 "No"), "\n",col_align("= Second stage:", 55, "right"), 
+                                                 "No"), "\n",col_align("= Second stage:", 57, "right"), 
                           ifelse(x$Arguments$.disattenuate == TRUE, "Yes", "No"))
                   }else{
                          "Yes (PLSc)"

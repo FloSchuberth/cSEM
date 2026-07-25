@@ -167,3 +167,72 @@ makeLine <- function(type = 1, width) {
   
   paste(rep(x,  width), collapse = "")
 }
+
+#' Internal: Flatten a cSEMResults object
+#'
+#' Recursively traverses a [cSEMResults] object (or any nested named list /
+#' S4 object) and returns a flat, named list whose names are the full access
+#' paths to each leaf element. This is primarily a helper for regression
+#' testing: comparing two flattened objects element-by-element makes it
+#' possible to trace exactly *which* result has changed between two versions
+#' of \pkg{cSEM} instead of only learning *that* the objects differ.
+#'
+#' A "leaf" is any `NULL`, atomic vector/matrix, factor, function, or
+#' \code{formula}. All other list-like or S4 objects are descended into.
+#' Path components are separated by `"$"` and follow the same notation used
+#' to address elements of a [cSEMResults] object, e.g.
+#' \code{"Estimates$Path_estimates"}.
+#'
+#' @usage NULL
+#'
+#' @param .object An object of class [cSEMResults] or any (nested) named
+#'   list or S4 object to be flattened.
+#' @param .path Character string. The access path of the current element.
+#'   Used internally for the recursion; users should rely on the default.
+#'
+#' @return A named `list` with one element per leaf of `.object`. The names
+#'   give the full `"$"`-separated access path to each leaf.
+#'
+#' @keywords internal
+
+flattencSEMResults <- function(.object, .path = "") {
+  
+  ## A leaf is anything that should be compared directly instead of
+  ## being descended into.
+  isLeaf <- function(.x) {
+    is.null(.x)    || is.atomic(.x) || is.factor(.x) ||
+      is.function(.x) || inherits(.x, c("formula", "Date", "POSIXct"))
+  }
+  
+  if(isLeaf(.object)) {
+    out <- list(.object)
+    names(out) <- if(.path == "") "<root>" else .path
+    return(out)
+  }
+  
+  ## Collect the child elements together with their names, handling both
+  ## ordinary (named) lists and S4 objects.
+  if(isS4(.object)) {
+    nms      <- methods::slotNames(.object)
+    children <- lapply(nms, function(.s) methods::slot(.object, .s))
+  } else {
+    children <- as.list(.object)
+    nms      <- names(children)
+  }
+  
+  ## Replace missing/empty names by their positional index so that every
+  ## leaf is reachable by a unique path.
+  if(is.null(nms)) {
+    nms <- as.character(seq_along(children))
+  }
+  nms[nms == ""] <- as.character(which(nms == ""))
+  
+  ## Descend into each child and concatenate the results.
+  out <- list()
+  for(i in seq_along(children)) {
+    child_path <- if(.path == "") nms[i] else paste(.path, nms[i], sep = "$")
+    out <- c(out, flattencSEMResults(children[[i]], .path = child_path))
+  }
+  
+  out
+}

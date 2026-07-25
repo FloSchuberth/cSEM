@@ -27,8 +27,10 @@
 #' Depending on the type/class of the indicator data provided cSEM computes the indicator 
 #' correlation matrix in different ways. See [calculateIndicatorCor()] for details.
 #'
-#' In the current version `.data` must not contain missing values. Future versions
-#' are likely to handle missing values as well.
+#' Missing values in `.data` are not treated by default, i.e., `.handle_missing = "none"`. Set 
+#' `.handle_missing = "listwise"` for listwise deletion,
+#' `.handle_missing = "mean"` to replace missing values by indicator means, or
+#' `.handle_missing = "regression"` to use regression imputation.
 #' 
 #' To provide a model use the [lavaan model syntax][lavaan::model.syntax].
 #' Note, however, that \pkg{cSEM} currently only supports the "standard" lavaan
@@ -215,6 +217,7 @@
 #' .disattenuate          = TRUE,
 #' .dominant_indicators   = NULL,
 #' .estimate_structural   = TRUE,
+#' .handle_missing        = c('none', 'listwise', 'mean', 'regression'),
 #' .id                    = NULL,
 #' .instruments           = NULL,
 #' .iter_max              = 100,
@@ -320,6 +323,7 @@ csem <- function(
   .disattenuate          = TRUE,
   .dominant_indicators   = NULL,
   .estimate_structural   = TRUE,
+  .handle_missing        = c('none', 'listwise', 'mean', 'regression'),
   .id                    = NULL,
   .instruments           = NULL,
   .iter_max              = 100,
@@ -351,6 +355,7 @@ csem <- function(
   .approach_nl          <- match.arg(.approach_nl)
   .approach_paths       <- match.arg(.approach_paths)
   .approach_weights     <- match.arg(.approach_weights)
+  .handle_missing       <- match.arg(.handle_missing)
   .conv_criterion       <- match.arg(.conv_criterion)
   .eval_plan            <- match.arg(.eval_plan)
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)
@@ -477,6 +482,11 @@ csem <- function(
         # Order data according to the ordering of the measurement model; delete
         # all columns that are not needed
         x <- x[, setdiff(colnames(model_original$measurement), model_original$vars_attached_to_2nd)]
+        # if(.handle_missing == "listwise") {
+        #   x <- x[complete.cases(x), , drop = FALSE]
+        # } else if(.handle_missing %in% c("mean", "regression")) {
+        #   x <- processData(.data = x, .model = model_original, .handle_missing = .handle_missing)
+        # }
         x
       })
       
@@ -486,6 +496,13 @@ csem <- function(
       # data_pooled[, "id"] <- rep(names(out), times = sapply(.data, nrow))
       data_pooled
     } else {
+      # if(.handle_missing == "listwise") {
+      #   columns <- setdiff(colnames(model_original$measurement), model_original$vars_attached_to_2nd)
+      #   .data <- .data[complete.cases(.data[, columns, drop = FALSE]), , drop = FALSE]
+      # } else if(.handle_missing %in% c("mean", "regression")) {
+      #   columns <- setdiff(colnames(model_original$measurement), model_original$vars_attached_to_2nd)
+      #   .data[, columns] <- processData(.data = .data, .model = model_original, .handle_missing = .handle_missing)[, columns]
+      # }
       .data
     }
     ## Add second order approach to $Information

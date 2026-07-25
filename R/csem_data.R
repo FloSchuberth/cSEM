@@ -3,9 +3,10 @@
 #' Prepare, standardize, check, and clean data provided via the `.data` argument.
 #'
 #' @usage processData(
-#'   .data        = NULL, 
-#'   .model       = NULL, 
-#'   .instruments = NULL
+#'   .data            = NULL, 
+#'   .model           = NULL, 
+#'   .instruments     = NULL,
+#'   .handle_missing  = NULL
 #'   )
 #'
 #' @inheritParams csem_arguments
@@ -17,9 +18,10 @@
 #' @keywords internal
 
 processData <- function(
-  .data        = NULL, 
-  .model       = NULL, 
-  .instruments = NULL
+  .data            = NULL, 
+  .model           = NULL, 
+  .instruments     = NULL,
+  .handle_missing  = NULL
   ) {
 
   ### Checks, errors and warnings ========
@@ -116,12 +118,98 @@ processData <- function(
   # Check if remaining data set contains NAs
   .data_temp <- .data[!complete.cases(.data), , drop = FALSE]
   
-  if(length(rownames(.data_temp)) > 0) {
-    stop2("The following error occured while processing the data:\n",
-          "Data set contains missing values in rows:", 
-          paste0("`", rownames(.data_temp), "`", collapse = ", "),
-          "\nRemove NAs or use imputation methods to replace them.")
+  missing_info <- list(
+    "Approach_missing" = .handle_missing,
+    "Missing_data" = length(rownames(.data_temp)) > 0,
+    "Rows_with_missing" = rownames(.data_temp),
+    "Number_of_rows_missing" = length(rownames(.data_temp))
+  )
+  
+  if(nrow(.data_temp) > 0) {
+    if (.handle_missing == "none") {
+      stop2(
+        "The following error occured while processing the data:\n",
+        "Data set contains missing values in rows:",
+        paste0("`", rownames(.data_temp), "`", collapse = ", "),
+        "\nRemove NAs, use imputation methods to replace them, or set `.handle_missing` to \"listwise\", \"mean\", or \"regression\"."
+      )
+      
+    } else if (.handle_missing == "listwise") {
+      .data <- .data[complete.cases(.data), , drop = FALSE]
+    } else if (.handle_missing == "mean") {
+      .data <- imputeMissingMean(.data)
+    } else if (.handle_missing == "regression") {
+      .data <- imputeMissingRegression(.data)
+    }
+    missing_info$Number_of_rows_imputed <- nrow(.data_temp)
   }
+  attr(.data, "missing_info") <- missing_info
   ## Return
   return(.data)
+}
+
+#' Internal: Mean imputation for missing data
+#'
+#' @keywords internal
+#' @noRd
+imputeMissingMean <- function(.data) {
+  missing_columns <- names(.data)[unlist(lapply(.data, anyNA))]
+  nonnumeric_columns <- missing_columns[!unlist(lapply(.data[missing_columns], is.numeric))]
+  
+  if(length(nonnumeric_columns) != 0) {
+    stop2("Mean replacement currently requires numeric indicators. Non-numeric indicators with missing values: ",
+          paste0("`", nonnumeric_columns, "`", collapse = ", "), ".")
+  }
+  
+  for(i in missing_columns) {
+    replacement <- mean(.data[[i]], na.rm = TRUE)
+    if(is.nan(replacement)) {
+      stop2("Mean replacement failed because indicator `", i, "` contains only missing values.")
+    }
+    .data[is.na(.data[[i]]), i] <- replacement
+  }
+  
+  return(.data)
+}
+
+#' Internal: Regression imputation for missing data
+#'
+#' @keywords internal
+#' @noRd
+imputeMissingRegression <- function(.data) {
+  missing_columns <- names(.data)[unlist(lapply(.data, anyNA))]
+  nonnumeric_columns <- names(.data)[!unlist(lapply(.data, is.numeric))]
+  
+  if(length(nonnumeric_columns) != 0) {
+    stop2("Regression imputation currently requires all indicators to be numeric. Non-numeric indicators: ",
+          paste0("`", nonnumeric_columns, "`", collapse = ", "), ".")
+  }
+  
+  if(ncol(.data) < 2) {
+    stop2("Regression imputation requires at least two indicators.")
+  }
+  
+  data_imputed <- imputeMissingMean(.data)
+  
+  for(i in missing_columns) {
+    observed_rows <- !is.na(.data[[i]])
+    missing_rows  <- is.na(.data[[i]])
+    predictors    <- setdiff(names(.data), i)
+    
+    if(sum(observed_rows) <= length(predictors)) {
+      stop2("Regression imputation for indicator `", i, "` requires more complete observations than predictors.")
+    }
+    
+    model_data <- data_imputed[observed_rows, c(i, predictors), drop = FALSE]
+    fit <- stats::lm(stats::reformulate(predictors, response = i), data = model_data)
+    predicted <- stats::predict(fit, newdata = data_imputed[missing_rows, predictors, drop = FALSE])
+    
+    if(anyNA(predicted)) {
+      stop2("Regression imputation failed for indicator `", i, "`.")
+    }
+    
+    data_imputed[missing_rows, i] <- predicted
+  }
+  
+  return(data_imputed)
 }
