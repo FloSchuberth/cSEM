@@ -41,7 +41,7 @@ A list of class \code{cSEMInfer}.
 \details{
 Calculate common inferential quantities. For users interested in the
 estimated standard errors, t-values, p-values and/or confidences
-intervals of the path, weight or loading estimates, calling \code{\link[dplyr:summarize]{summarize()}}
+intervals of the path, weight or loading estimates, calling \code{\link[=summarize]{summarize()}}
 directly will usually be more convenient as it has a much more
 user-friendly print method. \code{\link[=infer]{infer()}} is useful for comparing
 different confidence interval estimates.
@@ -151,5 +151,5 @@ infer(a1, .quantity = "CI_t_interval")}
 \insertAllCited{}
 }
 \seealso{
-\code{\link[=csem]{csem()}}, \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}, \code{\link[dplyr:summarize]{summarize()}} \link{cSEMResults}
+\code{\link[=csem]{csem()}}, \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}, \code{\link[=summarize]{summarize()}} \link{cSEMResults}
 }

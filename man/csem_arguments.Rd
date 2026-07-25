@@ -92,8 +92,9 @@ or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
 \item{.args_used}{A list of function argument names whose value was modified
 by the user.}
 
-\item{.asymptotic}{Logical. Should \code{\link[=calculateHTMTcore]{calculateHTMTcore()}} additionally return the
-gradients required for the delta-method standard error? Defaults to \code{FALSE}.}
+\item{.asymptotic}{Logical. Should the internal function \code{calculateHTMTcore()}
+additionally return the gradients required for the delta-method standard error?
+Defaults to \code{FALSE}.}
 
 \item{.attrbutes}{Character string. Variables used as attributes in IPMA.}
 
@@ -363,7 +364,7 @@ Defaults to \code{0.5}.}
 \item{.probs}{A vector of probabilities.}
 
 \item{.postestimation_object}{An object resulting from a call to one of cSEM's
-postestimation functions (e.g. \code{\link[dplyr:summarize]{summarize()}}).}
+postestimation functions (e.g. \code{\link[=summarize]{summarize()}}).}
 
 \item{.quality_criterion}{Character string. A single character string or a
 vector of character strings naming the quality criterion to compute. See

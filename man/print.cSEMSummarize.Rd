@@ -14,6 +14,6 @@ Defaults to \code{TRUE}.}
 The \link{cSEMSummary} method for the generic function \code{\link[=print]{print()}}.
 }
 \seealso{
-\code{\link[=csem]{csem()}}, \link{cSEMResults}, \code{\link[dplyr:summarize]{summarize()}}
+\code{\link[=csem]{csem()}}, \link{cSEMResults}, \code{\link[=summarize]{summarize()}}
 }
 \keyword{internal}

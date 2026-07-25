@@ -24,9 +24,9 @@ The direct effects are equal to the estimated coefficients. The total effect
 equals (I-B)^-1 Gamma. The indirect effect equals the difference between
 the total effect and the indirect effect. In addition, the variance accounted
 for (VAF) is calculated. The VAF is defined as the ratio of a variables
-indirect effect to its total effect. Helper for generic functions \code{\link[dplyr:summarize]{summarize()}} and \code{\link[=assess]{assess()}}.
+indirect effect to its total effect. Helper for generic functions \code{\link[=summarize]{summarize()}} and \code{\link[=assess]{assess()}}.
 }
 \seealso{
-\code{\link[=assess]{assess()}}, \code{\link[dplyr:summarize]{summarize()}} \link{cSEMResults}
+\code{\link[=assess]{assess()}}, \code{\link[=summarize]{summarize()}} \link{cSEMResults}
 }
 \keyword{internal}

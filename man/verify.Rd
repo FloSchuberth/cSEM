@@ -98,5 +98,5 @@ verify(out) # not ok
 }
 }
 \seealso{
-\code{\link[=csem]{csem()}}, \code{\link[dplyr:summarize]{summarize()}}, \link{cSEMResults}
+\code{\link[=csem]{csem()}}, \code{\link[=summarize]{summarize()}}, \link{cSEMResults}
 }
