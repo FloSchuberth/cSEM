@@ -208,10 +208,10 @@ calculateConstructVCV <- function(
 #'      Bravais-Pearson product-moment correlation is computed (via [stats::cor()][stats::cor()]).}
 #'   \item{`Numeric-factor`}{If any of the columns is a factor variable, the 
 #'     polyserial correlation \insertCite{Drasgow1988}{cSEM} is computed (via 
-#'     [polycor::polyserial()][polycor::polyserial()]).}
+#'     an own implementation).}
 #'   \item{`Factor-factor`}{If both columns are factor variables, the 
-#'     polychoric correlation \insertCite{Drasgow1988}{cSEM} is computed (via 
-#'     [polycor::polychor()][polycor::polychor()]).}
+#'     polychoric correlation \insertCite{Drasgow1988}{cSEM} is computed (via
+#'      an own implementation).}
 #' }
 #' Note: logical input is treated as a 0-1 factor variable.
 #' 
@@ -254,8 +254,6 @@ calculateIndicatorCor <- function(
           " columns of .data to be numeric.")
   }
   
-  ## polycor::hetcor() is relatively slow. If all columns are numeric use cor
-  ## directly
   switch (.approach_cor_robust,
           "none" = {
             if(only_numeric_cols) {
@@ -271,7 +269,7 @@ calculateIndicatorCor <- function(
               cor_type <- S
               
               # list for the thresholds
-              thres_est <- NULL
+              thres_est <- list()
               
               # temp is used to only calculate the correlations between two 
               # indicators once (upper triangular matrix)
@@ -279,35 +277,36 @@ calculateIndicatorCor <- function(
               for(i in colnames(.X_cleaned)){
                 temp <- temp[temp!=i]
                 for(j in temp){
-                  # If both indicators are not continous, the polychoric 
+                  # If both indicators are not continuous, the polychoric 
                   # correlation is calculated
                   if (is_numeric_indicator[[i]] == FALSE & is_numeric_indicator[[j]] == FALSE){
-                    # The polycor package gives a list with the polychoric correlation and
-                    # the thresholds estimates
-                    cor_temp <- polycor::polychor(.X_cleaned[,i], .X_cleaned[,j], thresholds = TRUE)
-                    S[i,j] <- cor_temp$rho
-                    cor_type[i,j] <- cor_temp$type
-                    thres_est[[i]] <- cor_temp$row.cuts
-                    thres_est[[j]] <- cor_temp$col.cuts
+
                     
-                    # If one indicator is continous, the polyserial correlation 
-                    # is calculated.Note: polyserial needs the continous 
+                    # polychor function returns the correlation and the thresholds as attribute
+                    rho <- polychor(.X_cleaned[,i], .X_cleaned[,j], thresholds = TRUE)
+                    S[i,j] <- rho
+                    cor_type[i,j] <- "polychoric"
+                    thres_est[[i]] <- attr(rho, "thr.x")
+                    thres_est[[j]] <- attr(rho, "thr.y")
+                    
+                    # If one indicator is continuous, the polyserial correlation 
+                    # is calculated.Note: the polyserial() function needs the continuous 
                     # indicator as the first argument.
                   }else if(is_numeric_indicator[[i]] == FALSE & is_numeric_indicator[[j]] == TRUE){
                     # The polycor package gives the polyserial correlation and the thresholds
-                    cor_temp <- polycor::polyserial(.X_cleaned[,j], .X_cleaned[,i], thresholds = TRUE)
-                    S[i,j] <- cor_temp$rho
-                    cor_type[i,j] <- cor_temp$type
-                    thres_est[[i]] <- cor_temp$cuts
+                    rho <- polyserial(.X_cleaned[,j], .X_cleaned[,i], thresholds = TRUE)
+                    S[i,j] <- rho
+                    cor_type[i,j] <- "polyserial"
+                    thres_est[[i]] <- attr(rho, "thr.y")
                     thres_est[[j]] <- NA
                   }else if(is_numeric_indicator[[i]] == TRUE & is_numeric_indicator[[j]] == FALSE){
-                    cor_temp <- polycor::polyserial(.X_cleaned[,i], .X_cleaned[,j], thresholds = TRUE)
-                    S[i,j] <- cor_temp$rho
-                    cor_type[i,j] <- cor_temp$type
-                    thres_est[[j]] <- cor_temp$cuts
+                    rho <- polyserial(.X_cleaned[,i], .X_cleaned[,j], thresholds = TRUE)
+                    S[i,j] <- rho
+                    cor_type[i,j] <- "polyserial"
                     thres_est[[i]] <- NA
+                    thres_est[[j]] <- attr(rho, "thr.y")
                     
-                    # If both indicators are continous, the Pearson correlation
+                    # If both indicators are continuous, the Pearson correlation
                     # is calculated.
                   }else{
                     S[i,j] <- cor(.X_cleaned[,i], .X_cleaned[,j])
@@ -365,6 +364,7 @@ calculateIndicatorCor <- function(
   # a polycoric correlation could also be used with GSCA or some other non-PLS-PM method.
   list(S = S, cor_type = cor_type, thres_est = thres_est)
 }
+
 
 #' Internal: Calculate Reliabilities
 #'  
