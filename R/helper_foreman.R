@@ -290,8 +290,8 @@ calculateIndicatorCor <- function(
                     thres_est[[i]] <- attr(rho, "thr.x")
                     thres_est[[j]] <- attr(rho, "thr.y")
                     
-                    # If one indicator is continous, the polyserial correlation 
-                    # is calculated.Note: polyserial needs the continous 
+                    # If one indicator is continuous, the polyserial correlation 
+                    # is calculated.Note: polyserial needs the continuous 
                     # indicator as the first argument.
                   }else if(is_numeric_indicator[[i]] == FALSE & is_numeric_indicator[[j]] == TRUE){
                     # The polycor package gives the polyserial correlation and the thresholds
