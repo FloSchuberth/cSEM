@@ -279,7 +279,7 @@ calculateIndicatorCor <- function(
               for(i in colnames(.X_cleaned)){
                 temp <- temp[temp!=i]
                 for(j in temp){
-                  # If both indicators are not continous, the polychoric 
+                  # If both indicators are not continuous, the polychoric 
                   # correlation is calculated
                   if (is_numeric_indicator[[i]] == FALSE & is_numeric_indicator[[j]] == FALSE){
                     # The polycor package gives a list with the polychoric correlation and
