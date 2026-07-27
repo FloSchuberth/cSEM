@@ -72,6 +72,7 @@
 <url><loc>https://floschuberth.github.io/cSEM/reference/csem_results.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/csem_summary.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/csem_test.html</loc></url>
+<url><loc>https://floschuberth.github.io/cSEM/reference/dbinorm.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/dgp_2ndorder_cf_of_c.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/distance_measures.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/doIPMA.html</loc></url>
@@ -80,6 +81,7 @@
 <url><loc>https://floschuberth.github.io/cSEM/reference/doRedundancyAnalysis.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/estimatePath.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/exportToExcel.html</loc></url>
+<url><loc>https://floschuberth.github.io/cSEM/reference/fastIntTab.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/firstOrderMeasurementEdges.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/fit.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/fit_measures.html</loc></url>
@@ -103,6 +105,8 @@
 <url><loc>https://floschuberth.github.io/cSEM/reference/plot.cSEMResults_2ndorder.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/plot.cSEMResults_default.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/plot.cSEMResults_multi.html</loc></url>
+<url><loc>https://floschuberth.github.io/cSEM/reference/polychor.html</loc></url>
+<url><loc>https://floschuberth.github.io/cSEM/reference/polyserial.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/predict.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/print.cSEMAssess.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/print.cSEMModelSearch.html</loc></url>
@@ -118,6 +122,7 @@
 <url><loc>https://floschuberth.github.io/cSEM/reference/print.cSEMTestOMF.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/print.cSEMVerify.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/processData.html</loc></url>
+<url><loc>https://floschuberth.github.io/cSEM/reference/rawcor.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/reliability.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/resampleData.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/resamplecSEMResults.html</loc></url>

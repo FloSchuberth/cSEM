@@ -66,14 +66,12 @@ indicators) involved in the computation.
 - `Numeric-factor`:
 
   If any of the columns is a factor variable, the polyserial correlation
-  (Drasgow 1988) is computed (via
-  [`polycor::polyserial()`](https://rdrr.io/pkg/polycor/man/polyserial.html)).
+  (Drasgow 1988) is computed (via an own implementation).
 
 - `Factor-factor`:
 
   If both columns are factor variables, the polychoric correlation
-  (Drasgow 1988) is computed (via
-  [`polycor::polychor()`](https://rdrr.io/pkg/polycor/man/polychor.html)).
+  (Drasgow 1988) is computed (via an own implementation).
 
 Note: logical input is treated as a 0-1 factor variable.
 

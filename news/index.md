@@ -4,6 +4,10 @@
 
 ## cSEM 0.6.2
 
+- Replace the polycor package by a more efficient implementation to
+  calculate polychoric/polyserial correlations. Thanks to Kjell S.
+  Slupphaug who contributed this implementation.
+
 - Adjust p-value calculation in testMGD in case of permutation-based
   tests to prevent that p-values can be exactly 0. Thanks to Michael
 
