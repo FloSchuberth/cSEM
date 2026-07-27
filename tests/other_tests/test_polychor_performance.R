@@ -155,14 +155,14 @@ Z5 <- as.data.frame(lapply(X, FUN = cut, breaks = thr5, ordered_result = TRUE))
 Z1 <- as.data.frame(lapply(X, FUN = cut, breaks = thr1, ordered_results = TRUE))
 
 colnames(Z5) <- paste0("z5", vars)
-colnames(Z1) <- paste0("z1", vars)
+colnames(z1) <- paste0("z1", vars)
 
 # ------------------------------------------------------------------------------
 # Compare Numerical Results -- Polychoric Correlations
 # ------------------------------------------------------------------------------
 
 # Compare results to polycor::polychor()
-round(abs(calculateIndicatorCor(Z5)$S - calculateIndicatorCorOld(Z5)$S), 3)
+round(abs(cSEM:::calculateIndicatorCor(Z5)$S - calculateIndicatorCorOld(Z5)$S), 3)
 #>      z5x1 z5x2 z5x3  z5x4  z5x5  z5x6 z5x7 z5x8 z5x9
 #> z5x1    0    0    0 0.000 0.000 0.000    0    0    0
 #> z5x2    0    0    0 0.000 0.000 0.000    0    0    0
@@ -175,7 +175,7 @@ round(abs(calculateIndicatorCor(Z5)$S - calculateIndicatorCorOld(Z5)$S), 3)
 #> z5x9    0    0    0 0.000 0.000 0.000    0    0    0
 
 # Compare results to lavaan::lavCor()
-round(abs(calculateIndicatorCor(Z5)$S - lavaan::lavCor(Z5, ordered = colnames(Z5))), 3)
+round(abs(cSEM:::calculateIndicatorCor(Z5)$S - lavaan::lavCor(Z5, ordered = colnames(Z5))), 3)
 #>      z5x1 z5x2 z5x3 z5x4 z5x5 z5x6 z5x7 z5x8 z5x9
 #> z5x1    0                                        
 #> z5x2    0    0                                   
@@ -187,7 +187,7 @@ round(abs(calculateIndicatorCor(Z5)$S - lavaan::lavCor(Z5, ordered = colnames(Z5
 #> z5x8    0    0    0    0    0    0    0    0     
 #> z5x9    0    0    0    0    0    0    0    0    0
 
-round(abs(calculateIndicatorCor(Z1)$S - lavaan::lavCor(Z1, ordered = colnames( Z1))), 3)
+round(abs(cSEM:::calculateIndicatorCor(Z1)$S - lavaan::lavCor(Z1, ordered = colnames( Z1))), 3)
 #>    x1 x2 x3 x4 x5 x6 x7 x8 x9
 #> x1  0                        
 #> x2  0  0                     
