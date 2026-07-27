@@ -67,7 +67,6 @@ Imports:
     Matrix,
     matrixcalc,
     matrixStats,
-    pbivnorm,
     progressr,
     psych,
     purrr,
