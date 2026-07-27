@@ -1,3 +1,14 @@
+#' Internal: Fast polychoric correlation
+#'
+#' Estimate the polychoric correlation between two ordinal (categorical)
+#' variables `x` and `y`, i.e., the correlation between the two continuous,
+#' bivariate normal latent variables assumed to underlie `x` and `y`
+#' \insertCite{Drasgow1988}{cSEM}. Implemented by Kjell S. Slupphaug.
+#' 
+#' @references
+#'   \insertAllCited{}
+#'   
+#' @keywords internal
 polychor <- function(x, y,
                      control = list(),
                      maxrho =.999,
@@ -173,6 +184,17 @@ polychor <- function(x, y,
 }
 
 
+#' Internal: Fast polyserial correlation
+#'
+#' Estimate the polyserial correlation between a continuous variable `x`
+#' and an ordinal (categorical) variable `y`, i.e., the correlation between
+#' `x` and the continuous latent variable assumed to underlie `y`
+#' \insertCite{Drasgow1988}{cSEM}. Implemented by Kjell S. Slupphaug.
+#'
+#' @references
+#'   \insertAllCited{}
+#'    
+#' @keywords internal 
 polyserial <- function(x, y,
                        control = list(),
                        maxrho =.999,
@@ -282,7 +304,16 @@ polyserial <- function(x, y,
   rho
 }
 
-
+#' Internal: Bivariate standard normal density
+#'
+#' Evaluate the density of the bivariate standard normal distribution with
+#' correlation `rho` at `(u, v)`. Used internally by [polychor()] to
+#' compute the gradient of the polychoric log-likelihood. Implemented by Kjell S. Slupphaug.
+#'
+#' @references
+#'   \insertAllCited{}
+#'    
+#' @keywords internal 
 dbinorm <- function(u, v, rho, force.zero = FALSE, rho.lim = 0.9999) {
   # dirty hack to handle extreme large values for rho
   # note that u, v, and rho are vectorized!
@@ -304,14 +335,37 @@ dbinorm <- function(u, v, rho, force.zero = FALSE, rho.lim = 0.9999) {
   out
 }
 
-
+#' Internal: Raw starting value for [polychor()]/[polyserial()]
+#'
+#' Compute the ordinary Bravais-Pearson correlation between `x` and `y`
+#' after coercing both to numeric. Used as the default starting value for
+#' the `rho` optimization in [polychor()] and [polyserial()]; for
+#' [polychor()], `x` and `y` are integer category codes rather than the
+#' underlying latent variables, so this is only a rough approximation of
+#' the polychoric correlation. Implemented by Kjell S. Slupphaug.
+#'
+#' @references
+#'   \insertAllCited{}
+#'   
+#' @keywords internal 
 rawcor <- function(x, y) {
   if (!is.numeric(x)) x <- as.numeric(x)
   if (!is.numeric(y)) y <- as.numeric(y)
   cor(x, y)
 }
 
-
+#' Internal: Fast (cross-)tabulation of integer-coded categorical variables
+#'
+#' A faster, more specialized alternative to [base::table()] for
+#' (cross-)tabulating one or two variables that are (or can be coerced to)
+#' small positive integer codes, as used by [polychor()] and
+#' [polyserial()]. Rows with a missing value in either `x` or `y` are
+#' dropped before tabulating.Implemented by Kjell S. Slupphaug.
+#'
+#' @references
+#'   \insertAllCited{}
+#'   
+#' @keywords internal 
 fastIntTab <- function(x, y = NULL) {
   if (is.null(y)) {
     ok <- !is.na(x)
