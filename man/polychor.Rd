@@ -9,7 +9,7 @@ polychor(
   y,
   control = list(),
   maxrho = 0.999,
-  start = rawcor(x, y),
+  start = NULL,
   thresholds = FALSE
 )
 }

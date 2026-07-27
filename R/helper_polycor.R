@@ -12,7 +12,7 @@
 polychor <- function(x, y,
                      control = list(),
                      maxrho =.999,
-                     start = rawcor(x, y),
+                     start = NULL,
                      thresholds = FALSE) {
   if (!is.integer(x))
     x <- as.integer(as.ordered(x))
@@ -111,9 +111,9 @@ polychor <- function(x, y,
   updateCache <- function(rho) {
     if (!is.na(cache.rho) && identical(rho, cache.rho))
       return(list(P = P, G = G))
-  
+
     cache.rho <<- rho
-  
+
     # Get probabilities for corners
     pcorners[keep.outer.idx] <- pbivnorm::pbivnorm(
       x   = upper.x,
@@ -140,15 +140,35 @@ polychor <- function(x, y,
   }
 
   polycorObjective <- function(rho) {
+    if (!is.finite(rho))
+      return(NaN)
+
     cache <- updateCache(rho = rho)
     -sum(t * log(cache$P), na.rm = TRUE)
   }
 
   polycorGradient <- function(rho) {
+    if (!is.finite(rho))
+      return(NaN)
+
     cache <- updateCache(rho = rho)
     -sum(t * cache$G / cache$P, na.rm = TRUE)
   }
-  
+
+  if (is.null(start)) {
+    # Starting values based on Olsson 1982 eq 38
+    cor.xy <- cor(x, y)
+    sd.x   <- sd(x) * sqrt((n - 1) / n)
+    sd.y   <- sd(y) * sqrt((n - 1) / n)
+    start <- cor.xy * sd.x * sd.y / (sum(dnorm(rc)) * sum(dnorm(cc)))
+
+    if (!is.finite(start) || abs(start) >= maxrho)
+      start <- cor.xy
+  }
+
+  if (!is.finite(start) || abs(start) > maxrho)
+    start <- 0.0
+
   # try 1
   optim <- suppressWarnings(nlminb(
     objective = polycorObjective,
@@ -198,7 +218,7 @@ polychor <- function(x, y,
 polyserial <- function(x, y,
                        control = list(),
                        maxrho =.999,
-                       start = rawcor(x, y),
+                       start = NULL,
                        thresholds = FALSE) {
   if (!is.integer(y))
     y <- as.integer(as.ordered(y))
@@ -257,11 +277,17 @@ polyserial <- function(x, y,
   }
 
   plsPolyserialObjective <- function(rho) {
+    if (!is.finite(rho))
+      return(NaN)
+
     updateCache(rho)
     -sum(logy)
   }
 
   plsPolyserialGradient <- function(rho) {
+    if (!is.finite(rho))
+      return(NaN)
+
     updateCache(rho)
 
     lowerTerm <- dnorm(lower, 0, sigma) * zrlower
@@ -272,6 +298,19 @@ polyserial <- function(x, y,
 
     -sum((lowerTerm - upperTerm) / prob)
   }
+
+  if (is.null(start)) {
+    # Starting values from Olsson 1982 eq 38
+    cor.xy <- cor(x, y)
+    sd.y   <- sd(y) * sqrt((n - 1) / n)
+    start  <- cor.xy * sd.y / sum(dnorm(thr.inner))
+
+    if (!is.finite(start) || abs(start) > maxrho)
+      start <- cor.xy
+  }
+  
+  if (!is.finite(start) || abs(start) > maxrho)
+    start <- 0.0
   
   # try 1
   optim <- suppressWarnings(nlminb(
@@ -335,24 +374,6 @@ dbinorm <- function(u, v, rho, force.zero = FALSE, rho.lim = 0.9999) {
   out
 }
 
-#' Internal: Raw starting value for [polychor()]/[polyserial()]
-#'
-#' Compute the ordinary Bravais-Pearson correlation between `x` and `y`
-#' after coercing both to numeric. Used as the default starting value for
-#' the `rho` optimization in [polychor()] and [polyserial()]; for
-#' [polychor()], `x` and `y` are integer category codes rather than the
-#' underlying latent variables, so this is only a rough approximation of
-#' the polychoric correlation. Implemented by Kjell S. Slupphaug.
-#'
-#' @references
-#'   \insertAllCited{}
-#'   
-#' @keywords internal 
-rawcor <- function(x, y) {
-  if (!is.numeric(x)) x <- as.numeric(x)
-  if (!is.numeric(y)) y <- as.numeric(y)
-  cor(x, y)
-}
 
 #' Internal: Fast (cross-)tabulation of integer-coded categorical variables
 #'
