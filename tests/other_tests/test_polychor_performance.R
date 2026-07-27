@@ -260,10 +260,10 @@ rbenchmark::benchmark(
   new = calculateIndicatorCor(Z5),
   lav = lavaan::lavCor(Z5, ordered = colnames(Z5))
 )
-#>   test replications elapsed relative user.self sys.self user.child sys.child
-#> 3  lav          100   7.114    3.462     7.080    0.008          0         0
-#> 2  new          100   2.055    1.000     2.042    0.002          0         0
-#> 1  old          100  79.230   38.555    78.909    0.011          0         0
+#   test replications elapsed relative user.self sys.self user.child sys.child
+# 3  lav          100   6.448    3.533     6.422    0.008          0         0
+# 2  new          100   1.825    1.000     1.818    0.002          0         0
+# 1  old          100  84.740   46.433    84.539    0.003          0         0
 
 # polychoric correlations 2 (finite) thresholds
 rbenchmark::benchmark(
@@ -272,17 +272,17 @@ rbenchmark::benchmark(
   lav = lavaan::lavCor(Z5, ordered = colnames(Z1))
 )
 #>   test replications elapsed relative user.self sys.self user.child sys.child
-#> 3  lav          100   5.569    2.573     5.545    0.007          0         0
-#> 2  new          100   2.164    1.000     2.152    0.006          0         0
-#> 1  old          100   9.579    4.427     9.543    0.003          0         0
+#> 3  lav          100   5.649    2.616     5.625    0.007          0         0
+#> 2  new          100   2.159    1.000     2.154    0.000          0         0
+#> 1  old          100   9.736    4.509     9.705    0.006          0         0
 
 # mixed
 rbenchmark::benchmark(
   old = calculateIndicatorCorOld(cbind(X, Z1, Z5)),
   new = calculateIndicatorCor(cbind(X, Z1, Z5)),
-  lav = lavaan::lavCor(cbind(X, Z1, Z5), ordered = c(colnames(Z1), colnames(Z5))),
+  lav = lavaan::lavCor(cbind(X, Z1, Z5), ordered = c(colnames(Z1), colnames(Z5)))
 )
 #>   test replications elapsed relative user.self sys.self user.child sys.child
-#> 3  lav          100  38.570    1.090    38.421    0.017          0         0
-#> 2  new          100  35.393    1.000    35.038    0.233          0         0
-#> 1  old          100 157.684    4.455   157.164    0.042          0         0
+#> 3  lav          100  39.361    1.385    39.253    0.014          0         0
+#> 2  new          100  28.418    1.000    28.343    0.007          0         0
+#> 1  old          100 166.069    5.844   165.640    0.024          0         0
