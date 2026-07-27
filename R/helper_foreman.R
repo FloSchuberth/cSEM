@@ -254,8 +254,6 @@ calculateIndicatorCor <- function(
           " columns of .data to be numeric.")
   }
   
-  ## polycor::hetcor() is relatively slow. If all columns are numeric use cor
-  ## directly
   switch (.approach_cor_robust,
           "none" = {
             if(only_numeric_cols) {
@@ -282,8 +280,9 @@ calculateIndicatorCor <- function(
                   # If both indicators are not continuous, the polychoric 
                   # correlation is calculated
                   if (is_numeric_indicator[[i]] == FALSE & is_numeric_indicator[[j]] == FALSE){
-                    # The polycor package gives a list with the polychoric correlation and
-                    # the thresholds estimates
+
+                    
+                    # polychor function returns the correlation and the thresholds as attribute
                     rho <- polychor(.X_cleaned[,i], .X_cleaned[,j], thresholds = TRUE)
                     S[i,j] <- rho
                     cor_type[i,j] <- "polychoric"
@@ -291,7 +290,7 @@ calculateIndicatorCor <- function(
                     thres_est[[j]] <- attr(rho, "thr.y")
                     
                     # If one indicator is continuous, the polyserial correlation 
-                    # is calculated.Note: polyserial needs the continuous 
+                    # is calculated.Note: the polyserial() function needs the continuous 
                     # indicator as the first argument.
                   }else if(is_numeric_indicator[[i]] == FALSE & is_numeric_indicator[[j]] == TRUE){
                     # The polycor package gives the polyserial correlation and the thresholds
@@ -307,7 +306,7 @@ calculateIndicatorCor <- function(
                     thres_est[[i]] <- NA
                     thres_est[[j]] <- attr(rho, "thr.y")
                     
-                    # If both indicators are continous, the Pearson correlation
+                    # If both indicators are continuous, the Pearson correlation
                     # is calculated.
                   }else{
                     S[i,j] <- cor(.X_cleaned[,i], .X_cleaned[,j])
