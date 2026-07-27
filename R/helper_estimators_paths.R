@@ -1121,7 +1121,7 @@ TwInterQuadTwInter <- function(.i, .j, .Q, .H) {
   
   i           <- names(tw_tab)
   j           <- names(other_tab)
-  i_split     <- unlist(strsplit(j, "\\."))
+  i_split     <- unlist(strsplit(i, "\\."))
   j_split     <- unlist(strsplit(j, "\\."))
   ij          <- c(i_split, j_split)
   ij_match    <- intersect(i_split, j_split)
