@@ -1469,6 +1469,7 @@ calculateHTMT <- function(
                   .absolute             = .absolute,
                   .alpha                = .alpha,
                   .approach_inference   = .approach_inference,
+                  .ci                   = .ci,
                   .inference            = .inference,
                   .only_common_factors  = .only_common_factors,
                   .R                    = .R,
@@ -1529,8 +1530,8 @@ calculateHTMT <- function(
   } else if(.inference && .approach_inference == "asymptotic") {
 
     if(ci_supplied){
-      warning2("`.ci` is ignored when `.approach_inference = 'asymptotic'`; a Wald (z) ",
-               "interval based on the delta-method standard error is returned.")
+      warning2("`.ci` is ignored when `.approach_inference = 'asymptotic'`; an asymptotic confidence",
+               "interval based on the delta-method is returned.")
     }
     if(.absolute == TRUE){
       warning2("For the asymptotic HTMT confidence interval, it is recommended to set .absolute to FALSE.")
