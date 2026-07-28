@@ -11,7 +11,7 @@ A faster, more specialized alternative to \code{\link[base:table]{base::table()}
 (cross-)tabulating one or two variables that are (or can be coerced to)
 small positive integer codes, as used by \code{\link[=polychor]{polychor()}} and
 \code{\link[=polyserial]{polyserial()}}. Rows with a missing value in either \code{x} or \code{y} are
-dropped before tabulating.Implemented by Kjell S. Slupphaug.
+dropped before tabulating. Implemented by Kjell S. Slupphaug.
 }
 \references{
 \insertAllCited{}
