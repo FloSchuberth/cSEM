@@ -1553,7 +1553,6 @@ calculateHTMT <- function(
     # Delta-method SE per construct pair; gradients (attached by calculateHTMTcore)
     # are built over the full Indicator_VCV, so they align with calculateCorVCV().
     se_pairs <- calculateHTMTasymptoticSE(attr(out, "gradients"),
-                                          .object$Estimates$Indicator_VCV,
                                           .object$Information$Data)
     attr(out, "gradients") <- NULL          # consumed; keep it off the returned matrix
     se_mat <- matrix(0, nrow(out), ncol(out), dimnames = dimnames(out))

@@ -451,7 +451,7 @@ calculateCorVCV <- function(.data) {
 #' @return A named numeric vector of standard errors, one per construct pair.
 #'
 #' @keywords internal
-calculateHTMTasymptoticSE <- function(.gradients, .S, .data) {
+calculateHTMTasymptoticSE <- function(.gradients, .data) {
   Sigma <- calculateCorVCV(.data = .data)          # once, reused for all pairs
   vapply(
     .gradients,
