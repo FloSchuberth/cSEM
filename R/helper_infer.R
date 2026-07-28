@@ -330,24 +330,13 @@ BcaCIResample <- function(.object, .first_resample, .probs) {
 #' Distribution-free asymptotic covariance matrix of correlations
 #'
 #' Large-sample variance-covariance matrix of the unique sample correlations in
-#' `.S`, using the asymptotically distribution-free (ADF) estimator of Steiger &
-#' Hakstian (1982). It is built from the sample fourth-order moments of the
-#' (standardized) data and is therefore consistent under non-normality; under
-#' multivariate normality it coincides with the Olkin-Siotani / Pearson-Filon
-#' normal-theory covariance, whose diagonal is the familiar `(1 - r^2)^2 / n`.
+#' `.S`, using the estimator of Steiger & Hakstian (1982). 
 #'
 #' The correlations are taken in `.S[lower.tri(.S)]` (column-major) order - the
 #' same order used by the HTMT gradient - so that a gradient vector and this
 #' matrix align by position for a delta-method confidence interval, i.e.
 #' `Var(f) = t(g) %*% calculateCorVCV(.S, .data) %*% g`.
 #'
-#' Valid for Pearson correlations only: `.data` must be the raw data whose Pearson
-#' correlations equal `.S`. For polychoric/polyserial correlations the raw-data
-#' fourth moments are not the correct asymptotic covariance; use the bootstrap in
-#' that case.
-#'
-#' @param .S A `(P x P)` correlation matrix with row-/column names matching the
-#'   columns of `.data`.
 #' @param .data A `(n x P)` matrix or data.frame of indicator data whose columns
 #'   include (and are matched by name to) `rownames(.S)`.
 #'
@@ -360,34 +349,83 @@ BcaCIResample <- function(.object, .first_resample, .probs) {
 #'   Mathematical and Statistical Psychology, 35(2), 208-215.
 #'
 #' @keywords internal
-calculateCorVCV <- function(.S, .data) {
-
-  ## Correlations in lower.tri(.S) (column-major) order -----------------------
-  lt <- lower.tri(.S)
-  i  <- row(.S)[lt]                  # first index of each correlation (i > j)
-  j  <- col(.S)[lt]                  # second index
-  r  <- .S[lt]                       # the correlations themselves
-
-  ## Per-observation products of the standardized indicators ------------------
-  z  <- scale(as.matrix(.data)[, rownames(.S), drop = FALSE])
-  n  <- nrow(z)
-  U  <- z[, i, drop = FALSE] * z[, j, drop = FALSE]   # n x L : z_i * z_j
-  V  <- z^2                                           # n x P : z_m^2
-  Uc <- sweep(U, 2, colMeans(U))                      # centered (mean ~ r_ij)
-  Vc <- sweep(V, 2, colMeans(V))                      # centered (mean ~ 1)
-
-  ## (Co)variances of those products = the sample fourth moments --------------
-  G_uu <- crossprod(Uc)     / n      # L x L : Cov(z_i z_j , z_k z_l)
-  G_vu <- crossprod(Vc, Uc) / n      # P x L : Cov(z_m^2   , z_k z_l)
-  G_vv <- crossprod(Vc)     / n      # P x P : Cov(z_m^2   , z_o^2)
-
-  ## Steiger-Hakstian correlation-metric correction ---------------------------
-  ##   (half on each index shared with a variance term, quarter on the pair)
-  Bmat <- 0.5 * sweep(G_vu[i, , drop = FALSE] + G_vu[j, , drop = FALSE], 1, r, "*")
-  Dsum <- G_vv[i, i, drop = FALSE] + G_vv[i, j, drop = FALSE] +
-          G_vv[j, i, drop = FALSE] + G_vv[j, j, drop = FALSE]
-
-  (G_uu - Bmat - t(Bmat) + 0.25 * outer(r, r) * Dsum) / n
+calculateCorVCV <- function(.data) {
+  n <- nrow(.data)
+  p <- ncol(.data)
+  size_n <- (p * p - p) / 2
+  
+  # Pre-calculate means and centered data
+  data_means <- colMeans(.data)
+  data_sd <- apply(.data, 2, sd)
+  
+  # Create indices for upper triangle
+  indices <- which(upper.tri(matrix(0, p, p)), arr.ind = TRUE)
+  
+  # Initialize result matrix
+  vc_r <- matrix(0, nrow = size_n, ncol = size_n)
+  
+  # Pre-calculate all possible products of centered variables
+  products <- array(0, dim = c(n, p, p))
+  for(i in 1:p) {
+    for(j in i:p) {
+      products[, i, j] <- .data[, i] * .data[, j]
+      products[, j, i] <- products[, i, j]
+    }
+  }
+  
+  # Function to get position in upper triangular matrix
+  get_pos <- function(i, j) {
+    if(i > j) {
+      temp <- i
+      i <- j
+      j <- temp
+    }
+    return(p*(i-1) - i*(i-1)/2 + j - i)
+  }
+  
+  # Calculate covariances using vectorized operations
+  for(idx1 in 1:nrow(indices)) {
+    x <- indices[idx1, 1]
+    y <- indices[idx1, 2]
+    
+    for(idx2 in idx1:nrow(indices)) {
+      z <- indices[idx2, 1]
+      t <- indices[idx2, 2]
+      
+      sd <- sd(.data[,x]) * sd(.data[,y]) * sd(.data[,z]) * sd(.data[,t])
+      
+      
+      # Calculate fourth-order moments using pre-computed products
+      mu_xyzt <- mean(products[, x, y] * products[, z, t])  / sd
+      
+      mu_xxzt <- mean(products[, x, x] * products[, z, t]) / sd
+      mu_yyzt <- mean(products[, y, y] * products[, z, t]) / sd
+      mu_xyzz <- mean(products[, x, y] * products[, z, z]) / sd
+      mu_xytt <- mean(products[, x, y] * products[, t, t]) / sd
+      
+      mu_xxtt <- mean(products[, x, x] * products[, t, t]) / sd
+      mu_xxzz <- mean(products[, x, x] * products[, z, z]) / sd
+      mu_yytt <- mean(products[, y, y] * products[, t, t]) / sd
+      mu_yyzz <- mean(products[, y, y] * products[, z, z]) / sd
+      
+      # Get correlation coefficients
+      rxy <- cor(.data[, x], .data[, y])
+      rzt <- cor(.data[, z], .data[, t])
+      
+      # Calculate covariance
+      cov_val <- (mu_xyzt - 0.5 * rxy * (mu_xxzt + mu_yyzt) - 
+                    0.5 * rzt * (mu_xyzz + mu_xytt) + 
+                    0.25 * rxy * rzt * (mu_xxzz + mu_xxtt + mu_yyzz + mu_yytt))
+      
+      pos1 <- get_pos(x, y)
+      pos2 <- get_pos(z, t)
+      
+      vc_r[pos1, pos2] <- cov_val
+      vc_r[pos2, pos1] <- cov_val  # Matrix is symmetric
+    }
+  }
+  
+  return(vc_r/nrow(.data))
 }
 
 
@@ -414,7 +452,7 @@ calculateCorVCV <- function(.S, .data) {
 #'
 #' @keywords internal
 calculateHTMTasymptoticSE <- function(.gradients, .S, .data) {
-  Sigma <- calculateCorVCV(.S = .S, .data = .data)          # once, reused for all pairs
+  Sigma <- calculateCorVCV(.data = .data)          # once, reused for all pairs
   vapply(
     .gradients,
     function(g) sqrt(drop(t(g) %*% Sigma %*% g)),           # sqrt( t(g) %*% Sigma %*% g )
