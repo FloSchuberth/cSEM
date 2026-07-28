@@ -329,19 +329,20 @@ BcaCIResample <- function(.object, .first_resample, .probs) {
 
 #' Distribution-free asymptotic covariance matrix of correlations
 #'
-#' Large-sample variance-covariance matrix of the unique sample correlations in
-#' `.S`, using the estimator of Steiger & Hakstian (1982). 
+#' Large-sample variance-covariance matrix of the unique sample correlations of
+#' the columns of `.data`, using the estimator of Steiger & Hakstian (1982).
 #'
-#' The correlations are taken in `.S[lower.tri(.S)]` (column-major) order - the
-#' same order used by the HTMT gradient - so that a gradient vector and this
-#' matrix align by position for a delta-method confidence interval, i.e.
-#' `Var(f) = t(g) %*% calculateCorVCV(.S, .data) %*% g`.
+#' The correlations are taken in lower-triangular (column-major) order of the
+#' correlation matrix of `.data` - the same order used by the HTMT gradient -
+#' so that a gradient vector and this matrix align by position for a
+#' delta-method confidence interval, i.e.
+#' `Var(f) = t(g) %*% calculateCorVCV(.data) %*% g`.
 #'
-#' @param .data A `(n x P)` matrix or data.frame of indicator data whose columns
-#'   include (and are matched by name to) `rownames(.S)`.
+#' @param .data A `(n x P)` matrix or data.frame of indicator data whose column
+#'   order matches the indicator correlation matrix the gradients were built on.
 #'
 #' @return The `(L x L)` asymptotic covariance matrix of the correlations,
-#'   `L = P(P - 1)/2`, in `lower.tri(.S)` order.
+#'   `L = P(P - 1)/2`, in lower-triangular (column-major) order.
 #'
 #' @references
 #'   Steiger, J. H., & Hakstian, A. R. (1982). The asymptotic distribution of
@@ -435,8 +436,8 @@ calculateCorVCV <- function(.data) {
 #' matrix of the indicator correlations ([calculateCorVCV()]) into the
 #' delta-method standard error of each HTMT, `sqrt(t(g) %*% Sigma %*% g)`. The
 #' covariance matrix is formed once and reused for every pair. Gradient vectors
-#' and covariance matrix share the `lower.tri(.S)` ordering, so they align by
-#' position (both are built from the same `.S`).
+#' and covariance matrix share the lower-triangular (column-major) ordering of
+#' the indicator correlation matrix, so they align by position.
 #'
 #' No lower bound is imposed on the variance: since `Sigma` is positive
 #' semi-definite, `t(g) %*% Sigma %*% g` is non-negative by construction, so a
@@ -444,8 +445,7 @@ calculateCorVCV <- function(.data) {
 #' surface as `NaN` (with a warning) rather than being silently clamped to zero.
 #'
 #' @param .gradients A named list of gradient vectors, one per construct pair,
-#'   each aligned with `.S[lower.tri(.S)]`.
-#' @param .S A `(P x P)` indicator correlation matrix.
+#'   each aligned with the lower triangular of the indicator correlation matrix.
 #' @param .data A `(n x P)` matrix or data.frame of indicator data.
 #'
 #' @return A named numeric vector of standard errors, one per construct pair.
