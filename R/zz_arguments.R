@@ -29,7 +29,7 @@
 #'   Only use if you know what you are doing.
 #' @param .approach_inference Character string. Approach used to obtain the
 #'   confidence interval for the HTMT. One of: "*bootstrap*" or "*asymptotic*".
-#'   If "*asymptotic*", a Wald interval based on the delta-method standard error
+#'   If "*asymptotic*", a confidence interval based on the delta-method standard error
 #'   is computed; only available for `.type_htmt = "htmt"`.
 #'   Defaults to "*bootstrap*".
 #' @param .approach_mgd Character string or a vector of character strings. 

@@ -1559,7 +1559,7 @@ calculateHTMT <- function(
     se_mat <- matrix(0, nrow(out), ncol(out), dimnames = dimnames(out))
     se_mat[lower.tri(se_mat)] <- se_pairs
 
-    # Wald bounds per matrix cell (2 x n^2), same layout as the bootstrap quants
+    # asymptotic CI bounds per matrix cell (2 x n^2), same layout as the bootstrap quants
     zval   <- stats::qnorm(1 - .alpha)
     quants <- rbind(c(out) - zval * c(se_mat),
                     c(out) + zval * c(se_mat))
