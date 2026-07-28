@@ -121,7 +121,12 @@ calculateCorrectionFactors <- function(
               "mean_harmonic"        = {
                 cf <- 1/mean(1/(S_vect/W_vect))
               },
-              "geo_of_harmonic"      = {stop("not implemented yet")}
+              "geo_of_harmonic"      = {
+                # eq. (15) in Dijkstra (2013): c = (A*H)^(1/4), where A and H are the
+                # arithmetic and harmonic means of S_vect/W_vect. Line 128 takes the
+                # outer sqrt, so store c^2 = sqrt(A*H) here.
+                cf <- sqrt(mean(S_vect/W_vect) * 1/mean(1/(S_vect/W_vect)))
+                }
       )
       
       ## Compute absolute value and take the sqrt since cf = c^2
