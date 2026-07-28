@@ -180,12 +180,14 @@ polychor <- function(x, y,
   # try 2
   if (optim$convergence != 0L) {
     # try again, with different starting value
-    optim <- snlminb(
+    retry <- snlminb(
       objective = polycorObjective,
       gradient = polycorGradient,
       start = 0.0, control = control,
       lower = -abs(maxrho), upper = abs(maxrho)
     )
+    if (!is.na(retry$par))
+      optim <- retry
   }
 
   # check convergence
@@ -322,12 +324,14 @@ polyserial <- function(x, y,
   # try 2
   if (optim$convergence != 0L) {
     # try again, with different starting value
-    optim <- snlminb(
+    retry <- snlminb(
       objective = plsPolyserialObjective,
       gradient = plsPolyserialGradient,
       start = 0.0, control = control,
       lower = -abs(maxrho), upper = abs(maxrho)
     )
+    if (!is.na(retry$par))
+      optim <- retry
   }
 
   # check convergence
