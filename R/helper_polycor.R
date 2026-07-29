@@ -170,30 +170,31 @@ polychor <- function(x, y,
     start <- 0.0
 
   # try 1
-  optim <- suppressWarnings(nlminb(
+  optim <- snlminb(
     objective = polycorObjective,
     gradient = polycorGradient,
     start = start, control = control,
     lower = -abs(maxrho), upper = abs(maxrho)
-  ))
+  )
 
   # try 2
   if (optim$convergence != 0L) {
     # try again, with different starting value
-    optim <- suppressWarnings(nlminb(
+    retry <- snlminb(
       objective = polycorObjective,
       gradient = polycorGradient,
       start = 0.0, control = control,
       lower = -abs(maxrho), upper = abs(maxrho)
-    ))
+    )
+    if (!is.na(retry$par))
+      optim <- retry
   }
 
   # check convergence
-  if (optim$convergence != 0L) {
+  if (optim$convergence != 0L)
     warning2("estimation of polychoric correlation did not converge!")
-  }
 
-  rho <- optim$par
+  rho <- if (is.na(optim$par)) start else optim$par # if NA the above warning is issued
 
   if (thresholds) {
     attr(rho, "thr.x") <- rc
@@ -313,35 +314,38 @@ polyserial <- function(x, y,
     start <- 0.0
   
   # try 1
-  optim <- suppressWarnings(nlminb(
+  optim <- snlminb(
     objective = plsPolyserialObjective,
     gradient = plsPolyserialGradient,
     start = start, control = control,
     lower = -abs(maxrho), upper = abs(maxrho)
-  ))
+  )
 
   # try 2
   if (optim$convergence != 0L) {
     # try again, with different starting value
-    optim <- suppressWarnings(nlminb(
+    retry <- snlminb(
       objective = plsPolyserialObjective,
       gradient = plsPolyserialGradient,
       start = 0.0, control = control,
       lower = -abs(maxrho), upper = abs(maxrho)
-    ))
+    )
+    if (!is.na(retry$par))
+      optim <- retry
   }
 
   # check convergence
   if (optim$convergence != 0L)
     warning2("estimation of polyserial correlation did not converge!")
 
-  rho <- optim$par
+  rho <- if (is.na(optim$par)) start else optim$par # if NA the above warning is issued
 
   if (thresholds)
     attr(rho, "thr.y") <- thr.inner
 
   rho
 }
+
 
 #' Internal: Bivariate standard normal density
 #'
@@ -381,7 +385,7 @@ dbinorm <- function(u, v, rho, force.zero = FALSE, rho.lim = 0.9999) {
 #' (cross-)tabulating one or two variables that are (or can be coerced to)
 #' small positive integer codes, as used by [polychor()] and
 #' [polyserial()]. Rows with a missing value in either `x` or `y` are
-#' dropped before tabulating.Implemented by Kjell S. Slupphaug.
+#' dropped before tabulating. Implemented by Kjell S. Slupphaug.
 #'
 #' @references
 #'   \insertAllCited{}
@@ -408,4 +412,54 @@ fastIntTab <- function(x, y = NULL) {
     nrow = nr,
     ncol = nc
   )
+}
+
+
+#' Internal: Safer alternative to [stats::nlminb()]
+#' 
+#' A safer alternative to [stats::nlminb()] which doesn't hard error.
+#' In the case of an error in [stats::nlminb()] (e.g.,. a NA/NaN gradient)
+#' the error is caught, and a list structured like the return value
+#' of [stats::nlminb()] is returned. Used in [polychor()] and
+#' [polyserial()]. Implemented by Kjell S. Slupphaug.
+#'
+#' @references
+#'   \insertAllCited{}
+#'   
+#' @keywords internal 
+snlminb <- function(start,
+                    objective,
+                    gradient = NULL,
+                    hessian = NULL,
+                    ...,
+                    scale = 1,
+                    control = list(),
+                    lower = -Inf,
+                    upper = Inf,
+                    warn.on.failure = TRUE) {
+  tryCatch({
+    suppressWarnings(stats::nlminb(
+      start     = start,
+      objective = objective,
+      gradient  = gradient,
+      hessian   = hessian,
+      ...,
+      scale     = scale,
+      control   = control,
+      lower     = lower,
+      upper     = upper
+    ))
+  }, error = function(err) {
+    msg <- paste("nlminb() failed! Message:", conditionMessage(err))
+    if (warn.on.failure) warning2(msg)
+
+    list(
+      par         = NA_real_,
+      objective   = NA_real_,
+      convergence = -1,
+      message     = msg,
+      iterations  = NA_integer_,
+      evaluations = NA_integer_
+    )
+  })
 }
