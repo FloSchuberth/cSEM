@@ -139,32 +139,33 @@ elements:
 
 - `$Klesel`:
 
-  A list with elements, `Test_statistic`, `P_value`, and `Decision`
+  A list with elements, `Test_statistic`, `P_value`, `Decision`, and
+  `VCV_type`.
 
 - `$Chin`:
 
   A list with elements, `Test_statistic`, `P_value`, `Decision`, and
-  `Decision_overall`
+  `Decision_overall`.
 
 - `$Sarstedt`:
 
   A list with elements, `Test_statistic`, `P_value`, `Decision`, and
-  `Decision_overall`
+  `Decision_overall`.
 
 - `$Keil`:
 
-  A list with elements, `Test_statistic`, `P_value`, `Decision`, and
-  `Decision_overall`
+  A list with elements, `Test_statistic`, `P_value`, `Decision`,
+  `Decision_overall`, and `df`.
 
 - `$Nitzl`:
 
-  A list with elements, `Test_statistic`, `P_value`, `Decision`, and
-  `Decision_overall`
+  A list with elements, `Test_statistic`, `P_value`, `Decision`,
+  `Decision_overall`, and `df`.
 
 - `$Henseler`:
 
   A list with elements, `Test_statistic`, `P_value`, `Decision`, and
-  `Decision_overall`
+  `Decision_overall`.
 
 - `$CI_para`:
 
@@ -340,7 +341,7 @@ model to estimate. Take the simple model:
 
 
     model_to_estimate <- "
-    Structural model
+    # Structural model
     eta2 ~ eta1
     eta3 ~ eta1 + eta2
 
@@ -355,7 +356,7 @@ compared across groups, write:
 
 
     to_compare <- "
-    Structural parameters to compare
+    # Structural parameters to compare
     eta3 ~ eta1
 
     # Loadings to compare

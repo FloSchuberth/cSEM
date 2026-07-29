@@ -170,22 +170,22 @@ named list containing the following list elements:</p>
 <dd><p>Additional information.</p></dd>
 
 <dt><code>$Klesel</code></dt>
-<dd><p>A list with elements, <code>Test_statistic</code>, <code>P_value</code>, and <code>Decision</code></p></dd>
+<dd><p>A list with elements, <code>Test_statistic</code>, <code>P_value</code>, <code>Decision</code>, and <code>VCV_type</code>.</p></dd>
 
 <dt><code>$Chin</code></dt>
-<dd><p>A list with elements, <code>Test_statistic</code>, <code>P_value</code>, <code>Decision</code>, and <code>Decision_overall</code></p></dd>
+<dd><p>A list with elements, <code>Test_statistic</code>, <code>P_value</code>, <code>Decision</code>, and <code>Decision_overall</code>.</p></dd>
 
 <dt><code>$Sarstedt</code></dt>
-<dd><p>A list with elements, <code>Test_statistic</code>, <code>P_value</code>, <code>Decision</code>, and <code>Decision_overall</code></p></dd>
+<dd><p>A list with elements, <code>Test_statistic</code>, <code>P_value</code>, <code>Decision</code>, and <code>Decision_overall</code>.</p></dd>
 
 <dt><code>$Keil</code></dt>
-<dd><p>A list with elements, <code>Test_statistic</code>, <code>P_value</code>, <code>Decision</code>, and <code>Decision_overall</code></p></dd>
+<dd><p>A list with elements, <code>Test_statistic</code>, <code>P_value</code>, <code>Decision</code>, <code>Decision_overall</code>, and <code>df</code>.</p></dd>
 
 <dt><code>$Nitzl</code></dt>
-<dd><p>A list with elements, <code>Test_statistic</code>, <code>P_value</code>, <code>Decision</code>, and <code>Decision_overall</code></p></dd>
+<dd><p>A list with elements, <code>Test_statistic</code>, <code>P_value</code>, <code>Decision</code>, <code>Decision_overall</code>, and <code>df</code>.</p></dd>
 
 <dt><code>$Henseler</code></dt>
-<dd><p>A list with elements, <code>Test_statistic</code>, <code>P_value</code>, <code>Decision</code>, and <code>Decision_overall</code></p></dd>
+<dd><p>A list with elements, <code>Test_statistic</code>, <code>P_value</code>, <code>Decision</code>, and <code>Decision_overall</code>.</p></dd>
 
 <dt><code>$CI_para</code></dt>
 <dd><p>A list with elements,  <code>Decision</code>, and <code>Decision_overall</code></p></dd>
@@ -345,7 +345,7 @@ a subset of parameters provide the parameters in <a href="https://rdrr.io/pkg/la
 the model to estimate. Take the simple model:</p>
 <div class="sourceCode"><pre><code><span></span>
 <span><span class="va">model_to_estimate</span> <span class="op">&lt;-</span> <span class="st">"</span></span>
-<span><span class="st">Structural model</span></span>
+<span><span class="st"># Structural model</span></span>
 <span><span class="st">eta2 ~ eta1</span></span>
 <span><span class="st">eta3 ~ eta1 + eta2</span></span>
 <span><span class="st"></span></span>
@@ -356,7 +356,7 @@ the model to estimate. Take the simple model:</p>
 <span><span class="st">"</span></span></code></pre></div><p>If only the path from eta1 to eta3 and the loadings of eta1 are to be compared
 across groups, write:</p><div class="sourceCode"><pre><code><span></span>
 <span><span class="va">to_compare</span> <span class="op">&lt;-</span> <span class="st">"</span></span>
-<span><span class="st">Structural parameters to compare</span></span>
+<span><span class="st"># Structural parameters to compare</span></span>
 <span><span class="st">eta3 ~ eta1</span></span>
 <span><span class="st"></span></span>
 <span><span class="st"># Loadings to compare</span></span>
