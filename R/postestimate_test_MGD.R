@@ -710,7 +710,8 @@ testMGD <- function(
   
   ### Postprocessing ===========================================================
   # Delete potential NA's
-  ref_dist1 <- Filter(Negate(anyNA), ref_dist)
+  # ref_dist1 <- Filter(Negate(anyNA), ref_dist)
+  ref_dist1 <- Filter(function(x) !anyNA(unlist(x)), ref_dist)
   }
   
   # # Order significance levels
@@ -756,23 +757,26 @@ testMGD <- function(
     ref_dist_Chin_temp <- purrr::transpose(ref_dist_Chin)
     names(ref_dist_Chin_temp) <- names(teststat_Chin)
     
+    
     ref_dist_matrices_Chin <- lapply(ref_dist_Chin_temp, function(x) {
       temp <- do.call(cbind, x)
-      temp_ind <- stats::complete.cases(temp)
-      temp[temp_ind, ,drop = FALSE]
+      # drop NAs
+      temp[, colSums(is.na(temp)) == 0, drop = FALSE]
     })
 
     
     # Calculation of the p-values
-    pvalue_Chin <- lapply(1:length(ref_dist_matrices_Chin), function(x) {
+    pvalue_Chin <- lapply(seq_along(ref_dist_matrices_Chin), function(x) {
+      
+      refm <- ref_dist_matrices_Chin[[x]]
+      obs  <- teststat_Chin[[x]][rownames(refm)]
     # # Share of values above the positive test statistic
     # rowMeans(ref_dist_matrices_Chin[[x]] >= abs(teststat_Chin[[x]])) +
     # # share of values of the reference distribution below the negative test statistic
     # rowMeans(ref_dist_matrices_Chin[[x]] <= (-abs(teststat_Chin[[x]])))
     
     # Use correction to ensure that p-value never equals 0 (Phipson & Smyth, 2010)
-    (rowSums(abs(ref_dist_matrices_Chin[[x]]) >= abs(teststat_Chin[[x]])) + 1) /
-      (ncol(ref_dist_matrices_Chin[[x]]) + 1)
+      (rowSums(abs(refm) >= abs(obs)) + 1) / (ncol(refm) + 1)
   })
     
     names(pvalue_Chin) <- names(ref_dist_matrices_Chin)
