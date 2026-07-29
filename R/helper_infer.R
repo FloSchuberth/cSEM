@@ -297,7 +297,10 @@ BcaCIResample <- function(.object, .first_resample, .probs) {
     1/6 * (sum(x^3) / sum(x^2)^1.5)
   }
   
-  a <- lapply(jack_estimates, function(x) t(x$Original - t(x$Resampled))) %>% 
+  a <- lapply(jack_estimates, function(x) {
+    jack_bar <- colMeans(x$Resampled)
+    t(jack_bar - t(x$Resampled))
+  }) %>% 
     lapply(function(x) apply(x, 2, aFun)) 
   
   p0 <- lapply(.first_resample, function(x) colMeans(t(t(x$Resampled) <= x$Original)))
