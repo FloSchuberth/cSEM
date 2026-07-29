@@ -107,7 +107,7 @@
 #' 
 #' \preformatted{
 #' model_to_estimate <- "
-#' Structural model
+#' # Structural model
 #' eta2 ~ eta1
 #' eta3 ~ eta1 + eta2
 #' 
@@ -121,7 +121,7 @@
 #' across groups, write:
 #' \preformatted{
 #'to_compare <- "
-#' Structural parameters to compare
+#' # Structural parameters to compare
 #' eta3 ~ eta1
 #' 
 #' # Loadings to compare
@@ -179,12 +179,12 @@
 #'
 #' \describe{
 #'   \item{`$Information`}{Additional information.}
-#'   \item{`$Klesel`}{A list with elements, `Test_statistic`, `P_value`, and `Decision`}
-#'   \item{`$Chin`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
-#'   \item{`$Sarstedt`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
-#'   \item{`$Keil`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
-#'   \item{`$Nitzl`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
-#'   \item{`$Henseler`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
+#'   \item{`$Klesel`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `VCV_type`.}
+#'   \item{`$Chin`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`.}
+#'   \item{`$Sarstedt`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`.}
+#'   \item{`$Keil`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, `Decision_overall`, and `df`.}
+#'   \item{`$Nitzl`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, `Decision_overall`, and `df`.}
+#'   \item{`$Henseler`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`.}
 #'   \item{`$CI_para`}{A list with elements,  `Decision`, and `Decision_overall`}
 #'   \item{`$CI_overlap`}{A list with elements,  `Decision`, and `Decision_overall`}
 #' }
@@ -1325,7 +1325,7 @@ testMGD <- function(
       "P_value"            = padjusted_Keil,
       "Decision"           = decision_Keil,
       "Decision_overall"   = decision_overall_Keil,
-      "df"                 = purrr::transpose(teststat_Keil)$df[[1]]   
+      "df"                 = purrr::transpose(teststat_Keil)$df   
     )
   }
   
@@ -1336,7 +1336,7 @@ testMGD <- function(
       "P_value"            = padjusted_Nitzl,
       "Decision"           = decision_Nitzl,
       "Decision_overall"   = decision_overall_Nitzl,
-      "df"                 = purrr::transpose(teststat_Nitzl)$df[[1]]
+      "df"                 = purrr::transpose(teststat_Nitzl)$df
       
     )
   }
