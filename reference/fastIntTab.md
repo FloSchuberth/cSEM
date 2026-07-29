@@ -8,7 +8,7 @@ small positive integer codes, as used by
 and
 [`polyserial()`](https://floschuberth.github.io/cSEM/reference/polyserial.md).
 Rows with a missing value in either `x` or `y` are dropped before
-tabulating.Implemented by Kjell S. Slupphaug.
+tabulating. Implemented by Kjell S. Slupphaug.
 
 ## Usage
 
