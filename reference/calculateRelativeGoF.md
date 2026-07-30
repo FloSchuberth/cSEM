@@ -3,7 +3,7 @@
 Calculate the Relative Goodness of Fit (GoF) proposed by Vinzi et al.
 (2010) . Note that, contrary to what the name suggests, the Relative GoF
 is **not** a measure of model fit in the sense of SEM. See e.g. Henseler
-and Sarstedt (2012) for a discussion.
+and Sarstedt (2013) for a discussion.
 
 ## Usage
 
@@ -28,7 +28,7 @@ A single numeric value.
 
 ## References
 
-Henseler J, Sarstedt M (2012). “Goodness-of-fit Indices for Partial
+Henseler J, Sarstedt M (2013). “Goodness-of-fit Indices for Partial
 Least Squares Path Modeling.” *Computational Statistics*, **28**(2),
 565–580.
 [doi:10.1007/s00180-012-0317-1](https://doi.org/10.1007/s00180-012-0317-1)

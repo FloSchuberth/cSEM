@@ -842,7 +842,7 @@ and
 Calculate the Goodness of Fit (GoF) proposed by Tenenhaus et al. (2004).
 Note that, contrary to what the name suggests, the GoF is **not** a
 measure of (overall) model fit in a $`\chi^2`$-fit test sense. See e.g.
-Henseler and Sarstedt (2012) for a discussion.
+Henseler and Sarstedt (2013) for a discussion.
 
 #### Formulae
 
@@ -850,7 +850,7 @@ The GoF is defined as:
 
 ``` math
 \text{GoF} = \sqrt{\varnothing \text{COM}_k \times \varnothing R^2_{structural}} = 
-\sqrt{\frac{1}{k}\sum^K_{k=1} \lambda^2_k + \frac{1}{M} \sum^M_{m = 1} R^2_{m;structural}} 
+\sqrt{\frac{1}{K}\sum^K_{k=1} \lambda^2_k \times \frac{1}{M} \sum^M_{m = 1} R^2_{m;structural}} 
 ```
 where $`COM_k`$ is the communality of indicator $`k`$, i.e. the variance
 in the indicator that is explained by its connected latent variable and
@@ -913,7 +913,7 @@ Criterion for Assessing Discriminant Validity in Variance-Based
 Structural Equation Modeling.” *Journal of the Academy of Marketing
 Science* 43 (1): 115–35. <https://doi.org/10.1007/s11747-014-0403-8>.
 
-Henseler, Jörg, and Marko Sarstedt. 2012. “Goodness-of-Fit Indices for
+Henseler, Jörg, and Marko Sarstedt. 2013. “Goodness-of-Fit Indices for
 Partial Least Squares Path Modeling.” *Computational Statistics* 28 (2):
 565–80. <https://doi.org/10.1007/s00180-012-0317-1>.
 
