@@ -711,7 +711,7 @@ testMGD <- function(
   ### Postprocessing ===========================================================
   # Delete potential NA's
   # ref_dist1 <- Filter(Negate(anyNA), ref_dist)
-  ref_dist1 <- Filter(function(x) !anyNA(unlist(x)), ref_dist)
+  ref_dist1 <- dropNAResamples(.ref_dist=ref_dist)
   }
   
   # # Order significance levels
