@@ -96,6 +96,7 @@
 <url><loc>https://floschuberth.github.io/cSEM/reference/index.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/infer.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/inference_helper.html</loc></url>
+<url><loc>https://floschuberth.github.io/cSEM/reference/isPositiveSemiDefinite.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/moments.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/mutateVector.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/nonlinear_estimation_utilities.html</loc></url>
@@ -143,6 +144,7 @@
 <url><loc>https://floschuberth.github.io/cSEM/reference/testMICOM.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/testOMF.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/threecommonfactors.html</loc></url>
+<url><loc>https://floschuberth.github.io/cSEM/reference/trace.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/verify.html</loc></url>
 </urlset>
 
