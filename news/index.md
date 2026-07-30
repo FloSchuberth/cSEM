@@ -4,6 +4,9 @@
 
 ## cSEM 0.6.2
 
+- Fix smaller issue in the print function for
+  [`assess()`](https://floschuberth.github.io/cSEM/reference/assess.md).
+
 - Replace helper function from the matrixcalc package. Thanks to
   Kjell S. Slupphaug for this contribution.
 

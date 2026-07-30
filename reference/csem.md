@@ -949,6 +949,11 @@ assess(res)
 #> ===========================
 #>   Indirect effect    Estimate  Std. error   t-stat.   p-value
 #>   eta3 ~ eta1          0.2049          NA        NA        NA
+#> 
+#> Variance accounted for (VAF):
+#> =============================
+#>   Effects        Estimate  Std. error   t-stat.   p-value
+#>   eta3 ~ eta1      0.3088          NA        NA        NA
 #> ________________________________________________________________________________
 
 # Notes: 

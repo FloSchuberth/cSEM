@@ -474,6 +474,11 @@ a
 #> ===========================
 #>   Indirect effect    Estimate  Std. error   t-stat.   p-value
 #>   eta3 ~ eta1          0.2049          NA        NA        NA
+#> 
+#> Variance accounted for (VAF):
+#> =============================
+#>   Effects        Estimate  Std. error   t-stat.   p-value
+#>   eta3 ~ eta1      0.3088          NA        NA        NA
 #> ________________________________________________________________________________
 
 ## The return value is a named list. Type for example:
@@ -530,7 +535,7 @@ res <- csem(threecommonfactors, model,
 
 ## Look at the resamples
 res$Estimates$Estimates_resample$Estimates1$User_fun$Resampled[1:4, ]
-#> [1] 0.02753364 0.02518452 0.02928503 0.02295839
+#> [1] 0.02700711 0.03202417 0.02491602 0.02610163
 
 ## Use infer() to compute e.g., the 95% percentile confidence interval
 res_infer <- infer(res, .quantity = "CI_percentile")
@@ -539,8 +544,8 @@ res_infer <- infer(res, .quantity = "CI_percentile")
 res_infer$User_fun 
 #> $CI_percentile
 #>            [,1]
-#> 95%L 0.02078068
-#> 95%U 0.03153357
+#> 95%L 0.01793726
+#> 95%U 0.03313658
 #> 
 
 ## Several quality criteria can be resampled simultaneously
@@ -554,7 +559,7 @@ res <- csem(threecommonfactors, model,
             .tolerance = 1e-04
 )
 res$Estimates$Estimates_resample$Estimates1$SRMR$Resampled[1:4, ]
-#> [1] 0.02079888 0.02561634 0.03234456 0.02621464
+#> [1] 0.03184125 0.02678657 0.03021571 0.02831914
 res$Estimates$Estimates_resample$Estimates1$RMS_theta$Resampled[1:4]
-#> [1] 0.1046925 0.1077926 0.1046783 0.1040272
+#> [1] 0.1113744 0.1035902 0.1051253 0.1007113
 ```
