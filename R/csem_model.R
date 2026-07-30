@@ -3,36 +3,36 @@
 #' Turns a model written in [lavaan model syntax][lavaan::model.syntax] into a
 #' [cSEMModel] list.
 #'
-#' Instruments must be supplied separately as a named list 
-#' of vectors of instruments. 
-#' The names of the list elements are the names of the dependent constructs of 
-#' the structural equation whose explanatory variables are endogenous. 
-#' The vectors contain the names of the instruments corresponding to each 
-#' equation. Note that exogenous variables of a given equation **must** be 
+#' Instruments must be supplied separately as a named list
+#' of vectors of instruments.
+#' The names of the list elements are the names of the dependent constructs of
+#' the structural equation whose explanatory variables are endogenous.
+#' The vectors contain the names of the instruments corresponding to each
+#' equation. Note that exogenous variables of a given equation **must** be
 #' supplied as instruments for themselves.
-#' 
+#'
 #' By default `parseModel()` attempts to check if the model provided is correct
 #' in a sense that all necessary components required to estimate the
 #' model are specified (e.g., a construct of the structural model has at least
 #' 1 item). To prevent checking for errors use `.check_errors = FALSE`.
-#' 
+#'
 #' @usage parseModel(
-#'   .model        = NULL, 
-#'   .instruments  = NULL, 
+#'   .model        = NULL,
+#'   .instruments  = NULL,
 #'   .check_errors = TRUE
 #'   )
 #'
 #' @inheritParams csem_arguments
-#' 
+#'
 #' @inherit csem_model return
 #'
 #' @example inst/examples/example_parseModel.R
-#' 
+#'
 #' @export
 #'
 parseModel <- function(
-  .model        = NULL, 
-  .instruments  = NULL, 
+  .model        = NULL,
+  .instruments  = NULL,
   .check_errors = TRUE
   ) {
 
@@ -40,7 +40,7 @@ parseModel <- function(
   if(inherits(.model,"cSEMModel")) {
 
     return(.model)
-    
+
   ### Check if list
   } else if(is.list(.model)) {
     ## Check if list contains minimum necessary elements (structural, measurement)
@@ -48,21 +48,21 @@ parseModel <- function(
       # Note: whenever a new element is added to cSEMModel it needs to be added
       # to this list to be able to detect valid and non valid elements.
       x <- setdiff(names(.model), c("structural", "measurement", "error_cor",
-                                    "cor_specified", "construct_type", 
-                                    "construct_order", "model_type", "instruments", 
-                                    "structural2", "measurement2", "error_cor2", 
+                                    "cor_specified", "construct_type",
+                                    "construct_order", "model_type", "instruments",
+                                    "structural2", "measurement2", "error_cor2",
                                     "Phi", "cons_exo", "cons_endo", "vars_2nd",
                                     "vars_attached_to_2nd", "vars_not_attached_to_2nd"))
       if(length(x) == 0) {
-        
+
         class(.model) <- "cSEMModel"
         return(.model)
-        
+
       } else {
-        
-        stop2("The following error occured in the `parseModel()` function:\n", 
-              "The list provided contains element names unknown to cSEM: ", 
-              paste0("'", x, "'", collapse = ", "), ".\n", 
+
+        stop2("The following error occured in the `parseModel()` function:\n",
+              "The list provided contains element names unknown to cSEM: ",
+              paste0("'", x, "'", collapse = ", "), ".\n",
               "See ?cSEMModel for a list of valid component names.")
       }
     } else {
@@ -70,26 +70,26 @@ parseModel <- function(
             "Structural and measurement matrix required.")
     }
   } else {
-    
+
     ### Convert to lavaan partable ---------------------------------------------
     m_lav <- lavaan::lavaanify(model = .model, fixed.x = FALSE)
-    
+
     ## Add column with starting values or labels
     m_lav$ustart2 <- ifelse(
-      is.na(m_lav$ustart) & m_lav$label != "", m_lav$label, m_lav$ustart) 
+      is.na(m_lav$ustart) & m_lav$label != "", m_lav$label, m_lav$ustart)
 
     ### Extract relevant information -------------------------------------------
     # s  := structural
     # m  := measurement
-    # co := error 
-    tbl_s  <- m_lav[m_lav$op == "~", ] # structural 
-    tbl_m  <- m_lav[m_lav$op %in% c("=~", "<~"), ] # measurement 
+    # co := error
+    tbl_s  <- m_lav[m_lav$op == "~", ] # structural
+    tbl_m  <- m_lav[m_lav$op %in% c("=~", "<~"), ] # measurement
     tbl_co <- m_lav[m_lav$op == "~~" & m_lav$user == 1, ] # correlations
     # variances are ignored
-    
+
     ## Collect starting values/population values if any are given
     pop_values <- c(tbl_s$ustart2, tbl_m$ustart2, tbl_co$ustart2)
-    
+
     ## Get all relevant subsets of constructs and/or indicators
     # i  := indicators
     # c  := constructs
@@ -98,9 +98,36 @@ parseModel <- function(
     # co := correlation / measurement error
     # l  := only linear (terms)
     # nl := only nonlinear (terms)
-    # 
+    #
     # Typical name: "name_[i/c]_[s/m]_[lhs/rhs]_[nl/l]"
-    
+
+    if (.check_errors) {
+      # Common error checks both for nrow(tbl_s) > 0 and nrow(tbl_s) == 0
+
+      ## Check if an observed variable or construct has a `.` in its name
+      names_i <- unique(tbl_m$rhs)
+      names_c <- unique(tbl_m$lhs)
+
+      has_dot_c <- grepl("\\.", names_c)
+      has_dot_i <- grepl("\\.", names_i)
+
+      if (any(has_dot_c)) {
+        stop2(
+          "At least one construc in your model contains a `.` (dot).\n",
+          "Dots are a reserved special character in cSEM. Please rename these\n",
+          "constructs in the model description:\n  ",
+          paste0(names_c[has_dot_c], collapse = ", ")
+        )
+      } else if (any(has_dot_i)) {
+        stop2(
+          "At least one indicator in your model contains a `.` (dot).\n",
+          "Dots are a reserved special character in cSEM. Please rename these\n",
+          "indicators in your data and the model description:\n  ",
+          paste0(names_i[has_dot_i], collapse = ", ")
+        )
+      }
+    }
+
     ### Structural model ---------------------
     # Check if structural model has been supplied as subsets are collected
     # differently in this case
@@ -108,14 +135,14 @@ parseModel <- function(
       names_i  <- tbl_m$rhs
       names_c  <- names_c_all <- unique(tbl_m$lhs)
       names_co <- unique(c(tbl_co$lhs, tbl_co$rhs))
-      
+
       names_c_2nd <- NULL
       names_c_nl  <- NULL
       names_c_attached_to_2nd <- NULL
       names_c_s_rhs_nl <- NULL
       names_c_m_rhs_nl <- NULL
       names_c_not_attachted_to_2nd <- NULL
-      
+
       ## Checks and errors
       if(.check_errors) {
         ## Stop if only a single measurement equation is given
@@ -125,8 +152,8 @@ parseModel <- function(
             "At least two constructs required for the estimation."
           )
         }
-        
-        # Note (01/2020) If only measurement model equations are given two cases 
+
+        # Note (01/2020) If only measurement model equations are given two cases
         #                need to be distinguised:
         #         1. The model contains fixed values to be used by cSEM.DGP
         #         2. The model is used for the estimation
@@ -134,131 +161,131 @@ parseModel <- function(
         #  between constructs to zero (as lavaan does it) does not work for composites
         #  (identification requires at least two correlated composites).
         #  The second case currently also causes an error, i.e. users are forced
-        #  to explicitly specify all correlations between constructs. This 
+        #  to explicitly specify all correlations between constructs. This
         #  is differnt to lavaan which has option auto.cov.y = TRUE set by default
-        
+
         tmp <- setdiff(names_c, intersect(names_c, names_co))
         if(length(tmp) != 0) {
           stop2(
             "The following error occured in the `parseModel()` function:\n",
-            "All construct correlations must be supplied explicitly using e.g.,: ", 
+            "All construct correlations must be supplied explicitly using e.g.,: ",
             paste0("`", names_c[1], " ~~ ", names_c[2],  "`")
           )
         }
-        
+
         ## Stop if any construct has no observables/indicators attached
         tmp <- setdiff(setdiff(names_co, names_i), names_c)
         if(length(tmp) != 0) {
           stop2(
             "The following error occured in the `parseModel()` function:\n",
-            "No measurement equation provided for: ", 
+            "No measurement equation provided for: ",
             paste0("`", tmp,  "`", collapse = ", ")
           )
         }
       }
-      
+
       # Note
       # - when there is no structural model supplied only correlations between
-      #   first order constructs is allowed 
+      #   first order constructs is allowed
     } else {
       # Construct names of the structural model (including nonlinear terms)
       names_c_s_lhs    <- unique(tbl_s$lhs)
       names_c_s_rhs    <- unique(tbl_s$rhs)
       names_c_s        <- union(names_c_s_lhs, names_c_s_rhs)
-      
-      # Construct names of the structural model including the names of the 
+
+      # Construct names of the structural model including the names of the
       # individual components of the interaction terms
       names_c_s_lhs_l  <- unique(unlist(strsplit(names_c_s_lhs, "\\.")))
       names_c_s_rhs_l  <- unique(unlist(strsplit(names_c_s_rhs, "\\.")))
       names_c_s_l      <- union(names_c_s_lhs_l, names_c_s_rhs_l)
-      
-      # Nonlinear construct names of the the structural model 
+
+      # Nonlinear construct names of the the structural model
       names_c_s_lhs_nl <- names_c_s_lhs[grep("\\.", names_c_s_lhs)] # must be empty
       names_c_s_rhs_nl <- names_c_s_rhs[grep("\\.", names_c_s_rhs)]
-      
+
       # Construct names of the structural model without nonlinear terms
       names_c_s_no_nl  <- setdiff(names_c_s, names_c_s_rhs_nl)
-      
+
       ### Measurement/composite model -----------------
-      # All indicator names (observables AND constructs that serve as indicators for a 
+      # All indicator names (observables AND constructs that serve as indicators for a
       # 2nd order construct (linear and nonlinear))
       names_i          <- unique(tbl_m$rhs)
-      
-      # Indicator names that contain a "." (should only contain 
+
+      # Indicator names that contain a "." (should only contain
       # nonlinear 2nd order terms!)
-      names_i_nl       <- names_i[grep("\\.", names_i)] # this catches all terms 
+      names_i_nl       <- names_i[grep("\\.", names_i)] # this catches all terms
       # with a "."!
-      
+
       # Construct names of the measurement model (including nonlinear terms;
       # Constructs of the rhs of the measurement model are considered first order constructs
       # attached to a second order construct)
       names_c_m_lhs    <- unique(tbl_m$lhs)
       names_c_m_rhs    <- intersect(names_i, c(names_c_m_lhs, names_i_nl))
       names_c_m        <- union(names_c_m_lhs, names_c_m_rhs)
-      
-      # Construct names of the measurement model including the names of the 
+
+      # Construct names of the measurement model including the names of the
       # individual components of the interaction terms
       names_c_m_lhs_l  <- unique(unlist(strsplit(names_c_m_lhs, "\\.")))
       names_c_m_rhs_l  <- unique(unlist(strsplit(names_c_m_rhs, "\\.")))
       names_c_m_l      <- union(names_c_m_lhs_l, names_c_m_rhs_l)
-      
-      # Nonlinear construct names of the measurement model 
+
+      # Nonlinear construct names of the measurement model
       names_c_m_lhs_nl <- names_c_m_lhs[grep("\\.", names_c_m_lhs)] # must be empty
       names_c_m_rhs_nl <- names_c_m_rhs[grep("\\.", names_c_m_rhs)]
-      
+
       # Construct names of the measurement model without nonlinear terms
       names_c_m_no_nl  <- setdiff(names_c_s, names_c_s_rhs_nl)
-      
+
       ## Hierachical constructs -------------------------
       # 1st order constructs attached to a second order construct
       names_c_attached_to_2nd <- names_c_m_rhs
-      
+
       # 2nd order construct names
       names_c_2nd      <- unique(tbl_m[tbl_m$rhs %in% names_c_attached_to_2nd, "lhs"])
-      
+
       # 1st order constructs not attached to a second order construct
       names_c_not_attachted_to_2nd <- setdiff(c(names_c_s, names_c_m), c(names_c_attached_to_2nd, names_c_2nd))
-      
+
       # Higher order construct names
       names_c_higher   <- intersect(names_c_2nd, names_c_m_rhs) # must be empty
-      
+
       ## Summary --------------------
       # All construct names (including nonlinear terms)
-      names_c_all      <- union(names_c_s, names_c_m) 
-      
+      names_c_all      <- union(names_c_s, names_c_m)
+
       # All linear construct names
-      names_c          <- names_c_all[!grepl("\\.", names_c_all)] 
-      
+      names_c          <- names_c_all[!grepl("\\.", names_c_all)]
+
       # All nonlinear construct names
-      names_c_nl       <- names_c_all[grepl("\\.", names_c_all)] 
+      names_c_nl       <- names_c_all[grepl("\\.", names_c_all)]
     }
 
     ## The the number of...
     number_of_constructs_all  <- length(names_c_all)
     number_of_constructs      <- length(names_c)
     number_of_indicators      <- length(names_i)
-    
+
     ## Order
     construct_order <- rep("First order", length(names_c))
     names(construct_order) <- names_c
     construct_order[names_c_2nd] <- "Second order"
-    
+
     ## Instruments
     if(!is.null(.instruments)) {
       names_construct_instruments <- names(.instruments)
-      
-      ## Note (05/2019): Currently, we only allow linear instruments (i.e. no 
+
+      ## Note (05/2019): Currently, we only allow linear instruments (i.e. no
       ##                 interaction terms). We may change that in the future.
       names_instruments_nl <- unlist(.instruments)[grep("\\.", unlist(.instruments))]
-      
+
       if(length(names_instruments_nl) != 0) {
         stop2("The following error occured in the `parseModel()` function:\n",
-              "Only linear instruments allowed. Dont know how to handle: ", 
+              "Only linear instruments allowed. Dont know how to handle: ",
               paste0("`", names_instruments_nl, "`", collapse = ", "))
       }
       names_instruments <- unique(unlist(strsplit(unlist(.instruments),  "\\.")))
     }
-    
+
     ## Sometimes (e.g. for testMGD) we need to parse an incomplete model, hence
     ## errors and warnings related to incomplete models should be ignored in this case.
     if(.check_errors) {
@@ -270,137 +297,137 @@ parseModel <- function(
               " all population values or none.")
       }
       if(!is.null(.instruments)) {
-        # Note (05/2019): Currently, we only allow instruments from within the model, 
-        #                 i.e instruments need to have a structural   
-        #                 and a measurement/composite equation. 
-        #                 Reason: we need to figure out, how to deal with 
+        # Note (05/2019): Currently, we only allow instruments from within the model,
+        #                 i.e instruments need to have a structural
+        #                 and a measurement/composite equation.
+        #                 Reason: we need to figure out, how to deal with
         #                 instruments that have no structural equation. If they are
-        #                 not part of the structural model its unclear how to 
+        #                 not part of the structural model its unclear how to
         #                 get composites/scores for them.
-        
+
         ## Check if all instruments are part of the structural model (i.e. internal)
         tmp <- setdiff(names_instruments, names_c)
-        
+
         if(!is.null(.instruments) && length(tmp) != 0) {
           stop2("The following error occured in the `parseModel()` function:\n",
-                "Currently, only internal instruments allowed. External instruments: ", 
+                "Currently, only internal instruments allowed. External instruments: ",
                 paste0("`", tmp,  "`", collapse = ", "))
         }
-        
+
         ## Check if construct names for instruments are correct
         tmp <- setdiff(names_construct_instruments, names_c)
-        
+
         if(!is.null(.instruments) && length(tmp) != 0) {
           stop2("The following error occured in the `parseModel()` function:\n",
-                "Instruments supplied for unknown constructs: ", 
+                "Instruments supplied for unknown constructs: ",
                 paste0("`", tmp,  "`", collapse = ", "))
-        } 
+        }
       }
-      
+
       ## Stop if one indicator is connected to several constructs
       if(any(duplicated(tbl_m$rhs))) {
         stop2(
           "The following error occured in the `parseModel()` function:\n",
           "At least one indicator is connected to several constructs.")
       }
-      
+
       if(nrow(tbl_s) != 0) {
         ## Stop if any interaction/nonlinear term is used as an endogenous (lhs) variable in the
-        ## structural model 
+        ## structural model
         if(length(names_c_s_lhs_nl)) {
-          
+
           stop2(
             "The following error occured in the `parseModel()` function:\n",
             "Interaction terms cannot appear on the left-hand side of a structural equation.")
         }
-        
+
         ## Stop if any interaction/nonlinear term is used as an endogenous (lhs) variable in the
-        ## measurement model 
+        ## measurement model
         if(length(names_c_m_lhs_nl)) {
-          
+
           stop2(
             "The following error occured in the `parseModel()` function:\n",
             "Interaction terms cannot appear on the left-hand side of a measurement equation.")
         }
-        
+
         ## Stop if any construct has no observables/indicators attached
         tmp <- setdiff(c(names_c_s_l, names_c_m_rhs_l), names_c_m_lhs)
-        
-        # Note: code below not required as long as only internal instruments 
-        #       are allowed 
-        ## Check if any of the individual components of the instruments has no 
+
+        # Note: code below not required as long as only internal instruments
+        #       are allowed
+        ## Check if any of the individual components of the instruments has no
         ## observables/indicators attached
         # if(!is.null(.instruments)) {
         #   tmp <- c(tmp, setdiff(names_instruments, names_c_m_lhs))
         # }
-        
+
         if(length(tmp) != 0) {
-          
+
           stop2(
             "The following error occured in the `parseModel()` function:\n",
-            "No measurement equation provided for: ", 
+            "No measurement equation provided for: ",
             paste0("`", tmp,  "`", collapse = ", ")
           )
-        } 
-        
-        ## Stop if a construct appears in the measurement but not in the 
+        }
+
+        ## Stop if a construct appears in the measurement but not in the
         ## structural model
         tmp <- setdiff(names_c_m_lhs, c(names_c_s_l, names_c_m_rhs_l))
-        
-        # Note: code below not required as long as only internal instruments 
-        #       are allowed 
+
+        # Note: code below not required as long as only internal instruments
+        #       are allowed
         # If tmp is non-empty: check if the constructs are instruments
         # (only if not an error should be returned)
         # if(length(tmp) != 0 & !is.null(.instruments)) {
         #   tmp <- setdiff(tmp, names_instruments)
         # }
-        
+
         if(length(tmp) != 0) {
-          
+
           stop2(
             "The following error occured in the `parseModel()` function:\n",
             "The following constructs of the measurement model do not appear",
             " in the structural model: ", paste0("`", tmp, "`", collapse = ", ")
           )
         }
-        
+
         ## Stop if any construct has a higher order than 2 (currently not allowed)
         if(length(names_c_higher) != 0) {
           stop2(
             "The following error occured in the `parseModel()` function:\n",
-            paste0("`", names_c_higher, "`"), " has order > 2.", 
+            paste0("`", names_c_higher, "`"), " has order > 2.",
             " Currently, only first and second-order constructs are supported.")
         }
-        
+
         ## Stop if a nonlinear term is used as a first order construct to build/measure
         ## a second order construct
         if(length(names_i_nl) != 0) {
           stop2("The following error occured in the `parseModel()` function:\n",
                 "Only linear first order constructs may be attached to second order constructs.",
-                " Dont know how to handle: ", 
+                " Dont know how to handle: ",
                 paste0("`", names_i_nl, "`", collapse = ", "))
         }
         ## Stop if at least one of the components of an interaction term does not appear
         ## in any of the structural equations.
         tmp <- setdiff(names_c_s_l, names_c_s_no_nl)
         if(length(tmp) != 0) {
-          
+
           stop2(
             "The following error occured in the `parseModel()` function:\n",
-            "The nonlinear terms containing ", paste0("`", tmp, "`", collapse = ", "), 
+            "The nonlinear terms containing ", paste0("`", tmp, "`", collapse = ", "),
             " are not embeded in a nomological net.")
-        } 
+        }
       }
     }
-    
+
     ## Construct type
     tbl_m$op <- ifelse(tbl_m$op == "=~", "Common factor", "Composite")
     construct_type  <- unique(tbl_m[, c("lhs", "op")])$op
     names(construct_type) <- unique(tbl_m[, c("lhs", "op")])$lhs
     construct_type <- construct_type[names_c]
-    
+
     ## Type of model (linear or nonlinear)
-    
+
     type_of_model <- if(length(names_c_nl) != 0) {
       "Nonlinear"
     } else {
@@ -408,8 +435,8 @@ parseModel <- function(
     }
     ### Create matrices specifying the relationship between constructs,
     ### indicators, and measurement errors -------------------------------------
-    # Note: code below not required as long as only internal instruments 
-    #       are allowed 
+    # Note: code below not required as long as only internal instruments
+    #       are allowed
     # model_structural  <- matrix(0,
     #                             nrow = length(names_c_s_l),
     #                             ncol = length(names_c_s),
@@ -421,42 +448,42 @@ parseModel <- function(
                                 ncol = number_of_constructs_all,
                                 dimnames = list(names_c, names_c_all)
     )
-    
+
     model_measurement <- matrix(0,
                                 nrow = number_of_constructs,
                                 ncol = number_of_indicators,
                                 dimnames = list(names_c, names_i)
     )
-        
+
     model_cor_specified <- matrix(0,
                                   nrow = length(unique(c(tbl_co$lhs,tbl_co$rhs))),
                                   ncol = length(unique(c(tbl_co$lhs,tbl_co$rhs))),
                                   dimnames = list (unique(c(tbl_co$lhs,tbl_co$rhs)),
                                                    unique(c(tbl_co$lhs,tbl_co$rhs))))
-    
-    ## For convenience its useful to have a separate matrix of measurement errors 
+
+    ## For convenience its useful to have a separate matrix of measurement errors
     model_measurement_error <- matrix(0,
                                       nrow = number_of_indicators,
                                       ncol = number_of_indicators,
                                       dimnames = list(names_i, names_i)
     )
-    
+
     ## Fill model_structural
     # if(nrow(tbl_s) == 0) { # only correlation given
     #   row_index <- match(tbl_co$lhs, names_c)
     #   col_index <- match(tbl_co$rhs, names_c_all)
     # } else { # path model is given
       row_index <- match(tbl_s$lhs, names_c)
-      col_index <- match(tbl_s$rhs, names_c_all) 
+      col_index <- match(tbl_s$rhs, names_c_all)
     # }
-    # Note: code below not required as long as only internal instruments 
-    #       are allowed 
+    # Note: code below not required as long as only internal instruments
+    #       are allowed
     # row_index <- match(tbl_s$lhs, names_c_s_l)
     # col_index <- match(tbl_s$rhs, names_c_s)
-    
+
     model_structural[cbind(row_index, col_index)] <- 1
-    
-    ## If starting/population values are given create a supplementary structural 
+
+    ## If starting/population values are given create a supplementary structural
     ## matrix that contains the starting values
     if(!anyNA(pop_values)) {
       model_structural2 <- model_structural
@@ -466,7 +493,7 @@ parseModel <- function(
     ## Fill model measurement
     row_index <- match(tbl_m$lhs, names_c)
     col_index <- match(tbl_m$rhs, names_i)
-    
+
     model_measurement[cbind(row_index, col_index)] <- 1
 
     ## If starting values are given create a supplementary measurement matrix
@@ -476,50 +503,50 @@ parseModel <- function(
       model_measurement2 <- model_measurement
       model_measurement2[cbind(row_index, col_index)] <- tbl_m$ustart2
     }
-    
+
     ## Fill model_measurement_error
     m_errors   <- tbl_co[tbl_co$lhs %in% names_i, , drop = FALSE]
-    
+
     row_index <- match(m_errors$lhs, names_i)
     col_index <- match(m_errors$rhs, names_i)
-    
+
     model_measurement_error[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
-    
-    # Currently, composite-based approaches (except GSCA ?) are unable to deal 
+
+    # Currently, composite-based approaches (except GSCA ?) are unable to deal
     # with measurement errors accros blocks (even if they were, it is not implemented in cSEM).
     if(.check_errors) {
       model_measurement_error_temp <- model_measurement_error
       for(i in names_c) {
         x <- which(model_measurement[i, ] == 1)
-        model_measurement_error_temp[x, x] <- NA 
+        model_measurement_error_temp[x, x] <- NA
       }
-      
+
       contains_measurement_error <- sum(model_measurement_error_temp, na.rm = TRUE)
-      
+
       if(contains_measurement_error > 0) {
         stop2("The following warning occured in the `parseModel()` function:\n",
               "Measurement errors across blocks not supported (yet).",
               " Remove specified across-block error correlation.")
       }
     }
-    
+
     # Fill model_cor_specified
     row_index <- match(tbl_co$lhs, unique(c(tbl_co$lhs,tbl_co$rhs)))
     col_index <- match(tbl_co$rhs, unique(c(tbl_co$lhs,tbl_co$rhs)))
-    
+
     model_cor_specified[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
-    
-    # Currently, only correlations between indicators (within block), 
-    # measurement errors (within block), and exogenous 
+
+    # Currently, only correlations between indicators (within block),
+    # measurement errors (within block), and exogenous
     # constructs are supported. The rest causes an error (if .check_errors = TRUE)
-    
+
     if(.check_errors & nrow(tbl_s) != 0) {
       # Extract endogenous and exogenous variables
       # vars_endo <- rownames(model_structural)[rowSums(model_structural) != 0]
       # vars_exo  <- setdiff(colnames(model_structural), vars_endo)
-     
+
       ## TO DO: Figure out how to write this error
-      
+
       ## Stop if construct correlation involving nonlinear terms are specified
       tmp <- intersect(rownames(model_cor_specified), c(names_c_s_rhs_nl, names_c_m_rhs_nl))
       if(length(tmp) > 0) {
@@ -528,12 +555,12 @@ parseModel <- function(
               " Remove specified construct correlations.")
       }
     }
-    
+
     ## If starting values are given create one matrix containing the correlation between
     ## indicators, one for the correlation between measurement errors, and one for the
     ## correlation between constructs. Each contains the starting values
     if(!anyNA(pop_values)) {
-      # Note: when a correlation between indicators is given with population values 
+      # Note: when a correlation between indicators is given with population values
       # it depends on the construct
       # type whether this correlation represents a measurement error correlation
       # or a correlation between indicators. Suppose we have:
@@ -544,17 +571,17 @@ parseModel <- function(
       #    of indicator 1 and 2.
       # 2. If the construct the indicators are attached to is modeled as a composite
       #    the expression refers to the correlation between the indicators itself.
-      
+
       m_errors   <- tbl_co[tbl_co$lhs %in% names_i, , drop = FALSE]
-      con_errors <- tbl_co[tbl_co$lhs %in% names_c, , drop = FALSE] 
-      
-      ## Correlation between indicators / measurement errors 
+      con_errors <- tbl_co[tbl_co$lhs %in% names_c, , drop = FALSE]
+
+      ## Correlation between indicators / measurement errors
       row_index <- match(m_errors$lhs, names_i)
       col_index <- match(m_errors$rhs, names_i)
-      
+
       model_cor_indicators <- model_measurement_error
       model_cor_indicators[cbind(c(row_index, col_index), c(col_index, row_index))] <- m_errors$ustart2
-      
+
       ## Correlation between constructs (so far only the correlation between
       ## exogenous constructs is relevant)
       model_cor_constructs <- model_cor_specified[unique(c(con_errors$lhs, con_errors$rhs)),
@@ -562,48 +589,48 @@ parseModel <- function(
 
       row_index <- match(con_errors$lhs, rownames(model_cor_constructs))
       col_index <- match(con_errors$rhs, colnames(model_cor_constructs))
-      
+
       if(nrow(model_cor_constructs) > 0) {
-        model_cor_constructs[cbind(c(row_index, col_index), c(col_index, row_index))] <- con_errors$ustart2 
+        model_cor_constructs[cbind(c(row_index, col_index), c(col_index, row_index))] <- con_errors$ustart2
       }
     }
-    
+
     ### Order model ============================================================
     # Order the structual equations in a way that every equation depends on
     # exogenous constructs and constructs that have been explained in a previous equation
     # This is necessary for the estimation of models containing nonlinear structural
     # relationships.
-    
+
     ### Preparation ------------------------------------------------------------
     temp <- model_structural
-    
+
     ## Extract endogenous and exogenous constructs
     cons_endo <- rownames(temp)[rowSums(temp) != 0]
     cons_exo  <- setdiff(colnames(temp), cons_endo)
-    
+
     # Endogenous constructs that are explained by exogenous and endogenous constructs
     explained_by_exo_endo <- cons_endo[rowSums(temp[cons_endo, cons_endo, drop = FALSE]) != 0]
-    
+
     # Endogenous constructs explained by exogenous constructs only
     explained_by_exo <- setdiff(cons_endo, explained_by_exo_endo)
-    
+
     ### Order =======================
     # First the endogenous constructs that are solely explained by the exogenous constructs
     model_ordered <- temp[explained_by_exo, , drop = FALSE]
-    
+
     # Add constructs that have already been ordered/taken care of to a vector
     # (including exogenous constructs and interaction terms)
     already_ordered <- c(cons_exo, explained_by_exo)
-    
+
     ## When there are feedback loops ordering does not work anymore, therefore
     #  ordering is skiped if there are feedback loops. Except for the
     #  the "replace" approach, this should not be a problem.
-    
+
     # Does the structural model contain feedback loops
     if(any(temp[cons_endo, cons_endo] + t(temp[cons_endo, cons_endo]) == 2)) {
-      
+
       model_ordered <- temp[c(already_ordered, explained_by_exo_endo), , drop = FALSE]
-      
+
     } else {
       ## Order in a way that the current structural equation does only depend on
       ## exogenous variables and/or variables that have already been ordered
@@ -611,13 +638,13 @@ parseModel <- function(
       explained_by_exo_endo_temp <- explained_by_exo_endo
       if(length(explained_by_exo_endo) > 0) {
         repeat {
-          
+
           counter <- counter + 1
-          
+
           for(i in explained_by_exo_endo_temp) {
             names_temp <- colnames(temp[i, temp[i, ] == 1, drop = FALSE])
             endo_temp  <- setdiff(names_temp, already_ordered)
-            
+
             if(length(endo_temp) == 0) {
               model_ordered <- rbind(model_ordered, temp[i, , drop = FALSE])
               already_ordered <- c(already_ordered, i)
@@ -633,21 +660,21 @@ parseModel <- function(
         } # END repeat
       } # END if-statement
     } # END else
-    
+
     ## Return a cSEMModel object.
     # A cSEMModel objects contains all the information about the model and its
-    # components such as the type of construct used. 
+    # components such as the type of construct used.
     n  <- c(setdiff(names_c, rownames(model_ordered)), rownames(model_ordered))
     m <- order(which(model_measurement[n, , drop = FALSE] == 1, arr.ind = TRUE)[, "row"])
     structural_ordered <- model_structural[n, c(n, setdiff(colnames(model_ordered), n)), drop = FALSE]
     # n1 <- intersect(n, colnames(model_ordered))
     # structural_ordered <- model_structural[n1, c(n1, setdiff(colnames(model_ordered), n1))]
-    
+
     ## Renew endogenous and exogenous constructs as the ordering may have changed
     cons_endo <- rownames(structural_ordered)[rowSums(structural_ordered) != 0]
     cons_exo  <- setdiff(colnames(structural_ordered), cons_endo)
-    
-    
+
+
     model_ls <- list(
       "structural"         = structural_ordered,
       "measurement"        = model_measurement[n, m, drop = FALSE],
@@ -657,7 +684,7 @@ parseModel <- function(
       "construct_order"    = construct_order[match(n, names(construct_order))],
       "model_type"         = type_of_model,
       "indicators"         = colnames(model_measurement[n, m, drop = FALSE]),
-      # 08.11.2019: 
+      # 08.11.2019:
       # 1. First order constructs are never considered exogenous.
       # 2. Nonlinear terms are also never considered exogenous.
       "cons_exo"           = setdiff(cons_exo, c(names_c_attached_to_2nd, names_c_s_rhs_nl, names_c_m_rhs_nl)),
@@ -666,7 +693,7 @@ parseModel <- function(
       "vars_attached_to_2nd"     = names_c_attached_to_2nd,
       "vars_not_attached_to_2nd" = names_c_not_attachted_to_2nd
     )
-    
+
     ## Add population values to output if any are given
     if(!anyNA(pop_values)) {
       model_ls$structural2   <- model_structural2[n, colnames(structural_ordered), drop = FALSE]
@@ -674,28 +701,28 @@ parseModel <- function(
       model_ls$indicator_cor <- model_cor_indicators[m, m, drop = FALSE]
       model_ls$construct_cor <- model_cor_constructs
     }
-    
+
     ## Are there instruments? If yes add them
     if(!is.null(.instruments)) {
       for(i in names(.instruments)) {
-        
+
         names_independent <- names(which(structural_ordered[i, ] == 1))
         ## Not sure how to deal with nonlinear terms. For now they are treated
         ## just like any other variable. If there is no instrument for a nonlinear
         ## term, it is treated as exogenous.
-        
+
         names_exogenous   <- intersect(colnames(names_independent), .instruments[[i]])
         names_endogenous  <- setdiff(names_independent, .instruments[[i]])
-        
+
         # First stage relations
         .instruments[[i]] <- matrix(1, nrow = length(names_endogenous), ncol = length(.instruments[[i]]),
                       dimnames = list(names_endogenous, .instruments[[i]]))
       }
       model_ls$instruments <- .instruments
     }
-    
+
     class(model_ls) <- "cSEMModel"
-    return(model_ls) 
+    return(model_ls)
   } # END else
 }
 
@@ -705,7 +732,7 @@ parseModel <- function(
 #' estimable model using either the "2stage" approach or the "mixed" approach.
 #'
 #' @usage convertModel(
-#'  .csem_model        = NULL, 
+#'  .csem_model        = NULL,
 #'  .approach_2ndorder = "2stage",
 #'  .stage             = "first"
 #'  )
@@ -718,35 +745,35 @@ parseModel <- function(
 #' @keywords internal
 #'
 convertModel <- function(
-  .csem_model        = NULL, 
+  .csem_model        = NULL,
   .approach_2ndorder = "2stage",
   .stage             = "first"
 ) {
-  
+
   ## Note: currently we dont include nonlinear relationships in the first
   ##       stage of 2/3stage approach. If we want to change this, we
   ##       need to update the code that subsets the relevant constructs/indicators
   ##       below.
-  
+
   # All linear constructs of the original model
   c_linear_original <- rownames(.csem_model$structural)
   # All constructs used in the first step (= all first order constructs)
   c_linear_1step <- names(.csem_model$construct_order[.csem_model$construct_order == "First order"])
   # All second order constructs
   c_2nd_order <- setdiff(c_linear_original, c_linear_1step)
-  # All indicators of the original model (including linear and nonlinear 
+  # All indicators of the original model (including linear and nonlinear
   # constructs that form/measure a second order construct)
   i_original <- colnames(.csem_model$measurement)
   i_linear_original <- intersect(c_linear_original, i_original)
-  i_nonlinear_original <- grep("\\.", i_original, value = TRUE) 
+  i_nonlinear_original <- grep("\\.", i_original, value = TRUE)
   # Linear constructs that serve as indicators and need to be replaced
   i_linear_1step <- setdiff(i_original, c(c_linear_original, i_nonlinear_original))
-  
+
   if(.stage %in% c("second")) {
     # Linear constructs that dont form/measure a second order construct
     c_not_attached_to_2nd <- setdiff(c_linear_1step, i_linear_original)
     c_2step <- c(c_not_attached_to_2nd, c_2nd_order)
-    
+
     ## Second step structural model
     x1 <- c()
     for(i in c_2step) {
@@ -764,14 +791,14 @@ convertModel <- function(
         # col_names <- c(col_names_linear, col_names_nonlinear)
         col_names <- unlist(temp)
         # col_names[col_names %in% nc_not_to_2nd] <- paste0(col_names[col_names %in% nc_not_to_2nd], "_temp")
-        paste0(ifelse(i %in% c_not_attached_to_2nd, paste0(i, "_temp"), i), "~", paste0(col_names, collapse = "+")) 
+        paste0(ifelse(i %in% c_not_attached_to_2nd, paste0(i, "_temp"), i), "~", paste0(col_names, collapse = "+"))
       } else {
         "\n"
       }
       x1 <- paste(x1, temp, sep = "\n")
     }
-    
-    ## Measurement model + second order structural equation 
+
+    ## Measurement model + second order structural equation
     # Constructs that dont form/measure a second order construct
     x2a <- c()
     for(i in c_not_attached_to_2nd) {
@@ -785,13 +812,13 @@ convertModel <- function(
       temp  <- paste0(i, ifelse(.csem_model$construct_type[i] == "Composite", "<~", "=~"), paste0(col_names, collapse = "+"))
       x2b <- paste(x2b, temp, sep = "\n")
     }
-    
+
     ## Error_cor
     error_cor <- .csem_model$error_cor
     # - Only upper triagular matrix as lavaan does not allow for double entries such
     #   as x11 ~~ x12 and x12 ~~ x11
     error_cor[lower.tri(error_cor)] <- 0
-    
+
     x3 <- list()
     for(i in .csem_model$vars_attached_to_2nd) {
       col_names <- colnames(error_cor[i, error_cor[i, , drop = FALSE] == 1, drop = FALSE])
@@ -800,7 +827,7 @@ convertModel <- function(
       temp <- c()
       if(!is.null(col_names)) {
         for(j in col_names) {
-         temp[j] <- paste0(i, "~~", j) 
+         temp[j] <- paste0(i, "~~", j)
         }
       } else {
         temp <- "\n"
@@ -808,22 +835,22 @@ convertModel <- function(
       x3[[i]] <- temp
     }
     x3 <- paste(unlist(x3), collapse = "\n")
-    
+
     # ## Construct correlation
     # construct_cor <- .csem_model$construct[.csem_model$cons_exo, .csem_model$cons_exo]
     # # - Only upper triagular matrix as lavaan does not allow for double entries such
     # #   as eta1 ~~ eta2 and eta2 ~~ eta1
     # construct_cor[lower.tri(construct_cor)] <- 0
-    # 
+    #
     # x4 <- list()
     # for(i in .csem_model$cons_exo) {
     #   col_names <- colnames(construct_cor[i, construct_cor[i, , drop = FALSE] == 1, drop = FALSE])
-    #   
+    #
     #   ## Continue here
     #   temp <- c()
     #   if(!is.null(col_names)) {
     #     for(j in col_names) {
-    #       temp[j] <- paste0(i, "_temp", "~~", j, "_temp") 
+    #       temp[j] <- paste0(i, "_temp", "~~", j, "_temp")
     #     }
     #   } else {
     #     temp <- "\n"
@@ -831,28 +858,28 @@ convertModel <- function(
     #   x4[[i]] <- temp
     # }
     # x4 <- paste(unlist(x4), collapse = "\n")
-    
+
     ## Model to be parsed
     # lav_model <- paste(x1, x2a, x2b, x3, x4, sep = "\n")
     lav_model <- paste(x1, x2a, x2b, x3, sep = "\n")
   } else { # BEGIN: first step
-    
+
     if(.approach_2ndorder %in% c("mixed")) {
-      
+
       ## Structural model
       # First order equations
       x1 <- c()
       for(i in c_linear_original) {
         col_names <- colnames(.csem_model$structural[i, .csem_model$structural[i, , drop = FALSE] == 1, drop = FALSE])
         temp <- if(!is.null(col_names)) {
-          paste0(i, "~", paste0(col_names, collapse = "+")) 
+          paste0(i, "~", paste0(col_names, collapse = "+"))
         } else {
           "\n"
         }
         x1 <- paste(x1, temp, sep = "\n")
       }
-      
-      ## Measurement model + second order structural equation 
+
+      ## Measurement model + second order structural equation
       # First order constructs
       x2a <- c()
       for(i in c_linear_1step) {
@@ -860,13 +887,13 @@ convertModel <- function(
         temp  <- paste0(i, ifelse(.csem_model$construct_type[i] == "Composite", "<~", "=~"), paste0(col_names, collapse = "+"))
         x2a <- paste(x2a, temp, sep = "\n")
       }
-      
+
       # Second order constructs
       x2b <- c()
       for(i in c_2nd_order) {
         # i <- c_2nd_order[1]
         col_names_1 <- colnames(.csem_model$measurement[i, .csem_model$measurement[i, , drop = FALSE ] == 1, drop = FALSE])
-        col_names_1_nonlinear <- grep("\\.", col_names_1, value = TRUE) 
+        col_names_1_nonlinear <- grep("\\.", col_names_1, value = TRUE)
         col_names_1_linear <- setdiff(col_names_1, col_names_1_nonlinear)
         col_names_2 <- .csem_model$measurement[col_names_1_linear, colSums(.csem_model$measurement[col_names_1_linear, ,drop = FALSE]) != 0, drop = FALSE]
         temp <- paste0(i, "_2nd_", colnames(col_names_2))
@@ -883,7 +910,7 @@ convertModel <- function(
           x2b <- paste(x2b, x2ba, sep = "\n")
         }
       }
-      
+
       ## Error_cor
       # First order
       x3 <- c()
@@ -902,9 +929,9 @@ convertModel <- function(
       }
       ## Model to be parsed
       lav_model <- paste(x1, x2a, x2b, x3, sep = "\n")
-      
+
     } else { # First step of the two step approach
-      
+
       ## Structural model
       x1 <- c()
       for(i in 2:length(c_linear_1step)) {
@@ -939,7 +966,7 @@ convertModel <- function(
   } # END first step
 
   model <- parseModel(lav_model)
-  
+
   ## add
   return(model)
 }
