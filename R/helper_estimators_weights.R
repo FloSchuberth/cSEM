@@ -697,7 +697,7 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
   # This alternative version forces U'1 = 0, so that the unique scores have a mean of 0,
   # which makes the Construct scores have a mean of 0 and is needed or else Path estimates
   # may be biased, especially as theta/n grows. By doing a QR decomposition of [1 | Eta_normed], it's ensured that 
-  # the different columns of the Q matrix are orthogonal to the ones column. Orthogonality to the ones column also
+  # the n_constructs + 2 columns of the Q matrix are orthogonal to the ones column. Orthogonality to the ones column also
   # means that the mean of each column is equal to 0.  
   #
   qr_eta <- qr(cbind(1, Eta_normed))
