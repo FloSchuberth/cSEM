@@ -698,7 +698,10 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
   # which makes the Construct scores have a mean of 0 and is needed or else Path estimates
   # may be biased, especially as theta/n grows. By doing a QR decomposition of [1 | Eta_normed], it's ensured that 
   # the n_constructs + 2 columns of the Q matrix are orthogonal to the ones column. Orthogonality to the ones column also
-  # means that the mean of each column is equal to 0.  
+  # means that the mean of each column is equal to 0.
+  # 
+  # When n_case is small relative to n_constructs and n_indicators, U may be under-identified and parameter bias may be much more apparent.
+  # Solutions to this problem are for future research. It should be noted that likelihood-based covariance structured analysis has similar problems.
   #
   qr_eta <- qr(cbind(1, Eta_normed))
   svd_mx <- svd(tcrossprod(x = D, y = qr.qty(qr_eta, Z_normed)[(n_constructs + 2):n_case, , drop = FALSE]))
