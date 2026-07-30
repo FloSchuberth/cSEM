@@ -21,14 +21,12 @@
 #' is assumed to hold for the GSCA-M-treated (effect) indicators, i.e.
 #' \eqn{\epsilon_2 = 0}: their implied variances are
 #' \eqn{\lambda_j^2 v_{pp} + d_j^2} (with \eqn{v_{pp}} the implied variance
-#' of the corresponding construct) and may fall short of the empirical unit
-#' variances -- the indicator variance left unexplained by the common and
-#' unique parts is part of the misfit. The measurement errors of composite
+#' of the corresponding construct). The measurement errors of composite
 #' indicators are assumed to be correlated within blocks (block-diagonal
 #' \eqn{E(\epsilon_1\epsilon_1')}), hence within-composite-block entries of
 #' \eqn{\Sigma} (including the diagonal) reproduce the empirical VCV \eqn{S}
-#' exactly. Unlike for the other estimators, the implied variances of
-#' endogenous constructs are not normalized to 1 for GSCA-type estimates.
+#' exactly. Similar to other estimators, the implied variances of all
+#' endogenous constructs are forcefully set to 1 for GSCA-type estimates.
 #'
 #' @usage fit(
 #'   .object    = NULL, 
@@ -143,11 +141,9 @@ fit.cSEMResults_default <- function(
     Corr_exo_endo <- Phi %*% t(Gamma) %*% t(solve(I-B))
     ## Correlations between endogenous constructs
     Cor_endo <- solve(I-B) %*% (Gamma %*% Phi %*% t(Gamma) + vcv_zeta) %*% t(solve(I-B))
-    # Fable: Except for GSCA-type estimates the implied variances of the endogenous
-    # constructs are normalized to 1. For GSCA the raw implied construct VCV
-    # of Cho et al. (2022, Eq. A-11) is used instead: deviations of the
-    # implied construct variances from 1 count as structural misfit there.
-    if(!approach_gsca) diag(Cor_endo) <- 1
+    # Private in-person communication with Dr. Heungsun Hwang on July 23, 2026: Similar
+    # to other estimators, the implied variances of endogenous constructs are also set to 1.
+    diag(Cor_endo) <- 1
     
     vcv_construct <- rbind(
       cbind(Phi, Corr_exo_endo),
@@ -178,7 +174,7 @@ fit.cSEMResults_default <- function(
   ## Calculate model-implied VCV of the indicators
   vcv_ind <- t(Lambda) %*% vcv_construct %*% Lambda
   
-  if(approach_gsca) {
+  if (isTRUE(approach_gsca)) {
     d <- .object$Estimates$Unique_loading_estimates
     if(is.null(d)) d <- numeric(ncol(Lambda)) # It is only null using plain GSCA
     D2 <- diag(d^2)

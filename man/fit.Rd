@@ -46,14 +46,12 @@ composite indicators). Following Cho et al. (2022), the common factor model
 is assumed to hold for the GSCA-M-treated (effect) indicators, i.e.
 \eqn{\epsilon_2 = 0}: their implied variances are
 \eqn{\lambda_j^2 v_{pp} + d_j^2} (with \eqn{v_{pp}} the implied variance
-of the corresponding construct) and may fall short of the empirical unit
-variances -- the indicator variance left unexplained by the common and
-unique parts is part of the misfit. The measurement errors of composite
+of the corresponding construct). The measurement errors of composite
 indicators are assumed to be correlated within blocks (block-diagonal
 \eqn{E(\epsilon_1\epsilon_1')}), hence within-composite-block entries of
 \eqn{\Sigma} (including the diagonal) reproduce the empirical VCV \eqn{S}
-exactly. Unlike for the other estimators, the implied variances of
-endogenous constructs are not normalized to 1 for GSCA-type estimates.
+exactly. Similar to other estimators, the implied variances of all
+endogenous constructs are forcefully set to 1 for GSCA-type estimates.
 }
 \references{
 \insertAllCited{}
