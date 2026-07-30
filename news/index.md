@@ -4,6 +4,9 @@
 
 ## cSEM 0.6.2
 
+- Replace helper function from the matrixcalc package. Thanks to
+  Kjell S. Slupphaug for this contribution.
+
 - Replace the polycor package by a more efficient implementation to
   calculate polychoric/polyserial correlations. Thanks to Kjell S.
   Slupphaug who contributed this implementation.

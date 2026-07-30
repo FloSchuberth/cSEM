@@ -350,6 +350,10 @@ To list all arguments and their possible choices, use
   Character. Used in `plot.cSEMIPMA` to indicate whether IPMA should be
   done for constructs or indicators.
 
+- .matrix:
+
+  A `matrix`.
+
 - .matrix1:
 
   A `matrix` to compare.

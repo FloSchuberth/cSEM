@@ -1,19 +1,20 @@
 # Internal: Trace of a matrix
 
-Compute the trace of `X`, i.e., the sum of the diagonal elements of `X`.
+Compute the trace of `.matrix`, i.e., the sum of the diagonal elements
+of `.matrix`.
 
 ## Usage
 
 ``` r
-trace(X)
+trace(.matrix)
 ```
 
 ## Arguments
 
-- X:
+- .matrix:
 
   Square numeric matrix.
 
 ## Value
 
-A numeric scalar: value with the trace of `X`.
+A numeric scalar: value with the trace of `.matrix`.
