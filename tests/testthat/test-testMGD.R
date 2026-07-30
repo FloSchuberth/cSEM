@@ -91,4 +91,97 @@ test_that("testMGD() works for second order models (.approach_mgd = 'all')", {
 # })
 
 
+# ==============================================================================
+# dropNAResamples(): removal of permutation runs containing NA
+# ==============================================================================
+# Tests for the NA filter used to post-process the permutation
+# reference distribution in testMGD(). The bug being guarded against: the filter
+# was originally written as Filter(Negate(anyNA), ref_dist), which misses NAs
+# nested inside the $Chin and $Klesel elements because anyNA() defaults to
+# recursive = FALSE. Such an NA then reached the p-value computation.
 
+# Build a permutation run in the shape produced inside testMGD()'s repeat loop.
+make_run <- function(klesel = c("dG" = 0.10, "dL" = 0.20),
+                     chin   = c("eta2 ~ eta1" = 0.05, "eta3 ~ eta1" = -0.03),
+                     sarstedt = c("F" = 1.5)) {
+  list(
+    Klesel   = klesel,
+    Chin     = list("group1_group2" = chin),   # nested one level deeper
+    Sarstedt = sarstedt
+  )
+}
+
+test_that("dropNAResamples() removes runs with an NA nested inside $Chin", {
+  ref_dist <- list(
+    run1 = make_run(),
+    run2 = make_run(chin = c("eta2 ~ eta1" = NA_real_, "eta3 ~ eta1" = -0.03)),
+    run3 = make_run()
+  )
+  
+  out <- cSEM:::dropNAResamples(ref_dist)
+  
+  expect_length(out, 2)
+  expect_named(out, c("run1", "run3"))
+  expect_identical(out$run1, ref_dist$run1)
+  expect_identical(out$run3, ref_dist$run3)
+  expect_false(anyNA(unlist(out)))
+})
+
+test_that("the original filter did NOT remove a nested NA (documents the bug)", {
+  # Characterisation test. If this ever starts failing, anyNA()'s treatment of
+  # lists has changed and the rationale in ?dropNAResamples needs revisiting.
+  ref_dist <- list(
+    run1 = make_run(),
+    run2 = make_run(chin = c("eta2 ~ eta1" = NA_real_, "eta3 ~ eta1" = -0.03)),
+    run3 = make_run()
+  )
+  
+  expect_length(Filter(Negate(anyNA), ref_dist), 3)  # old behaviour: kept it
+  expect_length(dropNAResamples(ref_dist), 2)        # new behaviour: drops it
+})
+
+test_that("dropNAResamples() removes an NA in the multi-element $Klesel vector", {
+  # anyNA(recursive = FALSE) only flags *length-one* atomic elements, so a
+  # length-two Klesel vector containing NA was missed as well.
+  ref_dist <- list(
+    run1 = make_run(),
+    run2 = make_run(klesel = c("dG" = NA_real_, "dL" = 0.20))
+  )
+  
+  expect_length(Filter(Negate(anyNA), ref_dist), 2)  # old behaviour
+  expect_length(dropNAResamples(ref_dist), 1)        # new behaviour
+  expect_named(dropNAResamples(ref_dist), "run1")
+})
+
+test_that("dropNAResamples() still removes the literal NA sentinel", {
+  # Guards against over-fixing: inadmissible runs under
+  # .handle_inadmissibles = 'drop' are stored as a bare NA and must still go.
+  ref_dist <- list(run1 = make_run(), run2 = NA, run3 = make_run())
+  
+  expect_length(dropNAResamples(ref_dist), 2)
+  expect_named(dropNAResamples(ref_dist), c("run1", "run3"))
+})
+
+test_that("dropNAResamples() treats NaN like NA", {
+  # Near-singular matrices tend to produce NaN (0/0) rather than NA.
+  ref_dist <- list(
+    run1 = make_run(),
+    run2 = make_run(chin = c("eta2 ~ eta1" = NaN, "eta3 ~ eta1" = -0.03)),
+    run3 = make_run(sarstedt = c("F" = NaN))
+  )
+  
+  expect_length(dropNAResamples(ref_dist), 1)
+  expect_named(dropNAResamples(ref_dist), "run1")
+})
+
+test_that("dropNAResamples() leaves a clean reference distribution untouched", {
+  ref_dist <- list(run1 = make_run(), run2 = make_run(), run3 = make_run())
+  expect_identical(dropNAResamples(ref_dist), ref_dist)
+})
+
+test_that("dropNAResamples() handles the degenerate inputs", {
+  expect_identical(dropNAResamples(list()), list())
+  expect_length(dropNAResamples(list(a = NA, b = NA)), 0)
+  # Runs where only some approaches were requested must survive.
+  expect_length(dropNAResamples(list(r1 = list(Chin = list(g = c(a = 0.1))))), 1)
+})
