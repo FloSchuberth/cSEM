@@ -342,7 +342,7 @@ print.cSEMAssess <- function(x, ...) {
     
     ## Confidence intervals
     # Get the column names of the columns containing confidence intervals
-    ci_colnames <- colnames(x$Effects$Total_effects)[-c(1:6)]
+    ci_colnames <- colnames(x$Effects$Total_effect)[-c(1:6)]
     
     # Are there more confidence intervals than the default (the 95% percentile CI)
     # Inform the user to use xxx instead.
@@ -364,7 +364,7 @@ print.cSEMAssess <- function(x, ...) {
       cat2("\n\nEstimated indirect effects:\n===========================")
       printEffects(x$Effects$Indirect_effect, .ci_colnames = ci_colnames, .what = "Indirect effect")
     }
-    if(any(names(x$effects) == "Variance_accounted_for")) {
+    if(any(names(x$Effects) == "Variance_accounted_for")) {
       ### Variance accounted for -------------------------------------------------
       cat2("\n\nVariance accounted for (VAF):\n=============================")
       printEffects(x$Effects$Variance_accounted_for, .ci_colnames = ci_colnames, .what = "Effects")
