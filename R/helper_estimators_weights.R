@@ -701,7 +701,8 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
   # means that the mean of each column is equal to 0.
   # 
   # When n_case is small relative to n_constructs and n_indicators, U may be under-identified and parameter bias may be much more apparent.
-  # Solutions to this problem are for future research. It should be noted that likelihood-based covariance structured analysis has similar problems.
+  # Solutions to this problem are discussed in Hwang et al. (2017), citing Unkel and Trendafilo (2013) and Trendafilo and Unkel (2011). 
+  # It should be noted that likelihood-based covariance structured analysis has similar problems, but faces convergen problems earlier than IGSCA.
   #
   qr_eta <- qr(cbind(1, Eta_normed))
   svd_mx <- svd(tcrossprod(x = D, y = qr.qty(qr_eta, Z_normed)[(n_constructs + 2):n_case, , drop = FALSE]))
