@@ -4,15 +4,15 @@
 \alias{trace}
 \title{Internal: Trace of a matrix}
 \usage{
-trace(X)
+trace(.matrix)
 }
 \arguments{
-\item{X}{Square numeric matrix.}
+\item{.matrix}{Square numeric matrix.}
 }
 \value{
-A numeric scalar: value with the trace of \code{X}.
+A numeric scalar: value with the trace of \code{.matrix}.
 }
 \description{
-Compute the trace of \code{X}, i.e., the sum of the diagonal elements of \code{X}.
+Compute the trace of \code{.matrix}, i.e., the sum of the diagonal elements of \code{.matrix}.
 }
 \keyword{internal}

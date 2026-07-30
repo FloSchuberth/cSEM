@@ -225,6 +225,8 @@ If the algorithm exceeds the specified number, weights of iteration step
 \item{.level}{Character. Used in \code{plot.cSEMIPMA} to indicate whether IPMA should be done
 for constructs or indicators.}
 
+\item{.matrix}{A \code{matrix}.}
+
 \item{.matrix1}{A \code{matrix} to compare.}
 
 \item{.matrix2}{A \code{matrix} to compare.}

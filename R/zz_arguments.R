@@ -171,7 +171,8 @@
 #'   If the algorithm exceeds the specified number, weights of iteration step 
 #'   `.iter_max - 1`  will be returned with a warning. Defaults to `100`.
 #' @param .level Character. Used in `plot.cSEMIPMA` to indicate whether IPMA should be done 
-#' for constructs or indicators.    
+#' for constructs or indicators.
+#' @param .matrix A `matrix`.    
 #' @param .matrix1 A `matrix` to compare.
 #' @param .matrix2 A `matrix` to compare.
 #' @param .matrices A list of at least two matrices.
@@ -512,6 +513,7 @@ args_default <- function(.choices = FALSE) {
     .iter_max                = 100,
     .listMatrices            = NULL, 
     .level                   = c('construct',"indicator"),
+    .matrix                  = NULL,
     .matrix1                 = NULL,
     .matrix2                 = NULL,
     .matrices                = NULL,

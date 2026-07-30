@@ -4,12 +4,12 @@
 \alias{isPositiveSemiDefinite}
 \title{Internal: Check if matrix is positive semi definite}
 \usage{
-isPositiveSemiDefinite(X, zero.tol = 1e-08)
+isPositiveSemiDefinite(.matrix, .tolerance = 1e-08)
 }
 \arguments{
-\item{X}{Numeric matrix to be checked.}
+\item{.matrix}{Numeric matrix to be checked.}
 
-\item{zero.tol}{Tolerance for close to zero (negative) values.}
+\item{.tolerance}{Tolerance for close to zero (negative) values.}
 }
 \value{
 A logical scalar: \code{TRUE} if \code{X} is PSD, otherwise \code{FALSE}.
@@ -17,9 +17,6 @@ A logical scalar: \code{TRUE} if \code{X} is PSD, otherwise \code{FALSE}.
 \description{
 Check if a matrix is positive semi definite (PSD).
 A matrix is PSD if all of its eigenvalues are greater than or
-equal to zero. One caveat, the package previously used
-\code{matrixcalc::is.positive.semi.definite()} where negative values
-close to zero \code{(abs(eigenvalues) < tol)} were not counted as negative.
-This behaviour is replicated here as well.
+equal to zero.
 }
 \keyword{internal}
