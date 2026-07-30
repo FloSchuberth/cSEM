@@ -720,7 +720,7 @@ calculateRelativeGoF <- function(
 ){
   
   if(inherits(.object, "cSEMResults_multi")) {
-    out <- lapply(.object, calculateGoF)
+    out <- lapply(.object, calculateRelativeGoF)
     return(out)
   } else if(inherits(.object, "cSEMResults_default")) {
     ## Get relevant quantities
