@@ -676,6 +676,8 @@ updateCB <-
 #' Update unique scores and unique loadings
 #' 
 #' Intended to be used within the alternating least squares algorithm for either GSCA_M or IGSCA. Assumes that the construct scores and data are normalized.
+#' 
+#' Ensures that the unique scores have a mean of 0.
 #'
 #' @param D Unique loadings
 #' @param Eta_normed Normalized data
@@ -689,35 +691,29 @@ updateCB <-
 #'
 updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_indicators, Z_normed) {
 
-  # PROPOSED PATCH -- NOT ACTIVE (2026-07-09).
-  # Diagnosis and patch author: Claude Fable 5 (Anthropic AI assistant).
-  # The Procrustes problem solved
-  # below is under-determined: because Eta = (Z - UD) W is a linear
-  # combination of the columns of Z - UD, the informative matrix
-  # (I - P_Eta) Z D has rank at most J - P, so P of U's J orthonormal columns
-  # are criterion-flat and the SVD fills them with an arbitrary null-space
-  # completion -- generically NOT orthogonal to the constant vector. The
-  # parameter estimates (W, C, B, D) and the GSCA-M criterion are exactly
-  # invariant to this arbitrariness, but all score-based output picks up
-  # spurious nonzero column means (Construct_scores means ~0.10 std. scale;
-  # Construct_VCV = cor(scores) then disagrees with the uncentered metric in
-  # which the path coefficients are least squares, gap ~1e-2). 
-  # The fix pins the flat mean direction with the identification constraint
-  # U'1 = 0 (the sample analogue of E(u) = 0 already implicit in the model):
-  # build the orthogonal complement of cbind(1, Eta) instead of Eta, i.e.
-  # replace the three statements below by
+  # Alternative version of Hwang et al. (2017)
+  # Author: Claude Fable 5 (Anthropic AI assistant).
   #
-  #   qr_eta <- qr(cbind(1, Eta_normed))
-  #   svd_mx <- svd(tcrossprod(x = D, y = qr.qty(qr_eta, Z_normed)[(n_constructs + 2):n_case, , drop = FALSE]))
-  #   U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs + 1, n_indicators), tcrossprod(x = svd_mx$v, y = svd_mx$u)))
+  # This alternative version forces U'1 = 0, so that the unique scores have a mean of 0,
+  # which makes the Construct scores have a mean of 0 and is needed or else Path estimates
+  # may be biased, especially as theta/n grows. By doing a QR decomposition of [1 | Eta_normed], it's ensured that 
+  # the different columns of the Q matrix are orthogonal to the ones column. Orthogonality to the ones column also
+  # means that the mean of each column is equal to 0.  
+  #
+  qr_eta <- qr(cbind(1, Eta_normed))
+  svd_mx <- svd(tcrossprod(x = D, y = qr.qty(qr_eta, Z_normed)[(n_constructs + 2):n_case, , drop = FALSE]))
+  U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs + 1, n_indicators), tcrossprod(x = svd_mx$v, y = svd_mx$u)))
 
-  qr_eta <- qr(Eta_normed)
-  # QtZ_null <- qr.qty(qr_eta, Z_normed)[(n_constructs + 1):n_case, , drop = FALSE]
-  # svd_mx <- svd(D %*% t(QtZ_null))
-  svd_mx <- svd(tcrossprod(x = D, y = qr.qty(qr_eta, Z_normed)[(n_constructs + 1):n_case, , drop = FALSE]))
-  # Utilde <- svd_mx$v %*% t(svd_mx$u)  # (N-P) × J
-  # U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs, n_indicators), svd_mx$v %*% t(svd_mx$u)))
-  U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs, n_indicators),  tcrossprod(x= svd_mx$v, y = svd_mx$u)))
+  # R Optimized version of Hwang et al. (2017)
+  # qr_eta <- qr(Eta_normed)
+  # svd_mx <- svd(tcrossprod(x = D, y = qr.qty(qr_eta, Z_normed)[(n_constructs + 1):n_case, , drop = FALSE]))
+  ## Optimized Version of
+  ## QtZ_null <- qr.qty(qr_eta, Z_normed)[(n_constructs + 1):n_case, , drop = FALSE]
+  ## svd_mx <- svd(D %*% t(QtZ_null))
+  # U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs, n_indicators),  tcrossprod(x= svd_mx$v, y = svd_mx$u)))
+  ## Optimized Version of
+  ## Utilde <- svd_mx$v %*% t(svd_mx$u)  # (N-P) × J
+  ## U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs, n_indicators), svd_mx$v %*% t(svd_mx$u)))
 
   # Old method based on Hwang et al. (2017) — O(N^2) memory and computation
   # Eta_Q2 <- qr.Q(qr(Eta_normed), complete = TRUE)[,

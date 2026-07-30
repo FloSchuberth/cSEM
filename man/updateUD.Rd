@@ -35,3 +35,6 @@ List of 2 elements, normalized unique scores (\code{U}) and normalized unique lo
 \description{
 Intended to be used within the alternating least squares algorithm for either GSCA_M or IGSCA. Assumes that the construct scores and data are normalized.
 }
+\details{
+Ensures that the unique scores have a mean of 0.
+}

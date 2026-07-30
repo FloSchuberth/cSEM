@@ -184,7 +184,7 @@ test_that("Only specified weights are non-zero", {
   ))
 })
 
-test_that("Only indicators of common factors have uniqueness scores and unique loadings", {
+test_that("Only indicators of common factors have uniqueness scores and unique loadings. And the mean of the unique scores and construct scores is equal to 0", {
   names_cf <- names(mod$Information$Model$construct_type[
     mod$Information$Model$construct_type == "Common factor"
   ])
@@ -206,6 +206,10 @@ test_that("Only indicators of common factors have uniqueness scores and unique l
   )
 
   absolute_sum_U <- colSums(abs(mod$Estimate$Unique_scores))
+
+  # Unique Scores and Construct Scores have a mean of 0
+  expect_equal(colMeans(mod$Estimates$Unique_scores), rep(0, ncol(mod$Estimates$Unique_scores)), ignore_attr = TRUE)
+  expect_equal(colMeans(mod$Estimates$Construct_scores), rep(0, ncol(mod$Estimates$Construct_scores)), ignore_attr = TRUE)
 
   # Zero uniqueness scores and unique loadings where expected
   expect_true(all(absolute_sum_U[indicator_c] == 0))
