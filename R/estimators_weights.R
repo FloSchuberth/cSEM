@@ -143,7 +143,7 @@ calculateWeightsPLS <- function(
       conv_status = NULL
       break # return one-step PLS-PM weights
       
-    } else if(iter_counter == iter_max & iter_max > 1) {
+    } else if(iter_counter >= iter_max & iter_max > 1) {
       # Set convergence status to FALSE, as algorithm has not converged
       conv_status = FALSE
       break
@@ -927,7 +927,7 @@ calculateWeightsGSCAm <- function(
     "Unique_scores" = Unique_scores,
     "E" = NULL,
     "Modes" = "gsca (gsca_m)",
-    "Conv_status" = ifelse(iter_counter == .iter_max, FALSE, TRUE),
+    "Conv_status" = ifelse(iter_counter >= .iter_max, FALSE, TRUE),
     "Iterations" = iter_counter
   )
   return(l)
@@ -1360,7 +1360,7 @@ calculateWeightsIGSCA <- function(
       "Unique_loading_estimates" = D_diag,
       "Unique_scores" = Unique_scores,
       "Modes" = "gsca (igsca)",
-      "Conv_status" = ifelse(it == .iter_max, FALSE, TRUE),
+      "Conv_status" = ifelse(it >= .iter_max, FALSE, TRUE),
       "Iterations" = it
     )
   )
