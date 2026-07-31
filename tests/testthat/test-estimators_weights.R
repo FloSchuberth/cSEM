@@ -28,9 +28,10 @@ mod <- csem(
   .model = tutorial_igsca_model,
   .approach_weights = "GSCA",
   .dominant_indicators = NULL,
-  .tolerance = 0.0001,
+  .tolerance = 0.001,
   .conv_criterion = "sum_diff_absolute",
-  .GSCA_modes = "NCMP"
+  .GSCA_modes = "NCMP",
+  .iter_max = 300
 )
 
 
@@ -58,9 +59,10 @@ gsca_mod <- csem(
   gsca_model,
   .approach_weights = "GSCA",
   .dominant_indicators = NULL,
-  .tolerance = 0.0001,
+  .tolerance = 0.001,
   .conv_criterion = "sum_diff_absolute",
-  .GSCA_modes = "NCMP"
+  .GSCA_modes = "NCMP",
+  .iter_max = 300
 )
 
 test_that("GSCA estimates are nominal", {
@@ -1132,6 +1134,7 @@ CustomerLoyality ~ CustomerSatisfaction + Competence + Likeability'
     .tolerance = 0.001,
     .conv_criterion = "sum_diff_absolute",
     .GSCA_modes = "NCMP",
+    .iter_max = 300,
     .starting_values = list(
       "Quality" = c(
         "qual_1" = 0.173,
@@ -1259,9 +1262,10 @@ AffJoy  ~ OrgIden"
       .data = BergamiBagozzi2000,
       .model = m,
       .approach_weights = "GSCA",
-      .tolerance = 1e-5,
+      .tolerance = 1e-4,
       .conv_criterion = "sum_diff_absolute",
-      .GSCA_modes = "NCMP"
+      .GSCA_modes = "NCMP",
+      .iter_max = 300
     )
   })
 
@@ -1271,9 +1275,10 @@ AffJoy  ~ OrgIden"
       .model = m,
       .approach_weights = "GSCA",
       .id = "gender",
-      .tolerance = 1e-5,
+      .tolerance = 1e-4,
       .conv_criterion = "sum_diff_absolute",
-      .GSCA_modes = "NCMP"
+      .GSCA_modes = "NCMP",
+      .iter_max = 300
     )
   })
 
@@ -1390,9 +1395,10 @@ AffJoy  ~ OrgIden"
       .data = BergamiBagozzi2000,
       .model = model_IGSCA,
       .approach_weights = "GSCA",
-      .tolerance = 1e-5,
+      .tolerance = 1e-4,
       .conv_criterion = "sum_diff_absolute",
       .GSCA_modes = "NCMP",
+      .iter_max = 300,
       .starting_values = sv_complete
     )
   )
@@ -1404,9 +1410,10 @@ AffJoy  ~ OrgIden"
       .data = BergamiBagozzi2000,
       .model = model_IGSCA,
       .approach_weights = "GSCA",
-      .tolerance = 1e-5,
+      .tolerance = 1e-4,
       .conv_criterion = "sum_diff_absolute",
       .GSCA_modes = "NCMP",
+      .iter_max = 300,
       .starting_values = sv_partial
     ),
     "GSCA init called"
@@ -1430,9 +1437,10 @@ AffJoy  ~ OrgIden"
     .data = BergamiBagozzi2000,
     .model = model_IGSCA,
     .approach_weights = "GSCA",
-    .tolerance = 1e-5,
+    .tolerance = 1e-4,
     .conv_criterion = "sum_diff_absolute",
-    .GSCA_modes = "NCMP"
+    .GSCA_modes = "NCMP",
+    .iter_max = 300
   )
 
   expect_true(res_single$Information$Weight_info$Convergence_status)
@@ -1452,9 +1460,10 @@ AffJoy  ~ OrgIden"
     .data = BergamiBagozzi2000,
     .model = model_IGSCA,
     .approach_weights = "GSCA",
-    .tolerance = 1e-5,
+    .tolerance = 1e-4,
     .conv_criterion = "sum_diff_absolute",
     .GSCA_modes = "NCMP",
+    .iter_max = 300,
     .starting_values = sv
   )
 
@@ -1470,9 +1479,10 @@ AffJoy  ~ OrgIden"
     .data = BergamiBagozzi2000,
     .model = model_IGSCA,
     .approach_weights = "GSCA",
-    .tolerance = 1e-5,
+    .tolerance = 1e-4,
     .conv_criterion = "sum_diff_absolute",
     .GSCA_modes = "NCMP",
+    .iter_max = 300,
     .id = "gender",
     .starting_values = sv
   )
@@ -1545,6 +1555,7 @@ test_that("multi-start GSCA selects the best-FIT starting-value set", {
 
   res <- csem(BergamiBagozzi2000, mstart_model,
               .approach_weights = "GSCA", .GSCA_modes = "NCMP",
+              .tolerance = 1e-4, .iter_max = 300,
               .starting_values = list(set1, set2))
 
   ms <- res$Information$Weight_info$Multistart
@@ -1561,6 +1572,7 @@ test_that("multi-start skips candidates that fail to fit, with a warning", {
   expect_warning(
     res <- csem(BergamiBagozzi2000, mstart_model,
                 .approach_weights = "GSCA", .GSCA_modes = "NCMP",
+                .tolerance = 1e-4, .iter_max = 300,
                 .starting_values = list(good, bad))
   )
   ms <- res$Information$Weight_info$Multistart

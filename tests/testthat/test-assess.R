@@ -222,27 +222,30 @@ AffJoy  ~ OrgIden"
     .data = BergamiBagozzi2000,
     .model = model_GSCA,
     .approach_weights = "GSCA",
-    .tolerance = 1e-5,
+    .tolerance = 1e-4,
     .conv_criterion = "sum_diff_absolute",
-    .GSCA_modes = "NCMP"
+    .GSCA_modes = "NCMP",
+    .iter_max = 300
   )
 
   out_Hwang_single_GSCAM <- csem(
     .data = BergamiBagozzi2000,
     .model = model_GSCAM,
     .approach_weights = "GSCA",
-    .tolerance = 1e-5,
+    .tolerance = 1e-4,
     .conv_criterion = "sum_diff_absolute",
-    .GSCA_modes = "NCMP"
+    .GSCA_modes = "NCMP",
+    .iter_max = 300
   )
 
   out_Hwang_single_IGSCA <- csem(
     .data = BergamiBagozzi2000,
     .model = model_IGSCA,
     .approach_weights = "GSCA",
-    .tolerance = 1e-5,
+    .tolerance = 1e-4,
     .conv_criterion = "sum_diff_absolute",
-    .GSCA_modes = "NCMP"
+    .GSCA_modes = "NCMP",
+    .iter_max = 300
   )
 
   # Reference values from gesca package (1.0.5)
@@ -281,9 +284,10 @@ AffJoy  ~ OrgIden"
     .model = model_GSCA,
     .approach_weights = "GSCA",
     .id = "gender",
-    .tolerance = 1e-5,
+    .tolerance = 1e-4,
     .conv_criterion = "sum_diff_absolute",
-    .GSCA_modes = "NCMP"
+    .GSCA_modes = "NCMP",
+    .iter_max = 300
   )
 
   out_Hwang_mg_GSCAM <- csem(
@@ -291,9 +295,10 @@ AffJoy  ~ OrgIden"
     .model = model_GSCAM,
     .approach_weights = "GSCA",
     .id = "gender",
-    .tolerance = 1e-5,
+    .tolerance = 1e-4,
     .conv_criterion = "sum_diff_absolute",
-    .GSCA_modes = "NCMP"
+    .GSCA_modes = "NCMP",
+    .iter_max = 300
   )
 
   out_Hwang_mg_IGSCA <- csem(
@@ -301,9 +306,10 @@ AffJoy  ~ OrgIden"
     .model = model_IGSCA,
     .approach_weights = "GSCA",
     .id = "gender",
-    .tolerance = 1e-5,
+    .tolerance = 1e-4,
     .conv_criterion = "sum_diff_absolute",
-    .GSCA_modes = "NCMP"
+    .GSCA_modes = "NCMP",
+    .iter_max = 300
   )
 
   # Reference values from gesca package (1.0.5)

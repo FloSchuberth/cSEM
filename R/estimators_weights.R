@@ -537,12 +537,12 @@ calculateWeightsGSCA <- function(
     if(conv) {
       # Set convergence status to TRUE as algorithm has converged
       conv_status = TRUE
-      break # return iterative PLS-PM weights
+      break 
       
     } else if(iter_counter == iter_max & iter_max == 1) {
       # Set convergence status to NULL, NULL is used if no algorithm is used
       conv_status = NULL
-      break # return one-step PLS-PM weights
+      break 
       
     } else if(iter_counter == iter_max & iter_max > 1) {
       # Set convergence status to FALSE, as algorithm has not converged
@@ -906,7 +906,18 @@ calculateWeightsGSCAm <- function(
     est <- A[which(A != 0)]
   }
 
-  
+
+  # The loop exits either because the criterion was met or because the iteration
+  # cap was reached. Re-checking the criterion on the last two iterates
+  # distinguishes the two, whereas the iteration count alone flags a run that
+  # converged exactly on iteration .iter_max as a failure.
+  conv_status <- checkConvergence(
+    .W_new = est,
+    .W_old = est0,
+    .tolerance = .tolerance,
+    .conv_criterion = .conv_criterion
+  )
+
 # Output Formatting ------------------------------------------------------
   # isTRUE(identical(diag(D^2), diag(D)^2))
   D_diag <- diag(D)
@@ -927,7 +938,7 @@ calculateWeightsGSCAm <- function(
     "Unique_scores" = Unique_scores,
     "E" = NULL,
     "Modes" = "gsca (gsca_m)",
-    "Conv_status" = ifelse(iter_counter >= .iter_max, FALSE, TRUE),
+    "Conv_status" = conv_status,
     "Iterations" = iter_counter
   )
   return(l)
@@ -1330,6 +1341,17 @@ calculateWeightsIGSCA <- function(
     }
   }
 
+  # The loop exits either because the criterion was met or because the iteration
+  # cap was reached. Re-checking the criterion on the last two iterates
+  # distinguishes the two, whereas the iteration count alone flags a run that
+  # converged exactly on iteration .iter_max as a failure.
+  conv_status <- checkConvergence(
+    .W_new = est,
+    .W_old = est0,
+    .tolerance = .tolerance,
+    .conv_criterion = .conv_criterion
+  )
+
   ## Output Formatting -------------------------------------------------------
 
   # Compute loadings for Canonical Composites
@@ -1360,7 +1382,7 @@ calculateWeightsIGSCA <- function(
       "Unique_loading_estimates" = D_diag,
       "Unique_scores" = Unique_scores,
       "Modes" = "gsca (igsca)",
-      "Conv_status" = ifelse(it >= .iter_max, FALSE, TRUE),
+      "Conv_status" = conv_status,
       "Iterations" = it
     )
   )
