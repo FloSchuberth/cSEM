@@ -442,7 +442,23 @@ calculateWeightsGSCA <- function(
   
   # Scale weights
   W <- scaleWeights(.S = .S, .W = W0)
-  
+
+  # Positions of the free parameters, taken from the model pattern once so that
+  # the monitored vector keeps a constant length across iterations. Convergence
+  # is judged on the weights, loadings and path coefficients jointly, matching
+  # calculateWeightsGSCAm() and calculateWeightsIGSCA(). lambda_index is empty
+  # for pure canonical composite models, whose loadings are not estimated inside
+  # the loop, and b_index is empty when there is no structural model.
+  w_index      <- which(.csem_model$measurement != 0)
+  lambda_index <- which(t(Lambda0) != 0)
+  b_index      <- which(t(B0) != 0)
+
+  # Loadings and paths of the previous iteration. On the first pass no previous
+  # set exists yet, so convergence is judged on the weights alone; this keeps a
+  # run started at the fixed point converging immediately, as before.
+  tLambda_prev <- NULL
+  tB_prev      <- NULL
+
   W_iter       <- W
   tolerance    <- .tolerance
   iter_max     <- .iter_max
@@ -529,8 +545,19 @@ calculateWeightsGSCA <- function(
       }
     }
     
-    # Check for convergence
-    conv <- checkConvergence(W, W_iter,
+    # Check for convergence on the weights, loadings and path coefficients
+    # jointly. tLambda and tB are built from W_iter at the top of this pass, so
+    # each block is compared against its own value from the previous pass.
+    if(is.null(tLambda_prev)) {
+      tLambda_prev <- tLambda
+      tB_prev      <- tB
+    }
+    est      <- c(W[w_index],      tLambda[lambda_index],      tB[b_index])
+    est_prev <- c(W_iter[w_index], tLambda_prev[lambda_index], tB_prev[b_index])
+    tLambda_prev <- tLambda
+    tB_prev      <- tB
+
+    conv <- checkConvergence(est, est_prev,
                              .conv_criterion = .conv_criterion,
                              .tolerance = .tolerance)
     
@@ -714,6 +741,13 @@ calculateWeightsGSCAm <- function(
   A  <- cbind(C, B) # (P x TT)
   # V  <- cbind(Ij, W) # (J x TT)
 
+  # Positions of the free parameters, taken from the model pattern once. They
+  # must not be recomputed from the estimates inside the loop: an estimate that
+  # landed exactly on zero would shorten the monitored vector, and the
+  # convergence comparison would then silently recycle the shorter one.
+  a_index <- which(A != 0)  # free loadings (C) and path coefficients (B)
+  w_index <- which(W != 0)  # free weights
+
   # Normalize Z
   normalization_factor <- sqrt(N - 1)
   Z <- Z / normalization_factor
@@ -775,7 +809,9 @@ calculateWeightsGSCAm <- function(
   
   
   D <- diag(diag(t(U) %*% Z))
-  est  <-  A[which(A != 0)]
+  # Convergence is judged on every free parameter carrying state across
+  # iterations: weights, loadings, path coefficients and unique loadings.
+  est  <-  c(W[w_index], A[a_index], diag(D))
   est0 <- est + 1
   iter_counter <- 0
   
@@ -903,7 +939,7 @@ calculateWeightsGSCAm <- function(
 
     # Build A
     A <- cbind(C, B)
-    est <- A[which(A != 0)]
+    est <- c(W[w_index], A[a_index], diag(D))
   }
 
 
@@ -1226,15 +1262,15 @@ calculateWeightsIGSCA <- function(
   ## Alternating Least Squares Algorithm -------------------------------------
 
   ### Optimization Preparation -----------------------------------------------
-  # Set the initial estimates based on either the structural model or the loadings
-  # if there's no structural model
-  if (length(b_index) > 0) {
-    est <- B[b_index]
-  } else {
-    # Because canonical composites do not estimate loadings, here the weights are generally used to determine convergenece, instead of loadings
-    est <- W[w_index]
-    # est <- C[c_index]
-  }
+  # Convergence is judged on every free parameter carrying state across
+  # iterations: weights, loadings, path coefficients and unique loadings. All
+  # four index sets come from the model pattern, so the monitored vector keeps a
+  # constant length. Watching the path coefficients alone is not enough: they
+  # can go briefly stationary while the weights and loadings are still moving,
+  # which ends the loop on a false convergence.
+  # Note that c_index already excludes canonical composites, whose loadings are
+  # not estimated inside the loop.
+  est <- c(W[w_index], C[c_index], B[b_index], diag(D))
   est0 <- est + 1
   it <- 0
 
@@ -1332,13 +1368,7 @@ calculateWeightsIGSCA <- function(
     U <- list_UD[["U"]]
     D <- list_UD[["D"]]
 
-    if (length(b_index) > 0) {
-      est <- B[b_index]
-    } else {
-      est <- W[w_index]
-      # Because canonical composites do not estimate loadings, here the weights are generally used to determine convergenece, instead of loadings
-      # est <- C[c_index]
-    }
+    est <- c(W[w_index], C[c_index], B[b_index], diag(D))
   }
 
   # The loop exits either because the criterion was met or because the iteration

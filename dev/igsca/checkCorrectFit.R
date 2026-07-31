@@ -8,6 +8,15 @@ HonestyHumility <~ Honesty1 + Honesty2 + Honesty3
 NetworkingBehavior ~ HonestyHumility
 "
 
+gsca_CCA_model <- "
+# Composite Model
+NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3
+HonestyHumility <~ Honesty1 + Honesty2 + Honesty3
+
+# Structural Model
+NetworkingBehavior ~~ HonestyHumility
+"
+
 data(LeDang2022)
 
 dat <- rbind(
@@ -15,14 +24,17 @@ dat <- rbind(
   subset(LeDang2022, Gender == "Female")[1:10,]
 )
 
-
+debugonce(calculateWeightsGSCA)
 gsca <- csem(
   .data = dat,
   gsca_model,
+  # gsca_CCA_model,
   .approach_weights = "GSCA",
   .dominant_indicators = NULL,
   .tolerance = 0.0001,
-  .conv_criterion = "sum_diff_absolute"
+  .conv_criterion = "sum_diff_absolute",
+  # .GSCA_modes = "CCMP"
+  .GSCA_modes = "NCMP"
 )
 
 gsca_mg <- csem(
@@ -65,6 +77,15 @@ HonestyHumility =~ Honesty1 + Honesty2 + Honesty3
 NetworkingBehavior ~ HonestyHumility
 "
 
+gscam_CFA_model <- "
+# Latent Varible Model
+NetworkingBehavior =~ Behavior1 + Behavior2 + Behavior3
+HonestyHumility =~ Honesty1 + Honesty2 + Honesty3
+
+# Correlated Factors
+NetworkingBehavior ~~ HonestyHumility
+"
+
 data(LeDang2022)
 
 dat <- rbind(
@@ -72,9 +93,11 @@ dat <- rbind(
   subset(LeDang2022, Gender == "Female")[1:10,]
 )
 
+debugonce(calculateWeightsGSCAm)
 gscam <- csem(
   .data = dat,
   gscam_model,
+  # gscam_CFA_model,
   .approach_weights = "GSCA",
   .dominant_indicators = NULL,
   .tolerance = 0.0001,
@@ -129,15 +152,22 @@ NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3
 
 # Latent Variable Model
 HonestyHumility =~ Honesty1 + Honesty2 + Honesty3
+
+# CCA
+NetworkingBehavior ~~ HonestyHumility
 "
 
+debugonce(calculateWeightsIGSCA)
 igsca <- csem(
   .data = dat,
   igsca_model,
+  # igsca_model_nostruct,
   .approach_weights = "GSCA",
   .dominant_indicators = NULL,
   .tolerance = 0.0001,
-  .conv_criterion = "sum_diff_absolute"
+  .conv_criterion = "sum_diff_absolute",
+  .GSCA_modes = "CCMP"
+  # .GSCA_modes = "NCMP"
 )
 
 igsca_mg <- csem(
