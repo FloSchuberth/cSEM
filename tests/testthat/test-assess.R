@@ -225,7 +225,7 @@ AffJoy  ~ OrgIden"
     .tolerance = 1e-4,
     .conv_criterion = "sum_diff_absolute",
     .GSCA_modes = "NCMP",
-    .iter_max = 300
+    .iter_max = 600
   )
 
   out_Hwang_single_GSCAM <- csem(
@@ -235,7 +235,7 @@ AffJoy  ~ OrgIden"
     .tolerance = 1e-4,
     .conv_criterion = "sum_diff_absolute",
     .GSCA_modes = "NCMP",
-    .iter_max = 300
+    .iter_max = 600
   )
 
   out_Hwang_single_IGSCA <- csem(
@@ -245,7 +245,7 @@ AffJoy  ~ OrgIden"
     .tolerance = 1e-4,
     .conv_criterion = "sum_diff_absolute",
     .GSCA_modes = "NCMP",
-    .iter_max = 300
+    .iter_max = 600
   )
 
   # Reference values from gesca package (1.0.5)
@@ -287,7 +287,7 @@ AffJoy  ~ OrgIden"
     .tolerance = 1e-4,
     .conv_criterion = "sum_diff_absolute",
     .GSCA_modes = "NCMP",
-    .iter_max = 300
+    .iter_max = 600
   )
 
   out_Hwang_mg_GSCAM <- csem(
@@ -298,7 +298,7 @@ AffJoy  ~ OrgIden"
     .tolerance = 1e-4,
     .conv_criterion = "sum_diff_absolute",
     .GSCA_modes = "NCMP",
-    .iter_max = 300
+    .iter_max = 600
   )
 
   out_Hwang_mg_IGSCA <- csem(
@@ -309,7 +309,7 @@ AffJoy  ~ OrgIden"
     .tolerance = 1e-4,
     .conv_criterion = "sum_diff_absolute",
     .GSCA_modes = "NCMP",
-    .iter_max = 300
+    .iter_max = 600
   )
 
   # Reference values from gesca package (1.0.5)

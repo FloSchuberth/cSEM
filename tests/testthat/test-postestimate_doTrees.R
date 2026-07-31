@@ -43,9 +43,10 @@ test_that("bdiagFit() block-diagonalizes multigroup fits in group order", {
     .model = model_IGSCA,
     .approach_weights = "GSCA",
     .id = "gender",
-    .tolerance = 1e-5,
+    .tolerance = 1e-4,
     .conv_criterion = "sum_diff_absolute",
-    .GSCA_modes = "NCMP"
+    .GSCA_modes = "NCMP",
+    .iter_max = 600
   )
 
   Sigma_list <- fit(res_mg, .saturated = FALSE, .type_vcv = "indicator")

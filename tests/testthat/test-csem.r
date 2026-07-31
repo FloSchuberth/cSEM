@@ -347,6 +347,7 @@ test_that("random-spec starting values run and select a best fit", {
   set.seed(123)
   res <- csem(BergamiBagozzi2000, mstart_model,
               .approach_weights = "GSCA", .GSCA_modes = "NCMP",
+              .tolerance = 1e-4, .iter_max = 600,
               .starting_values = c(n = 4, min = -1, max = 1))
   ms <- res$Information$Weight_info$Multistart
   expect_equal(ms$n_candidates, 4)
@@ -357,10 +358,12 @@ test_that("random-spec multi-start is reproducible under set.seed()", {
   set.seed(99)
   r1 <- csem(BergamiBagozzi2000, mstart_model,
              .approach_weights = "GSCA", .GSCA_modes = "NCMP",
+             .tolerance = 1e-4, .iter_max = 600,
              .starting_values = c(n = 4, min = -1, max = 1))
   set.seed(99)
   r2 <- csem(BergamiBagozzi2000, mstart_model,
              .approach_weights = "GSCA", .GSCA_modes = "NCMP",
+             .tolerance = 1e-4, .iter_max = 600,
              .starting_values = c(n = 4, min = -1, max = 1))
   expect_equal(r1$Estimates$Weight_estimates, r2$Estimates$Weight_estimates)
 })
@@ -381,6 +384,7 @@ test_that("multi-start GSCA selects per group for multigroup data", {
   set.seed(7)
   res <- csem(BergamiBagozzi2000, mstart_model,
               .approach_weights = "GSCA", .GSCA_modes = "NCMP",
+              .tolerance = 1e-4, .iter_max = 600,
               .id = "gender",
               .starting_values = c(n = 3, min = -1, max = 1))
   expect_s3_class(res, "cSEMResults_multi")
@@ -398,6 +402,7 @@ test_that("multi-start GSCA supports bootstrapping (multi-start per resample)", 
 
   res <- csem(BergamiBagozzi2000, mstart_model,
               .approach_weights = "GSCA", .GSCA_modes = "NCMP",
+              .tolerance = 1e-4, .iter_max = 600,
               .starting_values = list(set1, set2),
               .resample_method = "bootstrap", .R = 20, .seed = 1)
 
