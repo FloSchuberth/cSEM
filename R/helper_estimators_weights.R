@@ -708,6 +708,49 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
   svd_mx <- svd(tcrossprod(x = D, y = qr.qty(qr_eta, Z_normed)[(n_constructs + 2):n_case, , drop = FALSE]))
   U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs + 1, n_indicators), tcrossprod(x = svd_mx$v, y = svd_mx$u)))
 
+  # Alternative version of Hwang et al. (2017) V2
+  # Author: Claude Fable 5 (Anthropic AI assistant).
+  #
+  # TODO: The below code adds extra handling for when n_case <= n_constructs + 1. However, the
+  # output has not yet been studied or human-verified, so it is commented out.  
+  #
+  # Let Q2 denote those trailing columns of Q (an orthonormal basis of the
+  # orthogonal complement of [1 | Eta_normed]), m = n_case - rank_eta its
+  # dimension, and write U = Q2 %*% U_tilde. The update below is the Procrustes
+  # solution U_tilde = svd_mx$v %*% t(svd_mx$u) obtained from the *economy* SVD
+  # svd_mx = svd(D %*% t(Z) %*% Q2). Its meaning depends on m relative to
+  # J = n_indicators:
+  #
+  # * m >= J (classical case): U_tilde has orthonormal columns, so U'U = I_J.
+  #   This is Step 3 of Hwang et al. (2017).
+  # * m < J (more indicators + constructs than cases): U'U = I_J is infeasible
+  #   because rank(U) <= m < J (Hwang et al., 2017). Following their suggestion,
+  #   the same economy-SVD polar update then yields the zig-zag EFA update of
+  #   Unkel and Trendafilov (2013, step (ii)): U_tilde has orthonormal *rows*
+  #   (U_tilde %*% t(U_tilde) = I_m), which together with the unique-loading
+  #   update D = diag(U'Z) targets the relaxed constraint U'UD = D of
+  #   Trendafilov and Unkel (2011, GEFA). Under that constraint at least
+  #   J - m unique loadings must be zero at the solution ("unique factors with
+  #   zero variance"), which the alternating least squares iterations enforce
+  #   implicitly. Estimates in this regime are more prone to small-sample bias;
+  #   note that likelihood-based covariance structure analysis faces
+  #   convergence problems even earlier than IGSCA/GSCA_M.
+  # * m = 0 (n_case <= number of constructs + 1): the orthogonal complement is
+  #   empty, so U = 0 and (through D = diag(U'Z)) D = 0 -- the fully degenerate
+  #   GEFA solution in which every unique variance is zero and GSCA_M/IGSCA
+  #   reduce to GSCA.
+  #
+  # qr_eta <- qr(cbind(1, Eta_normed))
+  # rank_eta <- qr_eta$rank
+  # m <- n_case - rank_eta
+  # if (m > 0) {
+  #   svd_mx <- svd(tcrossprod(x = D, y = qr.qty(qr_eta, Z_normed)[rank_eta + seq_len(m), , drop = FALSE]))
+  #   U <- qr.qy(qr_eta, rbind(matrix(0, rank_eta, n_indicators), tcrossprod(x = svd_mx$v, y = svd_mx$u)))
+  # } else {
+  #   U <- matrix(0, n_case, n_indicators)
+  # }
+
+
   # R Optimized version of Hwang et al. (2017)
   # qr_eta <- qr(Eta_normed)
   # svd_mx <- svd(tcrossprod(x = D, y = qr.qty(qr_eta, Z_normed)[(n_constructs + 1):n_case, , drop = FALSE]))
