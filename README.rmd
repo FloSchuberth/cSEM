@@ -29,7 +29,9 @@ procedures (e.g., verify admissibility of the estimates, assess the
 model fit, test the model fit, compute confidence intervals, compare
 groups, etc.).
 
-## News (2026-07-27):
+## News (2026-08-02):
+- Fix bug in PLS-PM estimation of non-linear models involing second-order constructs. Thanks Thanks to Kjell S. Slupphaug for this contribution.  
+
 - Fix smaller issue in the print function for `assess()`.
 
 - Replace helper function from the matrixcalc package. Thanks to Kjell S. Slupphaug for this contribution.
