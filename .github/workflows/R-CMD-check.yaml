@@ -40,6 +40,25 @@ jobs:
         with:
           extra-packages: any::rcmdcheck
           needs: check
+          cache-version: 2
+          
+      - name: Install lavaan from source (no Windows binary exists for R 4.1)
+        if: matrix.config.r == '4.1'
+        shell: Rscript {0}
+        run: |
+          have <- requireNamespace("lavaan", quietly = TRUE)
+          if (!have || packageVersion("lavaan") < "0.6.20") {
+            install.packages(
+              "lavaan",
+              type = "source",
+              # lavaan's dependencies are unchanged since 0.6-15, so the copies
+              # already installed as binaries are reused.
+              dependencies = if (have) FALSE else NA,
+              repos = "https://cloud.r-project.org"
+            )
+          }
+          stopifnot(packageVersion("lavaan") >= "0.6.20")
+          cat("lavaan", format(packageVersion("lavaan")), "\n")
 
       - uses: r-lib/actions/check-r-package@v2
         with:
