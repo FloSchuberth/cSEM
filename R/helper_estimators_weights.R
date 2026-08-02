@@ -705,8 +705,24 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
   # It should be noted that likelihood-based covariance structured analysis has similar problems, but faces convergen problems earlier than IGSCA.
   #
   qr_eta <- qr(cbind(1, Eta_normed))
-  svd_mx <- svd(tcrossprod(x = D, y = qr.qty(qr_eta, Z_normed)[(n_constructs + 2):n_case, , drop = FALSE]))
-  U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs + 1, n_indicators), tcrossprod(x = svd_mx$v, y = svd_mx$u)))
+  # The first `k` columns of the Q matrix of [1 | Eta_normed] is equal to the rank of [1 | Eta_normed]. 
+  # The full Q matrix is N x N. In the case that some of the constructs are collinear with each other, then indexing naively 
+  # Will cause an error, particular when n_case is less than (rank_eta + 1). So the below approach is taken instead
+  # Additionally, recall that the rank of [1 | Eta_normed] must always be either equal to or less than the number of rows or columns [1 | Eta_normed],
+  #  therefore m will never be equal to a negative number
+  rank_eta <- qr_eta$rank
+  m        <- n_case - rank_eta
+  # if (m > 0) {
+    # rank_eta + seq_len(m) should equal to `n_constructs + 2: n_case`, unless there is collinearity in [1 | Eta_normed]
+  svd_mx <- svd(tcrossprod(x = D, y = qr.qty(qr_eta, Z_normed)[rank_eta + seq_len(m), , drop = FALSE]))
+  # rank_eta should equal to 1 + n_constructs (number of columns of [1 | Eta_normed]), unless there is collinearity
+  # matrix(0, n_constructs, n_indicators) is zero-padding so that we take the matrix product of the parts of Q that we want.
+  U <- qr.qy(qr_eta, rbind(matrix(0, rank_eta, n_indicators), tcrossprod(x = svd_mx$v, y = svd_mx$u)))
+  # } else if (m == 0) {
+    # U <- matrix(0, n_case, n_indicators)
+  # } else if (m <=0) {
+  #   stop2("Unique score computation failed, sample size is likely too small")
+  # }
 
   # Alternative version of Hwang et al. (2017) V2
   # Author: Claude Fable 5 (Anthropic AI assistant).
@@ -740,16 +756,16 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
   #   GEFA solution in which every unique variance is zero and GSCA_M/IGSCA
   #   reduce to GSCA.
   #
-  # qr_eta <- qr(cbind(1, Eta_normed))
-  # rank_eta <- qr_eta$rank
-  # m <- n_case - rank_eta
+  # qr_eta   <- qr(cbind(1, Eta_normed)) # qr([ones(ncase,1),Gamma])
+  # rank_eta <- qr_eta$rank # nlv + 1
+  # m        <- n_case - rank_eta # ncol(Q2)
   # if (m > 0) {
-  #   svd_mx <- svd(tcrossprod(x = D, y = qr.qty(qr_eta, Z_normed)[rank_eta + seq_len(m), , drop = FALSE]))
-  #   U <- qr.qy(qr_eta, rbind(matrix(0, rank_eta, n_indicators), tcrossprod(x = svd_mx$v, y = svd_mx$u)))
+  #   Q2tZ     <- qr.qty(qr_eta, Z_normed)[rank_eta + seq_len(m), , drop = FALSE] # Q2' Z
+  #   svd_mx   <- svd(tcrossprod(x = D, y = Q2tZ)) # svd(D*Z'*Q2,'econ')
+  #   U        <- qr.qy(qr_eta, rbind(matrix(0, rank_eta, n_indicators), tcrossprod(x = svd_mx$v, y = svd_mx$u)))   # Q2*(v*u')
   # } else {
   #   U <- matrix(0, n_case, n_indicators)
   # }
-
 
   # R Optimized version of Hwang et al. (2017)
   # qr_eta <- qr(Eta_normed)
