@@ -4,6 +4,10 @@
 
 ## cSEM 0.6.2
 
+- Fix bug in PLS-PM estimation of non-linear models involing
+  second-order constructs. Thanks Thanks to Kjell S. Slupphaug for this
+  contribution.
+
 - Fix smaller issue in the print function for
   [`assess()`](https://floschuberth.github.io/cSEM/reference/assess.md).
 
