@@ -67,7 +67,7 @@ calculate2ndStage <- function(
   
   # Select reliabilities for those constructs that are not attached
   # to a second order factor
-  if(length(vars_not_attached_to_2nd)) {
+  if(length(vars_not_attached_to_2nd)>0) {
     rel_not_attached_to_2nd <- rel_all_1step[vars_not_attached_to_2nd]
     names(rel_not_attached_to_2nd) <- paste0(vars_not_attached_to_2nd, "_temp")
   } else {
