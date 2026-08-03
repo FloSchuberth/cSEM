@@ -678,6 +678,8 @@ updateCB <-
 #' Intended to be used within the alternating least squares algorithm for either GSCA_M or IGSCA. Assumes that the construct scores and data are normalized.
 #' 
 #' Ensures that the unique scores have a mean of 0.
+#' 
+#' Following \insertCite{trendafilovExploratoryFactorAnalysis2011;textual}{cSEM}, as the ratio of the sample size to the number of indicators decreases, the unique scores and unique loadings approach 0. This means that both GSCAm and IGSCA will reduce to GSCA at small enough sample sizes.
 #'
 #' @param D Unique loadings
 #' @param Eta_normed Normalized data
@@ -712,60 +714,18 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
   #  therefore m will never be equal to a negative number
   rank_eta <- qr_eta$rank
   m        <- n_case - rank_eta
-  # if (m > 0) {
-    # rank_eta + seq_len(m) should equal to `n_constructs + 2: n_case`, unless there is collinearity in [1 | Eta_normed]
-  svd_mx <- svd(tcrossprod(x = D, y = qr.qty(qr_eta, Z_normed)[rank_eta + seq_len(m), , drop = FALSE]))
+  if (m > 0) {
+  #   rank_eta + seq_len(m) should equal to `n_constructs + 2: n_case`, unless there is collinearity in [1 | Eta_normed]
+    svd_mx <- svd(tcrossprod(x = D, y = qr.qty(qr_eta, Z_normed)[rank_eta + seq_len(m), , drop = FALSE]))
   # rank_eta should equal to 1 + n_constructs (number of columns of [1 | Eta_normed]), unless there is collinearity
   # matrix(0, n_constructs, n_indicators) is zero-padding so that we take the matrix product of the parts of Q that we want.
   U <- qr.qy(qr_eta, rbind(matrix(0, rank_eta, n_indicators), tcrossprod(x = svd_mx$v, y = svd_mx$u)))
-  # } else if (m == 0) {
-    # U <- matrix(0, n_case, n_indicators)
-  # } else if (m <=0) {
-  #   stop2("Unique score computation failed, sample size is likely too small")
-  # }
-
-  # Alternative version of Hwang et al. (2017) V2
-  # Author: Claude Fable 5 (Anthropic AI assistant).
-  #
-  # TODO: The below code adds extra handling for when n_case <= n_constructs + 1. However, the
-  # output has not yet been studied or human-verified, so it is commented out.  
-  #
-  # Let Q2 denote those trailing columns of Q (an orthonormal basis of the
-  # orthogonal complement of [1 | Eta_normed]), m = n_case - rank_eta its
-  # dimension, and write U = Q2 %*% U_tilde. The update below is the Procrustes
-  # solution U_tilde = svd_mx$v %*% t(svd_mx$u) obtained from the *economy* SVD
-  # svd_mx = svd(D %*% t(Z) %*% Q2). Its meaning depends on m relative to
-  # J = n_indicators:
-  #
-  # * m >= J (classical case): U_tilde has orthonormal columns, so U'U = I_J.
-  #   This is Step 3 of Hwang et al. (2017).
-  # * m < J (more indicators + constructs than cases): U'U = I_J is infeasible
-  #   because rank(U) <= m < J (Hwang et al., 2017). Following their suggestion,
-  #   the same economy-SVD polar update then yields the zig-zag EFA update of
-  #   Unkel and Trendafilov (2013, step (ii)): U_tilde has orthonormal *rows*
-  #   (U_tilde %*% t(U_tilde) = I_m), which together with the unique-loading
-  #   update D = diag(U'Z) targets the relaxed constraint U'UD = D of
-  #   Trendafilov and Unkel (2011, GEFA). Under that constraint at least
-  #   J - m unique loadings must be zero at the solution ("unique factors with
-  #   zero variance"), which the alternating least squares iterations enforce
-  #   implicitly. Estimates in this regime are more prone to small-sample bias;
-  #   note that likelihood-based covariance structure analysis faces
-  #   convergence problems even earlier than IGSCA/GSCA_M.
-  # * m = 0 (n_case <= number of constructs + 1): the orthogonal complement is
-  #   empty, so U = 0 and (through D = diag(U'Z)) D = 0 -- the fully degenerate
-  #   GEFA solution in which every unique variance is zero and GSCA_M/IGSCA
-  #   reduce to GSCA.
-  #
-  # qr_eta   <- qr(cbind(1, Eta_normed)) # qr([ones(ncase,1),Gamma])
-  # rank_eta <- qr_eta$rank # nlv + 1
-  # m        <- n_case - rank_eta # ncol(Q2)
-  # if (m > 0) {
-  #   Q2tZ     <- qr.qty(qr_eta, Z_normed)[rank_eta + seq_len(m), , drop = FALSE] # Q2' Z
-  #   svd_mx   <- svd(tcrossprod(x = D, y = Q2tZ)) # svd(D*Z'*Q2,'econ')
-  #   U        <- qr.qy(qr_eta, rbind(matrix(0, rank_eta, n_indicators), tcrossprod(x = svd_mx$v, y = svd_mx$u)))   # Q2*(v*u')
-  # } else {
-  #   U <- matrix(0, n_case, n_indicators)
-  # }
+  } else if (m == 0) {
+    # See trendafilovExploratoryFactorAnalysis2011 regarding how the unique scores becomes 0
+    U <- matrix(0, n_case, n_indicators)
+  } else if (m <= 0) {
+    stop2("Unique score computation failed, sample size is likely too small or there is an error in the algorithm. Please report to developers.")
+  }
 
   # R Optimized version of Hwang et al. (2017)
   # qr_eta <- qr(Eta_normed)
