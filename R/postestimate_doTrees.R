@@ -116,7 +116,6 @@ doTrees <- function(
     # TODO: Return to this bonferroni problem
     if (!is.null(split_fn)) {
       # Sets the splitter to one of the three functions that we're looking for.
-      # TODO: Add a switch statement to make sure that the splitter can only be one of c("FIT", "DLi", "DGi")
       cc$model <- model
       cc$indicators <- indicators
       cc$collector <- collector
