@@ -42,9 +42,8 @@ doTrees <- function(
 
 
   if (influence %in% c("mat", "vec")) {
-    influence <- switch(influence, mat = influence_mat, vec = influence_vec)
+    influence_fn <- switch(influence, mat = influence_mat, vec = influence_vec)
     # Conditional Tree Route --------------
-    # TODO: Implement igsca_ctree
     ytrafo <- function(data, weights, control) {
       mf <- model.frame(data)
       function(
@@ -77,7 +76,7 @@ doTrees <- function(
             nobs = length(subset)
           ))
         }
-        h <- influence(E)
+        h <- influence_fn(E)
         ef <- matrix(0, nrow = nrow(mf), ncol = ncol(h))
         ef[subset, ] <- h
         ## object is returned unconditionally: a mixed-pair splitter's kernel
