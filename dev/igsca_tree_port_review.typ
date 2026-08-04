@@ -43,13 +43,17 @@ then:
 - *Third pass* --- `splitter` became a `match.arg()` string and the test file was
   updated to match. Verified in #link(<b2>)[B2] across all 17 configurations the
   tests exercise, plus both guard paths.
+- *Fourth pass* --- the influence function moved to its own `influence_fn` local
+  (#link(<b2>)[B2]), and S1 was fixed: `argmax_split()` now counts failed kernel
+  scans, `doTrees()` warns on a wholly dead kernel, and the three tests of
+  #link(<negctl>)[section 5.4] are implemented and passing.
 
-Both blockers are now cleared and every `influence` #sym.times `splitter`
-combination runs. What remains is three carried-over silent failures, a test
-suite that still cannot detect any of them, and packaging cleanup.
-#link(<mixed>)[Section 5] sets out how to test the mixed-splitter configurations
-specifically; its injection recipes have been rewritten for the new string-valued
-API.
+Both blockers and the first silent failure are now cleared, and every `influence`
+#sym.times `splitter` combination runs. What remains is two carried-over silent
+failures, a test suite that still cannot detect them, and packaging cleanup.
+#link(<mixed>)[Section 5] sets out how to test the mixed-splitter configurations;
+its injection recipes have been rewritten for the string-valued API, and 5.4 is
+now shipped code rather than a proposal.
 
 == Status at a glance
 
@@ -60,7 +64,7 @@ API.
   table.header([*ID*], [*Finding*], [*Status*]),
   [B1], [`idx_permutation()` / `ndt_dists()` not ported], [#ok],
   [B2], [`splitter` is a function in one branch, a string in the other], [#ok],
-  [S1], [Broken split kernel degrades to a stump with no diagnostic], [#open],
+  [S1], [Broken split kernel degrades to a stump with no diagnostic], [#ok],
   [S2], [`control$bonferroni` silently ignored on the ctree path], [#open],
   [S3], [`coef()` / `plot()` empty for any tree that splits], [#open],
   [T1], [Snapshots stale (`trees_out` vs `trees_mx`)], [#open],
@@ -76,9 +80,11 @@ API.
   [P6], [No input validation], [#open],
 )
 
-The test file has been updated to pass strings, so it no longer errors on the
-signature --- but T1--T4 are untouched, and T4 is what will actually stop a run
-completing.
+The test file has been updated to pass strings and has gained
+#link(<negctl>)[section 5.4]'s three blocks --- but its original five blocks are
+untouched, so T1--T3 stand and T4 is only half-addressed: `ctl_mixed` now exists
+at the foot of the file while all 17 original calls still use a bare
+`igsca_tree_control()`. T4 is what will actually stop a run completing.
 
 #pagebreak()
 
@@ -199,70 +205,102 @@ error, and every one produces a split:
 `n_fail_resample = 2` on the `mat` mixed rows is ordinary non-convergence at
 extreme cutpoints, not a fault.)
 
-Two residual nits:
+*Residual nits: both since fixed.* The obsolete "add a switch statement" TODO has
+been deleted, and the mid-function rebinding of `influence` is gone --- `:45` now
+assigns the influence function to its own local, `influence_fn`, read at `:79`:
 
-- *An obsolete TODO.* `R/postestimate_doTrees.R:119` still reads "Add a switch
-  statement to make sure that the splitter can only be one of `c("FIT", "DLi",
-  "DGi")`". `match.arg()` now does exactly that; delete the comment.
-- *`influence` is rebound mid-function.* `:45` overwrites the character
-  `influence` with a *function* (`influence_mat` / `influence_vec`), while `:157`
-  re-tests `influence %in% c("FIT","DLi","DGi")` on the original value. It works,
-  because the rebinding happens inside the first branch, but the two conditions
-  now read as though they test the same variable when one of them has been
-  overwritten. A separate `influence_fn` local would remove the trap.
+```r
+influence_fn <- switch(influence, mat = influence_mat, vec = influence_vec)
+...
+h <- influence_fn(E)
+```
+
+`influence` therefore stays a character for the whole call, so the `else if
+(influence %in% c("FIT","DLi","DGi"))` at `:155` now tests what it appears to
+test. (An intermediate revision named this local `selector`, which collided with
+the genuine extree `selectfun` of the same name at `:158`/`:219` --- two different
+roles under one identifier in one function body. `influence_fn` avoids that:
+`selector` is now unambiguously the variable-selection function partykit means by
+the term.)
+
+Re-running the full sweep after the rename gave results *byte-identical* to the
+pre-rename run --- every `width` and `n_fail` value unchanged, differing only in
+wall-clock jitter. As an independent check that the `switch()` still maps to the
+right function, `influence = "mat"` and `"vec"` produce different trees, and their
+node-2 cutpoints (`-1.09783` on `noise_1`, `1.46613` on `noise_2`) reproduce the
+recorded snapshot exactly. That is a real cross-check rather than a coincidence:
+on the native path the cutpoint comes from ctree's deterministic maxstat scan, so
+it is invariant to `R_test` and the seed.
 
 #pagebreak()
 
 = Silent failures
 
-== S1. A broken split kernel degrades to a stump with no diagnostic
+== S1. A broken split kernel degraded to a stump with no diagnostic <s1>
 
-*Location:* `R/helper_doTrees.R:310--319`
+*Location:* `R/helper_doTrees.R:293--345` (`argmax_split`, `warn_dead_splitter`)
 
-*Status: still live, and now demonstrable under the current API.* B1 fixed the
-particular kernel that was dead; it did not fix the mechanism that hid it.
-Injecting a throwing kernel with `local_mocked_bindings()` reproduces the exact
-first-pass symptom against today's code:
+*Status: fixed.* `argmax_split()` wraps each kernel call in `tryCatch(..., error
+= function(e) NA_real_)`, which is right for a genuinely non-identified candidate
+partition but also swallowed *programming* errors: every candidate became `NA`,
+`any(is.finite(stats))` was `FALSE`, the loop `next`ed through every covariate,
+`argmax_split()` returned `NULL`, and partykit read that as "no admissible
+split". A dead kernel and an unsplittable node were indistinguishable in the
+returned object --- which is why the original `ndt_dists()` defect had to be found
+by hand rather than by the suite.
 
-```r
-local_mocked_bindings(
-  split_max_dli = function(model, mf, subset, goes_left, ctrl) stop("kernel is broken"))
-tr <- doTrees(dat, model, covs, influence = "mat", splitter = "DLi", control = ctl_mixed)
-
-partykit::width(partykit::node_party(tr))       #> 1     (a bare stump)
-attr(tr, "igsca_info")$n_fail_resample          #> 0     (no failures recorded)
-attr(tr, "igsca_info")$n_fail_split             #> NULL  (no such counter)
-```
-
-`argmax_split()` wraps each kernel call in `tryCatch(..., error = function(e)
-NA_real_)`, which is correct for a genuinely non-identified candidate partition
-but also swallows *programming* errors. Every candidate becomes `NA`,
-`any(is.finite(stats))` is `FALSE`, the loop `next`s through every covariate,
-`argmax_split()` returns `NULL`, and partykit reads that as "no admissible split".
-A dead kernel and an unsplittable node remain indistinguishable in the returned
-object.
-
-Any future kernel that throws --- a `calculateDG()` signature change, a renamed
-argument, a typo in a new distance --- fails the same silent way. It is also why
-the original defect had to be found by hand rather than by the suite.
-
-*Fix.* Count the scans that produced nothing usable, so the two cases separate:
+The `tryCatch` is unchanged (it still has to absorb non-convergent candidates).
+What changed is that the two cases are now counted apart. `argmax_split()` tracks
+whether the kernel was *evaluated at all* on this invocation, and only a scan
+that ran and yielded nothing is recorded as a failure:
 
 ```r
-stats <- vapply(cands, function(cc) {
-  tryCatch(splitter(model, mf, subset, cc$goes_left, ctrl),
-           error = function(e) NA_real_)
-}, numeric(1))
-if (!any(is.finite(stats))) {
-  collector$n_fail_split <- collector$n_fail_split + 1L
-  next
-}
+    stats <- vapply(cands, function(cc) {
+      tryCatch(splitter(model, mf, subset, cc$goes_left, ctrl),
+               error = function(e) NA_real_)
+    }, numeric(1))
+    ## The kernel was actually evaluated on this covariate, so the invocation
+    ## counts as a scan regardless of what came back.
+    scanned <- TRUE
+    if (!any(is.finite(stats))) next
+    collector$n_split_scan <- collector$n_split_scan + 1L
+    return(cands[[which.max(stats)]]$split)
+  }
+  if (scanned) {
+    collector$n_split_scan <- collector$n_split_scan + 1L
+    collector$n_fail_split <- collector$n_fail_split + 1L
+  }
+  NULL
 ```
 
-Add `n_fail_split` to `new_collector()` and to the `igsca_info` attribute, and
-warn from `doTrees()` when a non-`"native"` splitter was requested but every node
-visited recorded a failed scan. #link(<negctl>)[Section 5.4] gives the test that
-pins this down --- the snippet above is exactly what makes it passable.
+The distinction is load-bearing: a node with no admissible partition exits via
+`if (!length(cands)) next` and never sets `scanned`, so it is *not* counted as a
+kernel failure. Both counters were added to `new_collector()` and both are
+surfaced on the returned tree:
+
+```r
+attr(tr, "igsca_info")$n_split_scan   # scans where the kernel actually ran
+attr(tr, "igsca_info")$n_fail_split   # ... of which produced nothing usable
+```
+
+A totally dead kernel --- `n_fail_split == n_split_scan` --- now also warns, via
+a new internal `warn_dead_splitter()` called from both branches of `doTrees()`
+just before the attribute is attached:
+
+```
+Warning: The 'DLi' split kernel produced no usable statistic at any of the 2
+node(s) where it was scanned, so no split point could be chosen from it and the
+tree was grown as if no split were admissible. Check that the kernel runs
+standalone via partition_stat().
+```
+
+The warning deliberately fires only on total failure. A *partial* failure (some
+nodes fine, others not) is ordinary non-convergence and would be noise as a
+warning --- it is visible in the counters instead, where it can be asserted on.
+`splitter = "native"` short-circuits the check and leaves both counters at `0`,
+since no kernel is involved.
+
+Tests are in #link(<negctl>)[section 5.4] and now pass.
 
 == S2. `control$bonferroni` is silently ignored on the ctree path
 
@@ -417,8 +455,9 @@ splitters were entirely non-functional and the suite reported green.
 
 This is now *more* misleading than before, not less. Every mixed configuration
 currently returns `width = 3`, so the blocks pass --- and they would pass
-identically if all three kernels were dead, as S1's mocked-kernel demonstration
-shows.
+identically if all three kernels were dead. S1's fix means such a tree now also
+carries `n_fail_split > 0` and emits a warning, but `expect_no_error()` reads
+neither: a warning is not an error, and nothing inspects the counters.
 
 Split them, and assert on the artefact rather than on the absence of an exception:
 
@@ -431,8 +470,9 @@ for (sp in c("FIT", "DLi", "DGi")) {
 }
 ```
 
-`expect_gt(width, 1)` is the minimum assertion that would have caught S1.
-#link(<mixed>)[Section 5] goes further.
+`expect_gt(width, 1)` is the minimum assertion that would have caught S1;
+`expect_identical(attr(tr, "igsca_info")$n_fail_split, 0L)` is now the sharper
+one. #link(<mixed>)[Section 5] goes further.
 
 == T4. Only the *partition selectors* are expensive --- mixed splitters are cheap
 
@@ -472,11 +512,12 @@ matters, keep it behind `skip_on_ci()`.
 
 == T5. Nothing asserts the diagnostics the port exists to collect
 
-No test touches `n_fail_full`, `n_fail_node`, `n_fail_resample`, or
-`root_criteria` --- the entire `new_collector()` apparatus is untested, including
-the node-local scan cache in `argmax_split()`, which is the one piece of genuinely
-subtle logic in the port (`identical()` on closures as a cache key). See
-#link(<cache>)[section 5.5].
+Partly addressed. #link(<negctl>)[Section 5.4]'s three blocks now assert
+`n_split_scan` and `n_fail_split` on all three paths (dead kernel, working
+kernel, native). Still untouched: `n_fail_full`, `n_fail_node`,
+`n_fail_resample`, `root_criteria`, and the node-local scan cache in
+`argmax_split()` --- the one piece of genuinely subtle logic in the port
+(`identical()` on closures as a cache key). See #link(<cache>)[section 5.5].
 
 #pagebreak()
 
@@ -618,23 +659,60 @@ loudly if a partykit upgrade stops honouring `ctrl$splitfun`.
 
 == Negative control --- give the suite teeth <negctl>
 
-Codify S1's failure mode instead of leaving it undetectable:
+*Status: implemented and passing* (`tests/testthat/test-postestimate_doTrees.R`,
+10 assertions across three blocks). One test alone would not have been enough:
+asserting only that a dead kernel *warns* leaves open whether a working kernel
+warns too, so the trio brackets the behaviour from both sides plus the
+kernel-free path.
 
 ```r
+ctl_mixed <- igsca_tree_control(R_test = 50L, maxdepth = 2L, max_cuts = 8L)
+
 test_that("a dead split kernel is reported, not silently a stump", {
   local_mocked_bindings(
-    split_max_dli = function(model, mf, subset, goes_left, ctrl) stop("kernel is broken"))
+    split_max_dli = function(model, mf, subset, goes_left, ctrl) {
+      stop("kernel is broken")
+    }
+  )
   set.seed(11)
-  tr <- doTrees(dat, model, covs, influence = "mat",
-                splitter = "DLi", control = ctl_mixed)
-  expect_gt(attr(tr, "igsca_info")$n_fail_split, 0L)
+  expect_warning(
+    tr <- doTrees(data = dat, model = model, covariates = covs,
+                  influence = "mat", splitter = "DLi", control = ctl_mixed),
+    "produced no usable statistic"
+  )
+  info <- attr(tr, "igsca_info")
+  expect_gt(info$n_fail_split, 0L)
+  expect_identical(info$n_fail_split, info$n_split_scan)
+  # The tree really is the stump the diagnostic is warning about
+  expect_equal(partykit::width(partykit::node_party(tr)), 1)
+})
+
+test_that("a working split kernel records scans but no failures", {
+  set.seed(11)
+  tr <- expect_no_warning(doTrees(
+    data = dat, model = model, covariates = covs,
+    influence = "mat", splitter = "DLi", control = ctl_mixed))
+  info <- attr(tr, "igsca_info")
+  expect_gt(info$n_split_scan, 0L)
+  expect_identical(info$n_fail_split, 0L)
+  expect_gt(partykit::width(partykit::node_party(tr)), 1L)
+})
+
+test_that("the native split path never touches the kernel counters", {
+  set.seed(11)
+  tr <- doTrees(data = dat, model = model, covariates = covs,
+                influence = "mat", splitter = "native", control = ctl_mixed)
+  info <- attr(tr, "igsca_info")
+  expect_identical(info$n_split_scan, 0L)
+  expect_identical(info$n_fail_split, 0L)
 })
 ```
 
-Confirmed to fail today, for the right reason: the mocked kernel yields
-`width == 1`, `n_fail_resample == 0`, and `n_fail_split == NULL`. It passes once
-S1's counter exists --- which is the right relationship between a test and an open
-bug.
+Two things worth carrying into the rest of the suite. The reduced `ctl_mixed`
+keeps all three blocks to a few seconds --- mixed splitters run no permutation
+test, so this costs nothing in fidelity (see T4). And `partykit::width()` returns
+a *double*, not an integer: `expect_identical(width(...), 1L)` fails on type
+alone. Use `expect_equal(..., 1)` or `expect_gt()`.
 
 == The scan cache <cache>
 
@@ -861,12 +939,11 @@ than accidents:
   align: (left, left, left),
   table.header([*\#*], [*Item*], [*Why in this position*]),
   [1], [S2 --- restore `cc$bonferroni <- isTRUE(control$bonferroni)`], [One line, silently wrong today, no dependencies],
-  [2], [T4 --- split `ctl_mixed` / `ctl_part` test controls], [Without it you cannot iterate on the tests at all],
+  [2], [T4 --- promote §5.4's `ctl_mixed` to the top of the file, add `ctl_part`], [The constant already exists; the other 17 calls still use bare defaults],
   [3], [T1--T3 --- regenerate snapshots, drop `length()==5`, split `expect_no_error()`], [The signature has settled, so snapshots are now safe to regenerate; T2 fails outright once T4 lands],
   [4], [§5.1--5.3 --- kernel, `argmax_split`, and splitfun-wiring tests], [Cheap, fast, and they pin the contracts the port depends on],
-  [5], [S1 + §5.4 --- add `n_fail_split`, then the negative-control test], [The test is written to fail until the counter exists],
-  [6], [T5 + §5.5 --- scan-cache tests], [Subtlest logic in the port; currently untested],
-  [7], [S3 --- leaf refits, then fix `coef()` / `plot()`], [Largest behavioural change; independent of the rest],
-  [8], [P1--P6 --- prune exports, drop `:::`, fix `\value`, validate inputs], [Cleanup; P4's rename pairs naturally with B2's settled signature],
-  [9], [§5.6 --- numeric-cutpoint fixture], [Optional; only if the mixed pairs are a real study arm],
+  [5], [T5 + §5.5 --- scan-cache tests], [Subtlest logic in the port; the only collector field still unasserted],
+  [6], [S3 --- leaf refits, then fix `coef()` / `plot()`], [Largest behavioural change; independent of the rest],
+  [7], [P1--P6 --- prune exports, drop `:::`, fix `\value`, validate inputs], [Cleanup; P4's rename pairs naturally with B2's settled signature. Note `warn_dead_splitter()` is already `@noRd`],
+  [8], [§5.6 --- numeric-cutpoint fixture], [Optional; only if the mixed pairs are a real study arm],
 )

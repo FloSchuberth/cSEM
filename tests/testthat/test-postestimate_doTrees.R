@@ -216,3 +216,67 @@ test_that("IGSCA Trees Conditional Test on Geodesic Distance Runs as expected", 
     )
   })
 })
+
+# Dead split kernel ------------------------------------------------------
+# argmax_split() turns a throwing kernel into NA, which partykit reads as "no
+# admissible split" -- so a broken kernel yields a clean-looking stump. These
+# tests pin the diagnostic that separates that from a genuinely unsplittable
+# node. Mixed splitters run no permutation test, so a reduced control keeps
+# these to a couple of seconds.
+ctl_mixed <- igsca_tree_control(R_test = 50L, maxdepth = 2L, max_cuts = 8L)
+
+test_that("a dead split kernel is reported, not silently a stump", {
+  local_mocked_bindings(
+    split_max_dli = function(model, mf, subset, goes_left, ctrl) {
+      stop("kernel is broken")
+    }
+  )
+  set.seed(11)
+  expect_warning(
+    tr <- doTrees(
+      data = dat,
+      model = model,
+      covariates = covs,
+      influence = "mat",
+      splitter = "DLi",
+      control = ctl_mixed
+    ),
+    "produced no usable statistic"
+  )
+  info <- attr(tr, "igsca_info")
+  expect_gt(info$n_fail_split, 0L)
+  expect_identical(info$n_fail_split, info$n_split_scan)
+  # The tree really is the stump the diagnostic is warning about
+  expect_equal(partykit::width(partykit::node_party(tr)), 1)
+})
+
+test_that("a working split kernel records scans but no failures", {
+  set.seed(11)
+  tr <- expect_no_warning(doTrees(
+    data = dat,
+    model = model,
+    covariates = covs,
+    influence = "mat",
+    splitter = "DLi",
+    control = ctl_mixed
+  ))
+  info <- attr(tr, "igsca_info")
+  expect_gt(info$n_split_scan, 0L)
+  expect_identical(info$n_fail_split, 0L)
+  expect_gt(partykit::width(partykit::node_party(tr)), 1L)
+})
+
+test_that("the native split path never touches the kernel counters", {
+  set.seed(11)
+  tr <- doTrees(
+    data = dat,
+    model = model,
+    covariates = covs,
+    influence = "mat",
+    splitter = "native",
+    control = ctl_mixed
+  )
+  info <- attr(tr, "igsca_info")
+  expect_identical(info$n_split_scan, 0L)
+  expect_identical(info$n_fail_split, 0L)
+})

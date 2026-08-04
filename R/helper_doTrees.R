@@ -290,6 +290,7 @@ argmax_split <- function(
   whichvar,
   ctrl
 ) {
+  scanned <- FALSE
   for (j in whichvar) {
     hit <- identical(collector$scan_subset, subset) &&
       identical(collector$scan_splitter, splitter) &&
@@ -317,12 +318,46 @@ argmax_split <- function(
       },
       numeric(1)
     )
+    ## The kernel was actually evaluated on this covariate, so the invocation
+    ## counts as a scan regardless of what came back.
+    scanned <- TRUE
     if (!any(is.finite(stats))) {
       next
     }
+    collector$n_split_scan <- collector$n_split_scan + 1L
     return(cands[[which.max(stats)]]$split)
   }
+  ## Falling through after a scan means the kernel ran and never returned a
+  ## finite statistic -- the signature of a broken kernel, which tryCatch above
+  ## turns into NA and partykit would otherwise read as "no admissible split".
+  ## A node with no admissible partition never sets `scanned`, so the two cases
+  ## stay distinguishable in the collector.
+  if (scanned) {
+    collector$n_split_scan <- collector$n_split_scan + 1L
+    collector$n_fail_split <- collector$n_fail_split + 1L
+  }
   NULL
+}
+
+#' Warn when a requested split kernel never produced a usable statistic
+#'
+#' A kernel that throws is caught inside [argmax_split()] and turned into `NA`,
+#' which partykit reads as "no admissible split" -- indistinguishable from a
+#' genuinely unsplittable node unless the failed scans are counted. Warn when
+#' every scan the kernel was asked for came back empty.
+#' @noRd
+warn_dead_splitter <- function(collector, splitter) {
+  n <- collector$n_split_scan
+  if (splitter == "native" || n == 0L || collector$n_fail_split < n) {
+    return(invisible(NULL))
+  }
+  warning2(paste0(
+    "The '", splitter, "' split kernel produced no usable statistic at any of ",
+    "the ", n, " node(s) where it was scanned, so no split point could be ",
+    "chosen from it and the tree was grown as if no split were admissible. ",
+    "Check that the kernel runs standalone via partition_stat()."
+  ))
+  invisible(NULL)
 }
 
 
@@ -416,6 +451,10 @@ new_collector <- function() {
   e$n_fail_full <- 0L
   e$n_fail_node <- 0L
   e$n_fail_resample <- 0L
+  # Split-kernel scans: how many argmax_split() calls actually evaluated the
+  # kernel, and how many of those produced nothing usable. See argmax_split().
+  e$n_split_scan <- 0L
+  e$n_fail_split <- 0L
   e$scan <- list()
   e$scan_subset <- NULL
   e$scan_splitter <- NULL

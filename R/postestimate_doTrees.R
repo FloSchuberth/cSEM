@@ -143,12 +143,17 @@ doTrees <- function(
     # TODO: Do I need to pass an explicit converged function?
     ret <- partykit::ctree(fml, data = data, ytrafo = ytrafo, control = cc)
     class(ret) <- c("igsca_tree", class(ret))
+    warn_dead_splitter(collector, splitter)
     attr(ret, "igsca_info") <- list(
       n_fail_full = collector$n_fail_full,
       n_fail_node = collector$n_fail_node,
       ## 0 on the native path (COIN resampling lives inside libcoin); counts
       ## failed candidate MGA fits when a mixed-pair splitter is in play.
       n_fail_resample = collector$n_fail_resample,
+      ## Split-kernel scans: n_fail_split counts the scans that produced no
+      ## finite statistic. Both stay 0 when splitter = "native".
+      n_split_scan = collector$n_split_scan,
+      n_fail_split = collector$n_fail_split,
       root_criteria = root_criteria(ret)
     )
     return(ret)
@@ -230,10 +235,13 @@ doTrees <- function(
     )
     ret$terms <- d$terms$all
     class(ret) <- c("igsca_tree", "constparty", class(ret))
+    warn_dead_splitter(collector, splitter)
     attr(ret, "igsca_info") <- list(
       n_fail_full = collector$n_fail_full,
       n_fail_node = collector$n_fail_node,
       n_fail_resample = collector$n_fail_resample,
+      n_split_scan = collector$n_split_scan,
+      n_fail_split = collector$n_fail_split,
       root_criteria = root_criteria(ret)
     )
     return(ret)
