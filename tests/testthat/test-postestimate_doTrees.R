@@ -27,6 +27,8 @@ test_that("IGSCA Trees Conditional Test on Matrix of Residuals Runs as expected"
     influence = influence_mat,
     control = igsca_tree_control(),
   )
+  # Dirty substitute for snapshot
+  expect_true(length(trees_out) == 5)
   expect_snapshot(trees_out)
 
 })
@@ -44,5 +46,6 @@ test_that("IGSCA Trees Conditional Test on Vector of Residuals Runs as expected"
     influence = influence_vec,
     control = igsca_tree_control(),
   )
+  expect_true(length(trees_out) == 5)
   expect_snapshot(trees_out)
 })

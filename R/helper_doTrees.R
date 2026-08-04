@@ -126,7 +126,7 @@ try_fit <- function(.data, .model, .id = NULL) {
     error = function(e) NULL
   ))
   ok <- !is.null(fit) &&
-    isTRUE(tryCatch(csem_converged(fit), error = function(e) FALSE)) # That parameter estimates are proper solutions is the same bar that Hwang et al. (2021) IGSCA paper put
+    isTRUE(tryCatch(csem_converged(fit), error = function(e) FALSE)) 
   list(fit = fit, ok = ok)
 }
 
@@ -184,6 +184,18 @@ argmax_split <- function(
 }
 
 
+#' Title
+#'
+#' @param j
+#' @param z
+#' @param zs
+#' @param max_cuts
+#' @param minbucket
+#'
+#' @returns
+#'
+#' @export
+#' @examples
 candidate_partitions <- function(j, z, zs, max_cuts, minbucket) {
   keep_min <- function(cands) {
     Filter(
@@ -252,6 +264,10 @@ candidate_partitions <- function(j, z, zs, max_cuts, minbucket) {
   } else list()
 }
 
+#' Title
+#'
+#' @returns List
+#'
 new_collector <- function() {
   e <- new.env(parent = emptyenv())
   e$root_seen <- FALSE      # first trafo call = root fit (full vs node fail)
@@ -265,11 +281,22 @@ new_collector <- function() {
 }
 
 
+
+
+#' Get root-node criteria of igsca tree
+#'
 #' Root-node criteria matrix as stored by extree/ctree (saveinfo = TRUE):
 #' columns = tested covariates (all-NA columns dropped by extree), rows
 #' "statistic" / "p.value" (both raw scale) / "criterion" (log(1 - p) with
 #' extree's own statistic-rank tie-break already added). NULL when the root
 #' trafo failed (no test ran).
+#' 
+#' @param tree
+#'
+#' @returns Vector
+#'
+#' @importFrom partykit info_node node_party
+#' @export
 root_criteria <- function(tree) {
   info <- partykit::info_node(partykit::node_party(tree))
   if (is.null(info)) {
@@ -278,7 +305,17 @@ root_criteria <- function(tree) {
   info$criterion
 }
 
-## Methods: print falls through to constparty; coef/plot follow
+#' Get coefficients of tree object
+#'
+#' @param object
+#' @param node
+#' @param drop
+#' @param ...
+#'
+#' @returns List of Vectors
+#'
+#' @export
+#' @importFrom partykit nodeids info_node nodeapply
 coef.igsca_tree <- function(object, node = NULL, drop = TRUE, ...) {
   if (is.null(node)) {
     node <- partykit::nodeids(object, terminal = TRUE)
@@ -297,6 +334,17 @@ coef.igsca_tree <- function(object, node = NULL, drop = TRUE, ...) {
   }
 }
 
+#' Title
+#'
+#' @param x
+#' @param terminal_panel
+#' @param FUN
+#' @param tp_args
+#' @param ...
+#'
+#' @returns Graphic
+#'
+#' @export
 plot.igsca_tree <- function(x, terminal_panel = NULL, FUN = NULL, tp_args = NULL, ...) {
   if (is.null(terminal_panel)) {
     if (is.null(FUN)) {

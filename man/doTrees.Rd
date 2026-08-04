@@ -5,62 +5,26 @@
 \title{Recursive Partitioning Algorithm for \emph{csem} GSCA Models}
 \usage{
 doTrees(
-  .object,
-  .covariates,
-  .model,
-  .data = .object$Information$Arguments$.data,
-  .ctree_control = partykit::ctree_control(),
-  .igsca_tree_control = igsca_tree_control(),
-  influence = influence_vec,
-  .approach_weights = .object$Information$Arguments$.approach_weights,
-  .iter_max = .object$Information$Arguments$.iter_max,
-  .tolerance = .object$Information$Arguments$.tolerance,
-  .disattenuate = .object$Information$Arguments$.disattenuate,
-  .dominant_indicators = .object$Information$Arguments$.dominant_indicators,
-  .conv_criterion = .object$Information$Arguments$.conv_criterion
+  data,
+  model,
+  covariates,
+  influence = influence_ssr,
+  splitter = NULL,
+  control = igsca_tree_control()
 )
 }
 \arguments{
-\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
-
-\item{.covariates}{Character vector. List of variables for \code{\link[=doTrees]{doTrees()}}
-to consider splitting on. See \link[partykit:mob]{partykit::mob}}
-
-\item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
-or a \link{cSEMModel} list.}
-
-\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandardized
+\item{data}{A \code{data.frame} or a \code{matrix} of standardized or unstandardized
 data (indicators/items/manifest variables). Possible column types or classes
 of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or "\code{integer}"),
 "\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (converted to factor),
 or a mix of several types.}
 
-\item{.approach_weights}{Character string. Approach used to
-obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
-"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
-or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
+\item{model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
+or a \link{cSEMModel} list.}
 
-\item{.iter_max}{Integer. The maximum number of iterations allowed.
-If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
-If the algorithm exceeds the specified number, weights of iteration step
-\code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
-
-\item{.tolerance}{Double. The tolerance criterion for convergence.
-Defaults to \code{1e-05}.}
-
-\item{.disattenuate}{Logical. Should composite/proxy correlations
-be disattenuated to yield consistent loadings and path estimates if at least
-one of the construct is modeled as a common factor? Defaults to \code{TRUE}.}
-
-\item{.dominant_indicators}{A character vector of \code{"construct_name" = "indicator_name"} pairs,
-where \code{"indicator_name"} is a character string giving the name of the dominant indicator
-and \code{"construct_name"} a character string of the corresponding construct name.
-Dominant indicators may be specified for a subset of the constructs.
-Default to \code{NULL}.}
-
-\item{.conv_criterion}{Character string. The criterion to use for the convergence check.
-One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
-to "\emph{diff_absolute}".}
+\item{covariates}{Character vector. List of variables for \code{\link[=doTrees]{doTrees()}}
+to consider splitting on. See \link[partykit:mob]{partykit::mob}}
 }
 \value{
 cSEM Tree model of class \code{modelparty} and \code{party}.
