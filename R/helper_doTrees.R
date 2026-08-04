@@ -74,6 +74,21 @@ bdiagFit <- function(.object    = NULL,
 
 
 
+#' Title
+#'
+#' @param alpha
+#' @param bonferroni
+#' @param minbucket
+#' @param minsplit
+#' @param maxdepth
+#' @param max_cuts
+#' @param R_test
+#' @param coin_distribution
+#'
+#' @returns
+#'
+#' @export
+#' @examples
 igsca_tree_control <- function(alpha = 0.05,
                                bonferroni = FALSE,
                                minbucket = 30L,
@@ -94,18 +109,46 @@ igsca_tree_control <- function(alpha = 0.05,
   )
 }
 
+
 #' Casewise sum of squared GSCA residuals (n x 1) -- COIN_ssr influence.
+#'
+#' @param E
+#'
+#' @returns
+#'
+#' @export
+#' @examples
 influence_vec <- function(E) {
   matrix(rowSums(E^2), ncol = 1L)
 }
 
 
+
 #' Casewise squared-residual matrix (n x q, multivariate) -- COIN_mat.
+#'
+#' @param E
+#'
+#' @returns
+#'
+#' @export
+#' @examples
 influence_mat <- function(E) {
   E^2
 }
 
+
+#' Title
+#' 
 #' `.id = NULL` yields the pooled single-group fit; `.id = "group"` the MGA fit.
+#' 
+#' @param .data
+#' @param .model
+#' @param .id
+#'
+#' @returns
+#'
+#' @export
+#' @examples
 fit_csem <- function(.data, .model, .id = NULL) {
   csem(
     .data = .data,
@@ -120,6 +163,16 @@ fit_csem <- function(.data, .model, .id = NULL) {
   )
 }
 
+#' Title
+#'
+#' @param .data
+#' @param .model
+#' @param .id
+#'
+#' @returns
+#'
+#' @export
+#' @examples
 try_fit <- function(.data, .model, .id = NULL) {
   fit <- suppressWarnings(tryCatch(
     fit_csem(.data, .model, .id),
@@ -130,6 +183,14 @@ try_fit <- function(.data, .model, .id = NULL) {
   list(fit = fit, ok = ok)
 }
 
+#' Title
+#'
+#' @param fit
+#'
+#' @returns
+#'
+#' @export
+#' @examples
 csem_converged <- function(fit) {
   if (inherits(fit, "cSEMResults_multi")) {
     all(vapply(fit, function(x) sum(verify(x)) == 0, logical(1)))
@@ -139,6 +200,87 @@ csem_converged <- function(fit) {
 }
 
 
+#' Title
+#'
+#' Generic extree_fit() driver for the partition family. `d` is an
+#' extree_data object; `selector` already satisfies extree_fit's selectfun
+#' contract and is passed through VERBATIM; `splitter` is a statistic kernel
+#' argmaxed by argmax_split() via the thin splitfun closure below. ctrl must
+#' carry $collector (and, for IGSCA use, $model + $indicators for the
+#' testers). Exposed separately from igsca_tree() so
+#' ctree_equivalence_proof.R can drive it with Gaussian fixtures (no IGSCA
+#' fitting). Note: on this path a trafo's estfun (if any) is node-local
+#' (rows = subset); only the native ctree path needs the full-n scatter.
+#' 
+#' @param d
+#' @param trafo
+#' @param selector
+#' @param splitter
+#' @param ctrl
+#'
+#' @returns
+#'
+#' @export
+#' @importFrom partykit ctree_control
+grow_extree <- function(d, trafo, selector, splitter, ctrl) {
+  collector <- ctrl$collector
+  splitfun <- function(model, trafo, data, subset, weights, whichvar, ctrl) {
+    argmax_split(
+      splitter,
+      collector,
+      model,
+      model.frame(data),
+      subset,
+      whichvar,
+      ctrl
+    )
+  }
+
+  ## ctree_control() is only a scaffold: it supplies the extree knobs we do
+  ## not own (criterion, splittry, saveinfo, ...). Everything igsca-specific
+  ## is overridden from ctrl below; the trailing loop also carries the tester
+  ## config (model, indicators, collector, R_test, max_cuts, ...) into the
+  ## ctrl the callbacks receive.
+  ectrl <- partykit::ctree_control()
+  ectrl$update <- TRUE
+  ectrl$logmincriterion <- log(1 - ctrl$alpha)
+  ectrl$maxsurrogate <- 0L
+  ectrl$mtry <- Inf
+  for (nm in names(ctrl)) {
+    ectrl[[nm]] <- ctrl[[nm]]
+  }
+
+  n <- nrow(model.frame(d))
+  fit <- partykit::extree_fit(
+    data = d,
+    trafo = trafo,
+    converged = TRUE,
+    selectfun = selector,
+    splitfun = splitfun,
+    svselectfun = selector,
+    svsplitfun = splitfun,
+    partyvars = d$variables$z,
+    subset = seq_len(n),
+    weights = rep.int(1L, n),
+    ctrl = ectrl
+  )
+  fit$nodes
+}
+
+#' Title
+#'
+#' @param splitter
+#' @param collector
+#' @param model
+#' @param mf
+#' @param subset
+#' @param whichvar
+#' @param ctrl
+#'
+#' @returns
+#'
+#' @export
+#' @examples
 argmax_split <- function(
   splitter,
   collector,
@@ -362,4 +504,408 @@ plot.igsca_tree <- function(x, terminal_panel = NULL, FUN = NULL, tp_args = NULL
     tp_args <- NULL
   }
   partykit::plot.party(x, terminal_panel = terminal_panel, tp_args = tp_args, ...)
+}
+
+
+
+# Partition-family selectors & splitters for igsca_tree() -------------------
+#
+# The five study methods (registry cut 2026-07-14):
+#   COIN_ssr / COIN_mat     -> igsca_ctree() + influence_ssr/influence_mat
+#                              (native partykit::ctree; nothing lives here)
+#   NPT / NDT_DGi / NDT_DLi -> the plain selector/splitter functions below.
+#
+# Selector contract (= extree_fit's selectfun, passed through verbatim; the
+# formal names below are checked by extree_fit and must not change):
+#   select_*(model, trafo, data, subset, weights, whichvar, ctrl) ->
+#     list(criteria = 2 x p matrix, rows "statistic" [log scale] and
+#          "p.value" [log1p(-p) scale], columns named like model.frame(data))
+# Splitter contract (statistic kernel argmaxed by the engine's splitfun):
+#   split_*(model, mf, subset, goes_left, ctrl) -> scalar observed statistic
+#
+# Statistic-first scan (spec section 3): observed statistic at every
+# candidate (one 2-group MGA fit each; the node's pooled fit comes free from
+# the trafo as model$object), argmax per covariate, permutation p-value ONLY
+# at the argmax. The within-covariate selection effect is deliberately
+# uncorrected -- that bias is Study 1's measurand. Scan results are cached in
+# ctrl$collector so a matched splitter costs nothing; a mixed pair (any
+# select_* with any split_*) simply re-scans with its own kernel.
+#
+# Requires igsca_tree.R sourced first (candidate_partitions) and
+# R/MGA/csem_test_helpers.R (try_fit, idx_permutation, ndt_dists).
+
+
+
+#' Title
+#' 
+#' Node data for one candidate partition: children as `group` levels 1/2.
+#' 
+#' @param mf
+#' @param subset
+#' @param indicators
+#' @param goes_left
+#'
+#' @returns
+#'
+#' @export
+#' @examples
+node_group_data <- function(mf, subset, indicators, goes_left) {
+  d <- mf[subset, indicators, drop = FALSE]
+  cbind(group = factor(ifelse(goes_left, 1L, 2L), levels = c(1L, 2L)), d)
+}
+
+
+
+#' Title
+#'
+#' Pooled model-implied VCVs replicated to 2 blocks (constant per node;
+#' cached in the collector under $ndt_pools keyed by the subset).
+#' 
+#' @param single_fit
+#'
+#' @returns
+#'
+#' @export
+#' @examples
+ndt_pools <- function(single_fit) {
+  list(
+    Sc = cSEM:::bdiagFit(single_fit, .n_blocks = 2L, .type_vcv = "construct"),
+    Si = cSEM:::bdiagFit(single_fit, .n_blocks = 2L, .type_vcv = "indicator")
+  )
+}
+
+#' Title
+#'
+#' 
+#' Observed statistic for one candidate partition. `stat_kind` is "FITdiff"
+#' (NPT) or an ndt_dists() distance name -- "DGi"/"DLi" only: Study 1 works
+#' with the model-implied indicator VCV, never the construct VCV (the shared
+#' helper also computes "DGc"/"DLc", which stay unused here). Counts every
+#' failed auxiliary fit into collector$n_fail_resample (recorded, never
+#' redrawn).
+#' 
+#' @param stat_kind
+#' @param model
+#' @param mf
+#' @param subset
+#' @param goes_left
+#' @param ctrl
+#'
+#' @returns
+#'
+#' @export
+#' @examples
+partition_stat <- function(stat_kind, model, mf, subset, goes_left, ctrl) {
+  coll <- ctrl$collector
+  d <- node_group_data(mf, subset, ctrl$indicators, goes_left)
+  mga <- try_fit(d, ctrl$model, .id = "group")
+  if (!mga$ok) { coll$n_fail_resample <- coll$n_fail_resample + 1L; return(NA_real_) }
+  if (stat_kind == "FITdiff") {
+    if (is.null(model$object)) {
+      return(NA_real_)
+    }
+    val <- tryCatch(
+      cSEM::calculateFIT(mga$fit) - cSEM::calculateFIT(model$object),
+      error = function(e) NULL
+    )
+    if (is.null(val)) {
+      coll$n_fail_resample <- coll$n_fail_resample + 1L
+      return(NA_real_)
+    }
+    return(val)
+  }
+  ## NDT distances need the node's pooled 2-block VCVs (computed once/node).
+  ## cSEM internals (bdiagFit/calculateDG/calculateDL) can throw; guard so no
+  ## exception escapes the selector (would make SimDesign redraw the rep).
+  ## Invariant: within one tree-growing call, `subset` uniquely identifies a
+  ## node and model$object (the pooled fit) is invariant per node, so this
+  ## single-slot cache keyed on subset alone cannot collide across nodes.
+  ds <- tryCatch(
+    {
+      if (
+        is.null(coll$ndt_pools_subset) ||
+          !identical(coll$ndt_pools_subset, subset)
+      ) {
+        if (is.null(model$object)) {
+          return(NA_real_)
+        }
+        coll$ndt_pools <- ndt_pools(model$object)
+        coll$ndt_pools_subset <- subset
+      }
+      ndt_dists(coll$ndt_pools$Sc, coll$ndt_pools$Si, mga$fit)
+    },
+    error = function(e) NULL
+  )
+  if (is.null(ds)) { coll$n_fail_resample <- coll$n_fail_resample + 1L; return(NA_real_) }
+  unname(ds[stat_kind])
+}
+
+
+
+#' Title
+#'
+#' 
+#' Scan all candidates of covariate j; returns NULL when nothing admissible.
+#' 
+#' @param stat_kind
+#' @param j
+#' @param model
+#' @param mf
+#' @param subset
+#' @param ctrl
+#'
+#' @returns
+#'
+#' @export
+#' @examples
+scan_covariate <- function(stat_kind, j, model, mf, subset, ctrl) {
+  cands <- candidate_partitions(j, mf[[j]], mf[[j]][subset],
+                                ctrl$max_cuts, ctrl$minbucket)
+  if (!length(cands)) return(NULL)
+  stats <- vapply(
+    cands,
+    function(cc) {
+      partition_stat(stat_kind, model, mf, subset, cc$goes_left, ctrl)
+    },
+    numeric(1)
+  )
+  if (!any(is.finite(stats))) return(NULL)
+  k <- which.max(stats)
+  list(stat = stats[k], split = cands[[k]]$split, goes_left = cands[[k]]$goes_left)
+}
+
+#' Title
+#'
+#' One-sided permutation p-value at the argmax partition (post-BootBalVerify
+#' Study 0 conventions, 2026-07-13): permute the child labels, null >= obs
+#' without abs(). Failed resamples are dropped from the null (finite counts)
+#' and counted by partition_stat.
+#' 
+#' @param stat_kind
+#' @param obs
+#' @param model
+#' @param mf
+#' @param subset
+#' @param goes_left
+#' @param ctrl
+#'
+#' @returns
+#'
+#' @export
+#' @examples
+permutation_pvalue <- function(stat_kind, obs, model, mf, subset, goes_left, ctrl) {
+  n <- length(subset)
+  R <- ctrl$R_test
+  perm <- idx_permutation(n, R)
+  nul <- rep(NA_real_, R)
+  for (r in seq_len(R)) {
+    nul[r] <- partition_stat(
+      stat_kind,
+      model,
+      mf,
+      subset,
+      goes_left[perm[r, ]],
+      ctrl
+    )
+  }
+  (1 + sum(nul >= obs, na.rm = TRUE)) / (sum(is.finite(nul)) + 1)
+}
+
+
+#' Title
+#'
+#' Shared worker behind the three partition selectors: statistic-first scan
+#' per covariate, cache the argmax for the splitfun, permutation p at the
+#' argmax only. `matched_split_fn` is the splitter function whose kernel
+#' equals this selector's scan statistic -- the cache key grow_extree's
+#' splitfun compares against with identical().
+#' 
+#' @param stat_kind
+#' @param matched_split_fn
+#' @param model
+#' @param data
+#' @param subset
+#' @param whichvar
+#' @param ctrl
+#'
+#' @returns
+#'
+#' @export
+#' @examples
+partition_select <- function(stat_kind, matched_split_fn,
+                             model, data, subset, whichvar, ctrl) {
+  coll <- ctrl$collector
+  mf <- model.frame(data)
+  crit <- matrix(
+    NA_real_,
+    2L,
+    ncol(mf),
+    dimnames = list(c("statistic", "p.value"), names(mf))
+  )
+  ## (re)arm the node-local scan cache for the engine's splitfun
+  coll$scan <- list()
+  coll$scan_subset <- subset
+  coll$scan_splitter <- matched_split_fn
+  if (is.null(model$object)) return(list(criteria = crit))  # node fit failed
+  for (j in whichvar) {
+    sc <- scan_covariate(stat_kind, j, model, mf, subset, ctrl)
+    if (is.null(sc)) {
+      next
+    }
+    coll$scan[[as.character(j)]] <- sc
+    p <- permutation_pvalue(
+      stat_kind,
+      sc$stat,
+      model,
+      mf,
+      subset,
+      sc$goes_left,
+      ctrl
+    )
+    if (!is.finite(p)) {
+      next
+    }
+    ## One-sided world: negative observed statistics must not out-rank
+    ## positive ones on the log scale -- floor them at eps instead of
+    ## folding sign via abs().
+    crit["statistic", j] <- log(max(sc$stat, .Machine$double.eps))
+    crit["p.value", j] <- log1p(-min(p, 1 - 1e-12))
+  }
+  list(criteria = crit)
+}
+
+## The three partition selectors and the splitter kernels: deliberately
+## repetitive plain functions (no factories). Each selector pins its scan
+## statistic and names its matched splitter; each splitter is the bare
+## observed-statistic kernel. Any selector can be paired with any splitter
+## in igsca_tree() -- an unmatched pair just re-scans (cache miss) -- and
+## every kernel can also serve as igsca_ctree()'s mixed-pair `splitter`
+## (COIN variable selection + model-comparison split point, 2026-07-16).
+## Distances are model-implied INDICATOR-VCV only (dGi/dLi) -- Study 1 never
+## works with the construct VCV (user correction 2026-07-16).
+
+#' Title
+#'
+#' @param model
+#' @param trafo
+#' @param data
+#' @param subset
+#' @param weights
+#' @param whichvar
+#' @param ctrl
+#'
+#' @returns
+#'
+#' @export
+#' @examples
+select_npt <- function(model, trafo, data, subset, weights, whichvar, ctrl) {
+  partition_select(
+    "FITdiff",
+    split_max_fitdiff,
+    model,
+    data,
+    subset,
+    whichvar,
+    ctrl
+  )
+}
+
+#' Title
+#'
+#' @param model
+#' @param trafo
+#' @param data
+#' @param subset
+#' @param weights
+#' @param whichvar
+#' @param ctrl
+#'
+#' @returns
+#'
+#' @export
+#' @examples
+select_ndt_dgi <- function(
+  model,
+  trafo,
+  data,
+  subset,
+  weights,
+  whichvar,
+  ctrl
+) {
+  partition_select("DGi", split_max_dgi, model, data, subset, whichvar, ctrl)
+}
+
+#' Title
+#'
+#' @param model
+#' @param trafo
+#' @param data
+#' @param subset
+#' @param weights
+#' @param whichvar
+#' @param ctrl
+#'
+#' @returns
+#'
+#' @export
+#' @examples
+select_ndt_dli <- function(
+  model,
+  trafo,
+  data,
+  subset,
+  weights,
+  whichvar,
+  ctrl
+) {
+  partition_select("DLi", split_max_dli, model, data, subset, whichvar, ctrl)
+}
+
+#' Title
+#'
+#' @param model
+#' @param mf
+#' @param subset
+#' @param goes_left
+#' @param ctrl
+#'
+#' @returns
+#'
+#' @export
+#' @examples
+split_max_fitdiff <- function(model, mf, subset, goes_left, ctrl) {
+  partition_stat("FITdiff", model, mf, subset, goes_left, ctrl)
+}
+
+#' Title
+#'
+#' @param model
+#' @param mf
+#' @param subset
+#' @param goes_left
+#' @param ctrl
+#'
+#' @returns
+#'
+#' @export
+#' @examples
+split_max_dgi <- function(model, mf, subset, goes_left, ctrl) {
+  partition_stat("DGi", model, mf, subset, goes_left, ctrl)
+}
+
+#' Title
+#'
+#' @param model
+#' @param mf
+#' @param subset
+#' @param goes_left
+#' @param ctrl
+#'
+#' @returns
+#'
+#' @export
+#' @examples
+split_max_dli <- function(model, mf, subset, goes_left, ctrl) {
+  partition_stat("DLi", model, mf, subset, goes_left, ctrl)
 }
