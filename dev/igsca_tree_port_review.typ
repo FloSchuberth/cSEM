@@ -51,10 +51,14 @@ then:
   both distributions. #link(<testtype>)[Section 3.2.1] now answers the `testtype`
   TODO properly, including why the asymptotic route is genuine COIN inference and
   why partykit's "Bonferroni" is really Šidák.
+- *Sixth pass* --- S3 fixed: leaves are refit after growing and attached to the
+  terminal nodes, so `coef()` and `plot()` work and the tree finally carries a
+  per-leaf IGSCA fit. Inner-node objects are kept, with an opt-in switch.
 
-Both blockers and two of the three silent failures are now cleared, and every
-`influence` #sym.times `splitter` combination runs. What remains is S3, a test
-suite that cannot detect it, and packaging cleanup.
+*All behavioural findings are now closed.* Every `influence` #sym.times
+`splitter` combination runs, and the three silent failures are fixed. What
+remains is a test suite that still cannot detect regressions in most of it
+(T1--T3, T5) and packaging cleanup (P1--P6).
 #link(<mixed>)[Section 5] sets out how to test the mixed-splitter configurations;
 its injection recipes have been rewritten for the string-valued API, and 5.4 is
 now shipped code rather than a proposal.
@@ -70,7 +74,7 @@ now shipped code rather than a proposal.
   [B2], [`splitter` is a function in one branch, a string in the other], [#ok],
   [S1], [Broken split kernel degrades to a stump with no diagnostic], [#ok],
   [S2], [`control$bonferroni` silently ignored on the ctree path], [#ok],
-  [S3], [`coef()` / `plot()` empty for any tree that splits], [#open],
+  [S3], [`coef()` / `plot()` empty for any tree that splits], [#ok],
   [T1], [Snapshots stale (`trees_out` vs `trees_mx`)], [#open],
   [T2], [`length(tree) == 5` is a disguised structural assertion], [#open],
   [T3], [`expect_no_error()` cannot see the real failure mode], [#open],
@@ -238,7 +242,7 @@ it is invariant to `R_test` and the seed.
 
 #pagebreak()
 
-= Silent failures
+= Silent failures --- all three now resolved
 
 == S1. A broken split kernel degraded to a stump with no diagnostic <s1>
 
@@ -424,56 +428,87 @@ which reaches all four combinations --- MC#sym.plus.minus adjustment, asymptotic
 #sym.plus.minus adjustment --- with no post-hoc surgery on the control object.
 Optional: the current code is correct as it stands.
 
-== S3. `coef()` and `plot()` labels are empty for any tree that splits
+== S3. `coef()` and `plot()` were empty for any tree that splits <s3>
 
-*Location:* `R/helper_doTrees.R:461--477` (`coef.igsca_tree`), `R/helper_doTrees.R:490--507` (`plot.igsca_tree`)
+*Location:* `R/helper_doTrees.R` (`attach_leaf_fits`, `drop_inner_node_objects`,
+`coef.igsca_tree`, `plot.igsca_tree`); wired in at
+`R/postestimate_doTrees.R:150--160` and `:230--240`
 
-Unchanged. Both methods read `nobs` / `objfun` out of `info_node()` at *terminal*
-nodes. partykit only calls the trafo at nodes it attempts to split, so leaves
-carry no info at all:
+*Status: fixed.* Both methods read `nobs` / `objfun` out of `info_node()` at
+*terminal* nodes, but partykit only calls the trafo at nodes it *attempts to
+split*, so leaves arrived with `info = NULL`. `coef()` returned `NULL` for every
+tree with at least one split (it only appeared to work on stumps, where the root
+*is* the leaf) and `plot()` drew unlabelled boxes, because `sprintf("n = %s",
+NULL)` yields `character(0)` rather than erroring.
 
-```r
-r <- doTrees(dat, model, covs, influence = "mat",
-             control = igsca_tree_control(R_test = 50L, maxdepth = 1L))
-# node 1 -> info names: criterion,p.value,converged,objfun,object,nobs
-# node 2 -> info names: NULL
-# node 3 -> info names: NULL
+The deeper problem was not the methods: *the tree carried no per-leaf IGSCA fit
+at all*. A new `attach_leaf_fits()` refits the model once per leaf after growing
+and writes the result into the terminal nodes' own `info`, so both methods now
+work through the ordinary `info_node()` route rather than a side table.
 
-coef(r)
-#> NULL
+Two properties were verified before choosing that design:
+
+- `as.list()` / `as.partynode()` round-trips a grown tree *identically*, so
+  rewriting only the leaf entries leaves the rest of the structure untouched.
+- Terminal-node `info` is invisible to `print()` --- partykit's
+  `formatinfo_node()` falls back to `"*"` for list-valued info --- and that holds
+  even when the info carries a full `cSEMResults`. Attaching leaf fits therefore
+  does not change printed output or disturb the snapshots.
+
+Measured, `maxdepth = 2` on the ctree path and a `FIT` #sym.times `FIT`
+partition tree:
+
+```
+ctree      coef()          nobs   objfun        partition  coef()   nobs   objfun
+             node 3          68       NA                     node 2   500  3553.173
+             node 4         432  3076.803                    node 3   500  3438.003
+             node 5         500  3438.003
 ```
 
-`coef()` returns `NULL` for every tree with at least one split (it only appears to
-work on stumps, where the root *is* the leaf). `plot()` does not error ---
-`sprintf("n = %s", NULL)` yields `character(0)` --- it just draws unlabelled
-terminal boxes, which is worse than failing.
+Both previously returned `NULL`. `coef()` also gained row names (node ids) and
+now emits an `NA` row instead of silently dropping a node --- `rbind()` discards
+`NULL`s, which is precisely how the method used to collapse a whole tree to
+`NULL`. `plot()`'s default panel prints `?` rather than an empty box when a value
+is missing. `objfun` is the sum of squared casewise GSCA residuals, matching what
+the ctree trafo stores on inner nodes; on the partition path it is the *only*
+source of an SSR, since that trafo sets `objfun = NA_real_` throughout.
 
-This is a functional gap, not just a method bug: *the returned tree contains no
-per-leaf IGSCA fit*, which is presumably the main thing a user wants from a SEM
-tree. The leaf models are never estimated.
+*What the fix exposes.* Leaf refits can fail, and now say so: a new
+`n_fail_leaf` counter joins the `igsca_info` attribute, and the failing leaf gets
+`converged = FALSE`, `objfun = NA`, `object = NULL`. The `maxdepth = 2` tree
+above hit exactly that at node 3 (n = 68). This is worth knowing when choosing
+`minbucket`: with 13 indicators the default `30L` admits leaves the model may not
+fit. The failure is *sample-dependent rather than a size threshold* --- random
+subsets of n = 30 and n = 68 fitted while n = 50 did not --- so it is a rising
+probability of inadmissible estimates in small leaves, not a hard floor. Raising
+`minbucket` for larger models is the cheap defence; `n_fail_leaf > 0` is the
+signal that it is needed.
 
-*Fix.* Fit the leaves once after growing, then have both methods read from there:
+*Inner-node objects: kept, with an opt-in switch.* Every inner node's info still
+holds a full `cSEMResults`, because `saveinfo = TRUE` persists whatever the trafo
+returned. `drop_inner_node_objects()` removes those payloads after growing,
+leaving criteria, `nobs`, `objfun` and all leaf fits intact. It is *not* called
+by default; a commented-out line in each branch of `doTrees()` marks the switch:
 
 ```r
-refit_leaves <- function(tree, mf, model, indicators) {
-  ids  <- partykit::nodeids(tree, terminal = TRUE)
-  leaf <- partykit::fitted_node(partykit::node_party(tree), mf)
-  stats::setNames(lapply(ids, function(id) {
-    ft <- try_fit(mf[leaf == id, indicators, drop = FALSE], model)
-    list(nobs = sum(leaf == id), converged = ft$ok, object = if (ft$ok) ft$fit)
-  }), ids)
-}
+## MEMORY OPTIMIZATION (opt-in): each inner node's info holds a full
+## cSEMResults object, so a maxdepth = 3 tree keeps up to 7 of them.
+## Uncomment the next line to drop them; leaf fits are unaffected.
+##   ret <- drop_inner_node_objects(ret)
+## Do NOT instead delete `object = ft$fit` from the ytrafo above: a
+## mixed-pair splitter reads model$object while the tree is still growing,
+## so removing it there silently disables every non-native splitter.
 ```
 
-Store the result in `attr(ret, "igsca_info")$leaves` and rewrite
-`coef.igsca_tree()` / the default `plot.igsca_tree()` `FUN` against it. Cost is
-one IGSCA fit per leaf (#sym.tilde 0.6 s each here), negligible next to growing
-the tree.
-
-While there: `object = ft$fit` is stored in *every inner node's* info
-(`R/postestimate_doTrees.R:90`, `:209`). Each is a full `cSEMResults` object, so a
-`maxdepth = 3` tree retains up to 7 of them. Consider dropping `object` from the
-stored info once the leaf fits are attached explicitly.
+That last warning is the point of putting the switch here rather than at the
+trafo. Deleting `object = ft$fit` looks like the obvious optimisation and is the
+one place it must not be done: on the ctree path `partition_stat()` reads
+`model$object` for every candidate partition of a mixed-pair splitter, and on the
+partition path the selectors read it too --- removing it there would take out
+every non-native configuration, silently, exactly the way S1 used to fail.
+Measured saving from the safe switch: 1.9 #sym.arrow.r 1.1 Mb (ctree,
+2 inner nodes) and 1.2 #sym.arrow.r 0.7 Mb (partition, 1 inner node), with
+`coef()` unchanged afterwards.
 
 #pagebreak()
 
@@ -1037,8 +1072,8 @@ than accidents:
   [2], [T1--T3 --- regenerate snapshots, drop `length()==5`, split `expect_no_error()`], [The signature has settled, so snapshots are now safe to regenerate; T2 fails outright once T4 lands],
   [3], [§5.1--5.3 --- kernel, `argmax_split`, and splitfun-wiring tests], [Cheap, fast, and they pin the contracts the port depends on],
   [4], [T5 + §5.5 --- scan-cache tests], [Subtlest logic in the port; the only collector field still unasserted],
-  [5], [S3 --- leaf refits, then fix `coef()` / `plot()`], [The last open behavioural finding; independent of the rest],
-  [6], [P1--P6 --- prune exports, drop `:::`, fix `\value`, validate inputs], [Cleanup; P4's rename pairs naturally with B2's settled signature. Note `warn_dead_splitter()` is already `@noRd`],
+  [5], [P1--P6 --- prune exports, drop `:::`, fix `\value`, validate inputs], [Cleanup; P4's rename pairs naturally with B2's settled signature. Note `attach_leaf_fits()`, `drop_inner_node_objects()` and `warn_dead_splitter()` are already `@noRd`],
+  [6], [#link(<s3>)[S3] follow-up --- assert `n_fail_leaf` and raise `minbucket` for large models], [The counter is new and nothing tests it; the default `30L` admits unfittable leaves],
   [7], [§5.6 --- numeric-cutpoint fixture], [Optional; only if the mixed pairs are a real study arm],
   [8], [#link(<testtype>)[§3.2.1] --- optional: replace the `cc$bonferroni` override with a length-2 `testtype`], [Cosmetic; stays inside the documented partykit API],
 )

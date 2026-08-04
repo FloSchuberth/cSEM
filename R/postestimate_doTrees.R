@@ -146,6 +146,19 @@ doTrees <- function(
     ret <- partykit::ctree(fml, data = data, ytrafo = ytrafo, control = cc)
     class(ret) <- c("igsca_tree", class(ret))
     warn_dead_splitter(collector, splitter)
+
+    ## partykit never calls the trafo at a node it does not try to split, so
+    ## leaves arrive with info = NULL and carry no IGSCA fit. Refit them.
+    ret <- attach_leaf_fits(ret, ret$data, model, indicators, collector)
+
+    ## MEMORY OPTIMIZATION (opt-in): each inner node's info holds a full
+    ## cSEMResults object, so a maxdepth = 3 tree keeps up to 7 of them.
+    ## Uncomment the next line to drop them; leaf fits are unaffected.
+    ##   ret <- drop_inner_node_objects(ret)
+    ## Do NOT instead delete `object = ft$fit` from the ytrafo above: a
+    ## mixed-pair splitter reads model$object while the tree is still growing,
+    ## so removing it there silently disables every non-native splitter.
+
     attr(ret, "igsca_info") <- list(
       n_fail_full = collector$n_fail_full,
       n_fail_node = collector$n_fail_node,
@@ -156,6 +169,8 @@ doTrees <- function(
       ## finite statistic. Both stay 0 when splitter = "native".
       n_split_scan = collector$n_split_scan,
       n_fail_split = collector$n_fail_split,
+      ## Failed IGSCA refits at terminal nodes (attach_leaf_fits).
+      n_fail_leaf = collector$n_fail_leaf,
       root_criteria = root_criteria(ret)
     )
     return(ret)
@@ -238,12 +253,25 @@ doTrees <- function(
     ret$terms <- d$terms$all
     class(ret) <- c("igsca_tree", "constparty", class(ret))
     warn_dead_splitter(collector, splitter)
+
+    ## As on the ctree path: leaves are never visited by the trafo, and here the
+    ## trafo does not compute objfun at all (it is NA_real_ on inner nodes), so
+    ## the leaf refit is the only source of a per-node IGSCA fit and SSR.
+    ret <- attach_leaf_fits(ret, mf, model, indicators, collector)
+
+    ## MEMORY OPTIMIZATION (opt-in): see the note on the ctree path above.
+    ##   ret <- drop_inner_node_objects(ret)
+    ## Do NOT instead delete `object = ft$fit` from the trafo above: the
+    ## partition selectors read model$object on every candidate partition
+    ## (partition_stat), so removing it there breaks the whole branch.
+
     attr(ret, "igsca_info") <- list(
       n_fail_full = collector$n_fail_full,
       n_fail_node = collector$n_fail_node,
       n_fail_resample = collector$n_fail_resample,
       n_split_scan = collector$n_split_scan,
       n_fail_split = collector$n_fail_split,
+      n_fail_leaf = collector$n_fail_leaf,
       root_criteria = root_criteria(ret)
     )
     return(ret)

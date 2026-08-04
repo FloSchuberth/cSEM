@@ -455,6 +455,8 @@ new_collector <- function() {
   # kernel, and how many of those produced nothing usable. See argmax_split().
   e$n_split_scan <- 0L
   e$n_fail_split <- 0L
+  # Leaf refits: failed IGSCA fits at terminal nodes. See attach_leaf_fits().
+  e$n_fail_leaf <- 0L
   e$scan <- list()
   e$scan_subset <- NULL
   e$scan_splitter <- NULL
@@ -463,6 +465,90 @@ new_collector <- function() {
 
 
 
+
+#' Fit the IGSCA model at every terminal node and attach it to the tree
+#'
+#' partykit only calls the trafo at nodes it *attempts to split*, so leaves come
+#' back with `info = NULL` and every leaf-reading method sees nothing:
+#' [coef.igsca_tree()] returned `NULL` for any tree with at least one split, and
+#' [plot.igsca_tree()] drew unlabelled terminal boxes. More importantly the tree
+#' carried no per-leaf IGSCA fit at all, which is the main thing a SEM tree is
+#' for. Refitting once after the tree is grown fills both gaps.
+#'
+#' The fits are written into the terminal nodes' own `info`, so the methods can
+#' read them through the ordinary [partykit::info_node()] route rather than a
+#' side table. Printed output is unaffected: partykit's `formatinfo_node()`
+#' falls back to `"*"` for list-valued info, verified to hold even when the
+#' info carries a full `cSEMResults` object.
+#'
+#' Costs one IGSCA fit per leaf. Failures are counted into
+#' `collector$n_fail_leaf` and leave `converged = FALSE` on that node.
+#' @noRd
+attach_leaf_fits <- function(tree, mf, model, indicators, collector) {
+  ids <- partykit::nodeids(tree, terminal = TRUE)
+  ## Use the party object's own fitted node ids: they are guaranteed to be in
+  ## the same row order as `mf`, which re-deriving them would not be.
+  leaf <- tree$fitted[["(fitted)"]]
+
+  fits <- lapply(ids, function(id) {
+    rows <- which(leaf == id)
+    ft <- try_fit(mf[rows, indicators, drop = FALSE], model)
+    if (!ft$ok) {
+      collector$n_fail_leaf <- collector$n_fail_leaf + 1L
+      return(list(
+        nobs = length(rows),
+        converged = FALSE,
+        objfun = NA_real_,
+        object = NULL
+      ))
+    }
+    ## Sum of squared casewise GSCA residuals, matching the objfun the ctree
+    ## trafo stores on inner nodes. calculateGSCAErrors() can throw on an
+    ## otherwise converged fit, so the fit is kept either way.
+    E <- tryCatch(calculateGSCAErrors(ft$fit), error = function(e) NULL)
+    list(
+      nobs = length(rows),
+      converged = TRUE,
+      objfun = if (is.null(E)) NA_real_ else sum(E^2),
+      object = ft$fit
+    )
+  })
+  names(fits) <- as.character(ids)
+
+  ## as.list()/as.partynode() is partykit's own round-trip and is identity-
+  ## preserving when the info is left alone, so only the leaves change.
+  nd <- as.list(partykit::node_party(tree))
+  for (i in seq_along(nd)) {
+    key <- as.character(nd[[i]]$id)
+    if (is.null(nd[[i]]$kids) && !is.null(fits[[key]])) {
+      nd[[i]]$info <- fits[[key]]
+    }
+  }
+  tree$node <- partykit::as.partynode(nd)
+  tree
+}
+
+#' Strip the fitted cSEMResults objects from a grown tree's inner nodes
+#'
+#' Every inner node's info carries a full `cSEMResults` object, because
+#' `saveinfo = TRUE` persists whatever the trafo returned and the trafo must
+#' return it (see the note in [doTrees()]). A `maxdepth = 3` tree can therefore
+#' retain up to seven of them. This drops those payloads after growing, leaving
+#' the criteria, `nobs` and `objfun` intact. Terminal nodes are untouched, so
+#' the leaf fits attached by `attach_leaf_fits()` survive.
+#'
+#' Not called by default -- see the commented-out line in [doTrees()].
+#' @noRd
+drop_inner_node_objects <- function(tree) {
+  nd <- as.list(partykit::node_party(tree))
+  for (i in seq_along(nd)) {
+    if (!is.null(nd[[i]]$kids) && !is.null(nd[[i]]$info$object)) {
+      nd[[i]]$info$object <- NULL
+    }
+  }
+  tree$node <- partykit::as.partynode(nd)
+  tree
+}
 
 #' Get root-node criteria of igsca tree
 #'
@@ -505,9 +591,16 @@ coef.igsca_tree <- function(object, node = NULL, drop = TRUE, ...) {
     "rbind",
     partykit::nodeapply(object, ids = node, FUN = function(n) {
       i <- partykit::info_node(n)
-      c(nobs = i$nobs, objfun = i$objfun)
+      ## A node whose fit failed, or one never visited by the trafo, has no
+      ## info. Return an NA row rather than NULL: rbind() silently drops NULLs,
+      ## which is how this method used to return NULL for a whole tree.
+      c(
+        nobs = if (is.null(i$nobs)) NA_real_ else as.numeric(i$nobs),
+        objfun = if (is.null(i$objfun)) NA_real_ else as.numeric(i$objfun)
+      )
     })
   )
+  rownames(cf) <- as.character(node)
   if (drop) {
     drop(cf)
   } else {
@@ -530,9 +623,15 @@ plot.igsca_tree <- function(x, terminal_panel = NULL, FUN = NULL, tp_args = NULL
   if (is.null(terminal_panel)) {
     if (is.null(FUN)) {
       FUN <- function(info) {
+        ## info is NULL for a node the trafo never reached and objfun is NA
+        ## when the leaf refit failed; sprintf() on NULL yields character(0),
+        ## which silently draws an empty box, so both are shown explicitly.
         c(
-          sprintf("n = %s", info$nobs),
-          sprintf("SSR = %s", format(info$objfun, digits = 4L))
+          sprintf("n = %s", if (is.null(info$nobs)) "?" else info$nobs),
+          sprintf(
+            "SSR = %s",
+            if (is.null(info$objfun)) "?" else format(info$objfun, digits = 4L)
+          )
         )
       }
     }
