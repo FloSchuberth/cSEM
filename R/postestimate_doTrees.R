@@ -5,17 +5,17 @@
 #' @inheritParams csem
 #' @return cSEM Tree model of class `modelparty` and `party`.
 #' @export
-#' @importFrom partykit ctree_control
-#' @importFrom Formula as.Formula
+#' @importFrom partykit ctree_control ctree
 #' @references
 #'   \insertAllCited{}
 doTrees <- function(
   .object,
-  .splitvars,
+  .covariates,
   .model,
   .data = .object$Information$Arguments$.data,
   .ctree_control = partykit::ctree_control(),
   .igsca_tree_control = igsca_tree_control(),
+  influence = influence_vec, # TODO: Shuffle this into igsca_tree_control later
   .approach_weights = .object$Information$Arguments$.approach_weights,
   .iter_max = .object$Information$Arguments$.iter_max,
   .tolerance = .object$Information$Arguments$.tolerance,
@@ -33,14 +33,17 @@ doTrees <- function(
     'This function only supports GSCA models' = .object$Information$Arguments$.approach_weights ==
       "GSCA"
   )
-
+  
   # Preparation
+  .indicators <- .object$Information$Model$indicators
   ex_formula <- paste(
-    paste(.object$Information$Model$indicators, collapse = " + "),
+    paste(.indicators, collapse = " + "),
     "~",
-    paste(.splitvars, collapse = " + ")
+    paste(.covariates, collapse = " + ")
   ) |>
     stats::as.formula()
+
+  collector <- new_collector()
 
   partied_dat <- partykit::extree_data(
     formula = ex_formula,
@@ -49,14 +52,16 @@ doTrees <- function(
     nmax = c(yx = Inf, z = Inf) # TODO: What is this for?
   )
 
-  browser()
+  # browser()
   # model_frame <- model.frame(partied_dat)
 
   # TODO: Implement igsca_ctree
   ytrafo <- function(data, weights, control) {
     mf <- model.frame(data)
     function(subset, weights, info = NULL, estfun = TRUE, object = TRUE, ...) {
-      # TODO: Add fitting function to cSEM here. 
+      was_root <- !collector$root_seen
+      collector$root_seen <- TRUE
+      # TODO: try to substitute out try_fit for something simpler to make this easier to understand
       ft <- try_fit(mf[subset, indicators, drop = FALSE], model)
       E <- if (ft$ok) {
         tryCatch(calculateGSCAErrors(ft$fit), error = function(e) NULL)
@@ -72,33 +77,95 @@ doTrees <- function(
         return(list(
           estfun = NULL,
           converged = FALSE,
-          objfun = Inf,
+          objfun = Inf, # TODO: Reconsider if this is what I want
           object = NULL,
           nobs = length(subset)
         ))
+      } else {
+        h <- influence(E)
+        ef <- matrix(0, nrow = nrow(mf), ncol = ncol(h))
+        ef[subset, ] <- h
+        ## object is returned unconditionally: a mixed-pair splitter's kernel
+        ## needs the pooled node fit (partition_stat reads model$object), and
+        ## extree does not promise object = TRUE on the split path.
+        list(
+          estfun = ef,
+          converged = TRUE,
+          objfun = sum(E^2), # TODO: I'm not sure if I want the same objective function throughout? Is this what igsca_ctree is trying to maximize or minimize?
+          object = ft$fit,
+          nobs = length(subset)
+        )
       }
-      h <- influence(E)
-      ef <- matrix(0, nrow = nrow(mf), ncol = ncol(h))
-      ef[subset, ] <- h
-      ## object is returned unconditionally: a mixed-pair splitter's kernel
-      ## needs the pooled node fit (partition_stat reads model$object), and
-      ## extree does not promise object = TRUE on the split path.
-      list(
-        estfun = ef,
-        converged = TRUE,
-        objfun = sum(E^2),
-        object = ft$fit,
-        nobs = length(subset)
-      )
     }
   }
+
+  testtype <- if (.igsca_tree_control$coin_distribution == "approximate") {
+    "MonteCarlo"
+  } else if (isTRUE(.igsca_tree_control$bonferroni)) {
+    "Bonferroni"
+  } else {
+    "Univariate"
+  }
+  cc <- partykit::ctree_control(
+    teststat = "quadratic",
+    splitstat = "quadratic",
+    testtype = testtype,
+    nresample = .igsca_tree_control$R_test,
+    alpha = .igsca_tree_control$alpha,
+    minsplit = .igsca_tree_control$minsplit,
+    minbucket = .igsca_tree_control$minbucket,
+    maxdepth = .igsca_tree_control$maxdepth,
+    maxsurrogate = 0L,
+    nmax = c(yx = Inf, z = Inf),
+    saveinfo = TRUE
+  )
+  cc$bonferroni <- isTRUE(.igsca_tree_control$bonferroni)
+
+  if (!is.null(splitter)) {
+    cc$model <- model
+    cc$indicators <- .indicators
+    cc$collector <- collector
+    cc$max_cuts <- .igsca_tree_control$max_cuts
+    cc$splitfun <- function(
+      model,
+      trafo,
+      data,
+      subset,
+      weights,
+      whichvar,
+      ctrl
+    ) {
+      argmax_split(
+        splitter,
+        collector,
+        model,
+        model.frame(data),
+        subset,
+        whichvar,
+        ctrl
+      )
+    }
+    cc$svsplitfun <- cc$splitfun # never called (maxsurrogate = 0)
+  }
+
+  ret <- partykit::ctree(fml, data = data, ytrafo = ytrafo, control = cc)
+  class(ret) <- c("igsca_tree", class(ret))
+  attr(ret, "igsca_info") <- list(
+    n_fail_full = collector$n_fail_full,
+    n_fail_node = collector$n_fail_node,
+    ## 0 on the native path (COIN resampling lives inside libcoin); counts
+    ## failed candidate MGA fits when a mixed-pair splitter is in play.
+    n_fail_resample = collector$n_fail_resample,
+    root_criteria = root_criteria(ret)
+  )
+  return(ret)
 
   # TODO: Implement igsca_tree and add conditional switch 
   
 
-  class(tree) <- c(class(tree), "cSEMResults")
+  # class(tree) <- c(class(tree), "cSEMResults")
 
-  return(tree)
+  # return(tree)
 }
 
 

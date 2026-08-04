@@ -451,7 +451,7 @@ be used to handle flipping signs when resampling? One of "\emph{none}","\emph{in
 \item{.sim_points}{Integer. How many samples from the truncated normal distribution should
 be simulated to estimate the exogenous construct scores? Defaults to "\emph{100}".}
 
-\item{.splitvars}{Character vector. List of variables for \code{\link[=doTrees]{doTrees()}}
+\item{.covariates}{Character vector. List of variables for \code{\link[=doTrees]{doTrees()}}
 to consider splitting on. See \link[partykit:mob]{partykit::mob}}
 
 \item{.stage}{Character string. The stage the model is needed for.

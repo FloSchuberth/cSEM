@@ -33,7 +33,7 @@ pooled <- csem(
 # Apply Do Trees for Variable selection ---------------------------------------------------------
 doTrees(
     pooled,
-    .splitvars = covs,
+    .covariates = covs,
     .model = model,
     .data = dat,
     .ctree_control = partykit::ctree_control(),

@@ -1,87 +1,3 @@
-#' Calculate the difference in FIT
-#'
-#'
-#' @param data Data passed by boot
-#' @param idx Row-indices passed by boot
-#' @inheritParams csem
-#' @return Named vector of the delta between the FIT of the multi-group model
-#'   versus the FIT of the single-group model--positive values favor
-#'   multi-group, negative, single-group; the FIT of the single-group model; and
-#'   the FIT of the multi-group model.
-#' @keywords internal
-#'
-calculateFITForSplit <- function(data,
-                                 idx,
-                                 .model,
-                                 .id,
-                                 .approach_weights,
-                                 .conv_criterion,
-                                 .disattenuate,
-                                 .dominant_indicators,
-                                 .iter_max,
-                                 .tolerance) {
-  
-  # Robust Boot by-pass by Thomas on June 11,2013 https://stackoverflow.com/a/17040580
-  ret <- tryCatch({
-    sg_mod <- csem(
-      .data = data[idx, ],
-      .model = .model,
-      .approach_weights = .approach_weights,
-      .tolerance = .tolerance,
-      .conv_criterion = .conv_criterion
-    )
-    sg_fit <- calculateFIT(sg_mod)
-    
-    if (length(.id) == 1) {
-      mg_mod <- csem(
-        .data = data[idx, ],
-        .id = .id,
-        .model = .model,
-        .approach_weights = .approach_weights,
-        .tolerance = .tolerance,
-        .conv_criterion = .conv_criterion
-      )
-      
-      mg_fit <- bdiagGSCA(mg_mod) |>
-        calculateFIT()
-      
-      names(mg_fit) <- .id
-      
-      return(c("sg_fit" = sg_fit, mg_fit))
-      
-    } else if (length(.id) > 1) {
-      mg_fits <- lapply(.id, function(.id_iter) {
-        mg_mod <- csem(
-          .data = data[idx, ],
-          .id = .id_iter,
-          .model = .model,
-          .approach_weights = .approach_weights,
-          .tolerance = .tolerance,
-          .conv_criterion = .conv_criterion
-        )
-        
-        mg_fit <- bdiagGSCA(mg_mod) |>
-          calculateFIT()
-        names(mg_fit) <- .id_iter
-        
-        return(mg_fit)
-      })
-      
-      return(c("sg_fit" = sg_fit, unlist(mg_fits)))
-      
-    } else {
-      stop("Inappropriate length or type of .splitvars passed")
-      
-    }
-  }, error = function(error) {
-    return(c("sg_fit" = NA, "mg_fit" = NA))
-  })
-
-  return(ret)
-
-}
-
-
 #' Block-diagonalized model-implied correlation matrices
 #'
 #' Make it easy to compare the matrix distance between the model-implied
@@ -165,6 +81,7 @@ igsca_tree_control <- function(alpha = 0.05,
                                max_cuts = 20L,
                                R_test = 500L,
                                coin_distribution = c("approximate", "asymptotic")) {
+  # TODO: consider doing something like utils::modifyList(ctree_control, list(...)) instead to reduce the number of arguments
   list(
     alpha = alpha,
     bonferroni = bonferroni,
@@ -178,7 +95,7 @@ igsca_tree_control <- function(alpha = 0.05,
 }
 
 #' Casewise sum of squared GSCA residuals (n x 1) -- COIN_ssr influence.
-influence_ssr <- function(E) {
+influence_vec <- function(E) {
   matrix(rowSums(E^2), ncol = 1L)
 }
 
@@ -213,3 +130,129 @@ try_fit <- function(.data, .model, .id = NULL) {
   list(fit = fit, ok = ok)
 }
 
+
+
+argmax_split <- function(
+  splitter,
+  collector,
+  model,
+  mf,
+  subset,
+  whichvar,
+  ctrl
+) {
+  for (j in whichvar) {
+    hit <- identical(collector$scan_subset, subset) &&
+      identical(collector$scan_splitter, splitter) &&
+      !is.null(collector$scan[[as.character(j)]])
+    if (hit) {
+      return(collector$scan[[as.character(j)]]$split)
+    }
+    cands <- candidate_partitions(
+      j,
+      mf[[j]],
+      mf[[j]][subset],
+      ctrl$max_cuts,
+      ctrl$minbucket
+    )
+    if (!length(cands)) {
+      next
+    }
+    stats <- vapply(
+      cands,
+      function(cc) {
+        tryCatch(
+          splitter(model, mf, subset, cc$goes_left, ctrl),
+          error = function(e) NA_real_
+        )
+      },
+      numeric(1)
+    )
+    if (!any(is.finite(stats))) {
+      next
+    }
+    return(cands[[which.max(stats)]]$split)
+  }
+  NULL
+}
+
+
+candidate_partitions <- function(j, z, zs, max_cuts, minbucket) {
+  keep_min <- function(cands) {
+    Filter(
+      function(cc) {
+        nl <- sum(cc$goes_left)
+        nl >= minbucket && (length(zs) - nl) >= minbucket
+      },
+      cands
+    )
+  }
+  if (is.numeric(z) && !is.factor(z)) {
+    uz <- sort(unique(zs))
+    if (length(uz) < 2L) {
+      return(list())
+    }
+    mids <- (uz[-1L] + uz[-length(uz)]) / 2
+    if (length(mids) > max_cuts) {
+      mids <- unique(stats::quantile(
+        zs,
+        probs = seq_len(max_cuts) / (max_cuts + 1),
+        type = 7,
+        names = FALSE
+      ))
+    }
+    keep_min(lapply(mids, function(ct) {
+      list(
+        goes_left = zs < ct,
+        split = partykit::partysplit(
+          as.integer(j),
+          breaks = as.double(ct),
+          index = 1L:2L
+        )
+      )
+    }))
+  } else if (is.ordered(z)) {
+    levs <- levels(droplevels(zs))
+    K <- length(levs)
+    if (K < 2L) {
+      return(list())
+    }
+    keep_min(lapply(1L:(K - 1L), function(i) {
+      list(
+        goes_left = zs %in% levs[1L:i],
+        split = partykit::partysplit(
+          as.integer(j),
+          breaks = as.integer(match(levs[i], levels(z)))
+        )
+      )
+    }))
+  } else if (is.factor(z)) {
+    levs <- levels(droplevels(zs))
+    K <- length(levs)
+    if (K < 2L) {
+      return(list())
+    }
+    olev <- levels(z)
+    keep_min(lapply(1L:(2L^(K - 1L) - 1L), function(m) {
+      g <- levs[as.logical(intToBits(m))[1L:K]]
+      idx <- rep(NA_integer_, length(olev))
+      idx[match(levs, olev)] <- ifelse(levs %in% g, 1L, 2L)
+      list(
+        goes_left = zs %in% g,
+        split = partykit::partysplit(as.integer(j), index = idx)
+      )
+    }))
+  } else list()
+}
+
+new_collector <- function() {
+  e <- new.env(parent = emptyenv())
+  e$root_seen <- FALSE      # first trafo call = root fit (full vs node fail)
+  e$n_fail_full <- 0L
+  e$n_fail_node <- 0L
+  e$n_fail_resample <- 0L
+  e$scan <- list()
+  e$scan_subset <- NULL
+  e$scan_splitter <- NULL
+  e
+}

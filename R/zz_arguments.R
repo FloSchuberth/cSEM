@@ -333,7 +333,7 @@
 #' "*individual_reestimate*", "*construct_reestimate*". Defaults to "*none*".
 #' @param .sim_points Integer. How many samples from the truncated normal distribution should
 #'   be simulated to estimate the exogenous construct scores? Defaults to "*100*".
-#' @param .splitvars Character vector. List of variables for [cSEM::doTrees()]
+#' @param .covariates Character vector. List of variables for [cSEM::doTrees()]
 #'   to consider splitting on. See [partykit::mob]
 #' @param .stage Character string. The stage the model is needed for.
 #'   One of "*first*" or "*second*". Defaults to "*first*".

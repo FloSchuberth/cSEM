@@ -2,15 +2,16 @@
 % Please edit documentation in R/postestimate_doTrees.R
 \name{doTrees}
 \alias{doTrees}
-\title{Model-Based Recursive Partitioning Algorithm for \emph{csem} Models}
+\title{Recursive Partitioning Algorithm for \emph{csem} GSCA Models}
 \usage{
 doTrees(
   .object,
-  .splitvars,
+  .covariates,
   .model,
-  .maxdepth = Inf,
-  .minsize = nrow(tidy.cSEMResults(.object)),
   .data = .object$Information$Arguments$.data,
+  .ctree_control = partykit::ctree_control(),
+  .igsca_tree_control = igsca_tree_control(),
+  influence = influence_vec,
   .approach_weights = .object$Information$Arguments$.approach_weights,
   .iter_max = .object$Information$Arguments$.iter_max,
   .tolerance = .object$Information$Arguments$.tolerance,
@@ -22,16 +23,11 @@ doTrees(
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.splitvars}{Character vector. List of variables for \code{\link[=doTrees]{doTrees()}}
+\item{.covariates}{Character vector. List of variables for \code{\link[=doTrees]{doTrees()}}
 to consider splitting on. See \link[partykit:mob]{partykit::mob}}
 
-\item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}}
-
-\item{.maxdepth}{Maximum number of levels in the tree. See \code{\link[=doTrees]{doTrees()}}
-and \link[partykit:mob_control]{partykit::mob_control}.}
-
-\item{.minsize}{Minimum number of cases per node. See \code{\link[=doTrees]{doTrees()}} and
-\link[partykit:mob_control]{partykit::mob_control}.}
+\item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
+or a \link{cSEMModel} list.}
 
 \item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandardized
 data (indicators/items/manifest variables). Possible column types or classes
@@ -70,12 +66,7 @@ to "\emph{diff_absolute}".}
 cSEM Tree model of class \code{modelparty} and \code{party}.
 }
 \description{
-This implementation of Model-Based Recursive Partitioning for \emph{csem} models
-closely follows the implementations described for the \code{lavaan} package
-\insertCite{zeileis2020AchimZeileis}{cSEM} and the \code{networktree} package
-\insertCite{jonesNetworkTreesMethod2020}{cSEM} using \code{partykit::mob()} as
-described in hothornzeileis2015J.Mach.Learn.Res and
-hothornetal2006J.Comput.Graph.Stat and zeileisetal2008J.Comput.Graph.Stat.
+Recursive Partitioning Algorithm for \emph{csem} GSCA Models
 }
 \references{
 \insertAllCited{}
