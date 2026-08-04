@@ -54,14 +54,18 @@ then:
 - *Sixth pass* --- S3 fixed: leaves are refit after growing and attached to the
   terminal nodes, so `coef()` and `plot()` work and the tree finally carries a
   per-leaf IGSCA fit. Inner-node objects are kept, with an opt-in switch.
+- *Seventh pass* --- T4 first, then T1--T3, which is the only workable order:
+  until the controls are split by branch the suite cannot finish, and T2's node
+  counts fail for reasons that have nothing to do with correctness. The file now
+  runs in *2 min 05 s* at `FAIL 0 | WARN 0 | SKIP 0 | PASS 85`, against an
+  estimated #sym.tilde 16 h before.
 
-*All behavioural findings are now closed.* Every `influence` #sym.times
-`splitter` combination runs, and the three silent failures are fixed. What
-remains is a test suite that still cannot detect regressions in most of it
-(T1--T3, T5) and packaging cleanup (P1--P6).
-#link(<mixed>)[Section 5] sets out how to test the mixed-splitter configurations;
-its injection recipes have been rewritten for the string-valued API, and 5.4 is
-now shipped code rather than a proposal.
+*All behavioural findings are closed, and the suite now runs and asserts.* Every
+`influence` #sym.times `splitter` combination runs, the three silent failures are
+fixed, and each of the 17 configurations is now asserted to have *actually
+split* rather than merely not thrown. What remains is the unit layer that would
+*localise* a regression --- T5 and #link(<mixed>)[section 5]'s 5.1--5.3 and 5.5
+--- plus packaging cleanup (P1--P6).
 
 == Status at a glance
 
@@ -75,11 +79,11 @@ now shipped code rather than a proposal.
   [S1], [Broken split kernel degrades to a stump with no diagnostic], [#ok],
   [S2], [`control$bonferroni` silently ignored on the ctree path], [#ok],
   [S3], [`coef()` / `plot()` empty for any tree that splits], [#ok],
-  [T1], [Snapshots stale (`trees_out` vs `trees_mx`)], [#open],
-  [T2], [`length(tree) == 5` is a disguised structural assertion], [#open],
-  [T3], [`expect_no_error()` cannot see the real failure mode], [#open],
-  [T4], [Default control makes the partition tests unrunnable], [#part],
-  [T5], [Collector diagnostics and the scan cache are untested], [#open],
+  [T1], [Snapshots stale (`trees_out` vs `trees_mx`)], [#ok],
+  [T2], [`length(tree) == 5` is a disguised structural assertion], [#ok],
+  [T3], [`expect_no_error()` cannot see the real failure mode], [#ok],
+  [T4], [Default control makes the partition tests unrunnable], [#ok],
+  [T5], [Collector diagnostics and the scan cache are untested], [#part],
   [P1], [`NAMESPACE` stale], [#part],
   [P2], [`cSEM:::` / `cSEM::` into the package's own namespace], [#open],
   [P3], [Roxygen placeholders; wrong `@return`], [#open],
@@ -88,11 +92,12 @@ now shipped code rather than a proposal.
   [P6], [No input validation], [#open],
 )
 
-The test file has been updated to pass strings and has gained
-#link(<negctl>)[section 5.4]'s three blocks --- but its original five blocks are
-untouched, so T1--T3 stand and T4 is only half-addressed: `ctl_mixed` now exists
-at the foot of the file while all 17 original calls still use a bare
-`igsca_tree_control()`. T4 is what will actually stop a run completing.
+The test file now carries two controls chosen per branch, five regenerated
+snapshots, and one named `test_that()` per `influence` #sym.times `splitter`
+configuration, each asserting the tree grew rather than merely returned. The
+remaining test work is a *layer*, not a repair: nothing below the tree level is
+covered, so a failure still says "this configuration broke" without saying
+where. #link(<mixed>)[Section 5] is that layer, and 5.4 is already shipped.
 
 #pagebreak()
 
@@ -514,93 +519,109 @@ Measured saving from the safe switch: 1.9 #sym.arrow.r 1.1 Mb (ctree,
 
 = Test-suite findings
 
-The test file is the right shape --- one file per R file, five blocks covering the
-five methods, matching the conventions in `MEMORY.md` --- and it has been updated
-to the new string-valued `splitter`, so it no longer errors on the signature.
-These are the things that still stop it from testing anything.
+The test file is the right shape --- one file per R file, matching the
+conventions in `MEMORY.md` --- and T1--T4 are now fixed. This section records
+what changed and what was measured along the way; T5 is what is left.
 
-== T1. Snapshots are stale and will fail
+== T1. Snapshots were stale --- deleted and regenerated
 
-`tests/testthat/_snaps/postestimate_doTrees.md` still records the printed object
-under the name `trees_out` (lines 4 and 24):
+*Status: fixed.* `_snaps/postestimate_doTrees.md` recorded the printed object
+under the name `trees_out` while the tests bind `trees_mx` / `trees_vec` /
+`trees_NPT_FIT` / ...; `expect_snapshot()` captures the *expression* as well as
+the output, so both existing blocks failed on the `Code` line alone and the three
+partition blocks had no snapshot at all. The stale file was removed (commit
+`5e268c95`) and regenerated under the new controls --- five snapshots, one per
+`influence` value.
 
-```
-# IGSCA Trees Conditional Test on Matrix of Residuals Runs as expected
+Two properties were checked rather than assumed:
 
-    Code
-      trees_out
-```
+- *Reproducible across processes.* A second `devtools::test()` run in a fresh
+  session gives `WARN 0` --- no "Adding new snapshot", no diff --- so the
+  `set.seed()` at the head of each block pins both the libcoin Monte-Carlo draw
+  and `idx_permutation()`.
+- *The reference tree is unchanged by T4.* The `mat` snapshot still splits at
+  `noise_1 <= -1.09783`, the cutpoint recorded in #link(<b2>)[B2] long before any
+  of this, because the two `native` snapshot trees were deliberately left at the
+  package defaults. The three partition snapshots are new and are all the same
+  2-node split on `z_true`.
 
-The tests bind `trees_mx` / `trees_vec` / `trees_NPT_FIT` / .... `expect_snapshot()`
-captures the *expression* as well as the output, so both existing blocks fail on
-the `Code` line alone, and the three partition blocks have no snapshot at all.
-Delete the file and regenerate --- the signature has settled, so this is now safe
-to do.
+One packaging detail: removing the stale file took the last tracked file out of
+`tests/testthat/_snaps/`, so the regenerated file is *untracked* and needs a
+`git add tests/testthat/_snaps/` before it protects anything.
 
-== T2. `length(tree) == 5` is a disguised structural assertion
+== T2. `length(tree) == 5` --- replaced with assertions that say what they mean
 
-*Location:* `tests/testthat/test-postestimate_doTrees.R:32`, `:78`, `:125`, `:161`, `:196`
+*Status: fixed.* `length()` on a `party` dispatches to `length.party()`, which
+returns the *number of nodes*, not the length of a list, so the five
+`expect_true(length(x) == 5)` lines asserted "this tree has exactly 5 nodes" ---
+a strictly weaker duplicate of the snapshot immediately below, breaking on any
+legitimate change to the control defaults or the RNG stream, for a reason the
+`# Dirty substitute for snapshot` comment actively misdirected you about. They
+also had to go before T4 could land: the reduced controls produce 2- and 3-node
+trees, so all five would have failed for reasons unrelated to correctness.
 
-```r
-# Dirty substitute for snapshot
-expect_true(length(trees_mx) == 5)
-```
-
-`length()` on a `party` dispatches to `length.party()`, which returns the *number
-of nodes*, not the length of a list. Measured: the same call with `maxdepth = 1L`
-gives `length(r) == 3`. So this asserts "the tree has exactly 5 nodes" --- a
-strictly weaker duplicate of the snapshot immediately below it, which will break
-on any legitimate change to the control defaults or the RNG stream, for reasons
-the comment actively misleads you about.
-
-It also interacts badly with T4: the reduced controls needed to make the suite
-finish produce 2- and 3-node trees, so all five assertions fail for a reason that
-has nothing to do with correctness. Drop them, or replace with assertions that
-say what they mean:
-
-```r
-expect_s3_class(trees_mx, "igsca_tree")
-expect_identical(attr(trees_mx, "igsca_info")$n_fail_full, 0L)
-```
-
-== T3. `expect_no_error()` cannot see the failure mode that actually occurs
-
-*Location:* `tests/testthat/test-postestimate_doTrees.R:35--62` and the four analogous blocks
-
-All five blocks still wrap two or three `doTrees()` calls in a single
-`expect_no_error({...})`. Two problems. First, on failure you learn that *one* of
-three calls errored, not which. Second and more seriously, per S1 the realistic
-failure is not an error at all --- a broken kernel returns a stump and the block
-passes. That is exactly what happened in the first pass: the DLi and DGi mixed
-splitters were entirely non-functional and the suite reported green.
-
-This is now *more* misleading than before, not less. Every mixed configuration
-currently returns `width = 3`, so the blocks pass --- and they would pass
-identically if all three kernels were dead. S1's fix means such a tree now also
-carries `n_fail_split > 0` and emits a warning, but `expect_no_error()` reads
-neither: a warning is not an error, and nothing inspects the counters.
-
-Split them, and assert on the artefact rather than on the absence of an exception:
+They are replaced by one helper, applied to all 17 configurations:
 
 ```r
-for (sp in c("FIT", "DLi", "DGi")) {
-  tr <- doTrees(dat, model, covs, influence = "mat", splitter = sp, control = ctl_mixed)
-  expect_s3_class(tr, "igsca_tree")
-  expect_gt(partykit::width(partykit::node_party(tr)), 1L)   # it actually split
-  expect_identical(attr(tr, "igsca_info")$n_fail_full, 0L)
+expect_grew <- function(tree) {
+  expect_s3_class(tree, "igsca_tree")
+  info <- attr(tree, "igsca_info")
+  expect_identical(info$n_fail_full,  0L)
+  expect_identical(info$n_fail_split, 0L)
+  # width() returns a double, so expect_identical(..., 1L) would fail on type.
+  expect_gt(partykit::width(partykit::node_party(tree)), 1)
 }
 ```
 
-`expect_gt(width, 1)` is the minimum assertion that would have caught S1;
-`expect_identical(attr(tr, "igsca_info")$n_fail_split, 0L)` is now the sharper
-one. #link(<mixed>)[Section 5] goes further.
+Nothing now asserts a node count, which is what makes the per-branch controls
+safe to tune: `expect_grew()` holds at any `maxdepth`, and the exact shape of
+each tree is the snapshot's job.
 
-== T4. Only the *partition selectors* are expensive --- mixed splitters are cheap
+== T3. `expect_no_error()` --- split into one named test per configuration
 
-Revised from the first pass, which over-generalised the cost. The two paths differ
-by an order of magnitude, because only the partition *selectors* run permutation
-p-values; a mixed splitter re-scans candidates but inherits COIN variable
-selection from libcoin. Measured on this fixture:
+*Status: fixed.* Each of the five `expect_no_error({...})` blocks wrapped two or
+three `doTrees()` calls, so a failure told you that *one* of them errored but not
+which --- and, far worse, per S1 the realistic failure is not an error at all: a
+broken kernel returns a plausible stump and the block passes. That is exactly
+what happened in the first pass, when the DLi and DGi mixed splitters were
+entirely non-functional and the suite reported green.
+
+Each block is now a loop that *generates* one `test_that()` per splitter, so the
+test name carries the configuration even when the call errors outright:
+
+```r
+for (sp in c("FIT", "DLi", "DGi")) {
+  test_that(paste0("Matrix of Residuals selection splits on ", sp), {
+    set.seed(12353)
+    expect_grew(grow_tree("mat", sp, ctl_mixed))
+  })
+}
+```
+
+`grow_tree(influence, splitter, control)` is a one-line local wrapper around
+`doTrees()`; it collapses 17 seven-line call sites to 17 one-line ones without
+touching what `expect_snapshot()` captures.
+
+*These assertions have teeth, verified.* #link(<negctl>)[Section 5.4]'s mocked
+dead kernel makes exactly the `expect_grew()` assertions fail --- `width == 1`
+and `n_fail_split > 0` --- which is the regression the old blocks could not see.
+
+*Two counters were deliberately left out of `expect_grew()`*, both for measured
+reasons rather than caution:
+
+- `n_split_scan > 0` does *not* hold on the partition path. A matched
+  selector/splitter pair reuses the selector's scan through the cache
+  (#link(<cache>)[section 5.5]), so `FIT` #sym.times `FIT` legitimately reports
+  `0 / 0`; only the mismatched pairs rescan.
+- `n_fail_resample == 0L` does not hold either: the `mat` mixed rows reach 2, the
+  ordinary non-convergence at extreme cutpoints noted in #link(<b2>)[B2].
+
+== T4. Two controls, one per branch --- the suite finishes in two minutes
+
+*Status: fixed.* The two paths differ in cost by an order of magnitude, because
+only the partition *selectors* run permutation p-values; a mixed splitter
+re-scans candidates but inherits COIN variable selection from libcoin. Measured
+on this fixture:
 
 #table(
   columns: (1fr, auto),
@@ -608,46 +629,69 @@ selection from libcoin. Measured on this fixture:
   align: (left, right),
   table.header([*Configuration*], [*Wall clock*]),
   [one 2-group MGA fit], [0.585 s],
+  [ctree `native`, defaults (`maxdepth = 3, R_test = 500`)], [1.4 s],
   [mixed splitter, `maxdepth = 2, max_cuts = 8, R_test = 50`], [1.5--2.6 s],
-  [partition selector, `maxdepth = 1, max_cuts = 3, R_test = 24`], [14.0--15.3 s],
+  [partition selector, `maxdepth = 1, max_cuts = 3, R_test = 24`], [15.9 s],
+  [partition selector, `maxdepth = 2, max_cuts = 4, R_test = 24`], [31.6 s],
   [partition selector, one node at `max_cuts = 20, R_test = 500`], [#sym.tilde 15 min],
   [partition selector, one tree at `maxdepth = 3` (default)], [#sym.tilde 1.8 h],
 )
 
-All 17 calls in the test file still use a bare `igsca_tree_control()`. The eight
-ctree-branch calls are fine at defaults; the nine partition-branch calls are not
---- at #sym.tilde 1.8 h each the file is on the order of half a day. Define two
-controls at the top and use them by branch:
+All 17 calls used a bare `igsca_tree_control()`. The eight ctree-branch calls
+were fine at the defaults; the nine partition-branch calls were not --- at
+#sym.tilde 1.8 h each the file was on the order of *16 hours*. What shipped:
 
 ```r
 ctl_mixed <- igsca_tree_control(R_test = 50L, maxdepth = 2L, max_cuts = 8L)
-ctl_part  <- igsca_tree_control(R_test = 49L, max_cuts = 4L, maxdepth = 2L,
-                                minbucket = 100L)
+ctl_part  <- igsca_tree_control(R_test = 24L, max_cuts = 3L, maxdepth = 1L,
+                                minbucket = 200L)
 ```
 
-`R_test = 49L` matters only for `ctl_part`, and is worth a comment in the file.
-`permutation_pvalue()` returns `(1 + k) / (R + 1)`, so the smallest attainable
-p-value is `1/(R + 1)`, and the split criterion is a *strict* inequality
-(`crit > logmincriterion` #sym.arrow.r.double `p < alpha`). At `R_test = 19L` the
-floor is exactly `1/20 = 0.05`, which does *not* clear `alpha = 0.05`: the
-partition family needs `R_test >= 20L` or it silently returns stumps for reasons
-that have nothing to do with the data. `49L` leaves comfortable headroom at
-`1/50 = 0.02`.
+`ctl_part` is *shallower and cheaper than this section originally recommended*,
+on measurement. The proposed `maxdepth = 2L, max_cuts = 4L, minbucket = 100L`
+runs in 31.6 s and returns the *same 3-node tree* as the `maxdepth = 1L` control
+at 15.9 s: the children never split on this fixture, so the second level buys
+runtime and nothing else. Depth-2 recursion is exercised on the ctree branch by
+`ctl_mixed` instead, where it is nearly free.
+
+`R_test` matters only for `ctl_part`, and is worth the comment it carries in the
+file. `permutation_pvalue()` returns `(1 + k) / (R + 1)`, so the smallest
+attainable p-value is `1/(R + 1)`, and the split criterion is a *strict*
+inequality (`crit > logmincriterion` #sym.arrow.r.double `p < alpha`). At
+`R_test = 19L` the floor is exactly `1/20 = 0.05`, which does *not* clear
+`alpha = 0.05`: the partition family needs `R_test >= 20L` or it silently returns
+stumps for reasons that have nothing to do with the data. `24L` clears it at
+`1/25 = 0.04`.
 
 This does *not* apply to `ctl_mixed`. libcoin's Monte-Carlo p-value is a plain
 proportion with no add-one --- measured, `0.74 = 37/50` and `0.890 = 178/200`
 exactly --- so `p = 0` is attainable at any `R_test` and there is no such floor on
-the ctree branch. If a full-fidelity run matters, keep it behind
-`skip_on_ci()`.
+the ctree branch.
+
+*The two `native` snapshot trees keep the package defaults.* They cost 1.4 s
+each, so there is nothing to buy by reducing them, and leaving them alone is what
+lets the `mat` snapshot stay comparable to every earlier measurement in this
+document (T1). `ctl_mixed` covers the six mixed ctree calls plus
+#link(<negctl>)[section 5.4]'s three blocks; `ctl_part` covers all nine partition
+calls.
+
+*Result:* `FAIL 0 | WARN 0 | SKIP 0 | PASS 85` in *2 min 05 s*, so no part of
+this file needs `skip_on_ci()`.
 
 == T5. Nothing asserts the diagnostics the port exists to collect
 
-Partly addressed. #link(<negctl>)[Section 5.4]'s three blocks now assert
+Mostly addressed. #link(<negctl>)[Section 5.4]'s three blocks assert
 `n_split_scan` and `n_fail_split` on all three paths (dead kernel, working
-kernel, native). Still untouched: `n_fail_full`, `n_fail_node`,
-`n_fail_resample`, `root_criteria`, and the node-local scan cache in
-`argmax_split()` --- the one piece of genuinely subtle logic in the port
-(`identical()` on closures as a cache key). See #link(<cache>)[section 5.5].
+kernel, native), and T2's `expect_grew()` now asserts `n_fail_full` and
+`n_fail_split` on all 17 configurations.
+
+Still untouched: `n_fail_node`, `n_fail_resample`, `n_fail_leaf`,
+`root_criteria`, and the node-local scan cache in `argmax_split()` --- the one
+piece of genuinely subtle logic in the port (`identical()` on closures as a cache
+key). See #link(<cache>)[section 5.5]. `n_fail_leaf` is the one worth doing next:
+it is *live* on the default control (measured `n_fail_leaf = 1` on the `mat`
+snapshot tree, the n = 68 leaf of #link(<s3>)[S3]), so it is a real diagnostic
+firing in the suite today with nothing watching it.
 
 #pagebreak()
 
@@ -655,8 +699,10 @@ kernel, native). Still untouched: `n_fail_full`, `n_fail_node`,
 
 The mixed pairs (COIN variable selection + a model-comparison split point) are the
 configurations the suite is least able to check, because their failure mode is a
-*plausible-looking tree*, not an exception. Three measured facts shape what a
-useful test can look like.
+*plausible-looking tree*, not an exception. T3 closed the crudest version of that
+gap --- a wholly dead kernel now fails `expect_grew()` --- but a kernel that runs
+and picks the *wrong* cutpoint still passes every assertion in the file. Three
+measured facts shape what a useful test can look like.
 
 *(a) The splitfun wiring works, but it is an undocumented contract.* `doTrees()`
 plants its kernel in `cc$splitfun` and relies on partykit reading it back out of
@@ -795,9 +841,10 @@ asserting only that a dead kernel *warns* leaves open whether a working kernel
 warns too, so the trio brackets the behaviour from both sides plus the
 kernel-free path.
 
-```r
-ctl_mixed <- igsca_tree_control(R_test = 50L, maxdepth = 2L, max_cuts = 8L)
+As shipped, after T2--T4 hoisted `ctl_mixed`, `grow_tree()` and `expect_grew()`
+to the top of the file:
 
+```r
 test_that("a dead split kernel is reported, not silently a stump", {
   local_mocked_bindings(
     split_max_dli = function(model, mf, subset, goes_left, ctrl) {
@@ -806,8 +853,7 @@ test_that("a dead split kernel is reported, not silently a stump", {
   )
   set.seed(11)
   expect_warning(
-    tr <- doTrees(data = dat, model = model, covariates = covs,
-                  influence = "mat", splitter = "DLi", control = ctl_mixed),
+    tr <- grow_tree("mat", "DLi", ctl_mixed),
     "produced no usable statistic"
   )
   info <- attr(tr, "igsca_info")
@@ -819,30 +865,28 @@ test_that("a dead split kernel is reported, not silently a stump", {
 
 test_that("a working split kernel records scans but no failures", {
   set.seed(11)
-  tr <- expect_no_warning(doTrees(
-    data = dat, model = model, covariates = covs,
-    influence = "mat", splitter = "DLi", control = ctl_mixed))
-  info <- attr(tr, "igsca_info")
-  expect_gt(info$n_split_scan, 0L)
-  expect_identical(info$n_fail_split, 0L)
-  expect_gt(partykit::width(partykit::node_party(tr)), 1L)
+  tr <- expect_no_warning(grow_tree("mat", "DLi", ctl_mixed))
+  expect_gt(attr(tr, "igsca_info")$n_split_scan, 0L)
+  expect_grew(tr)
 })
 
 test_that("the native split path never touches the kernel counters", {
   set.seed(11)
-  tr <- doTrees(data = dat, model = model, covariates = covs,
-                influence = "mat", splitter = "native", control = ctl_mixed)
+  tr <- grow_tree("mat", "native", ctl_mixed)
   info <- attr(tr, "igsca_info")
   expect_identical(info$n_split_scan, 0L)
   expect_identical(info$n_fail_split, 0L)
 })
 ```
 
-Two things worth carrying into the rest of the suite. The reduced `ctl_mixed`
-keeps all three blocks to a few seconds --- mixed splitters run no permutation
-test, so this costs nothing in fidelity (see T4). And `partykit::width()` returns
-a *double*, not an integer: `expect_identical(width(...), 1L)` fails on type
-alone. Use `expect_equal(..., 1)` or `expect_gt()`.
+The middle block is the positive control for `expect_grew()` itself: it runs the
+same configuration as the first, unmocked, so between them the pair pins that the
+warning and the counters track the kernel rather than the control. Two details
+worth carrying: the reduced `ctl_mixed` keeps all three blocks to a few seconds,
+which costs nothing in fidelity since mixed splitters run no permutation test
+(T4); and `partykit::width()` returns a *double*, not an integer, so
+`expect_identical(width(...), 1L)` fails on type alone --- use
+`expect_equal(..., 1)` or `expect_gt()`.
 
 == The scan cache <cache>
 
@@ -1068,12 +1112,12 @@ than accidents:
   inset: 6pt,
   align: (left, left, left),
   table.header([*\#*], [*Item*], [*Why in this position*]),
-  [1], [T4 --- promote §5.4's `ctl_mixed` to the top of the file, add `ctl_part` at `R_test >= 20L`], [The constant already exists; the other 17 calls still use bare defaults],
-  [2], [T1--T3 --- regenerate snapshots, drop `length()==5`, split `expect_no_error()`], [The signature has settled, so snapshots are now safe to regenerate; T2 fails outright once T4 lands],
-  [3], [§5.1--5.3 --- kernel, `argmax_split`, and splitfun-wiring tests], [Cheap, fast, and they pin the contracts the port depends on],
-  [4], [T5 + §5.5 --- scan-cache tests], [Subtlest logic in the port; the only collector field still unasserted],
+  [#strike[1]], [#strike[T4 --- two controls, chosen by branch]], [*Done.* #sym.tilde 16 h #sym.arrow.r 2 min 05 s],
+  [#strike[2]], [#strike[T1--T3 --- regenerate snapshots, drop `length()==5`, split `expect_no_error()`]], [*Done.* 85 assertions, `FAIL 0 | WARN 0`],
+  [3], [§5.1--5.3 --- kernel, `argmax_split`, and splitfun-wiring tests], [*Now the head of the queue.* Cheap, fast, and they pin the contracts the port depends on],
+  [4], [T5 + §5.5 --- scan-cache tests], [Subtlest logic in the port, and still wholly unasserted],
   [5], [P1--P6 --- prune exports, drop `:::`, fix `\value`, validate inputs], [Cleanup; P4's rename pairs naturally with B2's settled signature. Note `attach_leaf_fits()`, `drop_inner_node_objects()` and `warn_dead_splitter()` are already `@noRd`],
-  [6], [#link(<s3>)[S3] follow-up --- assert `n_fail_leaf` and raise `minbucket` for large models], [The counter is new and nothing tests it; the default `30L` admits unfittable leaves],
+  [6], [#link(<s3>)[S3] follow-up --- assert `n_fail_leaf` and raise `minbucket` for large models], [The default `30L` admits unfittable leaves, and the counter fires in the suite today (`n_fail_leaf = 1` on the `mat` snapshot) with nothing watching it],
   [7], [§5.6 --- numeric-cutpoint fixture], [Optional; only if the mixed pairs are a real study arm],
   [8], [#link(<testtype>)[§3.2.1] --- optional: replace the `cc$bonferroni` override with a length-2 `testtype`], [Cosmetic; stays inside the documented partykit API],
 )
