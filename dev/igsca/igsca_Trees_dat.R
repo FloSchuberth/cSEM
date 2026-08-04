@@ -31,20 +31,37 @@ pooled <- csem(
 
 
 # Apply Do Trees for Variable selection ---------------------------------------------------------
-doTrees(
-    pooled,
-    .covariates = covs,
-    .model = model,
-    .data = dat,
-    .ctree_control = partykit::ctree_control(),
-    .igsca_tree_control = igsca_tree_control(),
-)
 
 ## Matrix of residuals ----------------------------------------------------
+debug(doTrees)
+doTrees(
+    .object = pooled,
+    .covariates = covs,
+    .model = model,
+    # .data = dat,
+    .ctree_control = partykit::ctree_control(),
+    .igsca_tree_control = igsca_tree_control(),
+    influence = influence_mat,
+    splitter = NULL
+)
+undebug(doTrees)
+
 
 # TODO: Try to reuse the ctree_control() function as much as possible
 
 ## Vector of residuals ----------------------------------------------------
+debug(doTrees)
+doTrees(
+    .object = pooled,
+    .covariates = covs,
+    .model = model,
+    # .data = dat,
+    .ctree_control = partykit::ctree_control(),
+    .igsca_tree_control = igsca_tree_control(),
+    influence = influence_vec,
+    splitter = NULL
+)
+undebug(doTrees)
 
 
 ## FIT Diff ---------------------------------------------------------------

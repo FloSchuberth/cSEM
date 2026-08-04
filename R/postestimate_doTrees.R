@@ -16,6 +16,7 @@ doTrees <- function(
   .ctree_control = partykit::ctree_control(),
   .igsca_tree_control = igsca_tree_control(),
   influence = influence_vec, # TODO: Shuffle this into igsca_tree_control later
+  splitter = NULL, # TODO: Shuffle this into igsca_tree_control later
   .approach_weights = .object$Information$Arguments$.approach_weights,
   .iter_max = .object$Information$Arguments$.iter_max,
   .tolerance = .object$Information$Arguments$.tolerance,

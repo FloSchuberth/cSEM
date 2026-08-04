@@ -256,3 +256,41 @@ new_collector <- function() {
   e$scan_splitter <- NULL
   e
 }
+
+## Methods: print falls through to constparty; coef/plot follow
+coef.igsca_tree <- function(object, node = NULL, drop = TRUE, ...) {
+  if (is.null(node)) {
+    node <- partykit::nodeids(object, terminal = TRUE)
+  }
+  cf <- do.call(
+    "rbind",
+    partykit::nodeapply(object, ids = node, FUN = function(n) {
+      i <- partykit::info_node(n)
+      c(nobs = i$nobs, objfun = i$objfun)
+    })
+  )
+  if (drop) {
+    drop(cf)
+  } else {
+    cf
+  }
+}
+
+plot.igsca_tree <- function(x, terminal_panel = NULL, FUN = NULL, tp_args = NULL, ...) {
+  if (is.null(terminal_panel)) {
+    if (is.null(FUN)) {
+      FUN <- function(info) {
+        c(
+          sprintf("n = %s", info$nobs),
+          sprintf("SSR = %s", format(info$objfun, digits = 4L))
+        )
+      }
+    }
+    terminal_panel <- do.call(
+      partykit::node_terminal,
+      c(list(obj = x, FUN = FUN), tp_args)
+    )
+    tp_args <- NULL
+  }
+  partykit::plot.party(x, terminal_panel = terminal_panel, tp_args = tp_args, ...)
+}
