@@ -531,8 +531,6 @@ plot.igsca_tree <- function(x, terminal_panel = NULL, FUN = NULL, tp_args = NULL
 # ctrl$collector so a matched splitter costs nothing; a mixed pair (any
 # select_* with any split_*) simply re-scans with its own kernel.
 #
-# Requires igsca_tree.R sourced first (candidate_partitions) and
-# R/MGA/csem_test_helpers.R (try_fit, idx_permutation, ndt_dists).
 
 
 
@@ -919,26 +917,28 @@ split_max_dli <- function(model, mf, subset, goes_left, ctrl) {
 #' 
 #' @param n
 #' @param R
-#' @param strata
 #'
 #' @returns
 #'
 #' @export
 #' @examples
-idx_permutation <- function(n, R, strata = NULL) {
+idx_permutation <- function(n, R) {
+  # Argument removed
+  # , strata = NULL 
+
   # row r starts as the identity 1:n
   out <- matrix(rep(seq_len(n), each = R), nrow = R, ncol = n)
-  if (is.null(strata)) {
+  # if (is.null(strata)) {
     for (r in seq_len(R)) out[r, ] <- sample.int(n)
-  } else {
-    strata <- as.integer(as.factor(strata))
-    for (s in unique(strata)) {
-      gp <- which(strata == s)
-      if (length(gp) > 1L) {
-        for (r in seq_len(R)) out[r, gp] <- sample(gp)
-      }
-    }
-  }
+  # } else {
+  #   strata <- as.integer(as.factor(strata))
+  #   for (s in unique(strata)) {
+  #     gp <- which(strata == s)
+  #     if (length(gp) > 1L) {
+  #       for (r in seq_len(R)) out[r, gp] <- sample(gp)
+  #     }
+  #   }
+  # }
   out
 }
 
