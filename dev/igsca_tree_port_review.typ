@@ -47,10 +47,14 @@ then:
   (#link(<b2>)[B2]), and S1 was fixed: `argmax_split()` now counts failed kernel
   scans, `doTrees()` warns on a wholly dead kernel, and the three tests of
   #link(<negctl>)[section 5.4] are implemented and passing.
+- *Fifth pass* --- S2's dropped `cc$bonferroni` line was restored and verified on
+  both distributions. #link(<testtype>)[Section 3.2.1] now answers the `testtype`
+  TODO properly, including why the asymptotic route is genuine COIN inference and
+  why partykit's "Bonferroni" is really Šidák.
 
-Both blockers and the first silent failure are now cleared, and every `influence`
-#sym.times `splitter` combination runs. What remains is two carried-over silent
-failures, a test suite that still cannot detect them, and packaging cleanup.
+Both blockers and two of the three silent failures are now cleared, and every
+`influence` #sym.times `splitter` combination runs. What remains is S3, a test
+suite that cannot detect it, and packaging cleanup.
 #link(<mixed>)[Section 5] sets out how to test the mixed-splitter configurations;
 its injection recipes have been rewritten for the string-valued API, and 5.4 is
 now shipped code rather than a proposal.
@@ -65,7 +69,7 @@ now shipped code rather than a proposal.
   [B1], [`idx_permutation()` / `ndt_dists()` not ported], [#ok],
   [B2], [`splitter` is a function in one branch, a string in the other], [#ok],
   [S1], [Broken split kernel degrades to a stump with no diagnostic], [#ok],
-  [S2], [`control$bonferroni` silently ignored on the ctree path], [#open],
+  [S2], [`control$bonferroni` silently ignored on the ctree path], [#ok],
   [S3], [`coef()` / `plot()` empty for any tree that splits], [#open],
   [T1], [Snapshots stale (`trees_out` vs `trees_mx`)], [#open],
   [T2], [`length(tree) == 5` is a disguised structural assertion], [#open],
@@ -302,41 +306,123 @@ since no kernel is involved.
 
 Tests are in #link(<negctl>)[section 5.4] and now pass.
 
-== S2. `control$bonferroni` is silently ignored on the ctree path
+== S2. `control$bonferroni` was silently ignored on the ctree path <s2>
 
-*Location:* `R/postestimate_doTrees.R:116` (`# TODO: Return to this bonferroni problem`)
+*Location:* `R/postestimate_doTrees.R:116`
 
-Unchanged. The template had one more line after `ctree_control()`:
+*Status: fixed.* The dropped line has been restored:
 
 ```r
 cc <- partykit::ctree_control(...)
-cc$bonferroni <- isTRUE(control$bonferroni)   # <- dropped in the port
+cc$bonferroni <- isTRUE(control$bonferroni)
 ```
 
-This is not a no-op. `ctree_control()` derives `bonferroni` from `testtype`, but
-the port computes `testtype` from `coin_distribution` first:
+It was never a no-op. `ctree_control()` derives `bonferroni` from `testtype`, but
+the port computes `testtype` from `coin_distribution` first, so with the default
+`coin_distribution = "approximate"` it always sent `testtype = "MonteCarlo"` and
+`cc$bonferroni` was always `FALSE` --- while on the *partition* path
+`grow_extree()` copies the whole control list into `ectrl`, so the same argument
+did take effect there. Verified fixed on both distributions
+(`R_test = 200`, three covariates):
 
 ```
-ctree_control()$bonferroni                         TRUE   (testtype = "Bonferroni")
-ctree_control(testtype = "MonteCarlo")$bonferroni  FALSE
+                  z_true     noise_1    noise_2
+asymptotic  FALSE  5.31e-57  0.872895   0.810172
+asymptotic  TRUE   1.59e-56  0.997947   0.993160
+MonteCarlo  FALSE  0.000     0.890      0.845
+MonteCarlo  TRUE   0.000     0.998669   0.996276
 ```
 
-With the default `coin_distribution = "approximate"` the port always sends
-`testtype = "MonteCarlo"`, so `cc$bonferroni` is always `FALSE` regardless of what
-the user asked for. `igsca_tree_control(bonferroni = TRUE)` is accepted, stored,
-threaded through, and then discarded.
+=== Answering the TODO: `testtype` vs `bonferroni` <testtype>
 
-The asymmetry is the real problem: on the *partition* path `grow_extree()` copies
-the whole control list into `ectrl` (`R/helper_doTrees.R:249--251`), so
-`bonferroni` *does* take effect there. One argument, honoured in one branch and
-ignored in the other, with no diagnostic.
+The earlier draft of this section said `testtype` picks "permutation vs
+asymptotic". That is half the story and worth stating properly, because
+`testtype` conflates *two* dimensions:
 
-*Fix.* Restore the line. To answer the TODO on its own terms: `testtype` selects
-how p-values are *computed* (permutation vs asymptotic), whereas `.extree_node()`
-reads `ctrl$bonferroni` independently to decide whether to *multiplicity-adjust*
-the criterion across covariates. They are orthogonal, which is exactly why the
-explicit assignment is needed --- otherwise choosing
-`coin_distribution = "approximate"` covertly forces `bonferroni = FALSE`.
+#table(
+  columns: (auto, auto, auto),
+  inset: 6pt,
+  align: (left, left, left),
+  table.header([*`testtype`*], [*p-value from*], [*Multiplicity*]),
+  [`"Bonferroni"`], [asymptotic limiting distribution], [adjusted],
+  [`"Univariate"`], [asymptotic limiting distribution], [none],
+  [`"MonteCarlo"`], [`nresample` permutations], [none],
+  [`"Teststatistic"`], [no p-value --- raw statistic is the criterion], [n/a],
+)
+
+*Are the p-values not always permutation-based?* No --- and this is the crux. In
+the conditional-inference (COIN) framework "permutation test" describes the
+*null distribution*, not the *computation*. Strasser and Weber derived the
+conditional mean $mu$ and covariance $Sigma$ of the linear statistic $T$ under
+that permutation null *in closed form*. Standardising with them gives
+$c = (T - mu)^tack.b Sigma^(+) (T - mu)$, which is asymptotically $chi^2$ with
+$"rank"(Sigma)$ degrees of freedom (`teststat = "quadratic"`). You can then read
+the p-value off that $chi^2$ limit *without ever drawing a permutation*. That is
+the asymptotic route, and it is partykit's default.
+
+Two measurements confirm no resampling happens on that path --- same seed,
+`influence = "mat"`, root criteria:
+
+```
+approximate, R_test = 50 :  z_true 0.00      noise_1 0.74      noise_2 0.82
+approximate, R_test = 200:  z_true 0.000     noise_1 0.890     noise_2 0.845
+asymptotic,  R_test = 50 :  z_true 5.31e-57  noise_1 0.872895  noise_2 0.810172
+asymptotic,  R_test = 200:  z_true 5.31e-57  noise_1 0.872895  noise_2 0.810172
+```
+
+First, `5.31e-57` is unreachable for *any* Monte-Carlo test at `R = 50` or `200`.
+Second, the asymptotic values are bit-identical across the two `R_test` settings
+--- `nresample` is simply unused. So `coin_distribution = "asymptotic"` is a real
+setting with the same conditional null and the same $mu$, $Sigma$; it only swaps
+an empirical tail for a $chi^2$ tail. It is far cheaper, and it yields continuous
+p-values instead of a grid; Monte Carlo is the safer choice in small nodes where
+the asymptotics have not bitten.
+
+*Why the fix is still needed.* `.extree_node()` applies the adjustment to
+whatever p-values it was handed, independently of how they were produced:
+
+```r
+if (ctrl$bonferroni)
+    sf$criteria["p.value", ] <- sf$criteria["p.value", ] *
+        sum(!is.na(sf$criteria["p.value", ]))
+```
+
+So the two knobs *are* orthogonal at the point of use, even though `testtype`
+bundles them at the point of configuration --- which is exactly why an explicit
+assignment was required.
+
+*Two details worth knowing.* That row holds $log(1 - p)$, not $p$, so multiplying
+by $k$ gives $log((1-p)^k)$ --- the adjustment is *Šidák*, $1 - (1-p)^k$, not
+Bonferroni's $k p$. It agrees with Bonferroni to first order (hence the exact
+$times 3$ on `z_true` above) but not for large p: $1 - (1 - 0.872895)^3 =
+0.997947$, matching the table exactly. Second, partykit *does* support asking for
+both dimensions at once --- `ctree_control()` accepts a length-2 `testtype`:
+
+```r
+testtype <- match.arg(testtype, several.ok = TRUE)
+if (length(testtype) > 1) {
+  stopifnot(all(testtype %in% c("Bonferroni", "MonteCarlo")))
+  ttesttype <- "MonteCarlo"
+}
+... bonferroni = "Bonferroni" %in% testtype
+```
+
+`ctree_control(testtype = c("Bonferroni", "MonteCarlo"))` is identical to the
+manual override on every non-function component (verified; the function-valued
+slots differ only by closure environment). So the mapping could drop the override
+entirely and stay inside the documented API:
+
+```r
+testtype <- c(
+  if (isTRUE(control$bonferroni))                 "Bonferroni",
+  if (control$coin_distribution == "approximate") "MonteCarlo"
+)
+if (is.null(testtype)) testtype <- "Univariate"
+```
+
+which reaches all four combinations --- MC#sym.plus.minus adjustment, asymptotic
+#sym.plus.minus adjustment --- with no post-hoc surgery on the control object.
+Optional: the current code is correct as it stands.
 
 == S3. `coef()` and `plot()` labels are empty for any tree that splits
 
@@ -504,11 +590,20 @@ ctl_part  <- igsca_tree_control(R_test = 49L, max_cuts = 4L, maxdepth = 2L,
                                 minbucket = 100L)
 ```
 
-`R_test = 49L` keeps the smallest attainable p-value at `1/50 = 0.02 < alpha`, so
-splitting is still possible --- worth stating explicitly in a comment, because
-anything below `R_test = 19L` makes `p < 0.05` unreachable and silently guarantees
-a stump for reasons that have nothing to do with the data. If a full-fidelity run
-matters, keep it behind `skip_on_ci()`.
+`R_test = 49L` matters only for `ctl_part`, and is worth a comment in the file.
+`permutation_pvalue()` returns `(1 + k) / (R + 1)`, so the smallest attainable
+p-value is `1/(R + 1)`, and the split criterion is a *strict* inequality
+(`crit > logmincriterion` #sym.arrow.r.double `p < alpha`). At `R_test = 19L` the
+floor is exactly `1/20 = 0.05`, which does *not* clear `alpha = 0.05`: the
+partition family needs `R_test >= 20L` or it silently returns stumps for reasons
+that have nothing to do with the data. `49L` leaves comfortable headroom at
+`1/50 = 0.02`.
+
+This does *not* apply to `ctl_mixed`. libcoin's Monte-Carlo p-value is a plain
+proportion with no add-one --- measured, `0.74 = 37/50` and `0.890 = 178/200`
+exactly --- so `p = 0` is attainable at any `R_test` and there is no such floor on
+the ctree branch. If a full-fidelity run matters, keep it behind
+`skip_on_ci()`.
 
 == T5. Nothing asserts the diagnostics the port exists to collect
 
@@ -938,12 +1033,12 @@ than accidents:
   inset: 6pt,
   align: (left, left, left),
   table.header([*\#*], [*Item*], [*Why in this position*]),
-  [1], [S2 --- restore `cc$bonferroni <- isTRUE(control$bonferroni)`], [One line, silently wrong today, no dependencies],
-  [2], [T4 --- promote §5.4's `ctl_mixed` to the top of the file, add `ctl_part`], [The constant already exists; the other 17 calls still use bare defaults],
-  [3], [T1--T3 --- regenerate snapshots, drop `length()==5`, split `expect_no_error()`], [The signature has settled, so snapshots are now safe to regenerate; T2 fails outright once T4 lands],
-  [4], [§5.1--5.3 --- kernel, `argmax_split`, and splitfun-wiring tests], [Cheap, fast, and they pin the contracts the port depends on],
-  [5], [T5 + §5.5 --- scan-cache tests], [Subtlest logic in the port; the only collector field still unasserted],
-  [6], [S3 --- leaf refits, then fix `coef()` / `plot()`], [Largest behavioural change; independent of the rest],
-  [7], [P1--P6 --- prune exports, drop `:::`, fix `\value`, validate inputs], [Cleanup; P4's rename pairs naturally with B2's settled signature. Note `warn_dead_splitter()` is already `@noRd`],
-  [8], [§5.6 --- numeric-cutpoint fixture], [Optional; only if the mixed pairs are a real study arm],
+  [1], [T4 --- promote §5.4's `ctl_mixed` to the top of the file, add `ctl_part` at `R_test >= 20L`], [The constant already exists; the other 17 calls still use bare defaults],
+  [2], [T1--T3 --- regenerate snapshots, drop `length()==5`, split `expect_no_error()`], [The signature has settled, so snapshots are now safe to regenerate; T2 fails outright once T4 lands],
+  [3], [§5.1--5.3 --- kernel, `argmax_split`, and splitfun-wiring tests], [Cheap, fast, and they pin the contracts the port depends on],
+  [4], [T5 + §5.5 --- scan-cache tests], [Subtlest logic in the port; the only collector field still unasserted],
+  [5], [S3 --- leaf refits, then fix `coef()` / `plot()`], [The last open behavioural finding; independent of the rest],
+  [6], [P1--P6 --- prune exports, drop `:::`, fix `\value`, validate inputs], [Cleanup; P4's rename pairs naturally with B2's settled signature. Note `warn_dead_splitter()` is already `@noRd`],
+  [7], [§5.6 --- numeric-cutpoint fixture], [Optional; only if the mixed pairs are a real study arm],
+  [8], [#link(<testtype>)[§3.2.1] --- optional: replace the `cc$bonferroni` override with a length-2 `testtype`], [Cosmetic; stays inside the documented partykit API],
 )

@@ -92,12 +92,12 @@ doTrees <- function(
       }
     }
     # TODO: Figure out the different test types and what it has to do with the coin_distribution and bonferroni
-    testtype <- if (control$coin_distribution == "approximate") {
-      "MonteCarlo"
-    } else if (isTRUE(control$bonferroni)) {
-      "Bonferroni"
-    } else {
-      "Univariate"
+    testtype <- c(
+      if (isTRUE(control$bonferroni)) "Bonferroni",
+      if (control$coin_distribution == "approximate") "MonteCarlo"
+    )
+    if (is.null(testtype)) {
+      testtype <- "Univariate"
     }
     cc <- partykit::ctree_control(
       teststat = "quadratic",
@@ -113,6 +113,8 @@ doTrees <- function(
       saveinfo = TRUE
     )
     # TODO: Return to this bonferroni problem
+    cc$bonferroni <- isTRUE(control$bonferroni)
+
     if (!is.null(split_fn)) {
       # Sets the splitter to one of the three functions that we're looking for.
       cc$model <- model
