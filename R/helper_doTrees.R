@@ -73,36 +73,15 @@ bdiagFit <- function(.object    = NULL,
 }
 
 
-#' Title
-#'
-#' @param alpha
-#' @param bonferroni
-#' @param minbucket
-#' @param minsplit
-#' @param maxdepth
-#' @param max_cuts
-#' @param R_test
-#' @param coin_distribution
-#' @param influence
-#' @param splitter
-#'
-#' @returns
-#'
-#' @export
-#' @examples
-igsca_tree_control <- function(
-  alpha = 0.05,
-  bonferroni = TRUE,
-  minbucket = 30L,
-  minsplit = 2L * minbucket,
-  maxdepth = 3L,
-  max_cuts = 20L,
-  R_test = 500L, # TODO: Consider reusing ctree_control()$nresample
-  coin_distribution = c("approximate", "asymptotic"),
-  influence = influence_vec,
-  splitter = NULL
-) {
-  # TODO: consider doing something like utils::modifyList(ctree_control, list(...)) instead to reduce the number of arguments
+
+igsca_tree_control <- function(alpha = 0.05,
+                               bonferroni = FALSE,
+                               minbucket = 30L,
+                               minsplit = 2L * minbucket,
+                               maxdepth = 3L,
+                               max_cuts = 20L,
+                               R_test = 500L,
+                               coin_distribution = c("approximate", "asymptotic")) {
   list(
     alpha = alpha,
     bonferroni = bonferroni,
@@ -111,9 +90,7 @@ igsca_tree_control <- function(
     maxdepth = as.integer(maxdepth),
     max_cuts = as.integer(max_cuts),
     R_test = as.integer(R_test),
-    coin_distribution = match.arg(coin_distribution),
-    influence = influence,
-    splitter = splitter
+    coin_distribution = match.arg(coin_distribution)
   )
 }
 
@@ -129,10 +106,10 @@ influence_mat <- function(E) {
 }
 
 #' `.id = NULL` yields the pooled single-group fit; `.id = "group"` the MGA fit.
-fit_csem <- function(.data, model, .id = NULL) {
+fit_csem <- function(.data, .model, .id = NULL) {
   csem(
     .data = .data,
-    model = model,
+    .model = .model,
     .id = .id,
     .approach_weights = "GSCA",
     .disattenuate = TRUE, # to get igsca
@@ -143,16 +120,23 @@ fit_csem <- function(.data, model, .id = NULL) {
   )
 }
 
-try_fit <- function(.data, model, .id = NULL) {
+try_fit <- function(.data, .model, .id = NULL) {
   fit <- suppressWarnings(tryCatch(
-    fit_csem(.data, model, .id),
+    fit_csem(.data, .model, .id),
     error = function(e) NULL
   ))
   ok <- !is.null(fit) &&
-    isTRUE(tryCatch(sum(verify(fit)), error = function(e) FALSE))
+    isTRUE(tryCatch(csem_converged(fit), error = function(e) FALSE)) # That parameter estimates are proper solutions is the same bar that Hwang et al. (2021) IGSCA paper put
   list(fit = fit, ok = ok)
 }
 
+csem_converged <- function(fit) {
+  if (inherits(fit, "cSEMResults_multi")) {
+    all(vapply(fit, function(x) sum(verify(x)) == 0, logical(1)))
+  } else {
+    sum(verify(fit)) == 0
+  }
+}
 
 
 argmax_split <- function(

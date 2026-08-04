@@ -17,16 +17,16 @@ model <- "# Latent variable model
  "
 
 # Fit single group model -------------------------------------------------
-pooled <- csem(
-    .data = dat,
-    .model = model,
-    .disattenuate = TRUE,
-    .approach_weights = "GSCA",
-    .conv_criterion = "sum_diff_absolute", # Default in gsca_m.m and gsca.m
-    .iter_max = 100, 
-    .GSCA_modes = "CCMP", 
-    .tolerance = 0.001 
-)
+# pooled <- csem(
+#     .data = dat,
+#     .model = model,
+#     .disattenuate = TRUE,
+#     .approach_weights = "GSCA",
+#     .conv_criterion = "sum_diff_absolute", # Default in gsca_m.m and gsca.m
+#     .iter_max = 100, 
+#     .GSCA_modes = "CCMP", 
+#     .tolerance = 0.001 
+# )
 
 
 
@@ -35,11 +35,13 @@ pooled <- csem(
 ## Matrix of residuals ----------------------------------------------------
 debug(doTrees)
 debug(partykit::ctree)
+set.seed(101)
 doTrees(
-    .object = pooled,
-    .covariates = covs,
-    model = model,
-    .control = igsca_tree_control(influence = influence_mat, splitter = NULL),
+    data = dat,
+    model = model, 
+    covariates = covs,
+    influence = influence_vec,
+    control = igsca_tree_control(),
 )
 undebug(partykit::ctree)
 undebug(doTrees)
@@ -54,6 +56,7 @@ doTrees(
     .covariates = covs,
     .data = dat,
     .model = model,
+    splitter = NULL,
     .control = igsca_tree_control(),
 )
 undebug(doTrees)
