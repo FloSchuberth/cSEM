@@ -6,6 +6,9 @@
 \usage{
 influence_mat(E)
 }
+\arguments{
+\item{E}{}
+}
 \description{
 Casewise squared-residual matrix (n x q, multivariate) -- COIN_mat.
 }

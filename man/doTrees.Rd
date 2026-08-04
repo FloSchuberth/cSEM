@@ -8,7 +8,7 @@ doTrees(
   data,
   model,
   covariates,
-  influence = influence_ssr,
+  influence = c("mat", "vec", "FIT", "DLi", "DGi"),
   splitter = NULL,
   control = igsca_tree_control()
 )

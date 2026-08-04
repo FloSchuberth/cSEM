@@ -9,6 +9,9 @@
 \arguments{
 \item{...}{}
 }
+\value{
+Graphic
+}
 \description{
 Title
 }

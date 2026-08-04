@@ -909,3 +909,60 @@ split_max_dgi <- function(model, mf, subset, goes_left, ctrl) {
 split_max_dli <- function(model, mf, subset, goes_left, ctrl) {
   partition_stat("DLi", model, mf, subset, goes_left, ctrl)
 }
+
+
+#' Title
+#' 
+#' Permutation resampling: sample WITHOUT replacement, within each stratum, so
+#' every replicate is a permutation of its stratum (each original row used
+#' exactly once per replicate). Mirrors/Near-Copy of boot:::permutation.array.
+#' 
+#' @param n
+#' @param R
+#' @param strata
+#'
+#' @returns
+#'
+#' @export
+#' @examples
+idx_permutation <- function(n, R, strata = NULL) {
+  # row r starts as the identity 1:n
+  out <- matrix(rep(seq_len(n), each = R), nrow = R, ncol = n)
+  if (is.null(strata)) {
+    for (r in seq_len(R)) out[r, ] <- sample.int(n)
+  } else {
+    strata <- as.integer(as.factor(strata))
+    for (s in unique(strata)) {
+      gp <- which(strata == s)
+      if (length(gp) > 1L) {
+        for (r in seq_len(R)) out[r, gp] <- sample(gp)
+      }
+    }
+  }
+  out
+}
+
+
+#' Title
+#'
+#' The four pooled-vs-MGA distances for one MGA fit, given the precomputed
+#' replicated-block pooled VCVs.
+#' 
+#' @param Sc_pool
+#' @param Si_pool
+#' @param mga_fit
+#'
+#' @returns
+#'
+#' @export
+#' @examples
+ndt_dists <- function(Sc_pool, Si_pool, mga_fit) {
+  Sc_mga <- bdiagFit(mga_fit, .type_vcv = "construct")
+  Si_mga <- bdiagFit(mga_fit, .type_vcv = "indicator")
+  c(
+    DGc = calculateDG(.matrix1 = Sc_pool, .matrix2 = Sc_mga),  # geodesic,  construct
+    DGi = calculateDG(.matrix1 = Si_pool, .matrix2 = Si_mga),  # geodesic,  indicator
+    DLc = calculateDL(.matrix1 = Sc_pool, .matrix2 = Sc_mga),  # sq-Euclid, construct
+    DLi = calculateDL(.matrix1 = Si_pool, .matrix2 = Si_mga)   # sq-Euclid, indicator
+  )
+}

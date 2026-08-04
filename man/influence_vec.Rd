@@ -6,6 +6,9 @@
 \usage{
 influence_vec(E)
 }
+\arguments{
+\item{E}{}
+}
 \description{
 Casewise sum of squared GSCA residuals (n x 1) -- COIN_ssr influence.
 }
