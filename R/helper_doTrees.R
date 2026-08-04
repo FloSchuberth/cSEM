@@ -73,14 +73,35 @@ bdiagFit <- function(.object    = NULL,
 }
 
 
-igsca_tree_control <- function(alpha = 0.05,
-                               bonferroni = TRUE,
-                               minbucket = 30L,
-                               minsplit = 2L * minbucket,
-                               maxdepth = 3L,
-                               max_cuts = 20L,
-                               R_test = 500L,
-                               coin_distribution = c("approximate", "asymptotic")) {
+#' Title
+#'
+#' @param alpha
+#' @param bonferroni
+#' @param minbucket
+#' @param minsplit
+#' @param maxdepth
+#' @param max_cuts
+#' @param R_test
+#' @param coin_distribution
+#' @param influence
+#' @param splitter
+#'
+#' @returns
+#'
+#' @export
+#' @examples
+igsca_tree_control <- function(
+  alpha = 0.05,
+  bonferroni = TRUE,
+  minbucket = 30L,
+  minsplit = 2L * minbucket,
+  maxdepth = 3L,
+  max_cuts = 20L,
+  R_test = 500L, # TODO: Consider reusing ctree_control()$nresample
+  coin_distribution = c("approximate", "asymptotic"),
+  influence = influence_vec,
+  splitter = NULL
+) {
   # TODO: consider doing something like utils::modifyList(ctree_control, list(...)) instead to reduce the number of arguments
   list(
     alpha = alpha,
@@ -90,7 +111,9 @@ igsca_tree_control <- function(alpha = 0.05,
     maxdepth = as.integer(maxdepth),
     max_cuts = as.integer(max_cuts),
     R_test = as.integer(R_test),
-    coin_distribution = match.arg(coin_distribution)
+    coin_distribution = match.arg(coin_distribution),
+    influence = influence,
+    splitter = splitter
   )
 }
 
@@ -106,10 +129,10 @@ influence_mat <- function(E) {
 }
 
 #' `.id = NULL` yields the pooled single-group fit; `.id = "group"` the MGA fit.
-fit_csem <- function(.data, .model, .id = NULL) {
+fit_csem <- function(.data, model, .id = NULL) {
   csem(
     .data = .data,
-    .model = .model,
+    model = model,
     .id = .id,
     .approach_weights = "GSCA",
     .disattenuate = TRUE, # to get igsca
@@ -120,9 +143,9 @@ fit_csem <- function(.data, .model, .id = NULL) {
   )
 }
 
-try_fit <- function(.data, .model, .id = NULL) {
+try_fit <- function(.data, model, .id = NULL) {
   fit <- suppressWarnings(tryCatch(
-    fit_csem(.data, .model, .id),
+    fit_csem(.data, model, .id),
     error = function(e) NULL
   ))
   ok <- !is.null(fit) &&
@@ -255,6 +278,20 @@ new_collector <- function() {
   e$scan_subset <- NULL
   e$scan_splitter <- NULL
   e
+}
+
+
+#' Root-node criteria matrix as stored by extree/ctree (saveinfo = TRUE):
+#' columns = tested covariates (all-NA columns dropped by extree), rows
+#' "statistic" / "p.value" (both raw scale) / "criterion" (log(1 - p) with
+#' extree's own statistic-rank tie-break already added). NULL when the root
+#' trafo failed (no test ran).
+root_criteria <- function(tree) {
+  info <- partykit::info_node(partykit::node_party(tree))
+  if (is.null(info)) {
+    return(NULL)
+  }
+  info$criterion
 }
 
 ## Methods: print falls through to constparty; coef/plot follow

@@ -11,12 +11,10 @@
 doTrees <- function(
   .object,
   .covariates,
-  .model,
+  model,
   .data = .object$Information$Arguments$.data,
-  .ctree_control = partykit::ctree_control(),
-  .igsca_tree_control = igsca_tree_control(),
-  influence = influence_vec, # TODO: Shuffle this into igsca_tree_control later
-  splitter = NULL, # TODO: Shuffle this into igsca_tree_control later
+  # .ctree_control = partykit::ctree_control(),
+  .control = igsca_tree_control(),
   .approach_weights = .object$Information$Arguments$.approach_weights,
   .iter_max = .object$Information$Arguments$.iter_max,
   .tolerance = .object$Information$Arguments$.tolerance,
@@ -53,9 +51,14 @@ doTrees <- function(
     nmax = c(yx = Inf, z = Inf) # TODO: What is this for?
   )
 
+  ## Extract from .control
+  influence_fn <- .control$influence
+  splitter_fn <- .control$splitter
+
   # browser()
   # model_frame <- model.frame(partied_dat)
 
+  # Conditional Tree Route --------------
   # TODO: Implement igsca_ctree
   ytrafo <- function(data, weights, control) {
     mf <- model.frame(data)
@@ -63,7 +66,7 @@ doTrees <- function(
       was_root <- !collector$root_seen
       collector$root_seen <- TRUE
       # TODO: try to substitute out try_fit for something simpler to make this easier to understand
-      ft <- try_fit(mf[subset, indicators, drop = FALSE], model)
+      ft <- try_fit(mf[subset, .indicators, drop = FALSE], model)
       E <- if (ft$ok) {
         tryCatch(calculateGSCAErrors(ft$fit), error = function(e) NULL)
       } else {
@@ -82,8 +85,8 @@ doTrees <- function(
           object = NULL,
           nobs = length(subset)
         ))
-      } else {
-        h <- influence(E)
+      } else if (!is.null(E)) {
+        h <- influence_fn(E)
         ef <- matrix(0, nrow = nrow(mf), ncol = ncol(h))
         ef[subset, ] <- h
         ## object is returned unconditionally: a mixed-pair splitter's kernel
@@ -99,34 +102,35 @@ doTrees <- function(
       }
     }
   }
-
-  testtype <- if (.igsca_tree_control$coin_distribution == "approximate") {
+  # TODO: Figure out the different test types and what it has to do with the coin_distribution and bonferroni
+  testtype <- if (.control$coin_distribution == "approximate") {
     "MonteCarlo"
-  } else if (isTRUE(.igsca_tree_control$bonferroni)) {
+  } else if (isTRUE(.control$bonferroni)) {
     "Bonferroni"
   } else {
     "Univariate"
   }
+  # Come back and put this into igsca_tree_control more explicitly
   cc <- partykit::ctree_control(
     teststat = "quadratic",
     splitstat = "quadratic",
     testtype = testtype,
-    nresample = .igsca_tree_control$R_test,
-    alpha = .igsca_tree_control$alpha,
-    minsplit = .igsca_tree_control$minsplit,
-    minbucket = .igsca_tree_control$minbucket,
-    maxdepth = .igsca_tree_control$maxdepth,
+    nresample = .control$R_test,
+    alpha = .control$alpha,
+    minsplit = .control$minsplit,
+    minbucket = .control$minbucket,
+    maxdepth = .control$maxdepth,
     maxsurrogate = 0L,
     nmax = c(yx = Inf, z = Inf),
     saveinfo = TRUE
   )
-  cc$bonferroni <- isTRUE(.igsca_tree_control$bonferroni)
+  cc$bonferroni <- isTRUE(.control$bonferroni)
 
-  if (!is.null(splitter)) {
+  if (!is.null(splitter_fn)) {
     cc$model <- model
     cc$indicators <- .indicators
     cc$collector <- collector
-    cc$max_cuts <- .igsca_tree_control$max_cuts
+    cc$max_cuts <- .control$max_cuts
     cc$splitfun <- function(
       model,
       trafo,
@@ -148,8 +152,8 @@ doTrees <- function(
     }
     cc$svsplitfun <- cc$splitfun # never called (maxsurrogate = 0)
   }
-
-  ret <- partykit::ctree(fml, data = data, ytrafo = ytrafo, control = cc)
+  # TODO: Do I need to pass an explicit converged function?
+  ret <- partykit::ctree(ex_formula, data = .data, ytrafo = ytrafo, control = cc)
   class(ret) <- c("igsca_tree", class(ret))
   attr(ret, "igsca_info") <- list(
     n_fail_full = collector$n_fail_full,

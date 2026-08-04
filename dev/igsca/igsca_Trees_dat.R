@@ -34,16 +34,14 @@ pooled <- csem(
 
 ## Matrix of residuals ----------------------------------------------------
 debug(doTrees)
+debug(partykit::ctree)
 doTrees(
     .object = pooled,
     .covariates = covs,
-    .model = model,
-    # .data = dat,
-    .ctree_control = partykit::ctree_control(),
-    .igsca_tree_control = igsca_tree_control(),
-    influence = influence_mat,
-    splitter = NULL
+    model = model,
+    .control = igsca_tree_control(influence = influence_mat, splitter = NULL),
 )
+undebug(partykit::ctree)
 undebug(doTrees)
 
 
@@ -54,12 +52,9 @@ debug(doTrees)
 doTrees(
     .object = pooled,
     .covariates = covs,
+    .data = dat,
     .model = model,
-    # .data = dat,
-    .ctree_control = partykit::ctree_control(),
-    .igsca_tree_control = igsca_tree_control(),
-    influence = influence_vec,
-    splitter = NULL
+    .control = igsca_tree_control(),
 )
 undebug(doTrees)
 
