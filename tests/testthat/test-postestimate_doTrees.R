@@ -38,7 +38,7 @@ test_that("IGSCA Trees Conditional Test on Matrix of Residuals Runs as expected"
       model = model,
       covariates = covs,
       influence = "mat",
-      splitter = split_max_fitdiff,
+      splitter = "FIT",
       control = igsca_tree_control()
     )
 
@@ -47,7 +47,7 @@ test_that("IGSCA Trees Conditional Test on Matrix of Residuals Runs as expected"
       model = model,
       covariates = covs,
       influence = "mat",
-      splitter = split_max_dli,
+      splitter = "DLi",
       control = igsca_tree_control()
     )
 
@@ -56,7 +56,7 @@ test_that("IGSCA Trees Conditional Test on Matrix of Residuals Runs as expected"
       model = model,
       covariates = covs,
       influence = "mat",
-      splitter = split_max_dgi,
+      splitter = "DGi",
       control = igsca_tree_control()
     )
   })
@@ -84,7 +84,7 @@ test_that("IGSCA Trees Conditional Test on Vector of Residuals Runs as expected"
       model = model,
       covariates = covs,
       influence = "vec",
-      splitter = split_max_fitdiff,
+      splitter = "FIT",
       control = igsca_tree_control()
     )
 
@@ -93,7 +93,7 @@ test_that("IGSCA Trees Conditional Test on Vector of Residuals Runs as expected"
       model = model,
       covariates = covs,
       influence = "vec",
-      splitter = split_max_dli,
+      splitter = "DLi",
       control = igsca_tree_control()
     )
 
@@ -102,7 +102,7 @@ test_that("IGSCA Trees Conditional Test on Vector of Residuals Runs as expected"
       model = model,
       covariates = covs,
       influence = "vec",
-      splitter = split_max_dgi,
+      splitter = "DGi",
       control = igsca_tree_control()
     )
   })
@@ -119,7 +119,7 @@ test_that("IGSCA Trees Variable Selection on FIT Runs as expected", {
     model = model,
     covariates = covs,
     influence = "FIT",
-    splitter = split_max_fitdiff,
+    splitter = "FIT",
     control = igsca_tree_control()
   )
   expect_true(length(trees_NPT_FIT) == 5)
@@ -131,7 +131,7 @@ test_that("IGSCA Trees Variable Selection on FIT Runs as expected", {
       model = model,
       covariates = covs,
       influence = "FIT",
-      splitter = split_max_dli,
+      splitter = "DLi",
       control = igsca_tree_control()
     )
 
@@ -140,7 +140,7 @@ test_that("IGSCA Trees Variable Selection on FIT Runs as expected", {
       model = model,
       covariates = covs,
       influence = "FIT",
-      splitter = split_max_dgi,
+      splitter = "DGi",
       control = igsca_tree_control()
     )
   })
@@ -155,6 +155,7 @@ test_that("IGSCA Trees Conditional Test on Squared-Euclidean Distance Runs as ex
     model = model,
     covariates = covs,
     influence = "DLi",
+    splitter = "FIT",
     control = igsca_tree_control()
   )
   expect_true(length(trees_DLi_FIT) == 5)
@@ -166,7 +167,7 @@ test_that("IGSCA Trees Conditional Test on Squared-Euclidean Distance Runs as ex
       model = model,
       covariates = covs,
       influence = "DLi",
-      splitter = split_max_dli,
+      splitter = "DLi",
       control = igsca_tree_control()
     )
 
@@ -175,7 +176,7 @@ test_that("IGSCA Trees Conditional Test on Squared-Euclidean Distance Runs as ex
       model = model,
       covariates = covs,
       influence = "DLi",
-      splitter = split_max_dgi,
+      splitter = "DGi",
       control = igsca_tree_control()
     )
   })
@@ -189,6 +190,7 @@ test_that("IGSCA Trees Conditional Test on Geodesic Distance Runs as expected", 
     model = model,
     covariates = covs,
     influence = "DGi",
+    splitter = "FIT",
     control = igsca_tree_control()
   )
   expect_true(length(trees_DGi_FIT) == 5)
@@ -200,7 +202,7 @@ test_that("IGSCA Trees Conditional Test on Geodesic Distance Runs as expected", 
       model = model,
       covariates = covs,
       influence = "DGi",
-      splitter = split_max_dli,
+      splitter = "DLi",
       control = igsca_tree_control()
     )
 
@@ -209,7 +211,7 @@ test_that("IGSCA Trees Conditional Test on Geodesic Distance Runs as expected", 
       model = model,
       covariates = covs,
       influence = "DGi",
-      splitter = split_max_dgi,
+      splitter = 'DGi',
       control = igsca_tree_control()
     )
   })

@@ -13,11 +13,22 @@ doTrees <- function(
   model,
   covariates,
   influence = c("mat", "vec", "FIT", "DLi", "DGi"),
-  splitter = NULL,
+  splitter = c("native", "FIT", "DLi", "DGi"),
   control = igsca_tree_control()
 ) {
   # Preparation
   influence <- match.arg(influence)
+  splitter <- match.arg(splitter)
+
+  split_fn <- switch(
+    splitter,
+    native = NULL,
+    FIT = split_max_fitdiff,
+    DLi = split_max_dli,
+    DGi = split_max_dgi
+  )
+
+
 
   indicators <- parseModel(model)$indicators
   fml <- paste(
@@ -103,7 +114,7 @@ doTrees <- function(
       saveinfo = TRUE
     )
     # TODO: Return to this bonferroni problem
-    if (!is.null(splitter)) {
+    if (!is.null(split_fn)) {
       # Sets the splitter to one of the three functions that we're looking for.
       # TODO: Add a switch statement to make sure that the splitter can only be one of c("FIT", "DLi", "DGi")
       cc$model <- model
@@ -120,7 +131,7 @@ doTrees <- function(
         ctrl
       ) {
         argmax_split(
-          splitter,
+          split_fn,
           collector,
           model,
           model.frame(data),
@@ -145,21 +156,17 @@ doTrees <- function(
     return(ret)
   } else if (influence %in% c("FIT", "DLi", "DGi")) {
     # NPT, dGi and dLi split -------------------------------------------------
+
     selector <- switch(
       influence,
       FIT = select_npt,
       DLi = select_ndt_dli,
       DGi = select_ndt_dgi
     )
+
     stopifnot(
-      "splitter should be one of 'FIT', 'DLi' or 'DGi'" = splitter %in%
+      "splitter should be any one of 'FIT', 'DLi' or 'DGi' when the influence (selector) function is one of 'FIT', 'DLi' or 'DGi'" = splitter %in%
         c("FIT", "DLi", "DGi")
-    )
-    splitter <- switch(
-      splitter,
-      FIT = split_max_fitdiff,
-      DLi = split_max_dli,
-      DGi = split_max_dgi
     )
 
     d <- partykit::extree_data(
@@ -211,7 +218,7 @@ doTrees <- function(
     ctrl$indicators <- indicators
     ctrl$collector <- collector
 
-    nodes <- grow_extree(d, trafo, selector, splitter, ctrl)
+    nodes <- grow_extree(d, trafo, selector, split_fn, ctrl)
     fitted <- data.frame(
       "(fitted)" = partykit::fitted_node(nodes, mf),
       "(weights)" = rep.int(1L, nrow(mf)),
