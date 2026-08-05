@@ -36,7 +36,7 @@
       Number of inner nodes:    1
       Number of terminal nodes: 2
 
-# IGSCA Trees Variable Selection on FIT Runs as expected
+# IGSCA Trees Variable Selection on NPT (FIT) Runs as expected
 
     Code
       trees_NPT_FIT
