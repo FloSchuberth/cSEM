@@ -7,10 +7,10 @@
 root_criteria(tree)
 }
 \arguments{
-\item{tree}{}
+\item{tree}{A tree returned by \code{\link[=doTrees]{doTrees()}}.}
 }
 \value{
-Vector
+The root node's criteria \code{matrix}, or \code{NULL} if no test ran.
 }
 \description{
 Root-node criteria matrix as stored by extree/ctree (saveinfo = TRUE):
@@ -18,4 +18,7 @@ columns = tested covariates (all-NA columns dropped by extree), rows
 "statistic" / "p.value" (both raw scale) / "criterion" (log(1 - p) with
 extree's own statistic-rank tie-break already added). NULL when the root
 trafo failed (no test ran).
+}
+\seealso{
+\code{\link[=doTrees]{doTrees()}}
 }

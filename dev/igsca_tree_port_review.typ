@@ -68,15 +68,26 @@ then:
   `doTrees()` now takes a *fitted* `cSEMResults` and replays that fit's own
   `csem()` arguments at every node, so no estimator is hard-coded anywhere. The
   snapshots did not move, which is the evidence the replay reproduces the old
-  hard-coded call exactly. `PASS 150` in 2 min 25 s.
+  hard-coded call exactly. `PASS 150` in 2 min 25 s. The reasoning behind the
+  API is recorded in #link(<designrecord>)[section 9].
+- *Tenth pass* --- P2, then P1, then P3, in that order because each one shrinks
+  the next: the `:::` prefixes went first, then 22 of the 26 exports became
+  `@noRd` (deleting 23 `.Rd` files), leaving only four public symbols to document
+  properly. `devtools::check_man()` is clean for every file the port touches.
+  *All findings in this document are now closed* except
+  #link(<mixed>)[section 5]'s 5.1--5.3 and 5.6.
 
-*All behavioural findings are closed, and the suite now runs and asserts.* Every
-`influence` #sym.times `splitter` combination runs, the three silent failures are
-fixed, each of the 17 configurations is asserted to have *actually split* rather
-than merely not thrown, and every diagnostic the collector carries is now
-asserted somewhere. What remains is the layer that would show a *correct-looking
-but wrong* answer --- #link(<mixed>)[section 5]'s 5.1--5.3 and 5.6 --- plus
-packaging cleanup (P1--P3; P4--P6 are closed).
+*Every finding in this document is now closed.* Each `influence` #sym.times
+`splitter` combination runs, the three silent failures are fixed, all 17
+configurations are asserted to have *actually split* rather than merely not
+thrown, every diagnostic the collector carries is asserted somewhere, and the
+package surface is four exported symbols with real documentation behind them.
+
+What remains is not a finding but a *layer*: nothing here would catch a kernel
+that runs and picks the *wrong* cutpoint. #link(<mixed>)[Section 5]'s 5.1--5.3
+are the unit tests that would localise such a fault, and 5.6 is the fixture that
+would make "wrong" checkable at all --- worth building only if the mixed pairs
+are a real study arm.
 
 == Status at a glance
 
@@ -95,9 +106,9 @@ packaging cleanup (P1--P3; P4--P6 are closed).
   [T3], [`expect_no_error()` cannot see the real failure mode], [#ok],
   [T4], [Default control makes the partition tests unrunnable], [#ok],
   [T5], [Collector diagnostics and the scan cache are untested], [#ok],
-  [P1], [`NAMESPACE` stale], [#part],
-  [P2], [`cSEM:::` / `cSEM::` into the package's own namespace], [#open],
-  [P3], [Roxygen placeholders; wrong `@return`], [#part],
+  [P1], [`NAMESPACE` stale, then over-exported], [#ok],
+  [P2], [`cSEM:::` / `cSEM::` into the package's own namespace], [#ok],
+  [P3], [Roxygen placeholders; wrong `@return`], [#ok],
   [P4], [Argument naming departs from package convention], [#ok],
   [P5], [`fit_csem()` hard-codes the estimator], [#ok],
   [P6], [No input validation], [#ok],
@@ -1042,61 +1053,66 @@ rather than a convenience.
 
 = Packaging and API
 
-== P1. `document()` has been run --- now prune the export list <p1>
+== P1. The export list is now four symbols and two methods <p1>
 
-*Status: inverted.* `NAMESPACE` has been regenerated and `man/` populated, so the
-first pass's complaint is resolved: `igsca_tree_control` and the `split_max_*`
-kernels are now reachable, and `cSEM::doTrees(control = cSEM::igsca_tree_control(...))`
-works.
+*Status: fixed.* The first pass complained that `NAMESPACE` was stale; running
+`document()` inverted the problem into 26 exported symbols, most of them internal
+machinery with no standalone meaning, each one a public commitment and each one
+carrying a `man/*.Rd` for `R CMD check` to scrutinise (P3).
 
-The problem is now the opposite one. 26 new symbols are exported, and most are
-internal machinery with no standalone meaning:
+22 of them are now `@noRd`, which deletes the export *and* the `.Rd` file. What
+remains is the surface this section proposed:
 
-```
-argmax_split  csem_converged  fit_csem  grow_extree  idx_permutation
-ndt_dists  ndt_pools  node_group_data  partition_select  partition_stat
-permutation_pvalue  scan_covariate  select_ndt_dgi  select_ndt_dli
-select_npt  split_max_dgi  split_max_dli  split_max_fitdiff  try_fit
-candidate_partitions  influence_mat  influence_vec  ...
-```
+#table(
+  columns: (auto, 1fr),
+  inset: 6pt,
+  align: (left, left),
+  table.header([*Exported*], [*Why it is public*]),
+  [`doTrees()`], [The entry point],
+  [`igsca_tree_control()`], [Its `.control` argument; useless if unreachable],
+  [`bdiagFit()`], [A general utility, already documented, already referenced from
+   `zz_arguments.R`, and already tested],
+  [`root_criteria()`], [Reads a diagnostic off a returned tree],
+  [`coef()` / `plot()` methods], [S3 dispatch on `igsca_tree`],
+)
 
-Every one of these is now public API you are committing to keep stable, and each
-carries a `man/*.Rd` that `R CMD check` will scrutinise (see P3). Replace
-`@export` with `@keywords internal` or `@noRd` on all of them. B2's string-valued
-`splitter` has already removed the last *user-facing* reason to expose the
-`split_max_*` kernels --- but keep them (or their `partition_stat()` backend)
-reachable from the test file, since the unit tests in
-#link(<mixed>)[section 5] call them directly. A defensible public surface is
-`doTrees`, `igsca_tree_control`, `bdiagFit`, `root_criteria`, and the two S3
-methods.
+*Un-exporting cost the tests nothing*, which is the point worth recording: a
+testthat file runs with the package namespace as its parent, so
+`test-helper_doTrees.R` still calls `partition_stat()`, `scan_covariate()`,
+`argmax_split()` and the `split_max_*` kernels directly, and
+`local_mocked_bindings()` still rebinds them --- it operates on the namespace, not
+the export list. `PASS 150 | FAIL 0` after the pruning, unchanged.
 
 == P2. `:::` and `::` into the package's own namespace
 
-*Location:* `R/helper_doTrees.R:572--573` and `R/helper_doTrees.R:608`
-
-Unchanged:
+*Status: fixed.* Three call sites dropped their prefixes:
 
 ```r
-Sc = cSEM:::bdiagFit(single_fit, .n_blocks = 2L, .type_vcv = "construct"),
-Si = cSEM:::bdiagFit(single_fit, .n_blocks = 2L, .type_vcv = "indicator")
+Sc = bdiagFit(single_fit, .n_blocks = 2L, .type_vcv = "construct"),
+Si = bdiagFit(single_fit, .n_blocks = 2L, .type_vcv = "indicator")
 ...
-cSEM::calculateFIT(mga$fit) - cSEM::calculateFIT(model$object)
+calculateFIT(mga$fit) - calculateFIT(model$object)
 ```
 
-Both are defined in this package (`bdiagFit` at `R/helper_doTrees.R:26`,
-`calculateFIT` at `R/helper_assess.R:2013`). `R CMD check` flags the `:::` form
-("a package almost never needs to use `:::` for its own objects"), and both break
-under `load_all()` if the installed and sourced versions diverge.
+Both functions are defined in this package (`bdiagFit` in `helper_doTrees.R`,
+`calculateFIT` in `helper_assess.R`). `R CMD check` flags the `:::` form ("a
+package almost never needs to use `:::` for its own objects"), and both forms
+break under `load_all()` when the installed and sourced versions diverge --- a
+hazard this port hit for real, since `calculateFIT()` is exactly where
+#link(<p5>)[P5]'s silent PLS-PM refit surfaced.
 
-The new code makes the inconsistency starker rather than better: `ndt_dists()`
-(`R/helper_doTrees.R:960--966`) calls `bdiagFit()`, `calculateDG()` and
-`calculateDL()` bare and correctly, sitting 390 lines below `ndt_pools()` doing
-the same thing through `cSEM:::`. Drop the prefixes.
+The inconsistency was internal to one file: `ndt_dists()` already called
+`bdiagFit()`, `calculateDG()` and `calculateDL()` bare and correctly, 390 lines
+below `ndt_pools()` doing the same thing through `cSEM:::`.
 
-== P3. Roxygen placeholders --- now materialised as `.Rd` files
+Two stale comments went with it: the `COIN_ssr` naming that
+`influence_ssr` #sym.arrow.r `influence_vec` left behind, and the registry
+comment still describing the methods as `igsca_ctree()` entry points.
 
-`document()` has turned the placeholder blocks into committed documentation.
-`man/idx_permutation.Rd` in full:
+== P3. Roxygen placeholders --- resolved by pruning, then by writing them
+
+*Status: fixed.* `document()` had turned the placeholder blocks into committed
+documentation. `man/idx_permutation.Rd` in full, as it stood:
 
 ```
 \title{Title}
@@ -1111,10 +1127,29 @@ Permutation resampling: sample WITHOUT replacement, within each stratum, ...
 
 Three `R CMD check` problems in nine lines: the title is literally `Title`, `n`
 and `R` are undocumented while `strata` has an empty description, and there is no
-`\value{}`. That pattern repeats across the 20-odd new `.Rd` files. P1's pruning
-is the cheapest fix --- `@noRd` deletes the file and the warnings with it --- and
-whatever survives as public API needs a real title, real `@param` text and a real
-`@return`.
+`\value{}`. That pattern repeated across the 20-odd new `.Rd` files.
+
+It was fixed in the order this section recommended. #link(<p1>)[P1]'s pruning
+deleted *23* `.Rd` files outright, taking their warnings with them; 43 bare
+`@param` placeholders went with them, since roxygen warns about an empty `@param`
+even inside an `@noRd` block. The internal blocks kept their prose and lost only
+their tags --- a `#' Title` line above a real description was simply removed,
+promoting the description to the title position, and the dozen blocks that had
+*no* description now have a one-line one.
+
+The four survivors were then written properly: `igsca_tree_control()` documents
+all eight arguments, including the two whose failure modes this document had to
+discover (`minbucket` admitting unfittable leaves, `R_test` below `20L` making
+splitting impossible); `root_criteria()`, `coef.igsca_tree()` and
+`plot.igsca_tree()` document their arguments and returns.
+
+`devtools::check_man()` is now clean for every file this port touches. The
+remaining warnings are pre-existing and unrelated --- unresolved links in
+`00_csem.R` to `parseModel`, `cSEMModel` and the `calculateWeights*` internals.
+
+Note the `strata` argument in the `.Rd` above is also gone: B1 flagged it as an
+untested branch `permutation_pvalue()` never used, and `idx_permutation(n, R)`
+now takes only what it is called with.
 
 Two specific errors in `man/doTrees.Rd`, *both fixed* alongside
 #link(<p5>)[P5]'s signature change:
@@ -1131,10 +1166,10 @@ Two specific errors in `man/doTrees.Rd`, *both fixed* alongside
   algorithms and `.splitter` is constrained by which one you picked (B2's
   `stopifnot`). All five are now documented explicitly rather than inherited.
 
-The rest of P3 stands: the other 20-odd `.Rd` files still carry `\title{Title}`
-and empty `@param` entries, and P1's pruning is still the cheapest fix.
+Both were fixed by writing the five arguments out explicitly rather than
+inheriting them.
 
-== P4. Argument naming departs from the package convention
+== P4. Argument naming departs from the package convention <p4>
 
 *Status: fixed*, together with P5 --- the signature was breaking anyway, so both
 landed in one change. `doTrees(.object, .covariates, .influence, .splitter,
@@ -1269,8 +1304,101 @@ than accidents:
   [#strike[2]], [#strike[T1--T3 --- regenerate snapshots, drop `length()==5`, split `expect_no_error()`]], [*Done.* 85 assertions, `FAIL 0 | WARN 0`],
   [3], [§5.1--5.3 --- kernel, `argmax_split`, and splitfun-wiring tests], [*Now the head of the queue.* Cheap, fast, and they pin the contracts the port depends on],
   [#strike[4]], [#strike[T5 + §5.5 --- collector and scan-cache tests]], [*Done.* Two-part cache key both covered; `PASS 121` across the two files],
-  [5], [P1--P3 --- prune exports, drop `:::`, fix the remaining `.Rd` placeholders], [*P4--P6 done* with #link(<p5>)[P5]'s signature change. What is left is the export surface: P1's pruning deletes most of P3's `.Rd` warnings with it. Note `attach_leaf_fits()`, `drop_inner_node_objects()`, `warn_dead_splitter()`, `csem_tree_args()` and `validate_tree_input()` are already `@noRd`],
+  [#strike[5]], [#strike[P1--P6 --- prune exports, drop `:::`, fix `\value`, validate inputs]], [*Done.* 26 exports #sym.arrow.r 4 + 2 methods, 23 `.Rd` files deleted, `check_man()` clean for every file the port touches],
   [6], [#link(<s3>)[S3] follow-up --- raise `minbucket` for large models], [`n_fail_leaf` is now asserted (T5), but the default `30L` still admits leaves the model cannot fit --- the assertion pins the symptom, it does not fix it],
   [7], [§5.6 --- numeric-cutpoint fixture], [Optional; only if the mixed pairs are a real study arm],
   [#strike[8]], [#strike[#link(<testtype>)[§3.2.1] --- replace the `cc$bonferroni` override with a length-2 `testtype`]], [*Done.* The override was measured to be a no-op on all four combinations and deleted with both TODOs],
 )
+
+#pagebreak()
+
+= Design record: the fitted-object API <designrecord>
+
+Written after the fact, at the point of implementation (commit `3131b5d5`), so
+that the reasoning survives if the decisions have to be revisited. This records
+*why* the alternatives were rejected, not what was built --- for that see
+#link(<p5>)[P5].
+
+== The problem
+
+`doTrees(data, model, covariates, ...)` refit every node through a `fit_csem()`
+that hard-coded `.approach_weights = "GSCA"`, `.disattenuate = TRUE`,
+`.GSCA_modes = "CCMP"`, `.conv_criterion = "sum_diff_absolute"`,
+`.iter_max = 100` and `.tolerance = 1e-4`. There was no `...` and no argument to
+reach past it, so the tree's estimator was a property of the *package*, not of
+the analysis. Threading `...` through would have fixed the immediate complaint
+while leaving the user to keep two descriptions of the same model in sync ---
+the one they fitted with, and the one the tree refits with.
+
+Taking a *fitted object* removes the second description entirely.
+
+== The three decisions
+
+*(1) Where do the covariates come from?* Chosen: the fitted object's own stored
+data; `doTrees()` has no `data` argument.
+
+#table(
+  columns: (auto, 1fr),
+  inset: 6pt,
+  align: (left, left),
+  table.header([*Option*], [*Why it was or was not taken*]),
+  [*From `.object` only* #sym.arrow.r *chosen*],
+  [`csem()` stores the whole input `data.frame` and ignores non-indicator
+   columns when fitting (measured), so covariates ride along at no cost. The
+   decisive property is not convenience but *row alignment*: the rows the tree
+   partitions are by construction the rows the model was fitted on, and no
+   argument exists through which they could disagree],
+  [Separate `data` argument],
+  [Would suit a user who fitted `csem()` on indicator columns only. Rejected:
+   nothing checks that `data`'s rows correspond to the fit's, and a silent
+   row mismatch is precisely the class of failure this port keeps producing
+   (see #link(<s1>)[S1], and `modifyList()` in #link(<p5>)[P5])],
+  [`.object` by default, `data` as override],
+  [Both behaviours, two code paths to document and test, and the override
+   reintroduces the mismatch risk for the one case it serves. YAGNI],
+)
+
+*(2) Argument naming.* Chosen: dot-prefix everything ---
+`.object`, `.covariates`, `.influence`, `.splitter`, `.control`. The signature
+was breaking regardless, so this was the cheapest possible moment to close
+#link(<p4>)[P4]; deferring it would have meant breaking the signature twice.
+
+*(3) A `.model` override?* Chosen: no argument at all; the fit's model is always
+reused.
+
+This was the decision most likely to go the other way, and the measurement
+settled it. The stored `.model` is a parsed `cSEMModel` and `parseModel()`
+round-trips it identically, so it can be handed straight back to `csem()` --- the
+anticipated need to *re-pass* the model turned out not to exist. An override
+would only serve fitting a *different* model in the nodes than at the root, which
+makes the returned object describe two models at once. If that is ever wanted,
+it should be a different function, not an argument.
+
+== What would force a revisit
+
+- *A user who cannot refit.* The whole design assumes `csem()` can be re-run on
+  subsets. It is already true for every node the tree grows, so this is not a new
+  constraint --- but a fit whose arguments cannot be replayed (a hand-modified
+  `cSEMResults`, or a future `csem()` argument that is not idempotent) would
+  break it silently. `fit_csem()`'s `is.list()` guard catches only the crudest
+  version of that.
+- *Second-order or multigroup input.* Both are refused today. Multigroup is
+  refused on principle (grouping is the tree's job); second-order is refused only
+  incidentally, by `calculateFIT()`'s own `stop2()`. If 2nd-order trees are ever
+  wanted, the refusal needs to become explicit and the FIT statistics need a
+  story.
+- *A non-GSCA study arm.* The estimator guard is deliberately narrow: it refuses
+  only the combinations whose statistics are GSCA-specific
+  (`mat`/`vec`/`FIT`), and lets `DLi`/`DGi` through on any estimator. If a
+  PLS-PM tree ever becomes a real study arm, §5.6's recovery fixture is what
+  would establish that those distances behave, since nothing currently checks
+  they are *statistically* meaningful off GSCA --- only that they run.
+
+== What the process caught
+
+Both traps in #link(<p5>)[P5] --- `modifyList()`'s recursive merge and `$<-`'s
+coercion of a model string into a positional `.model` --- produced fits that
+*ran and converged*. Neither was found by reading; the first by testing a node
+size that does not divide the original (137), the second by the suite's
+snapshots refusing to reproduce. Both were introduced by this change and caught
+before it landed, which is the argument for having done T1--T5 first.

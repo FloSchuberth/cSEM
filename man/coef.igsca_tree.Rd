@@ -2,16 +2,31 @@
 % Please edit documentation in R/helper_doTrees.R
 \name{coef.igsca_tree}
 \alias{coef.igsca_tree}
-\title{Get coefficients of tree object}
+\title{Per-node fit summaries of an igsca tree}
 \usage{
 \method{coef}{igsca_tree}(object, node = NULL, drop = TRUE, ...)
 }
 \arguments{
-\item{...}{}
+\item{object}{A tree returned by \code{\link[=doTrees]{doTrees()}}.}
+
+\item{node}{Node ids to report. Defaults to the terminal nodes.}
+
+\item{drop}{If \code{TRUE} (the default), a single-node result is simplified from
+a one-row matrix to a named vector.}
+
+\item{...}{Ignored.}
 }
 \value{
-List of Vectors
+A \code{matrix} with columns \code{nobs} and \code{objfun}, one row per node, row
+names being the node ids; a named vector when one node is requested and
+\code{drop = TRUE}.
 }
 \description{
-Get coefficients of tree object
+Reports the number of observations and the objective function value of each
+node's fit. Terminal nodes carry the fits \code{\link[=doTrees]{doTrees()}} attaches after growing;
+a node whose fit failed returns an \code{NA} row rather than being dropped, so the
+rows always correspond to \code{node}.
+}
+\seealso{
+\code{\link[=doTrees]{doTrees()}}
 }

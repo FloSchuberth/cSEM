@@ -2,16 +2,30 @@
 % Please edit documentation in R/helper_doTrees.R
 \name{plot.igsca_tree}
 \alias{plot.igsca_tree}
-\title{Title}
+\title{Plot an igsca tree}
 \usage{
 \method{plot}{igsca_tree}(x, terminal_panel = NULL, FUN = NULL, tp_args = NULL, ...)
 }
 \arguments{
-\item{...}{}
+\item{x}{A tree returned by \code{\link[=doTrees]{doTrees()}}.}
+
+\item{terminal_panel}{Panel function for the terminal nodes. Defaults to the
+\code{nobs}/\code{objfun} panel described above.}
+
+\item{FUN}{Formatting function applied to each leaf's info before printing.}
+
+\item{tp_args}{Arguments passed on to \code{terminal_panel}.}
+
+\item{...}{Passed to \code{\link[partykit:party-plot]{partykit::plot.party()}}.}
 }
 \value{
-Graphic
+Called for the plot it draws. The return value is
+\code{\link[partykit:party-plot]{partykit::plot.party()}}'s and is not meaningful.
 }
 \description{
-Title
+Draws the tree with a terminal panel reporting each leaf's \code{nobs} and
+\code{objfun}. A leaf whose fit failed prints \verb{?} rather than an empty box.
+}
+\seealso{
+\code{\link[=doTrees]{doTrees()}}
 }

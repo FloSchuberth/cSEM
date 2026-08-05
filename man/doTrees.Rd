@@ -36,9 +36,9 @@ failure counters and root criteria.
 \description{
 Grows a tree that partitions the rows \code{.object} was fitted on into subgroups
 whose model estimates differ. Every node is refit by replaying \code{.object}'s own
-\code{\link[=csem]{csem()}} arguments (see \code{\link[=fit_csem]{fit_csem()}}), so the estimator, modes and convergence
-settings of the tree are those of the fit it was given -- there is nothing to
-keep in sync and no estimator hard-coded here.
+\code{\link[=csem]{csem()}} arguments, so the estimator, modes and convergence settings of the
+tree are those of the fit it was given -- there is nothing to keep in sync and
+no estimator hard-coded here.
 }
 \details{
 \code{.influence} selects the family: \code{"mat"} and \code{"vec"} run conditional-inference

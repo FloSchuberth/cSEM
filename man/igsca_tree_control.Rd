@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_doTrees.R
 \name{igsca_tree_control}
 \alias{igsca_tree_control}
-\title{Title}
+\title{Tuning parameters for \code{\link[=doTrees]{doTrees()}}}
 \usage{
 igsca_tree_control(
   alpha = 0.05,
@@ -16,8 +16,45 @@ igsca_tree_control(
 )
 }
 \arguments{
-\item{coin_distribution}{}
+\item{alpha}{Significance level a covariate must clear to split a node.}
+
+\item{bonferroni}{Adjust the node's p-values for the number of covariates
+tested. The adjustment partykit applies is Šidák, \eqn{1 - (1 - p)^k}, which
+agrees with Bonferroni to first order.}
+
+\item{minbucket}{Minimum number of observations in a terminal node. With many
+indicators the default admits leaves the model may not fit; see the
+\code{n_fail_leaf} counter on the returned tree.}
+
+\item{minsplit}{Minimum number of observations required to attempt a split.}
+
+\item{maxdepth}{Maximum depth of the tree, the root counting as 0.}
+
+\item{max_cuts}{Maximum number of candidate cutpoints scanned per numeric
+covariate. Only the partition families use this.}
+
+\item{R_test}{Number of resamples. On the conditional-inference path this is
+libcoin's \code{nresample} and is unused when \code{coin_distribution} is
+"asymptotic". On the partition path it is the permutation count, where
+values below \code{20L} make splitting impossible: the smallest attainable
+p-value is \eqn{1 / (R + 1)}, which must clear \code{alpha} strictly.}
+
+\item{coin_distribution}{Null distribution for the conditional-inference
+families: "approximate" draws \code{R_test} permutations, "asymptotic" reads the
+p-value off the limiting chi-squared distribution of the same conditional
+null. Ignored by the partition families.}
+}
+\value{
+A named \code{list} of tuning parameters.
 }
 \description{
-Title
+The two \code{doTrees()} families read this list differently, and the cost of a
+given setting differs by an order of magnitude between them: the
+conditional-inference families (\code{.influence} \code{"mat"}/\code{"vec"}) get their
+variable selection from libcoin, while the partition families
+(\code{"FIT"}/\code{"DLi"}/\code{"DGi"}) run an \code{R_test} permutation test per covariate per
+node, every permutation of which is a two-group model fit.
+}
+\seealso{
+\code{\link[=doTrees]{doTrees()}}
 }

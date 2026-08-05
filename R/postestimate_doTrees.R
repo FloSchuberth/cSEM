@@ -2,9 +2,9 @@
 #'
 #' Grows a tree that partitions the rows `.object` was fitted on into subgroups
 #' whose model estimates differ. Every node is refit by replaying `.object`'s own
-#' [csem()] arguments (see [fit_csem()]), so the estimator, modes and convergence
-#' settings of the tree are those of the fit it was given -- there is nothing to
-#' keep in sync and no estimator hard-coded here.
+#' [csem()] arguments, so the estimator, modes and convergence settings of the
+#' tree are those of the fit it was given -- there is nothing to keep in sync and
+#' no estimator hard-coded here.
 #'
 #' `.influence` selects the family: `"mat"` and `"vec"` run conditional-inference
 #' (COIN) variable selection on casewise GSCA residuals, `"FIT"`, `"DLi"` and
