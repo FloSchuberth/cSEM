@@ -91,7 +91,14 @@ doTrees <- function(
         )
       }
     }
-    # TODO: Figure out the different test types and what it has to do with the coin_distribution and bonferroni
+    ## partykit's `testtype` conflates two orthogonal choices: where the
+    ## p-value comes from ("MonteCarlo" = nresample permutations, otherwise the
+    ## asymptotic chi-squared limit of the same conditional null) and whether
+    ## it is adjusted for multiplicity. `ctree_control()` accepts a length-2
+    ## vector to ask for both, so building it this way reaches all four
+    ## combinations of our two arguments inside the documented API -- and
+    ## `bonferroni = "Bonferroni" %in% testtype` is then derived correctly by
+    ## ctree_control() itself, with no post-hoc surgery on the control object.
     testtype <- c(
       if (isTRUE(control$bonferroni)) "Bonferroni",
       if (control$coin_distribution == "approximate") "MonteCarlo"
@@ -112,8 +119,6 @@ doTrees <- function(
       nmax = c(yx = Inf, z = Inf),
       saveinfo = TRUE
     )
-    # TODO: Return to this bonferroni problem
-    cc$bonferroni <- isTRUE(control$bonferroni)
 
     if (!is.null(split_fn)) {
       # Sets the splitter to one of the three functions that we're looking for.

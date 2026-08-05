@@ -59,13 +59,19 @@ then:
   counts fail for reasons that have nothing to do with correctness. The file now
   runs in *2 min 05 s* at `FAIL 0 | WARN 0 | SKIP 0 | PASS 85`, against an
   estimated #sym.tilde 16 h before.
+- *Eighth pass* --- #link(<testtype>)[§3.2.1]'s open question settled: the
+  `cc$bonferroni` override was measured to be a no-op and deleted, with both
+  TODOs. T5 closed --- every collector field and the scan cache now have tests,
+  in `test-postestimate_doTrees.R` and `test-helper_doTrees.R` respectively.
+  `FAIL 0 | WARN 0 | SKIP 0 | PASS 121` across the two files, still 2 min 05 s.
 
 *All behavioural findings are closed, and the suite now runs and asserts.* Every
 `influence` #sym.times `splitter` combination runs, the three silent failures are
-fixed, and each of the 17 configurations is now asserted to have *actually
-split* rather than merely not thrown. What remains is the unit layer that would
-*localise* a regression --- T5 and #link(<mixed>)[section 5]'s 5.1--5.3 and 5.5
---- plus packaging cleanup (P1--P6).
+fixed, each of the 17 configurations is asserted to have *actually split* rather
+than merely not thrown, and every diagnostic the collector carries is now
+asserted somewhere. What remains is the layer that would show a *correct-looking
+but wrong* answer --- #link(<mixed>)[section 5]'s 5.1--5.3 and 5.6 --- plus
+packaging cleanup (P1--P6).
 
 == Status at a glance
 
@@ -83,7 +89,7 @@ split* rather than merely not thrown. What remains is the unit layer that would
   [T2], [`length(tree) == 5` is a disguised structural assertion], [#ok],
   [T3], [`expect_no_error()` cannot see the real failure mode], [#ok],
   [T4], [Default control makes the partition tests unrunnable], [#ok],
-  [T5], [Collector diagnostics and the scan cache are untested], [#part],
+  [T5], [Collector diagnostics and the scan cache are untested], [#ok],
   [P1], [`NAMESPACE` stale], [#part],
   [P2], [`cSEM:::` / `cSEM::` into the package's own namespace], [#open],
   [P3], [Roxygen placeholders; wrong `@return`], [#open],
@@ -93,11 +99,13 @@ split* rather than merely not thrown. What remains is the unit layer that would
 )
 
 The test file now carries two controls chosen per branch, five regenerated
-snapshots, and one named `test_that()` per `influence` #sym.times `splitter`
-configuration, each asserting the tree grew rather than merely returned. The
-remaining test work is a *layer*, not a repair: nothing below the tree level is
-covered, so a failure still says "this configuration broke" without saying
-where. #link(<mixed>)[Section 5] is that layer, and 5.4 is already shipped.
+snapshots, one named `test_that()` per `influence` #sym.times `splitter`
+configuration --- each asserting the tree grew rather than merely returned ---
+and a block per collector diagnostic. `test-helper_doTrees.R` carries the
+node-level half: the scan cache and `partition_stat()`'s failure accounting.
+What is left of #link(<mixed>)[section 5] is the part that would catch a kernel
+that runs and picks the *wrong* cutpoint (5.1--5.3), and the fixture that would
+make "wrong" checkable at all (5.6).
 
 #pagebreak()
 
@@ -317,16 +325,15 @@ Tests are in #link(<negctl>)[section 5.4] and now pass.
 
 == S2. `control$bonferroni` was silently ignored on the ctree path <s2>
 
-*Location:* `R/postestimate_doTrees.R:116`
+*Location:* `R/postestimate_doTrees.R:94--108`
 
-*Status: fixed.* The dropped line has been restored:
+*Status: fixed, then superseded.* The fix was first made by restoring the dropped
+`cc$bonferroni <- isTRUE(control$bonferroni)` override. It now ships as the
+length-2 `testtype` of #link(<testtype>)[section 3.2.1] instead, and the override
+has been deleted --- see that section for the measurement that retired it.
 
-```r
-cc <- partykit::ctree_control(...)
-cc$bonferroni <- isTRUE(control$bonferroni)
-```
-
-It was never a no-op. `ctree_control()` derives `bonferroni` from `testtype`, but
+The original diagnosis stands: the override was never a no-op *at the time*.
+`ctree_control()` derives `bonferroni` from `testtype`, but
 the port computes `testtype` from `coin_distribution` first, so with the default
 `coin_distribution = "approximate"` it always sent `testtype = "MonteCarlo"` and
 `cc$bonferroni` was always `FALSE` --- while on the *partition* path
@@ -398,7 +405,7 @@ if (ctrl$bonferroni)
 
 So the two knobs *are* orthogonal at the point of use, even though `testtype`
 bundles them at the point of configuration --- which is exactly why an explicit
-assignment was required.
+assignment was required *while `testtype` was being computed as a single string*.
 
 *Two details worth knowing.* That row holds $log(1 - p)$, not $p$, so multiplying
 by $k$ gives $log((1-p)^k)$ --- the adjustment is *Šidák*, $1 - (1-p)^k$, not
@@ -418,7 +425,7 @@ if (length(testtype) > 1) {
 
 `ctree_control(testtype = c("Bonferroni", "MonteCarlo"))` is identical to the
 manual override on every non-function component (verified; the function-valued
-slots differ only by closure environment). So the mapping could drop the override
+slots differ only by closure environment). So the mapping can drop the override
 entirely and stay inside the documented API:
 
 ```r
@@ -431,7 +438,50 @@ if (is.null(testtype)) testtype <- "Univariate"
 
 which reaches all four combinations --- MC#sym.plus.minus adjustment, asymptotic
 #sym.plus.minus adjustment --- with no post-hoc surgery on the control object.
-Optional: the current code is correct as it stands.
+
+=== The override was left in on top of it, and was a no-op
+
+*Resolved.* An intermediate revision adopted the mapping above *and kept* the
+`cc$bonferroni <- isTRUE(control$bonferroni)` line beneath it, with the TODO
+comments that motivated both still attached. The two lines were not both needed,
+and the leftover made it look as though `ctree_control()` could not be trusted to
+derive the flag.
+
+Measured across all four combinations, the override changed nothing:
+
+```
+bonferroni  dist          testtype passed        -> cc$bonferroni
+FALSE       approximate   MonteCarlo                FALSE
+FALSE       asymptotic    Univariate                FALSE
+TRUE        approximate   Bonferroni + MonteCarlo   TRUE
+TRUE        asymptotic    Bonferroni                TRUE
+```
+
+`identical(cc_with_override, cc_without_override)` is `TRUE` in all four cases,
+so the assignment could only ever have re-written the value
+`"Bonferroni" %in% testtype` had already produced. It has been deleted, along
+with both TODO comments, and replaced with a comment stating the mapping.
+
+Two further things were checked before removing it. `criterion` stays the
+length-1 `"p.value"` under a length-2 `testtype` --- `ctree_control()` derives it
+from the *collapsed* `ttesttype`, not the vector, so the length-2 form introduces
+no recycling anywhere downstream. And the four root-criteria matrices are
+*bit-identical* before and after removal while remaining distinct from each other
+(`R_test = 200`, `maxdepth = 1`), which is the evidence that `bonferroni` is
+still live rather than quietly lost:
+
+```
+root p.value        z_true     noise_1    noise_2
+asymptotic  FALSE   5.31e-57   0.872895   0.810172
+asymptotic  TRUE    1.59e-56   0.997947   0.993160
+MonteCarlo  FALSE   0.000000   0.890000   0.795000
+MonteCarlo  TRUE    0.000000   0.998669   0.991385
+```
+
+These are the same four signatures S2 recorded when the override *was* the fix,
+which is the point: the argument still reaches partykit by a different route. The
+Šidák identity holds exactly on both distributions ---
+$1 - (1 - 0.872895)^3 = 0.997947$ and $1 - (1 - 0.890)^3 = 0.998669$.
 
 == S3. `coef()` and `plot()` were empty for any tree that splits <s3>
 
@@ -519,9 +569,11 @@ Measured saving from the safe switch: 1.9 #sym.arrow.r 1.1 Mb (ctree,
 
 = Test-suite findings
 
-The test file is the right shape --- one file per R file, matching the
-conventions in `MEMORY.md` --- and T1--T4 are now fixed. This section records
-what changed and what was measured along the way; T5 is what is left.
+The test files are the right shape --- one per R file, matching the conventions
+in `MEMORY.md`, with the tree-level assertions in `test-postestimate_doTrees.R`
+and the node-level ones in `test-helper_doTrees.R`. This section records what
+changed and what was measured along the way. All five findings are closed; the
+remaining test work is #link(<mixed>)[section 5]'s 5.1--5.3 and 5.6.
 
 == T1. Snapshots were stale --- deleted and regenerated
 
@@ -678,20 +730,49 @@ calls.
 *Result:* `FAIL 0 | WARN 0 | SKIP 0 | PASS 85` in *2 min 05 s*, so no part of
 this file needs `skip_on_ci()`.
 
-== T5. Nothing asserts the diagnostics the port exists to collect
+== T5. The diagnostics the port exists to collect are now asserted
 
-Mostly addressed. #link(<negctl>)[Section 5.4]'s three blocks assert
-`n_split_scan` and `n_fail_split` on all three paths (dead kernel, working
-kernel, native), and T2's `expect_grew()` now asserts `n_fail_full` and
-`n_fail_split` on all 17 configurations.
+*Status: fixed.* Every field on `attr(tr, "igsca_info")` is now covered, plus the
+scan cache. The counters are the port's only window into *partial* failure ---
+each is reached by a path that still returns a well-formed tree, so nothing else
+in the suite would notice one going wrong.
 
-Still untouched: `n_fail_node`, `n_fail_resample`, `n_fail_leaf`,
-`root_criteria`, and the node-local scan cache in `argmax_split()` --- the one
-piece of genuinely subtle logic in the port (`identical()` on closures as a cache
-key). See #link(<cache>)[section 5.5]. `n_fail_leaf` is the one worth doing next:
-it is *live* on the default control (measured `n_fail_leaf = 1` on the `mat`
-snapshot tree, the n = 68 leaf of #link(<s3>)[S3]), so it is a real diagnostic
-firing in the suite today with nothing watching it.
+`n_split_scan` and `n_fail_split` were already pinned by
+#link(<negctl>)[section 5.4] and T2's `expect_grew()`. The four blocks added to
+`test-postestimate_doTrees.R` cover the rest:
+
+#table(
+  columns: (auto, 1fr),
+  inset: 6pt,
+  align: (left, left),
+  table.header([*Field*], [*How it is reached, and what is asserted*]),
+  [`n_fail_full`],
+  [`try_fit` mocked to fail unconditionally. Asserts `1L`, `n_fail_node == 0L`,
+   `root_criteria` `NULL`, and a stump --- the collector's `root_seen` flag is
+   the only thing separating this from the next row],
+  [`n_fail_node`],
+  [`try_fit` mocked to fail only below the full sample size, so the root fits
+   and every child fails. Asserts `n_fail_full == 0L`, `n_fail_node > 0L`, and
+   that the root test still ran (the tree split)],
+  [`root_criteria`],
+  [Structure (`colnames == covs`, all three rows present) plus the statistical
+   claim the fixture supports: `z_true` wins the root criterion outright and
+   neither `noise_*` clears `alpha`],
+  [`n_fail_leaf`],
+  [The default-control `mat` tree, where the n = 68 leaf of
+   #link(<s3>)[S3] genuinely fails. Asserts `1L`, and that `coef()` reports it
+   as an `NA` `objfun` row *with* its `nobs` rather than dropping the node],
+)
+
+The `n_fail_leaf` block doubles as the only test of S3's `coef()` fix: the
+regression it guards against is `rbind()` silently discarding a `NULL`, which is
+exactly how that method used to collapse a whole tree to `NULL`.
+
+`n_fail_resample` and the scan cache are node-level and live in
+`test-helper_doTrees.R` --- see #link(<cache>)[section 5.5], now implemented.
+`partition_stat()`'s contract is that an unfittable candidate partition comes
+back as `NA_real_` with the counter bumped, *never* as an exception; anything
+that escapes there would make SimDesign redraw the whole replication.
 
 #pagebreak()
 
@@ -890,32 +971,50 @@ which costs nothing in fidelity since mixed splitters run no permutation test
 
 == The scan cache <cache>
 
-`argmax_split()`'s cache key is `identical()` on the splitter *closure*
-(`R/helper_doTrees.R:294--296`). A matched selector/splitter pair should reuse the
-selector's scan; a mismatched pair should rescan with its own kernel. Both are
-cheap to check at unit level with a pre-armed collector, and neither is covered
-today:
+*Status: implemented* (`tests/testthat/test-helper_doTrees.R`, with a
+`node_fixture()` that packages one pooled node fit the way the trafo hands it to
+a kernel).
+
+`argmax_split()`'s cache key has two components --- `identical()` on the splitter
+*closure* and `identical()` on the subset (`R/helper_doTrees.R:294--296`) --- so
+the test exercises both. A matched selector/splitter pair reuses the selector's
+scan; a mismatched kernel, or the same kernel at a different node, rescans:
 
 ```r
-test_that("a matched pair reuses the scan and a mismatched pair rescans", {
-  fx <- node_fixture(); j <- match("noise_1", names(fx$mf)); subset <- seq_len(nrow(fx$mf))
-  coll <- fx$ctrl$collector
-  sc <- scan_covariate("FITdiff", j, fx$model, fx$mf, subset, fx$ctrl)
-  coll$scan <- stats::setNames(list(sc), as.character(j))
-  coll$scan_subset   <- subset
-  coll$scan_splitter <- split_max_fitdiff
+sc <- scan_covariate("FITdiff", j, fx$model, fx$mf, fx$subset, fx$ctrl)
+coll$scan <- stats::setNames(list(sc), as.character(j))
+coll$scan_subset   <- fx$subset
+coll$scan_splitter <- split_max_fitdiff
 
-  expect_identical(                                   # matched -> cache hit
-    argmax_split(split_max_fitdiff, coll, fx$model, fx$mf, subset, j, fx$ctrl),
-    sc$split)
-  expect_false(isTRUE(all.equal(                      # mismatched -> rescan
-    argmax_split(split_max_dli, coll, fx$model, fx$mf, subset, j, fx$ctrl),
-    sc$split)))
-})
+expect_identical(                                     # matched -> cache hit
+  argmax_split(split_max_fitdiff, coll, fx$model, fx$mf, fx$subset, j, fx$ctrl),
+  sc$split)
+expect_identical(coll$n_split_scan, 0L)               # ... kernel never ran
+
+sp_dli <- argmax_split(                               # mismatched -> rescan
+  split_max_dli, coll, fx$model, fx$mf, fx$subset, j, fx$ctrl)
+expect_identical(coll$n_split_scan, 1L)
+expect_false(isTRUE(all.equal(                        # and it disagrees
+  partykit::breaks_split(sp_dli), partykit::breaks_split(sc$split))))
+
+coll$n_split_scan <- 0L                               # same kernel, other node
+argmax_split(split_max_fitdiff, coll, fx$model, fx$mf, fx$subset[-1L], j, fx$ctrl)
+expect_identical(coll$n_split_scan, 1L)
 ```
 
+*The `n_split_scan` assertions are the load-bearing ones.* Comparing the returned
+splits alone would not distinguish a hit from a rescan that happened to land on
+the same cutpoint --- and on the matched pair it *always* would, by construction.
+An unchanged counter is what "the kernel never ran" actually means.
+
+The differing-cutpoint assertion is a bonus that holds because of fact (c) above:
+FIT cuts `noise_1` at `-0.231765`, DLi at `-1.69654`. Do not extend it to
+`DLi` #sym.times `DGi`, which legitimately agree.
+
 Note this test must *not* be combined with `local_mocked_bindings()` on the same
-kernels: the cache key is closure identity, and a mock would change it.
+kernels: the cache key is closure identity, and a mock would change it. That is
+also why the `n_fail_resample` test next to it mocks `try_fit` rather than a
+kernel.
 
 == What none of this proves
 
@@ -1115,9 +1214,9 @@ than accidents:
   [#strike[1]], [#strike[T4 --- two controls, chosen by branch]], [*Done.* #sym.tilde 16 h #sym.arrow.r 2 min 05 s],
   [#strike[2]], [#strike[T1--T3 --- regenerate snapshots, drop `length()==5`, split `expect_no_error()`]], [*Done.* 85 assertions, `FAIL 0 | WARN 0`],
   [3], [§5.1--5.3 --- kernel, `argmax_split`, and splitfun-wiring tests], [*Now the head of the queue.* Cheap, fast, and they pin the contracts the port depends on],
-  [4], [T5 + §5.5 --- scan-cache tests], [Subtlest logic in the port, and still wholly unasserted],
+  [#strike[4]], [#strike[T5 + §5.5 --- collector and scan-cache tests]], [*Done.* Two-part cache key both covered; `PASS 121` across the two files],
   [5], [P1--P6 --- prune exports, drop `:::`, fix `\value`, validate inputs], [Cleanup; P4's rename pairs naturally with B2's settled signature. Note `attach_leaf_fits()`, `drop_inner_node_objects()` and `warn_dead_splitter()` are already `@noRd`],
-  [6], [#link(<s3>)[S3] follow-up --- assert `n_fail_leaf` and raise `minbucket` for large models], [The default `30L` admits unfittable leaves, and the counter fires in the suite today (`n_fail_leaf = 1` on the `mat` snapshot) with nothing watching it],
+  [6], [#link(<s3>)[S3] follow-up --- raise `minbucket` for large models], [`n_fail_leaf` is now asserted (T5), but the default `30L` still admits leaves the model cannot fit --- the assertion pins the symptom, it does not fix it],
   [7], [§5.6 --- numeric-cutpoint fixture], [Optional; only if the mixed pairs are a real study arm],
-  [8], [#link(<testtype>)[§3.2.1] --- optional: replace the `cc$bonferroni` override with a length-2 `testtype`], [Cosmetic; stays inside the documented partykit API],
+  [#strike[8]], [#strike[#link(<testtype>)[§3.2.1] --- replace the `cc$bonferroni` override with a length-2 `testtype`]], [*Done.* The override was measured to be a no-op on all four combinations and deleted with both TODOs],
 )
