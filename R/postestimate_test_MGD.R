@@ -189,8 +189,7 @@
 #'   \item{`$CI_overlap`}{A list with elements,  `Decision`, and `Decision_overall`}
 #' }
 #' 
-#' If `.output_type = "structured"` a tibble (data frame) with the following columns 
-#' is returned.
+#' If `.output_type = "structured"` a tibble (data frame) with the following columns is returned.
 #' 
 #' \describe{
 #'   \item{`Test`}{The name of the test.}
