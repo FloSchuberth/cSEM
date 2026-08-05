@@ -25,6 +25,9 @@
 - **Gloria Pietropolli**. Contributor.
   [](https://orcid.org/0000-0001-7623-8419)
 
+- **Kjell S. Slupphaug**. Contributor.
+  [](https://orcid.org/0009-0005-8324-2834)
+
 ## Citation
 
 Source:
