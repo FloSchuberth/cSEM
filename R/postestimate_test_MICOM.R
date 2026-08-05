@@ -171,11 +171,14 @@ testMICOM <- function(
     #   pb <- txtProgressBar(min = 0, max = .R, style = 3)
     # }
     
-    # Save old seed and restore on exit! This is important since users may have
+    # Save old seed (if it exists) and restore on exit!
+    # This is important since users may have
     # set a seed before, in which case the global seed would be
-    # overwritten if not explicitly restored
-    old_seed <- .Random.seed
-    on.exit({.Random.seed <<- old_seed})
+    # overwritten if not explicitly restored.
+    if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) {
+      old_seed <- get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
+      on.exit(assign(".Random.seed", old_seed, envir = .GlobalEnv), add = TRUE)
+    }
     
     ## Create seed if not already set
     if(is.null(.seed)) {

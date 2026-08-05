@@ -2,6 +2,8 @@
 
 #  cSEM 0.6.2
 
+- Fix issue with setting a seed in non-interactive session. Thanks to Kjell S. Slupphaug and Jason Berger for their contribution.   
+
 - Fix bug in PLS-PM estimation of non-linear models involing second-order constructs. Thanks Thanks to Kjell S. Slupphaug for this contribution.  
 
 - Fix smaller issue in the print function for `assess()`.

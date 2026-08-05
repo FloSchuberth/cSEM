@@ -182,11 +182,14 @@ testOMF <- function(
   X_trans           <- X %*% S_half %*% Sig_half
   colnames(X_trans) <- colnames(X)
   
-  # Save old seed and restore on exit! This is important since users may have
+  # Save old seed (if it exists) and restore on exit!
+  # This is important since users may have
   # set a seed before, in which case the global seed would be
   # overwritten if not explicitly restored.
-  old_seed <- .Random.seed
-  on.exit({.Random.seed <<- old_seed})
+  if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) {
+    old_seed <- get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
+    on.exit(assign(".Random.seed", old_seed, envir = .GlobalEnv), add = TRUE)
+  }
   
   ## Create seed if not already set
   if(is.null(.seed)) {
@@ -195,7 +198,7 @@ testOMF <- function(
     # drawing a random seed out of .Random.seed. If set.seed(seed = NULL) is not
     # called sample(.Random.seed, 1) would result in the same random seed as
     # long as .Random.seed remains unchanged. By resetting the seed we make 
-    # sure that sample draws a different element everytime it is called.
+    # sure that sample draws a different element every time it is called.
     .seed <- sample(.Random.seed, 1)
   }
   ## Set seed
