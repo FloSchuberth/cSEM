@@ -16,7 +16,10 @@ The root node's criteria \code{matrix}, or \code{NULL} if no test ran.
 Root-node criteria matrix as stored by extree/ctree (saveinfo = TRUE):
 columns = tested covariates (all-NA columns dropped by extree), rows
 "statistic" / "p.value" (both raw scale) / "criterion" (log(1 - p) with
-extree's own statistic-rank tie-break already added). NULL when the root
+extree's own statistic-rank tie-break already added). Under
+\code{bonferroni = TRUE} the reported p-values are the Šidák-adjusted ones -- the
+engine adjusts before it stores, so this is the quantity that was actually
+compared against \code{alpha}, not the per-covariate p-value. NULL when the root
 trafo failed (no test ran).
 }
 \seealso{

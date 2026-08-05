@@ -156,7 +156,25 @@ validate_tree_input <- function(data, indicators, covariates, influence,
 #' @param alpha Significance level a covariate must clear to split a node.
 #' @param bonferroni Adjust the node's p-values for the number of covariates
 #'   tested. The adjustment partykit applies is Šidák, \eqn{1 - (1 - p)^k}, which
-#'   agrees with Bonferroni to first order.
+#'   agrees with Bonferroni to first order. `k` is the number of covariates that
+#'   returned a p-value at that node, not the number requested. Both families
+#'   honour this: the engine applies it to whatever the selector returns, so it
+#'   reaches the partition families too -- where it raises the `R_test` floor
+#'   sharply (see below). Defaults to `TRUE`, matching
+#'   [partykit::ctree_control()]: every node scans all covariates, so the
+#'   unadjusted p-value is a multiple-comparison statistic reported as if it
+#'   were a single test.
+#'
+#'   Note that "Šidák" is our name for it, not partykit's -- the word appears
+#'   nowhere in that package's documentation, which calls the option
+#'   "Bonferroni" throughout. `?partykit::ctree_control` documents only the
+#'   choice ("`Bonferroni` and `Univariate` relate to p-values from the
+#'   asymptotic distribution (adjusted or unadjusted)"), and
+#'   `?partykit::ctree` only that the criterion is multiplicity adjusted. The
+#'   exponential form is visible solely in the source of partykit's unexported
+#'   `.extree_node()`, which multiplies the stored \eqn{\log(1 - p)} by `k` --
+#'   i.e. \eqn{\log((1 - p)^k)}. The primary reference for the framework is
+#'   Hothorn, Hornik and Zeileis (2006), listed under `?partykit::ctree`.
 #' @param minbucket Minimum number of observations in a terminal node. With many
 #'   indicators the default admits leaves the model may not fit; see the
 #'   `n_fail_leaf` counter on the returned tree.
@@ -165,26 +183,52 @@ validate_tree_input <- function(data, indicators, covariates, influence,
 #' @param max_cuts Maximum number of candidate cutpoints scanned per numeric
 #'   covariate. Only the partition families use this.
 #' @param R_test Number of resamples. On the conditional-inference path this is
-#'   libcoin's `nresample` and is unused when `coin_distribution` is
-#'   "asymptotic". On the partition path it is the permutation count, where
-#'   values below `20L` make splitting impossible: the smallest attainable
-#'   p-value is \eqn{1 / (R + 1)}, which must clear `alpha` strictly.
-#' @param coin_distribution Null distribution for the conditional-inference
-#'   families: "approximate" draws `R_test` permutations, "asymptotic" reads the
-#'   p-value off the limiting chi-squared distribution of the same conditional
-#'   null. Ignored by the partition families.
+#'   libcoin's `nresample` and is unused under the default
+#'   `coin_distribution = "asymptotic"`. On the partition path it is the
+#'   permutation count, and it carries a correctness floor rather than just a
+#'   budget: the smallest attainable p-value is \eqn{1 / (R + 1)}, which must
+#'   clear `alpha` strictly, so no node can ever split below it. Unadjusted the
+#'   floor is `R_test >= 20L`; under `bonferroni = TRUE` it becomes
+#'   \eqn{R > (1 - \alpha)^{-1/k} / (1 - (1 - \alpha)^{1/k}) }, which for
+#'   `alpha = 0.05` and `k = 3` covariates is `R_test >= 59L`. The two families
+#'   price a resample very differently -- libcoin permutes a precomputed
+#'   influence matrix, while the partition path refits a two-group model per
+#'   permutation -- so a value that is cheap on one is not on the other.
+#' @param coin_distribution How the conditional-inference families evaluate the
+#'   null distribution -- not *which* null, which is the permutation null
+#'   either way. Both settings test the same hypothesis by the same Strasser
+#'   and Weber (1999) framework; they differ only in how its tail is obtained.
+#'   "asymptotic" (the default) draws no permutations at all: libcoin computes
+#'   the linear statistic's exact conditional expectation and covariance under
+#'   the permutation null in closed form, standardises by them, and reads the
+#'   p-value off the limiting chi-squared distribution -- the large-sample
+#'   shape of that same permutation distribution. "approximate" instead
+#'   estimates the tail by drawing `R_test` permutations of it.
+#'
+#'   So "asymptotic" is still a permutation test; it is the resampling that is
+#'   approximated away, not the conditioning. `?libcoin::LinStatExpCov` states
+#'   the split directly -- the code "computes the linear statistic, its
+#'   expectation and covariance and, *optionally*, `nresample` samples from its
+#'   permutation distribution" -- and Strasser and Weber's title, "The
+#'   Asymptotic Theory of Permutation Statistics", is the whole point.
+#'
+#'   Prefer the default unless the large-sample approximation is in doubt. It
+#'   is also exactly reproducible, since nothing is drawn, whereas the Monte
+#'   Carlo estimate carries a standard error of \eqn{\sqrt{p (1 - p) / R}} --
+#'   at the default `R_test` wide enough to flip a borderline split between
+#'   runs. Ignored by the partition families, which always permute.
 #'
 #' @returns A named `list` of tuning parameters.
 #' @seealso [doTrees()]
 #' @export
 igsca_tree_control <- function(alpha = 0.05,
-                               bonferroni = FALSE,
+                               bonferroni = TRUE,
                                minbucket = 30L,
                                minsplit = 2L * minbucket,
                                maxdepth = 3L,
                                max_cuts = 20L,
                                R_test = 500L,
-                               coin_distribution = c("approximate", "asymptotic")) {
+                               coin_distribution = c("asymptotic", "approximate")) {
   list(
     alpha = alpha,
     bonferroni = bonferroni,
@@ -318,6 +362,25 @@ grow_extree <- function(d, trafo, selector, splitter, ctrl) {
   ## is overridden from ctrl below; the trailing loop also carries the tester
   ## config (args, indicators, collector, R_test, max_cuts, ...) into the
   ## ctrl the callbacks receive.
+  ##
+  ## Two scaffold fields are load-bearing and must survive the loop, which they
+  ## do only because igsca_tree_control() happens not to use those names:
+  ##   * `criterion` ("p.value") -- .extree_node() reads it as the *row name* it
+  ##     pulls out of our criteria matrix to rank covariates by. Setting it to
+  ##     "statistic" would silently rank on the raw kernel statistic and ignore
+  ##     every p-value we compute.
+  ##   * `bonferroni` -- .extree_node() applies the Šidák adjustment itself, to
+  ##     whatever the selectfun returned, so partition_select() must keep
+  ##     handing back *unadjusted* p-values. ctrl$bonferroni does overwrite the
+  ##     scaffold's value here, which is the intent: the partition families
+  ##     honour the same switch as the conditional-inference ones. Do not go
+  ##     looking for "Šidák" in partykit's help pages -- it is not there, the
+  ##     option is documented as "Bonferroni" (see ?ctree_control, testtype).
+  ##     The `* sum(!is.na(...))` on the log(1 - p) scale in .extree_node() is
+  ##     the only place the exponential form is stated; see the note under
+  ##     `bonferroni` in igsca_tree_control() for the full trail.
+  ## `testtype` and `nresample` are inert on this path -- they only steer
+  ## libcoin inside ctree's own selectfun, which we have replaced.
   ectrl <- partykit::ctree_control()
   ectrl$update <- TRUE
   ectrl$logmincriterion <- log(1 - ctrl$alpha)
@@ -620,7 +683,10 @@ drop_inner_node_objects <- function(tree) {
 #' Root-node criteria matrix as stored by extree/ctree (saveinfo = TRUE):
 #' columns = tested covariates (all-NA columns dropped by extree), rows
 #' "statistic" / "p.value" (both raw scale) / "criterion" (log(1 - p) with
-#' extree's own statistic-rank tie-break already added). NULL when the root
+#' extree's own statistic-rank tie-break already added). Under
+#' `bonferroni = TRUE` the reported p-values are the Šidák-adjusted ones -- the
+#' engine adjusts before it stores, so this is the quantity that was actually
+#' compared against `alpha`, not the per-covariate p-value. NULL when the root
 #' trafo failed (no test ran).
 #'
 #' @param tree A tree returned by [doTrees()].
@@ -883,7 +949,12 @@ permutation_pvalue <- function(stat_kind, obs, model, mf, subset, goes_left, ctr
 #' argmax only. `matched_split_fn` is the splitter function whose kernel
 #' equals this selector's scan statistic -- the cache key grow_extree's
 #' splitfun compares against with identical().
-#' 
+#'
+#' Returns the same shape .ctree_select() does, and on the same log scales,
+#' because .extree_node() consumes both identically: `statistic` as log(stat)
+#' and `p.value` as log1p(-p), the latter *unadjusted* -- the engine applies
+#' the multiplicity correction to this matrix itself.
+#'
 #'
 #' @noRd
 partition_select <- function(stat_kind, matched_split_fn,

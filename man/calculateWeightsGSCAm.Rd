@@ -38,7 +38,7 @@ fit with the best overall FIT (see \code{\link[=calculateFIT]{calculateFIT()}}) 
 for any subsequent resampling, guarding against alternating-least-squares
 local optima. \strong{(3) Random sets (GSCA only):} a named numeric vector of
 length three, \verb{c(n = <number of sets>, min = <lower>, max = <upper>)}, from
-which \code{n} sets of starting weights are sampled via \code{\link[stats:Uniform]{stats::runif()}} over
+which \code{n} sets of starting weights are sampled via \code{\link[stats:runif]{stats::runif()}} over
 \verb{[min, max]}; call \code{\link[=set.seed]{set.seed()}} before \code{csem()} for reproducible draws.
 Forms (2) and (3) require \code{.approach_weights = "GSCA"}; for multigroup data
 the selection of best FIT is performed per group, as opposed to the overall

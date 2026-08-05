@@ -12,9 +12,9 @@ generateRandomStartingValues(.measurement, .n, .min, .max)
 
 \item{.n}{Integer. Number of random sets to generate.}
 
-\item{.min}{Numeric. Lower bound passed to \code{\link[stats:Uniform]{stats::runif()}}.}
+\item{.min}{Numeric. Lower bound passed to \code{\link[stats:runif]{stats::runif()}}.}
 
-\item{.max}{Numeric. Upper bound passed to \code{\link[stats:Uniform]{stats::runif()}}.}
+\item{.max}{Numeric. Upper bound passed to \code{\link[stats:runif]{stats::runif()}}.}
 }
 \value{
 A list of length \code{.n}; each element is a named list of named numeric

@@ -30,13 +30,11 @@
       
       Fitted party:
       [1] root
-      |   [2] z_true in 1
-      |   |   [3] noise_2 <= 1.46613: *
-      |   |   [4] noise_2 > 1.46613: *
-      |   [5] z_true in 2: *
+      |   [2] z_true in 1: *
+      |   [3] z_true in 2: *
       
-      Number of inner nodes:    2
-      Number of terminal nodes: 3
+      Number of inner nodes:    1
+      Number of terminal nodes: 2
 
 # IGSCA Trees Variable Selection on FIT Runs as expected
 

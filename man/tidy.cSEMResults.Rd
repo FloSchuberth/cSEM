@@ -26,7 +26,7 @@
 \item{conf.type}{Type of confidence interval returned. See  the \code{.ci} argument of \code{\link[=summarize]{summarize()}}. Unlike \code{\link[=summarize]{summarize()}}, only one type of confidence interval at-a-time is supported.}
 
 \item{...}{
-  Arguments passed on to \code{\link[=summarize]{summarize}}
+  Arguments passed on to \code{\link{summarize}}
   \describe{
     \item{\code{.alpha}}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}

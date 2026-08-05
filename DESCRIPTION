@@ -85,7 +85,6 @@ Imports:
     partykit,
     tibble (>= 3.0.0)
 RdMacros: Rdpack, lifecycle
-RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
 Suggests: 
     DiagrammeR,
@@ -113,4 +112,4 @@ Config/testthat/edition: 3
 Config/testthat/parallel: true
 VignetteBuilder: knitr
 Language: en-US
-
+Config/roxygen2/version: 8.1.0

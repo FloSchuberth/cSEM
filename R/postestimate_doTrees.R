@@ -120,12 +120,28 @@ doTrees <- function(
     }
     ## partykit's `testtype` conflates two orthogonal choices: where the
     ## p-value comes from ("MonteCarlo" = nresample permutations, otherwise the
-    ## asymptotic chi-squared limit of the same conditional null) and whether
-    ## it is adjusted for multiplicity. `ctree_control()` accepts a length-2
-    ## vector to ask for both, so building it this way reaches all four
-    ## combinations of our two arguments inside the documented API -- and
-    ## `bonferroni = "Bonferroni" %in% testtype` is then derived correctly by
-    ## ctree_control() itself, with no post-hoc surgery on the control object.
+    ## asymptotic chi-squared limit of the same conditional null) and whether it
+    ## is adjusted for multiplicity. Passing both keywords reaches all four
+    ## combinations of our two arguments inside the documented API -- and it is
+    ## documented: ?ctree_control says under `testtype` that "Bonferroni and
+    ## Univariate relate to p-values from the asymptotic distribution (adjusted
+    ## or unadjusted)" and that "Bonferroni-adjusted Monte-Carlo p-values are
+    ## computed when both Bonferroni and MonteCarlo are given". This works
+    ## because ctree_control() splits them apart rather than keeping the vector:
+    ## `bonferroni` is derived as `"Bonferroni" %in% testtype`, and `testtype`
+    ## itself is then collapsed by match.arg() to the single remaining keyword.
+    ## The stored control therefore reads testtype = "MonteCarlo",
+    ## bonferroni = TRUE -- not the length-2 vector we passed in. That is the
+    ## form the engine wants: .ctree_test_internal() only ever asks whether
+    ## "MonteCarlo" %in% ctrl$testtype to choose libcoin's nresample, and the
+    ## adjustment is applied elsewhere (see below), so nothing downstream needs
+    ## the "Bonferroni" keyword to survive.
+    ##
+    ## The adjustment itself is not ctree's -- .extree_node() applies it to
+    ## whatever any selectfun returns, before comparing against
+    ## logmincriterion. So it lands on the partition families' custom selector
+    ## too, and neither path must pre-adjust its own p-values or it would be
+    ## counted twice.
     testtype <- c(
       if (isTRUE(control$bonferroni)) "Bonferroni",
       if (control$coin_distribution == "approximate") "MonteCarlo"

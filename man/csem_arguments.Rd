@@ -411,7 +411,7 @@ from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}"
 resampling from each resample is only required for the studentized confidence
 interval ("\emph{CI_t_interval}") computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
 
-\item{`.resample_object`}{An R object of class \code{cSEMResults_resampled}
+\item{.resample_object}{An R object of class \code{cSEMResults_resampled}
 obtained from \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} or by setting \code{.resample_method = "bootstrap"}
 or \code{"jackknife"} when calling \code{\link[=csem]{csem()}}.}
 
@@ -471,7 +471,7 @@ fit with the best overall FIT (see \code{\link[=calculateFIT]{calculateFIT()}}) 
 for any subsequent resampling, guarding against alternating-least-squares
 local optima. \strong{(3) Random sets (GSCA only):} a named numeric vector of
 length three, \verb{c(n = <number of sets>, min = <lower>, max = <upper>)}, from
-which \code{n} sets of starting weights are sampled via \code{\link[stats:Uniform]{stats::runif()}} over
+which \code{n} sets of starting weights are sampled via \code{\link[stats:runif]{stats::runif()}} over
 \verb{[min, max]}; call \code{\link[=set.seed]{set.seed()}} before \code{csem()} for reproducible draws.
 Forms (2) and (3) require \code{.approach_weights = "GSCA"}; for multigroup data
 the selection of best FIT is performed per group, as opposed to the overall

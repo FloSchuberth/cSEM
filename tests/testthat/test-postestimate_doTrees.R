@@ -37,6 +37,11 @@ res <- csem(
 # partition family ("FIT"/"DLi"/"DGi") runs an R_test permutation test per
 # covariate per node and every permutation is a two-group MGA fit, so at the
 # defaults a single call takes about an hour and a half.
+#
+# R_test is inert here: it reaches the conditional-test family only as libcoin's
+# nresample, which the default coin_distribution = "asymptotic" never draws. It
+# is left in place so the setting still applies if a test below opts back into
+# "approximate".
 ctl_mixed <- igsca_tree_control(R_test = 50L, maxdepth = 2L, max_cuts = 8L)
 
 # R_test >= 20L is a correctness floor, not just a budget: permutation_pvalue()
@@ -46,11 +51,21 @@ ctl_mixed <- igsca_tree_control(R_test = 50L, maxdepth = 2L, max_cuts = 8L)
 # the data says. 24L keeps headroom at 1/25 = 0.04. maxdepth = 1L costs nothing
 # in coverage on this fixture -- measured, the children do not split at
 # maxdepth = 2L either, they only double the runtime.
+#
+# bonferroni is off here against the package default, and that is a budget
+# decision rather than a statistical one. The engine applies Šidák across the
+# k = 3 covariates scanned at each node, which raises the floor above from
+# R_test >= 20L to R_test >= 59L -- 1 - (1 - 1/25)^3 = 0.115 does not clear
+# alpha, so every partition test below would assert against a stump. Paying for
+# it means 59 two-group MGA refits per covariate per node instead of 24. The
+# adjustment is exercised on the conditional-inference path instead, where a
+# resample costs a permutation of a precomputed matrix rather than a model fit.
 ctl_part <- igsca_tree_control(
   R_test = 24L,
   max_cuts = 3L,
   maxdepth = 1L,
-  minbucket = 200L
+  minbucket = 200L,
+  bonferroni = FALSE
 )
 
 grow_tree <- function(influence, splitter, control, object = res) {

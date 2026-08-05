@@ -93,19 +93,27 @@ import(utils)
 importFrom(MASS,ginv)
 importFrom(Matrix,bdiag)
 importFrom(Rdpack,reprompt)
-importFrom(cli,boxx)
-importFrom(cli,rule)
-importFrom(generics,glance)
-importFrom(generics,tidy)
+importFrom(cli,
+  boxx,
+  rule
+)
+importFrom(generics,
+  glance,
+  tidy
+)
 importFrom(lifecycle,deprecate_soft)
 importFrom(magrittr,"%>%")
 importFrom(matrixStats,rowProds)
-importFrom(partykit,ctree)
-importFrom(partykit,ctree_control)
-importFrom(partykit,info_node)
-importFrom(partykit,node_party)
-importFrom(partykit,nodeapply)
-importFrom(partykit,nodeids)
+importFrom(partykit,
+  ctree,
+  ctree_control,
+  info_node,
+  node_party,
+  nodeapply,
+  nodeids
+)
 importFrom(rlang,.data)
-importFrom(tibble,as_tibble)
-importFrom(tibble,tibble)
+importFrom(tibble,
+  as_tibble,
+  tibble
+)

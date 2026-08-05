@@ -6,13 +6,13 @@
 \usage{
 igsca_tree_control(
   alpha = 0.05,
-  bonferroni = FALSE,
+  bonferroni = TRUE,
   minbucket = 30L,
   minsplit = 2L * minbucket,
   maxdepth = 3L,
   max_cuts = 20L,
   R_test = 500L,
-  coin_distribution = c("approximate", "asymptotic")
+  coin_distribution = c("asymptotic", "approximate")
 )
 }
 \arguments{
@@ -20,7 +20,25 @@ igsca_tree_control(
 
 \item{bonferroni}{Adjust the node's p-values for the number of covariates
 tested. The adjustment partykit applies is Šidák, \eqn{1 - (1 - p)^k}, which
-agrees with Bonferroni to first order.}
+agrees with Bonferroni to first order. \code{k} is the number of covariates that
+returned a p-value at that node, not the number requested. Both families
+honour this: the engine applies it to whatever the selector returns, so it
+reaches the partition families too -- where it raises the \code{R_test} floor
+sharply (see below). Defaults to \code{TRUE}, matching
+\code{\link[partykit:ctree_control]{partykit::ctree_control()}}: every node scans all covariates, so the
+unadjusted p-value is a multiple-comparison statistic reported as if it
+were a single test.
+
+Note that "Šidák" is our name for it, not partykit's -- the word appears
+nowhere in that package's documentation, which calls the option
+"Bonferroni" throughout. \code{?partykit::ctree_control} documents only the
+choice ("\code{Bonferroni} and \code{Univariate} relate to p-values from the
+asymptotic distribution (adjusted or unadjusted)"), and
+\code{?partykit::ctree} only that the criterion is multiplicity adjusted. The
+exponential form is visible solely in the source of partykit's unexported
+\code{.extree_node()}, which multiplies the stored \eqn{\log(1 - p)} by \code{k} --
+i.e. \eqn{\log((1 - p)^k)}. The primary reference for the framework is
+Hothorn, Hornik and Zeileis (2006), listed under \code{?partykit::ctree}.}
 
 \item{minbucket}{Minimum number of observations in a terminal node. With many
 indicators the default admits leaves the model may not fit; see the
@@ -34,15 +52,41 @@ indicators the default admits leaves the model may not fit; see the
 covariate. Only the partition families use this.}
 
 \item{R_test}{Number of resamples. On the conditional-inference path this is
-libcoin's \code{nresample} and is unused when \code{coin_distribution} is
-"asymptotic". On the partition path it is the permutation count, where
-values below \code{20L} make splitting impossible: the smallest attainable
-p-value is \eqn{1 / (R + 1)}, which must clear \code{alpha} strictly.}
+libcoin's \code{nresample} and is unused under the default
+\code{coin_distribution = "asymptotic"}. On the partition path it is the
+permutation count, and it carries a correctness floor rather than just a
+budget: the smallest attainable p-value is \eqn{1 / (R + 1)}, which must
+clear \code{alpha} strictly, so no node can ever split below it. Unadjusted the
+floor is \code{R_test >= 20L}; under \code{bonferroni = TRUE} it becomes
+\eqn{R > (1 - \alpha)^{-1/k} / (1 - (1 - \alpha)^{1/k}) }, which for
+\code{alpha = 0.05} and \code{k = 3} covariates is \code{R_test >= 59L}. The two families
+price a resample very differently -- libcoin permutes a precomputed
+influence matrix, while the partition path refits a two-group model per
+permutation -- so a value that is cheap on one is not on the other.}
 
-\item{coin_distribution}{Null distribution for the conditional-inference
-families: "approximate" draws \code{R_test} permutations, "asymptotic" reads the
-p-value off the limiting chi-squared distribution of the same conditional
-null. Ignored by the partition families.}
+\item{coin_distribution}{How the conditional-inference families evaluate the
+null distribution -- not \emph{which} null, which is the permutation null
+either way. Both settings test the same hypothesis by the same Strasser
+and Weber (1999) framework; they differ only in how its tail is obtained.
+"asymptotic" (the default) draws no permutations at all: libcoin computes
+the linear statistic's exact conditional expectation and covariance under
+the permutation null in closed form, standardises by them, and reads the
+p-value off the limiting chi-squared distribution -- the large-sample
+shape of that same permutation distribution. "approximate" instead
+estimates the tail by drawing \code{R_test} permutations of it.
+
+So "asymptotic" is still a permutation test; it is the resampling that is
+approximated away, not the conditioning. \code{?libcoin::LinStatExpCov} states
+the split directly -- the code "computes the linear statistic, its
+expectation and covariance and, \emph{optionally}, \code{nresample} samples from its
+permutation distribution" -- and Strasser and Weber's title, "The
+Asymptotic Theory of Permutation Statistics", is the whole point.
+
+Prefer the default unless the large-sample approximation is in doubt. It
+is also exactly reproducible, since nothing is drawn, whereas the Monte
+Carlo estimate carries a standard error of \eqn{\sqrt{p (1 - p) / R}} --
+at the default \code{R_test} wide enough to flip a borderline split between
+runs. Ignored by the partition families, which always permute.}
 }
 \value{
 A named \code{list} of tuning parameters.

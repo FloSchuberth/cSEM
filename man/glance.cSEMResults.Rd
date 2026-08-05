@@ -10,7 +10,7 @@
 \item{x}{Fitted \code{csem} model with class \code{cSEMResults} as returned from \code{\link[=csem]{csem()}}}
 
 \item{...}{
-  Arguments passed on to \code{\link[=assess]{assess}}
+  Arguments passed on to \code{\link{assess}}
   \describe{
     \item{\code{.object}}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
     \item{\code{.only_common_factors}}{Logical. Should only concepts modeled as common

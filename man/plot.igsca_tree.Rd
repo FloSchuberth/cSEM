@@ -16,11 +16,11 @@
 
 \item{tp_args}{Arguments passed on to \code{terminal_panel}.}
 
-\item{...}{Passed to \code{\link[partykit:party-plot]{partykit::plot.party()}}.}
+\item{...}{Passed to \code{\link[partykit:plot.party]{partykit::plot.party()}}.}
 }
 \value{
 Called for the plot it draws. The return value is
-\code{\link[partykit:party-plot]{partykit::plot.party()}}'s and is not meaningful.
+\code{\link[partykit:plot.party]{partykit::plot.party()}}'s and is not meaningful.
 }
 \description{
 Draws the tree with a terminal panel reporting each leaf's \code{nobs} and
