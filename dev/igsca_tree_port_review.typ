@@ -76,6 +76,14 @@ then:
   properly. `devtools::check_man()` is clean for every file the port touches.
   *All findings in this document are now closed* except
   #link(<mixed>)[section 5]'s 5.1--5.3 and 5.6.
+- *Eleventh pass* --- #link(<mixed>)[§5]'s 5.1--5.3 built, all three in the
+  order the document proposed them: the kernels are now exercised one node at a
+  time (finite statistic, admissible and discriminating cutpoint, and
+  `partition_select()`'s `.Machine$double.eps` floor), and the undocumented
+  `cc$splitfun` contract is asserted by counting the kernel's invocations.
+  `FAIL 0 | WARN 0 | SKIP 0` at `PASS 130` in 2 min 13 s
+  (`test-postestimate_doTrees.R`) and `PASS 37` in 10 s
+  (`test-helper_doTrees.R`). The snapshots did not move.
 
 *Every finding in this document is now closed.* Each `influence` #sym.times
 `splitter` combination runs, the three silent failures are fixed, all 17
@@ -83,11 +91,12 @@ configurations are asserted to have *actually split* rather than merely not
 thrown, every diagnostic the collector carries is asserted somewhere, and the
 package surface is four exported symbols with real documentation behind them.
 
-What remains is not a finding but a *layer*: nothing here would catch a kernel
-that runs and picks the *wrong* cutpoint. #link(<mixed>)[Section 5]'s 5.1--5.3
-are the unit tests that would localise such a fault, and 5.6 is the fixture that
-would make "wrong" checkable at all --- worth building only if the mixed pairs
-are a real study arm.
+What remains is not a finding but a *fixture*. 5.1--5.3 now localise a fault to
+a single kernel, to a single cutpoint, or to the `cc$splitfun` wiring --- but
+they compare the kernels against each other, never against a known answer,
+because this fixture has no numeric covariate with a true threshold in it.
+#link(<mixed>)[Section 5.6] is that missing fixture, and it is worth building
+only if the mixed pairs are a real study arm.
 
 == Status at a glance
 
@@ -117,11 +126,11 @@ are a real study arm.
 The test file now carries two controls chosen per branch, five regenerated
 snapshots, one named `test_that()` per `influence` #sym.times `splitter`
 configuration --- each asserting the tree grew rather than merely returned ---
-and a block per collector diagnostic. `test-helper_doTrees.R` carries the
-node-level half: the scan cache and `partition_stat()`'s failure accounting.
-What is left of #link(<mixed>)[section 5] is the part that would catch a kernel
-that runs and picks the *wrong* cutpoint (5.1--5.3), and the fixture that would
-make "wrong" checkable at all (5.6).
+a block per collector diagnostic, and the `cc$splitfun` contract test.
+`test-helper_doTrees.R` carries the node-level half: the kernel statistics,
+cutpoint choice, the log-scale floor, the scan cache and `partition_stat()`'s
+failure accounting. All that is left of #link(<mixed>)[section 5] is 5.6, the
+fixture that would make a *wrong* cutpoint checkable at all.
 
 #pagebreak()
 
@@ -589,8 +598,9 @@ Measured saving from the safe switch: 1.9 #sym.arrow.r 1.1 Mb (ctree,
 The test files are the right shape --- one per R file, matching the conventions
 in `MEMORY.md`, with the tree-level assertions in `test-postestimate_doTrees.R`
 and the node-level ones in `test-helper_doTrees.R`. This section records what
-changed and what was measured along the way. All five findings are closed; the
-remaining test work is #link(<mixed>)[section 5]'s 5.1--5.3 and 5.6.
+changed and what was measured along the way. All five findings are closed, and
+so is #link(<mixed>)[section 5]'s 5.1--5.3; the only remaining test work is
+5.6, which needs a fixture that does not exist yet.
 
 == T1. Snapshots were stale --- deleted and regenerated
 
@@ -798,17 +808,18 @@ that escapes there would make SimDesign redraw the whole replication.
 The mixed pairs (COIN variable selection + a model-comparison split point) are the
 configurations the suite is least able to check, because their failure mode is a
 *plausible-looking tree*, not an exception. T3 closed the crudest version of that
-gap --- a wholly dead kernel now fails `expect_grew()` --- but a kernel that runs
-and picks the *wrong* cutpoint still passes every assertion in the file. Three
-measured facts shape what a useful test can look like.
+gap --- a wholly dead kernel now fails `expect_grew()` --- and 5.1--5.3 below
+close everything else that is checkable without a new fixture. Three measured
+facts shaped what those tests could look like, and (b) is why the whole layer
+lives in `test-helper_doTrees.R` rather than at the tree level.
 
 *(a) The splitfun wiring works, but it is an undocumented contract.* `doTrees()`
 plants its kernel in `cc$splitfun` and relies on partykit reading it back out of
 the control object. A counting wrapper confirms it fires --- 9 kernel calls on a
 `maxdepth = 2, max_cuts = 8` tree (1 at the root for `z_true`, 8 at node 2 for
 `noise_1`) on partykit 1.2.29. The template's note says "verified against partykit
-1.2.28", so this contract has already survived one upgrade unverified. It deserves
-an explicit test.
+1.2.28", so this contract had already survived one upgrade unverified. 5.3 is the
+test that now pins it.
 
 *(b) The fixture cannot falsify cutpoint choice at the root.* `z_true` is a
 2-level factor, so `candidate_partitions()` returns exactly *one* candidate:
@@ -825,17 +836,21 @@ assertion about *which* cutpoint a mixed splitter chose is vacuous, which is why
 no amount of rephrasing the existing `expect_no_error()` would have worked.
 
 *(c) Kernels do disagree, on numeric covariates.* Pinning `whichvar` to `noise_1`
-and running `argmax_split()` directly:
+and running `argmax_split()` directly, under the `node_fixture()` 5.1 ships
+(`max_cuts = 8`, `minbucket = 100`, `noise_1` #sym.in $[-2.744, 3.029]$):
 
 ```
-FIT  cutpoint on noise_1 = -0.231765
-DLi  cutpoint on noise_1 = -1.69654
-DGi  cutpoint on noise_1 = -1.69654
+FIT  cutpoint on noise_1 = -0.370762
+DLi  cutpoint on noise_1 = -1.256350
+DGi  cutpoint on noise_1 =  1.240120
 ```
 
-So a differential assertion is meaningful --- but *`DLi` and `DGi` legitimately
-agree*, both being model-implied indicator-VCV distances. Do not assert pairwise
-distinctness across all three.
+So a differential assertion is meaningful. It is still asserted for *`FIT` vs
+`DLi` only*: `DLi` and `DGi` are two distances between the same pair of
+model-implied indicator VCVs, nothing stops them selecting the same candidate,
+and before P5 changed how node fits are estimated they did exactly that (both
+cut at `-1.69654`). Three-way distinctness would be an assertion about this
+fixture rather than about the kernels.
 
 *A note on injection.* Now that B2 has made `splitter` a `match.arg()` string, a
 test can no longer pass a custom kernel by value. Anything that needs to observe
@@ -846,7 +861,9 @@ below records the same 9 calls the by-value version did.
 
 == Kernel unit tests --- the layer that was missing
 
-Two MGA fits each, and the failure message names the broken kernel. This is the
+*Status: implemented* (`tests/testthat/test-helper_doTrees.R`).
+
+One MGA fit each, and the failure message names the broken kernel. This is the
 test that would have caught the missing `ndt_dists()` in seconds:
 
 ```r
@@ -866,10 +883,10 @@ node_fixture <- function(max_cuts = 8L, minbucket = 100L) {
 
 test_that("every split kernel returns a finite statistic", {
   fx <- node_fixture()
-  gl <- fx$mf$noise_1 <= stats::median(fx$mf$noise_1)
+  goes_left <- fx$mf$noise_1 <= stats::median(fx$mf$noise_1)
   for (k in c("FITdiff", "DLi", "DGi")) {
     expect_true(
-      is.finite(partition_stat(k, fx$model, fx$mf, seq_len(nrow(fx$mf)), gl, fx$ctrl)),
+      is.finite(partition_stat(k, fx$model, fx$mf, fx$subset, goes_left, fx$ctrl)),
       info = k
     )
   }
@@ -878,46 +895,92 @@ test_that("every split kernel returns a finite statistic", {
 
 `partition_stat()` converts a missing-function error into `NA` +
 `n_fail_resample++`, so `is.finite()` catches it. Observed values at the median
-split are `FITdiff = -0.00398`, `DLi = 0.0439`, `DGi = 0.0136` --- note the
-negative FIT difference, which is exactly the case `partition_select()`'s
-`.Machine$double.eps` floor exists to handle, and worth a regression test of its
-own.
+split are `FITdiff = -0.00398`, `DLi = 0.0439`, `DGi = 0.0136`.
 
-== `argmax_split()` returns an admissible cutpoint
+*The negative FIT difference got its own regression test.* A two-group refit can
+fit *worse* than the pooled model, and on a noise covariate usually does ---
+which is exactly the case `partition_select()`'s `.Machine$double.eps` floor
+exists to handle, since it reports statistics on the log scale and `log()` of a
+negative number is `NaN`. A `NaN` there does not error: it leaves that covariate's
+`criteria` column `NA`, so the covariate silently drops out of variable
+selection, and only ever for the covariates the data says least about.
 
 ```r
-test_that("argmax_split returns an admissible cutpoint for every kernel", {
+test_that("partition_select() floors a negative argmax statistic", {
   fx <- node_fixture(); j <- match("noise_1", names(fx$mf))
-  for (k in c("FIT", "DLi", "DGi")) {
-    kern <- switch(k, FIT = split_max_fitdiff, DLi = split_max_dli, DGi = split_max_dgi)
-    sp <- argmax_split(kern, fx$ctrl$collector, fx$model, fx$mf,
-                       seq_len(nrow(fx$mf)), j, fx$ctrl)
-    expect_s3_class(sp, "partysplit")
-    br <- partykit::breaks_split(sp)
-    expect_true(is.finite(br), info = k)
-    expect_true(br > min(fx$mf$noise_1) && br < max(fx$mf$noise_1), info = k)
-  }
-})
-
-test_that("different kernels place different cutpoints", {
-  fx <- node_fixture(); j <- match("noise_1", names(fx$mf))
-  cut <- function(kern) partykit::breaks_split(
-    argmax_split(kern, fx$ctrl$collector, fx$model, fx$mf,
-                 seq_len(nrow(fx$mf)), j, fx$ctrl))
-  # NB: DLi and DGi legitimately agree -- both are indicator-VCV distances.
-  expect_false(isTRUE(all.equal(cut(split_max_fitdiff), cut(split_max_dli))))
+  local_mocked_bindings(
+    # Stubbed so the floor is what is under test rather than the fits: a real
+    # scan takes the argmax, which is not guaranteed to be the negative case.
+    scan_covariate = function(...) list(stat = -0.004, split = NULL,
+                                        goes_left = rep(TRUE, length(fx$subset))),
+    permutation_pvalue = function(...) 0.01
+  )
+  crit <- partition_select("FITdiff", split_max_fitdiff, fx$model, fx$mf,
+                           fx$subset, j, fx$ctrl)$criteria
+  expect_identical(crit["statistic", j], log(.Machine$double.eps))
+  expect_true(is.finite(crit["p.value", j]))
 })
 ```
 
-These call the kernels directly rather than through `doTrees()`, so they are
-unaffected by B2 and need no mocking. This is where cutpoint choice *must* be
-tested, per fact (b) --- at the tree level the root gives the kernel no freedom.
+Stubbing both helpers means this block runs no model fits at all. It is also the
+one test in the group that asserts an exact value rather than a property:
+`log(.Machine$double.eps)` #sym.approx `-36.0437` is what the floor produces, and
+nothing else in the file would notice it becoming `NaN`.
+
+== `argmax_split()` returns an admissible cutpoint
+
+*Status: implemented* (`tests/testthat/test-helper_doTrees.R`), as *one*
+`test_that()` rather than the two this document originally proposed. The
+admissibility test already has all three cutpoints in hand when it finishes, so
+a separate "different kernels place different cutpoints" block would have
+re-run 16 two-group MGA fits to recompute two numbers it had just computed ---
+four seconds for no coverage that the merged block does not already carry.
+
+```r
+test_that("argmax_split() returns an admissible cutpoint the kernels disagree on", {
+  fx <- node_fixture(); j <- match("noise_1", names(fx$mf)); z <- fx$mf[[j]]
+  cutpoint <- function(kern) {
+    sp <- argmax_split(kern, fx$ctrl$collector, fx$model, fx$mf,
+                       fx$subset, j, fx$ctrl)
+    # NULL is what argmax_split() returns when no candidate produced a finite
+    # statistic -- the dead kernel this layer exists to localise.
+    expect_true(inherits(sp, "partysplit"))
+    partykit::breaks_split(sp)
+  }
+  brs <- vapply(list(FIT = split_max_fitdiff, DLi = split_max_dli,
+                     DGi = split_max_dgi), cutpoint, numeric(1))
+  for (k in names(brs)) {
+    # Strictly inside the observed range: an endpoint sends every row one way.
+    expect_true(is.finite(brs[[k]]) && brs[[k]] > min(z) && brs[[k]] < max(z),
+                info = k)
+  }
+  expect_false(isTRUE(all.equal(brs[["FIT"]], brs[["DLi"]])))   # see fact (c)
+})
+```
+
+This calls the kernels directly rather than through `doTrees()`, so it is
+unaffected by B2 and needs no mocking. It is also where cutpoint choice *must*
+be tested, per fact (b) --- at the tree level the root gives the kernel no
+freedom, because `z_true` offers exactly one candidate.
+
+Two details the naive version gets wrong. `inherits()` rather than
+`expect_s3_class()`, and the range check as a single `expect_true(..., info = k)`
+rather than two, because only the `info` form names the kernel that broke ---
+which is the entire reason this layer exists rather than an assertion at the
+tree level. And the endpoint exclusion is strict on both sides: a cutpoint at
+`min(z)` or `max(z)` is one partykit accepts and grows a degenerate child from,
+so `is.finite()` alone would not catch it.
 
 == Assert that partykit actually calls the splitfun
 
+*Status: implemented* (`tests/testthat/test-postestimate_doTrees.R`, next to the
+negative controls of 5.4 --- both are about the kernel wiring rather than about
+any one configuration).
+
 ```r
-test_that("doTrees installs its splitfun into partykit's split search", {
+test_that("doTrees() installs its splitfun into partykit's split search", {
   calls <- new.env(parent = emptyenv()); calls$n <- 0L
+  # Capturing the real kernel first is what stops the mock recursing into itself.
   real  <- split_max_fitdiff
   local_mocked_bindings(
     split_max_fitdiff = function(model, mf, subset, goes_left, ctrl) {
@@ -926,14 +989,17 @@ test_that("doTrees installs its splitfun into partykit's split search", {
     })
   set.seed(11)
   tr <- grow_tree("mat", "FIT", ctl_mixed)
-  expect_gt(calls$n, 0L)                                    # the contract
-  expect_gt(partykit::width(partykit::node_party(tr)), 1L)  # it split
+  expect_gt(calls$n, 0L)   # the contract
+  expect_grew(tr)          # ... and the tree is one the kernel actually shaped
 })
 ```
 
-Verified: `calls$n == 9`, `width == 3`. Capturing `real <- split_max_fitdiff`
-*before* the mock is what avoids infinite recursion. This test is what breaks
-loudly if a partykit upgrade stops honouring `ctrl$splitfun`.
+Verified: `calls$n == 9`, `width == 3`, `n_split_scan == 2`, on partykit 1.2.29
+and testthat 3.3.2. `expect_grew()` rather than the bare `width() > 1` first
+proposed: it also pins `n_fail_split == 0`, so a mock that fired but returned
+nothing usable --- 9 calls and a stump --- cannot pass. This test is what breaks
+loudly if a partykit upgrade stops honouring `ctrl$splitfun`, which would
+otherwise show up only as a silent fallback to partykit's own maxstat scan.
 
 == Negative control --- give the suite teeth <negctl>
 
@@ -1029,8 +1095,9 @@ the same cutpoint --- and on the matched pair it *always* would, by construction
 An unchanged counter is what "the kernel never ran" actually means.
 
 The differing-cutpoint assertion is a bonus that holds because of fact (c) above:
-FIT cuts `noise_1` at `-0.231765`, DLi at `-1.69654`. Do not extend it to
-`DLi` #sym.times `DGi`, which legitimately agree.
+FIT cuts `noise_1` at `-0.370762`, DLi at `-1.256350`. Do not extend it to
+`DLi` #sym.times `DGi`, which may legitimately agree --- 5.2 makes the same
+FIT-vs-DLi comparison and stops at the same place, for the same reason.
 
 Note this test must *not* be combined with `local_mocked_bindings()` on the same
 kernels: the cache key is closure identity, and a mock would change it. That is
@@ -1302,7 +1369,7 @@ than accidents:
   table.header([*\#*], [*Item*], [*Why in this position*]),
   [#strike[1]], [#strike[T4 --- two controls, chosen by branch]], [*Done.* #sym.tilde 16 h #sym.arrow.r 2 min 05 s],
   [#strike[2]], [#strike[T1--T3 --- regenerate snapshots, drop `length()==5`, split `expect_no_error()`]], [*Done.* 85 assertions, `FAIL 0 | WARN 0`],
-  [3], [§5.1--5.3 --- kernel, `argmax_split`, and splitfun-wiring tests], [*Now the head of the queue.* Cheap, fast, and they pin the contracts the port depends on],
+  [#strike[3]], [#strike[§5.1--5.3 --- kernel, `argmax_split`, and splitfun-wiring tests]], [*Done.* `PASS 167` across the two files; 5.2's two proposed blocks merged into one, and 5.1 gained the eps-floor regression test it flagged],
   [#strike[4]], [#strike[T5 + §5.5 --- collector and scan-cache tests]], [*Done.* Two-part cache key both covered; `PASS 121` across the two files],
   [#strike[5]], [#strike[P1--P6 --- prune exports, drop `:::`, fix `\value`, validate inputs]], [*Done.* 26 exports #sym.arrow.r 4 + 2 methods, 23 `.Rd` files deleted, `check_man()` clean for every file the port touches],
   [6], [#link(<s3>)[S3] follow-up --- raise `minbucket` for large models], [`n_fail_leaf` is now asserted (T5), but the default `30L` still admits leaves the model cannot fit --- the assertion pins the symptom, it does not fix it],

@@ -174,6 +174,32 @@ for (sp in c("DLi", "DGi")) {
   })
 }
 
+# Splitfun contract ------------------------------------------------------
+# doTrees() plants its kernel in cc$splitfun and relies on partykit reading it
+# back out of the control object. Nothing in ?ctree_control promises that, so it
+# is an undocumented contract, and it has already survived one partykit upgrade
+# unverified. If a release stops honouring it, every mixed configuration
+# silently falls back to partykit's own maxstat scan and still returns a
+# perfectly plausible tree -- so counting the kernel's invocations is the only
+# way to see it happen.
+test_that("doTrees() installs its splitfun into partykit's split search", {
+  calls <- new.env(parent = emptyenv())
+  calls$n <- 0L
+  # Capturing the real kernel first is what stops the mock recursing into itself.
+  real <- split_max_fitdiff
+  local_mocked_bindings(
+    split_max_fitdiff = function(model, mf, subset, goes_left, ctrl) {
+      calls$n <- calls$n + 1L
+      real(model, mf, subset, goes_left, ctrl)
+    }
+  )
+  set.seed(11)
+  tr <- grow_tree("mat", "FIT", ctl_mixed)
+  expect_gt(calls$n, 0L)
+  # ... and the tree that came back is one the kernel actually shaped.
+  expect_grew(tr)
+})
+
 # Dead split kernel ------------------------------------------------------
 # argmax_split() turns a throwing kernel into NA, which partykit reads as "no
 # admissible split" -- so a broken kernel yields a clean-looking stump. These

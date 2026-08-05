@@ -16,6 +16,8 @@ library(lobstr)
 library(cli)
 cli::pretty_print_code()
 
+library(testthat)
+
 # Test by typing `lm` in the console
 
 #' library(tibble)

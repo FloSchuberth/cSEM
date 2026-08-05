@@ -135,6 +135,53 @@ test_that("fit_csem() replays the arguments of the fit it was given", {
   expect_s3_class(fit_csem(g, args_trees, .id = "group"), "cSEMResults_multi")
 })
 
+# A kernel that throws is caught by argmax_split() and turned into NA, which
+# partykit reads as "no admissible split" -- so at the tree level a broken kernel
+# and a genuinely unsplittable node look identical. Called directly, a kernel
+# either returns a finite statistic or it does not, and the failure names it.
+test_that("every split kernel returns a finite statistic", {
+  fx <- node_fixture()
+  # A median split on a noise covariate: no group difference is expected here,
+  # but every kernel must still put a number on it.
+  goes_left <- fx$mf$noise_1 <= stats::median(fx$mf$noise_1)
+  for (k in c("FITdiff", "DLi", "DGi")) {
+    expect_true(
+      is.finite(
+        partition_stat(k, fx$model, fx$mf, fx$subset, goes_left, fx$ctrl)
+      ),
+      info = k
+    )
+  }
+})
+
+test_that("partition_select() floors a negative argmax statistic", {
+  # The FIT difference at that median split is negative (-0.004): a two-group
+  # refit can fit worse than the pooled model, and on a noise covariate usually
+  # does. partition_select() reports statistics on the log scale, so without the
+  # .Machine$double.eps floor log() would return NaN and drop the covariate out
+  # of variable selection entirely -- silently, and only for the covariates the
+  # data says least about.
+  fx <- node_fixture()
+  j <- match("noise_1", names(fx$mf))
+  local_mocked_bindings(
+    # Stubbed so the floor is what is under test rather than the fits: a real
+    # scan takes the argmax, which is not guaranteed to be the negative case.
+    scan_covariate = function(...) {
+      list(
+        stat = -0.004,
+        split = NULL,
+        goes_left = rep(TRUE, length(fx$subset))
+      )
+    },
+    permutation_pvalue = function(...) 0.01
+  )
+  crit <- partition_select(
+    "FITdiff", split_max_fitdiff, fx$model, fx$mf, fx$subset, j, fx$ctrl
+  )$criteria
+  expect_identical(crit["statistic", j], log(.Machine$double.eps))
+  expect_true(is.finite(crit["p.value", j]))
+})
+
 test_that("partition_stat() records a failed auxiliary fit instead of throwing", {
   local_mocked_bindings(
     try_fit = function(.data, .args, .id = NULL) list(fit = NULL, ok = FALSE)
@@ -152,6 +199,47 @@ test_that("partition_stat() records a failed auxiliary fit instead of throwing",
     NA_real_
   )
   expect_identical(coll$n_fail_resample, 1L)
+})
+
+# This is where cutpoint choice has to be tested: at the tree level the root
+# offers no freedom, since z_true is a 2-level factor and candidate_partitions()
+# returns exactly one candidate for it. noise_1 is numeric and yields max_cuts
+# of them, so a kernel that runs but picks the wrong cutpoint is visible here
+# and nowhere else.
+test_that("argmax_split() returns an admissible cutpoint the kernels disagree on", {
+  fx <- node_fixture()
+  j <- match("noise_1", names(fx$mf))
+  z <- fx$mf[[j]]
+  cutpoint <- function(kern) {
+    sp <- argmax_split(
+      kern, fx$ctrl$collector, fx$model, fx$mf, fx$subset, j, fx$ctrl
+    )
+    # NULL is what argmax_split() returns when no candidate produced a finite
+    # statistic -- the dead kernel this layer exists to localise.
+    expect_true(inherits(sp, "partysplit"))
+    partykit::breaks_split(sp)
+  }
+
+  brs <- vapply(
+    list(FIT = split_max_fitdiff, DLi = split_max_dli, DGi = split_max_dgi),
+    cutpoint,
+    numeric(1)
+  )
+  for (k in names(brs)) {
+    # Strictly inside the observed range: an endpoint sends every row one way,
+    # which partykit accepts and grows a degenerate child from.
+    expect_true(
+      is.finite(brs[[k]]) && brs[[k]] > min(z) && brs[[k]] < max(z),
+      info = k
+    )
+  }
+
+  # The kernels are only worth pairing with a selector if they disagree about
+  # where to cut. Asserted for FIT vs DLi only: DLi and DGi are both distances
+  # between the same model-implied indicator VCVs and may legitimately land on
+  # the same candidate, so distinctness across all three would be an assertion
+  # about this fixture rather than about the kernels.
+  expect_false(isTRUE(all.equal(brs[["FIT"]], brs[["DLi"]])))
 })
 
 # NB: this must not be combined with local_mocked_bindings() on the kernels --
