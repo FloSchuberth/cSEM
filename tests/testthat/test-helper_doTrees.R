@@ -147,7 +147,12 @@ test_that("every split kernel returns a finite statistic", {
   for (k in c("FITdiff", "DLi", "DGi")) {
     expect_true(
       is.finite(
-        partition_stat(k, fx$model, fx$mf, fx$subset, goes_left, fx$ctrl)
+        partition_stat(stat_kind = k, 
+          model = fx$model, 
+          mf = fx$mf,
+          subset = fx$subset,
+          goes_left = goes_left,
+          ctrl = fx$ctrl)
       ),
       info = k
     )
@@ -176,7 +181,13 @@ test_that("partition_select() floors a negative argmax statistic", {
     permutation_pvalue = function(...) 0.01
   )
   crit <- partition_select(
-    "FITdiff", split_max_fitdiff, fx$model, fx$mf, fx$subset, j, fx$ctrl
+    stat_kind = "FITdiff",
+    matched_split_fn = split_max_fitdiff,
+    model = fx$model,
+    data = fx$mf,
+    subset = fx$subset,
+    whichvar = j,
+    ctrl = fx$ctrl
   )$criteria
   expect_identical(crit["statistic", j], log(.Machine$double.eps))
   expect_true(is.finite(crit["p.value", j]))
@@ -194,7 +205,12 @@ test_that("partition_stat() records a failed auxiliary fit instead of throwing",
   # anything that escapes here would make SimDesign redraw the whole rep.
   expect_identical(
     partition_stat(
-      "DLi", list(object = NULL), dat, seq_len(nrow(dat)), goes_left, ctrl
+      stat_kind = "DLi",
+      model = list(object = NULL),
+      mf = dat,
+      subset = seq_len(nrow(dat)),
+      goes_left = goes_left,
+      ctrl = ctrl
     ),
     NA_real_
   )
@@ -208,11 +224,18 @@ test_that("partition_stat() records a failed auxiliary fit instead of throwing",
 # and nowhere else.
 test_that("argmax_split() returns an admissible cutpoint the kernels disagree on", {
   fx <- node_fixture()
-  j <- match("noise_1", names(fx$mf))
+  j <- match("noise_1", names(fx$mf)) # column number of noise_1 in the data
   z <- fx$mf[[j]]
+  # Function for getting the cutpoint in mf$j to split the data on
   cutpoint <- function(kern) {
     sp <- argmax_split(
-      kern, fx$ctrl$collector, fx$model, fx$mf, fx$subset, j, fx$ctrl
+      splitter = kern,
+      collector = fx$ctrl$collector,
+      model = fx$model,
+      mf = fx$mf,
+      subset = fx$subset,
+      whichvar = j,
+      ctrl = fx$ctrl
     )
     # NULL is what argmax_split() returns when no candidate produced a finite
     # statistic -- the dead kernel this layer exists to localise.
@@ -251,7 +274,14 @@ test_that("argmax_split() reuses a matched scan and rescans a mismatched one", {
 
   # Arm the cache the way partition_select() does before handing control back
   # to the engine's splitfun.
-  sc <- scan_covariate("FITdiff", j, fx$model, fx$mf, fx$subset, fx$ctrl)
+  sc <- scan_covariate(
+    stat_kind = "FITdiff",
+    j = j,
+    model = fx$model,
+    mf = fx$mf,
+    subset = fx$subset,
+    ctrl = fx$ctrl
+  )
   coll$scan <- stats::setNames(list(sc), as.character(j))
   coll$scan_subset <- fx$subset
   coll$scan_splitter <- split_max_fitdiff
@@ -260,7 +290,13 @@ test_that("argmax_split() reuses a matched scan and rescans a mismatched one", {
   # never evaluated -- an unchanged n_split_scan is what "cache hit" means.
   expect_identical(
     argmax_split(
-      split_max_fitdiff, coll, fx$model, fx$mf, fx$subset, j, fx$ctrl
+      splitter = split_max_fitdiff,
+      collector = coll,
+      model = fx$model,
+      mf = fx$mf,
+      subset = fx$subset,
+      whichvar = j,
+      ctrl = fx$ctrl
     ),
     sc$split
   )

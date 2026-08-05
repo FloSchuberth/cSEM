@@ -21,6 +21,10 @@
   - Within a particular tested multigroup model?
   - Separation in convergence failure for variable selection versus split point selection
 + What is a kernel?
++ What helper functions or ways of interacting with the fitted tree need to be added/documented?
+  - Split-point + p-value?
+  - 
+
 
 = helper_doTrees.R
 
