@@ -31,9 +31,9 @@ res <- csem(
 
 # Controls ---------------------------------------------------------------
 # The two influence families cost an order of magnitude apart, so they get
-# separate budgets. The conditional-test family ("mat"/"vec") inherits COIN
+# separate budgets. The (1) conditional-test family ("mat"/"vec") inherits COIN
 # variable selection from libcoin and is cheap even at the defaults; a mixed
-# splitter only re-scans candidate cutpoints, which adds a second or two. The
+# splitter only re-scans candidate cutpoints, which adds a second or two. The (2)
 # partition family ("FIT"/"DLi"/"DGi") runs an R_test permutation test per
 # covariate per node and every permutation is a two-group MGA fit, so at the
 # defaults a single call takes about an hour and a half.
@@ -86,9 +86,9 @@ grow_tree <- function(influence, splitter, control, object = res) {
 expect_grew <- function(tree) {
   expect_s3_class(tree, "igsca_tree")
   info <- attr(tree, "igsca_info")
-  expect_identical(info$n_fail_full, 0L)
-  expect_identical(info$n_fail_split, 0L)
-  # width() returns a double, so expect_identical(..., 1L) would fail on type.
+  expect_identical(info$n_fail_full, 0L) # TODO: ?
+  expect_identical(info$n_fail_split, 0L) # No failures to split
+  # The width of the grown tree should be greater than 1 (there should be more than a stub)
   expect_gt(partykit::width(partykit::node_party(tree)), 1)
 }
 
@@ -98,24 +98,23 @@ expect_grew <- function(tree) {
 test_that("IGSCA Trees Conditional Test on Matrix of Residuals Runs as expected", {
   set.seed(12353)
   # The native path is cheap enough to snapshot at the package defaults.
-  trees_mx <- grow_tree("mat", "native", igsca_tree_control())
+  trees_mx <- grow_tree(influence = "mat", splitter = "native", control = igsca_tree_control())
   expect_grew(trees_mx)
   expect_snapshot(trees_mx)
 })
 
+## Variable selection on matrix of residuals and split point selection on different criteria
 for (sp in c("FIT", "DLi", "DGi")) {
   test_that(paste0("Matrix of Residuals selection splits on ", sp), {
     set.seed(12353)
-    expect_grew(grow_tree("mat", sp, ctl_mixed))
+    expect_grew(grow_tree(influence = "mat", splitter = sp, control = ctl_mixed))
   })
 }
-
-
 
 # Vector of Residuals ----------------------------------------------------
 test_that("IGSCA Trees Conditional Test on Vector of Residuals Runs as expected", {
   set.seed(12353)
-  trees_vec <- grow_tree("vec", "native", igsca_tree_control())
+  trees_vec <- grow_tree(influence = "vec", splitter = "native", control = igsca_tree_control())
   expect_grew(trees_vec)
   expect_snapshot(trees_vec)
 })
@@ -123,16 +122,16 @@ test_that("IGSCA Trees Conditional Test on Vector of Residuals Runs as expected"
 for (sp in c("FIT", "DLi", "DGi")) {
   test_that(paste0("Vector of Residuals selection splits on ", sp), {
     set.seed(12353)
-    expect_grew(grow_tree("vec", sp, ctl_mixed))
+    expect_grew(grow_tree(influence = "vec", splitter = sp, control = ctl_mixed))
   })
 }
 
 
 
 # NPT-FIT Split ---------------------------------------------------------------
-test_that("IGSCA Trees Variable Selection on FIT Runs as expected", {
+test_that("IGSCA Trees Variable Selection on NPT (FIT) Runs as expected", {
   set.seed(12353)
-  trees_NPT_FIT <- grow_tree("FIT", "FIT", ctl_part)
+  trees_NPT_FIT <- grow_tree(influence = "FIT", splitter = "FIT", control = ctl_part)
   expect_grew(trees_NPT_FIT)
   expect_snapshot(trees_NPT_FIT)
 })
@@ -140,14 +139,14 @@ test_that("IGSCA Trees Variable Selection on FIT Runs as expected", {
 for (sp in c("DLi", "DGi")) {
   test_that(paste0("FIT selection splits on ", sp), {
     set.seed(12353)
-    expect_grew(grow_tree("FIT", sp, ctl_part))
+    expect_grew(grow_tree(influence = "FIT", splitter = sp, control = ctl_part))
   })
 }
 
 # dLi Split --------------------------------------------------------------
 test_that("IGSCA Trees Conditional Test on Squared-Euclidean Distance Runs as expected", {
   set.seed(12353)
-  trees_DLi_FIT <- grow_tree("DLi", "FIT", ctl_part)
+  trees_DLi_FIT <- grow_tree(influence = "DLi", splitter = "FIT", control = ctl_part)
   expect_grew(trees_DLi_FIT)
   expect_snapshot(trees_DLi_FIT)
 })
@@ -155,14 +154,14 @@ test_that("IGSCA Trees Conditional Test on Squared-Euclidean Distance Runs as ex
 for (sp in c("DLi", "DGi")) {
   test_that(paste0("DLi selection splits on ", sp), {
     set.seed(12353)
-    expect_grew(grow_tree("DLi", sp, ctl_part))
+    expect_grew(grow_tree(influence = "DLi", splitter =  sp, control = ctl_part))
   })
 }
 
 # dGi Split --------------------------------------------------------------
 test_that("IGSCA Trees Conditional Test on Geodesic Distance Runs as expected", {
   set.seed(12353)
-  trees_DGi_FIT <- grow_tree("DGi", "FIT", ctl_part)
+  trees_DGi_FIT <- grow_tree(influence = "DGi", splitter = "FIT", control = ctl_part)
   expect_grew(trees_DGi_FIT)
   expect_snapshot(trees_DGi_FIT)
 })
@@ -170,7 +169,7 @@ test_that("IGSCA Trees Conditional Test on Geodesic Distance Runs as expected", 
 for (sp in c("DLi", "DGi")) {
   test_that(paste0("DGi selection splits on ", sp), {
     set.seed(12353)
-    expect_grew(grow_tree("DGi", sp, ctl_part))
+    expect_grew(grow_tree(influence = "DGi", splitter = sp, control = ctl_part))
   })
 }
 
@@ -184,17 +183,20 @@ for (sp in c("DLi", "DGi")) {
 # way to see it happen.
 test_that("doTrees() installs its splitfun into partykit's split search", {
   calls <- new.env(parent = emptyenv())
+  # Represents the number of times that split_max_fitdiff is called
   calls$n <- 0L
   # Capturing the real kernel first is what stops the mock recursing into itself.
   real <- split_max_fitdiff
   local_mocked_bindings(
     split_max_fitdiff = function(model, mf, subset, goes_left, ctrl) {
+      # `calls`` will be modified even without `<<-` syntax because it is an environment
       calls$n <- calls$n + 1L
       real(model, mf, subset, goes_left, ctrl)
     }
   )
   set.seed(11)
-  tr <- grow_tree("mat", "FIT", ctl_mixed)
+  tr <- grow_tree(influence = "mat", splitter = "FIT", control = ctl_mixed)
+  # print(calls$n)
   expect_gt(calls$n, 0L)
   # ... and the tree that came back is one the kernel actually shaped.
   expect_grew(tr)
@@ -213,19 +215,19 @@ test_that("a dead split kernel is reported, not silently a stump", {
   )
   set.seed(11)
   expect_warning(
-    tr <- grow_tree("mat", "DLi", ctl_mixed),
+    tr <- grow_tree(influence = "mat", splitter = "DLi", control = ctl_mixed),
     "produced no usable statistic"
   )
   info <- attr(tr, "igsca_info")
   expect_gt(info$n_fail_split, 0L)
-  expect_identical(info$n_fail_split, info$n_split_scan)
+  expect_identical(info$n_fail_split, info$n_split_scan) # TODO: Why should these be identical?
   # The tree really is the stump the diagnostic is warning about
   expect_equal(partykit::width(partykit::node_party(tr)), 1)
 })
 
 test_that("a working split kernel records scans but no failures", {
   set.seed(11)
-  tr <- expect_no_warning(grow_tree("mat", "DLi", ctl_mixed))
+  tr <- expect_no_warning(grow_tree(influence = "mat", splitter = "DLi", control = ctl_mixed))
   info <- attr(tr, "igsca_info")
   expect_gt(info$n_split_scan, 0L)
   expect_grew(tr)
@@ -233,7 +235,7 @@ test_that("a working split kernel records scans but no failures", {
 
 test_that("the native split path never touches the kernel counters", {
   set.seed(11)
-  tr <- grow_tree("mat", "native", ctl_mixed)
+  tr <- grow_tree(influence = "mat", splitter = "native", control = ctl_mixed)
   info <- attr(tr, "igsca_info")
   expect_identical(info$n_split_scan, 0L)
   expect_identical(info$n_fail_split, 0L)
@@ -250,8 +252,9 @@ test_that("doTrees() refits nodes with the estimator the fit used", {
   for (fam in list(c("mat", "native"), c("FIT", "FIT"))) {
     set.seed(11)
     tr <- grow_tree(
-      fam[1], fam[2],
-      if (fam[1] == "mat") ctl_mixed else ctl_part
+      influence = fam[1],
+      splitter = fam[2],
+      control = if (fam[1] == "mat") ctl_mixed else ctl_part
     )
     # Leaf refits can legitimately fail on a small node (see n_fail_leaf), so
     # take the first leaf that produced a fit rather than the first leaf.
@@ -274,7 +277,7 @@ test_that("doTrees() refits nodes with the estimator the fit used", {
   }
 })
 
-test_that("fit_csem() refuses an argument list that is not one", {
+test_that("fit_csem() refuses inappropriate arguments", {
   # The failure this prevents is silent: a model string coerces to a list whose
   # unnamed element matches .model by position, so the fit runs under csem()'s
   # default estimator instead of the object's.
@@ -338,7 +341,7 @@ test_that("a root fit failure is a full failure, not a node failure", {
     try_fit = function(.data, .args, .id = NULL) list(fit = NULL, ok = FALSE)
   )
   set.seed(11)
-  tr <- grow_tree("mat", "native", ctl_mixed)
+  tr <- grow_tree(influence = "mat", splitter = "native", control = ctl_mixed)
   info <- attr(tr, "igsca_info")
   expect_identical(info$n_fail_full, 1L)
   # The root is counted once and never as a node, which is the whole job of the
@@ -363,7 +366,7 @@ test_that("a fit failure below the root is a node failure", {
     }
   )
   set.seed(11)
-  tr <- grow_tree("mat", "native", ctl_mixed)
+  tr <- grow_tree(influence = "mat", splitter = "native", control = ctl_mixed)
   info <- attr(tr, "igsca_info")
   expect_identical(info$n_fail_full, 0L)
   expect_gt(info$n_fail_node, 0L)
@@ -373,7 +376,10 @@ test_that("a fit failure below the root is a node failure", {
 
 test_that("root_criteria records the test that chose the root split", {
   set.seed(11)
-  rc <- attr(grow_tree("mat", "native", ctl_mixed), "igsca_info")$root_criteria
+  rc <- attr(
+    grow_tree(influence = "mat", splitter = "native", control = ctl_mixed),
+    "igsca_info"
+  )$root_criteria
   expect_identical(colnames(rc), covs)
   expect_true(all(c("statistic", "p.value", "criterion") %in% rownames(rc)))
   # z_true is the fixture's true grouping variable, so it must win the root
@@ -385,7 +391,7 @@ test_that("root_criteria records the test that chose the root split", {
 
 test_that("a failed leaf refit is counted and surfaces in coef()", {
   set.seed(12353)
-  tr <- grow_tree("mat", "native", igsca_tree_control())
+  tr <- grow_tree(influence = "mat", splitter = "native", control = igsca_tree_control())
   # With 13 indicators the default minbucket = 30L admits leaves the model
   # cannot fit; this tree's n = 68 leaf is one of them.
   expect_identical(attr(tr, "igsca_info")$n_fail_leaf, 1L)

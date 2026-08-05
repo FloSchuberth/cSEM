@@ -16,8 +16,6 @@ library(lobstr)
 library(cli)
 cli::pretty_print_code()
 
-library(testthat)
-
 # Test by typing `lm` in the console
 
 #' library(tibble)
@@ -34,3 +32,7 @@ library(testthat)
 # library(testthat)
 # local_mocked_bindings(..., .package = NULL, .env = caller_env())
 # https://testthat.r-lib.org/reference/local_mocked_bindings.html
+
+library(testthat)
+library(withr)
+# withr::deferred_run()
