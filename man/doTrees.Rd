@@ -5,32 +5,47 @@
 \title{Recursive Partitioning Algorithm for \emph{csem} GSCA Models}
 \usage{
 doTrees(
-  data,
-  model,
-  covariates,
-  influence = c("mat", "vec", "FIT", "DLi", "DGi"),
-  splitter = NULL,
-  control = igsca_tree_control()
+  .object,
+  .covariates,
+  .influence = c("mat", "vec", "FIT", "DLi", "DGi"),
+  .splitter = c("native", "FIT", "DLi", "DGi"),
+  .control = igsca_tree_control()
 )
 }
 \arguments{
-\item{data}{A \code{data.frame} or a \code{matrix} of standardized or unstandardized
-data (indicators/items/manifest variables). Possible column types or classes
-of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or "\code{integer}"),
-"\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (converted to factor),
-or a mix of several types.}
+\item{.object}{A single-group \code{cSEMResults} object, as returned by \code{\link[=csem]{csem()}}.
+Its data must contain the \code{.covariates} columns; \code{\link[=csem]{csem()}} ignores
+non-indicator columns, so they can simply ride along in the original call.}
 
-\item{model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
-or a \link{cSEMModel} list.}
+\item{.covariates}{Character vector of columns of \code{.object}'s data to
+partition on.}
 
-\item{covariates}{Character vector. List of variables for \code{\link[=doTrees]{doTrees()}}
-to consider splitting on. See \link[partykit:mob]{partykit::mob}}
+\item{.influence}{Node statistic and, with it, the algorithm family. One of
+"mat", "vec", "FIT", "DLi" or "DGi".}
+
+\item{.splitter}{Cutpoint rule. One of "native", "FIT", "DLi" or "DGi";
+"native" is only available when \code{.influence} is "mat" or "vec".}
+
+\item{.control}{Tuning parameters, see \code{\link[=igsca_tree_control]{igsca_tree_control()}}.}
 }
 \value{
-cSEM Tree model of class \code{modelparty} and \code{party}.
+A tree of class \code{c("igsca_tree", "constparty", "party")}, carrying the
+per-leaf fits (see \code{\link[=coef.igsca_tree]{coef.igsca_tree()}}) and an \code{igsca_info} attribute of
+failure counters and root criteria.
 }
 \description{
-Recursive Partitioning Algorithm for \emph{csem} GSCA Models
+Grows a tree that partitions the rows \code{.object} was fitted on into subgroups
+whose model estimates differ. Every node is refit by replaying \code{.object}'s own
+\code{\link[=csem]{csem()}} arguments (see \code{\link[=fit_csem]{fit_csem()}}), so the estimator, modes and convergence
+settings of the tree are those of the fit it was given -- there is nothing to
+keep in sync and no estimator hard-coded here.
+}
+\details{
+\code{.influence} selects the family: \code{"mat"} and \code{"vec"} run conditional-inference
+(COIN) variable selection on casewise GSCA residuals, \code{"FIT"}, \code{"DLi"} and
+\code{"DGi"} run permutation tests on a model-comparison statistic. \code{.splitter}
+chooses the cutpoint within the selected covariate, and \code{"native"} (partykit's
+own maxstat scan) is available only to the COIN family.
 }
 \references{
 \insertAllCited{}

@@ -17,16 +17,20 @@ model <- "# Latent variable model
  "
 
 # Fit single group model -------------------------------------------------
-# pooled <- csem(
-#     .data = dat,
-#     .model = model,
-#     .disattenuate = TRUE,
-#     .approach_weights = "GSCA",
-#     .conv_criterion = "sum_diff_absolute", # Default in gsca_m.m and gsca.m
-#     .iter_max = 100, 
-#     .GSCA_modes = "CCMP", 
-#     .tolerance = 0.001 
-# )
+# doTrees() takes this fit and replays these arguments at every node, so the
+# tree is estimated the way the pooled model was -- .tolerance = 0.001 below
+# now reaches every node refit. `dat` is passed whole: csem() ignores the
+# covariate columns when fitting, and doTrees() reads them back off the object.
+pooled <- csem(
+    .data = dat,
+    .model = model,
+    .disattenuate = TRUE,
+    .approach_weights = "GSCA",
+    .conv_criterion = "sum_diff_absolute", # Default in gsca_m.m and gsca.m
+    .iter_max = 100,
+    .GSCA_modes = "CCMP",
+    .tolerance = 0.001
+)
 
 
 
@@ -37,11 +41,10 @@ debug(doTrees)
 debug(partykit::ctree)
 set.seed(101)
 doTrees(
-    data = dat,
-    model = model, 
-    covariates = covs,
-    influence = influence_vec,
-    control = igsca_tree_control(),
+    .object = pooled,
+    .covariates = covs,
+    .influence = "mat",
+    .control = igsca_tree_control(),
 )
 undebug(partykit::ctree)
 undebug(doTrees)
@@ -54,9 +57,8 @@ debug(doTrees)
 doTrees(
     .object = pooled,
     .covariates = covs,
-    .data = dat,
-    .model = model,
-    splitter = NULL,
+    .influence = "vec",
+    .splitter = "native",
     .control = igsca_tree_control(),
 )
 undebug(doTrees)

@@ -2,13 +2,35 @@
 % Please edit documentation in R/helper_doTrees.R
 \name{fit_csem}
 \alias{fit_csem}
-\title{Title}
+\title{Refit the tree's model on a subset of the data}
 \usage{
-fit_csem(.data, .model, .id = NULL)
+fit_csem(.data, .args, .id = NULL)
 }
 \arguments{
-\item{.id}{}
+\item{.data}{Data for this node.}
+
+\item{.args}{Argument list of the original \code{\link[=csem]{csem()}} call.}
+
+\item{.id}{Grouping column, or \code{NULL} for a pooled fit.}
+}
+\value{
+A \code{cSEMResults} object.
 }
 \description{
-\code{.id = NULL} yields the pooled single-group fit; \code{.id = "group"} the MGA fit.
+Replays the argument list of the \code{\link[=csem]{csem()}} call \code{\link[=doTrees]{doTrees()}} was given, with
+\code{.data} swapped for the node's rows, so that every node in the tree is
+estimated exactly the way its root was -- estimator, modes, convergence
+criterion and all. \code{.args} is \code{.object$Information$Arguments}; its \code{.model}
+entry is the parsed \code{cSEMModel}, which \code{\link[=csem]{csem()}} accepts unchanged.
+}
+\details{
+\code{.id = NULL} yields the pooled single-group fit; \code{.id = "group"} the MGA fit;
+assigning \code{NULL} drops the entry, so the pooled case falls back to \code{\link[=csem]{csem()}}'s
+own default.
+
+Do NOT reach for \code{modifyList()} here. It recurses whenever the old and new
+values are both lists, and a \code{data.frame} is a list -- so it merges the node's
+columns into the stored data instead of replacing it, and \verb{[[<-.data.frame}
+\emph{recycles} rather than errors whenever the node size divides the original.
+A node of n/2 then fits happily on a duplicated copy of itself.
 }

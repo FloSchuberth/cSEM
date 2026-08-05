@@ -1,24 +1,46 @@
 #' Recursive Partitioning Algorithm for *csem* GSCA Models
 #'
+#' Grows a tree that partitions the rows `.object` was fitted on into subgroups
+#' whose model estimates differ. Every node is refit by replaying `.object`'s own
+#' [csem()] arguments (see [fit_csem()]), so the estimator, modes and convergence
+#' settings of the tree are those of the fit it was given -- there is nothing to
+#' keep in sync and no estimator hard-coded here.
 #'
-#' @inheritParams csem_arguments
-#' @inheritParams csem
-#' @return cSEM Tree model of class `modelparty` and `party`.
+#' `.influence` selects the family: `"mat"` and `"vec"` run conditional-inference
+#' (COIN) variable selection on casewise GSCA residuals, `"FIT"`, `"DLi"` and
+#' `"DGi"` run permutation tests on a model-comparison statistic. `.splitter`
+#' chooses the cutpoint within the selected covariate, and `"native"` (partykit's
+#' own maxstat scan) is available only to the COIN family.
+#'
+#' @param .object A single-group `cSEMResults` object, as returned by [csem()].
+#'   Its data must contain the `.covariates` columns; [csem()] ignores
+#'   non-indicator columns, so they can simply ride along in the original call.
+#' @param .covariates Character vector of columns of `.object`'s data to
+#'   partition on.
+#' @param .influence Node statistic and, with it, the algorithm family. One of
+#'   "mat", "vec", "FIT", "DLi" or "DGi".
+#' @param .splitter Cutpoint rule. One of "native", "FIT", "DLi" or "DGi";
+#'   "native" is only available when `.influence` is "mat" or "vec".
+#' @param .control Tuning parameters, see [igsca_tree_control()].
+#'
+#' @return A tree of class `c("igsca_tree", "constparty", "party")`, carrying the
+#'   per-leaf fits (see [coef.igsca_tree()]) and an `igsca_info` attribute of
+#'   failure counters and root criteria.
 #' @export
 #' @importFrom partykit ctree_control ctree
 #' @references
 #'   \insertAllCited{}
 doTrees <- function(
-  data,
-  model,
-  covariates,
-  influence = c("mat", "vec", "FIT", "DLi", "DGi"),
-  splitter = c("native", "FIT", "DLi", "DGi"),
-  control = igsca_tree_control()
+  .object,
+  .covariates,
+  .influence = c("mat", "vec", "FIT", "DLi", "DGi"),
+  .splitter = c("native", "FIT", "DLi", "DGi"),
+  .control = igsca_tree_control()
 ) {
   # Preparation
-  influence <- match.arg(influence)
-  splitter <- match.arg(splitter)
+  influence <- match.arg(.influence)
+  splitter <- match.arg(.splitter)
+  control <- .control
 
   split_fn <- switch(
     splitter,
@@ -28,13 +50,18 @@ doTrees <- function(
     DGi = split_max_dgi
   )
 
+  ## Everything the tree needs -- the rows to partition, the covariate columns,
+  ## the model, and the estimator settings for every node refit -- comes from
+  ## the fit itself, so a node cannot be estimated differently from its root.
+  args <- csem_tree_args(.object)
+  data <- as.data.frame(args$.data)
+  indicators <- parseModel(args$.model)$indicators
+  validate_tree_input(data, indicators, .covariates, influence, splitter, args)
 
-
-  indicators <- parseModel(model)$indicators
   fml <- paste(
     paste(indicators, collapse = " + "),
     "~",
-    paste(covariates, collapse = " + ")
+    paste(.covariates, collapse = " + ")
   ) |>
     stats::as.formula()
 
@@ -56,7 +83,7 @@ doTrees <- function(
       ) {
         was_root <- !collector$root_seen
         collector$root_seen <- TRUE
-        ft <- try_fit(mf[subset, indicators, drop = FALSE], model)
+        ft <- try_fit(mf[subset, indicators, drop = FALSE], args)
         E <- if (ft$ok) {
           tryCatch(calculateGSCAErrors(ft$fit), error = function(e) NULL)
         } else {
@@ -122,7 +149,7 @@ doTrees <- function(
 
     if (!is.null(split_fn)) {
       # Sets the splitter to one of the three functions that we're looking for.
-      cc$model <- model
+      cc$args <- args
       cc$indicators <- indicators
       cc$collector <- collector
       cc$max_cuts <- control$max_cuts
@@ -154,7 +181,7 @@ doTrees <- function(
 
     ## partykit never calls the trafo at a node it does not try to split, so
     ## leaves arrive with info = NULL and carry no IGSCA fit. Refit them.
-    ret <- attach_leaf_fits(ret, ret$data, model, indicators, collector)
+    ret <- attach_leaf_fits(ret, ret$data, args, indicators, collector)
 
     ## MEMORY OPTIMIZATION (opt-in): each inner node's info holds a full
     ## cSEMResults object, so a maxdepth = 3 tree keeps up to 7 of them.
@@ -212,7 +239,7 @@ doTrees <- function(
     ) {
       was_root <- !collector$root_seen
       collector$root_seen <- TRUE
-      ft <- try_fit(mf[subset, indicators, drop = FALSE], model)
+      ft <- try_fit(mf[subset, indicators, drop = FALSE], args)
       if (!ft$ok) {
         if (was_root) {
           collector$n_fail_full <- 1L
@@ -239,7 +266,7 @@ doTrees <- function(
     }
 
     ctrl <- control
-    ctrl$model <- model
+    ctrl$args <- args
     ctrl$indicators <- indicators
     ctrl$collector <- collector
 
@@ -253,7 +280,7 @@ doTrees <- function(
       nodes,
       data = mf,
       fitted = fitted,
-      info = list(model = model, covariates = covariates)
+      info = list(model = args$.model, covariates = .covariates)
     )
     ret$terms <- d$terms$all
     class(ret) <- c("igsca_tree", "constparty", class(ret))
@@ -262,7 +289,7 @@ doTrees <- function(
     ## As on the ctree path: leaves are never visited by the trafo, and here the
     ## trafo does not compute objfun at all (it is NA_real_ on inner nodes), so
     ## the leaf refit is the only source of a per-node IGSCA fit and SSR.
-    ret <- attach_leaf_fits(ret, mf, model, indicators, collector)
+    ret <- attach_leaf_fits(ret, mf, args, indicators, collector)
 
     ## MEMORY OPTIMIZATION (opt-in): see the note on the ctree path above.
     ##   ret <- drop_inner_node_objects(ret)

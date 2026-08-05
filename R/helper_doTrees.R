@@ -73,6 +73,76 @@ bdiagFit <- function(.object    = NULL,
 }
 
 
+#' Pull the csem() argument list out of the object doTrees() was given
+#'
+#' The tree replays these arguments at every node, so the object has to be one
+#' whose arguments describe a single fit. A multigroup `cSEMResults_multi` keeps
+#' its `Information` per group and has no top-level `Arguments` at all -- and
+#' grouping is what the tree is for, so it is refused rather than unwrapped.
+#' @noRd
+csem_tree_args <- function(.object) {
+  if (!inherits(.object, "cSEMResults")) {
+    stop2(
+      "`.object` must be a cSEMResults object as returned by csem(), not ",
+      class(.object)[1], "."
+    )
+  }
+  if (inherits(.object, "cSEMResults_multi")) {
+    stop2(
+      "`.object` must be a single-group fit: doTrees() finds the groups. ",
+      "Refit without `.id` and pass the pooled result."
+    )
+  }
+  args <- .object$Information$Arguments
+  if (is.null(args)) {
+    stop2("`.object` carries no $Information$Arguments to refit nodes with.")
+  }
+  args
+}
+
+
+#' Check the tree can be grown from this fit
+#'
+#' Two things partykit and csem() would otherwise report from far away, plus one
+#' they would not report at all: `calculateGSCAErrors()` returns `NA` (not an
+#' error) off a GSCA fit, so the COIN families would fail deep inside the trafo,
+#' and `calculateFIT()` errors, which `partition_stat()` turns into a silent
+#' `NA`. The distance statistics read model-implied indicator VCVs and are
+#' genuinely estimator-agnostic, so they are left alone.
+#' @noRd
+validate_tree_input <- function(data, indicators, covariates, influence,
+                                splitter, args) {
+  if (!length(covariates)) {
+    stop2("`.covariates` must name at least one column to partition on.")
+  }
+  missing_cov <- setdiff(covariates, names(data))
+  if (length(missing_cov)) {
+    stop2(
+      "The following covariates are not columns of the data `.object` was ",
+      "fitted on: ", paste(missing_cov, collapse = ", "),
+      ". Include them in the csem() call -- non-indicator columns are ignored ",
+      "when fitting."
+    )
+  }
+  overlap <- intersect(covariates, indicators)
+  if (length(overlap)) {
+    stop2(
+      "The following covariates are also indicators of the model: ",
+      paste(overlap, collapse = ", "), "."
+    )
+  }
+  needs_gsca <- influence %in% c("mat", "vec", "FIT") || splitter == "FIT"
+  if (needs_gsca && !identical(args$.approach_weights, "GSCA")) {
+    stop2(
+      "`.influence = \"", influence, "\"` with `.splitter = \"", splitter,
+      "\"` needs a GSCA fit, but `.object` was fitted with .approach_weights = ",
+      "\"", args$.approach_weights, "\". The residual and FIT statistics are ",
+      "GSCA-specific; the DLi/DGi distances are not."
+    )
+  }
+  invisible(TRUE)
+}
+
 
 #' Title
 #'
@@ -137,45 +207,61 @@ influence_mat <- function(E) {
 }
 
 
-#' Title
-#' 
-#' `.id = NULL` yields the pooled single-group fit; `.id = "group"` the MGA fit.
-#' 
-#' @param .data
-#' @param .model
-#' @param .id
+#' Refit the tree's model on a subset of the data
 #'
-#' @returns
+#' Replays the argument list of the [csem()] call [doTrees()] was given, with
+#' `.data` swapped for the node's rows, so that every node in the tree is
+#' estimated exactly the way its root was -- estimator, modes, convergence
+#' criterion and all. `.args` is `.object$Information$Arguments`; its `.model`
+#' entry is the parsed `cSEMModel`, which [csem()] accepts unchanged.
+#'
+#' `.id = NULL` yields the pooled single-group fit; `.id = "group"` the MGA fit;
+#' assigning `NULL` drops the entry, so the pooled case falls back to [csem()]'s
+#' own default.
+#'
+#' Do NOT reach for `modifyList()` here. It recurses whenever the old and new
+#' values are both lists, and a `data.frame` is a list -- so it merges the node's
+#' columns into the stored data instead of replacing it, and `[[<-.data.frame`
+#' *recycles* rather than errors whenever the node size divides the original.
+#' A node of n/2 then fits happily on a duplicated copy of itself.
+#'
+#' @param .data Data for this node.
+#' @param .args Argument list of the original [csem()] call.
+#' @param .id Grouping column, or `NULL` for a pooled fit.
+#'
+#' @returns A `cSEMResults` object.
 #'
 #' @export
 #' @examples
-fit_csem <- function(.data, .model, .id = NULL) {
-  csem(
-    .data = .data,
-    .model = .model,
-    .id = .id,
-    .approach_weights = "GSCA",
-    .disattenuate = TRUE, # to get igsca
-    .conv_criterion = "sum_diff_absolute", # Default in gsca_m.m and gsca.m
-    .iter_max = 100, # Default in igsca_sim.m
-    .GSCA_modes = "CCMP", # Unknown (to me) if it affects convergence
-    .tolerance = 0.0001 # Default in gsca_m.m and gsca.m
-  )
+fit_csem <- function(.data, .args, .id = NULL) {
+  ## Not paranoia: `$<-` coerces an atomic to a list, so passing a model string
+  ## here (as every call site used to) yields a list whose unnamed first element
+  ## matches csem()'s `.model` by position -- a fit that runs, converges, and
+  ## silently uses csem()'s default estimator instead of the object's.
+  if (!is.list(.args)) {
+    stop2(
+      "`.args` must be the argument list of a csem() call, not ",
+      class(.args)[1], "."
+    )
+  }
+  .args$.data <- .data
+  .args$.id <- .id
+  do.call(csem, .args)
 }
 
-#' Title
+#' Fit that reports failure instead of throwing
 #'
-#' @param .data
-#' @param .model
-#' @param .id
+#' @param .data Data for this node.
+#' @param .args Argument list of the original [csem()] call.
+#' @param .id Grouping column, or `NULL` for a pooled fit.
 #'
-#' @returns
+#' @returns List of the fit (`NULL` on failure) and whether it converged.
 #'
 #' @export
 #' @examples
-try_fit <- function(.data, .model, .id = NULL) {
+try_fit <- function(.data, .args, .id = NULL) {
   fit <- suppressWarnings(tryCatch(
-    fit_csem(.data, .model, .id),
+    fit_csem(.data, .args, .id),
     error = function(e) NULL
   ))
   ok <- !is.null(fit) &&
@@ -239,7 +325,7 @@ grow_extree <- function(d, trafo, selector, splitter, ctrl) {
   ## ctree_control() is only a scaffold: it supplies the extree knobs we do
   ## not own (criterion, splittry, saveinfo, ...). Everything igsca-specific
   ## is overridden from ctrl below; the trailing loop also carries the tester
-  ## config (model, indicators, collector, R_test, max_cuts, ...) into the
+  ## config (args, indicators, collector, R_test, max_cuts, ...) into the
   ## ctrl the callbacks receive.
   ectrl <- partykit::ctree_control()
   ectrl$update <- TRUE
@@ -484,7 +570,7 @@ new_collector <- function() {
 #' Costs one IGSCA fit per leaf. Failures are counted into
 #' `collector$n_fail_leaf` and leave `converged = FALSE` on that node.
 #' @noRd
-attach_leaf_fits <- function(tree, mf, model, indicators, collector) {
+attach_leaf_fits <- function(tree, mf, args, indicators, collector) {
   ids <- partykit::nodeids(tree, terminal = TRUE)
   ## Use the party object's own fitted node ids: they are guaranteed to be in
   ## the same row order as `mf`, which re-deriving them would not be.
@@ -492,7 +578,7 @@ attach_leaf_fits <- function(tree, mf, model, indicators, collector) {
 
   fits <- lapply(ids, function(id) {
     rows <- which(leaf == id)
-    ft <- try_fit(mf[rows, indicators, drop = FALSE], model)
+    ft <- try_fit(mf[rows, indicators, drop = FALSE], args)
     if (!ft$ok) {
       collector$n_fail_leaf <- collector$n_fail_leaf + 1L
       return(list(
@@ -734,7 +820,7 @@ ndt_pools <- function(single_fit) {
 partition_stat <- function(stat_kind, model, mf, subset, goes_left, ctrl) {
   coll <- ctrl$collector
   d <- node_group_data(mf, subset, ctrl$indicators, goes_left)
-  mga <- try_fit(d, ctrl$model, .id = "group")
+  mga <- try_fit(d, ctrl$args, .id = "group")
   if (!mga$ok) { coll$n_fail_resample <- coll$n_fail_resample + 1L; return(NA_real_) }
   if (stat_kind == "FITdiff") {
     if (is.null(model$object)) {

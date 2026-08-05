@@ -15,6 +15,20 @@ model <- "# Latent variable model
  eta2 ~ eta1 + eta4 + eta3
  "
 
+# doTrees() reads its data, model and estimator settings off this fit and
+# replays them at every node, so the covariates ride along in the csem() call --
+# non-indicator columns are ignored when fitting.
+res <- csem(
+  .data = dat,
+  .model = model,
+  .approach_weights = "GSCA",
+  .disattenuate = TRUE,
+  .conv_criterion = "sum_diff_absolute",
+  .iter_max = 100,
+  .GSCA_modes = "CCMP",
+  .tolerance = 0.0001
+)
+
 # Controls ---------------------------------------------------------------
 # The two influence families cost an order of magnitude apart, so they get
 # separate budgets. The conditional-test family ("mat"/"vec") inherits COIN
@@ -39,14 +53,13 @@ ctl_part <- igsca_tree_control(
   minbucket = 200L
 )
 
-grow_tree <- function(influence, splitter, control) {
+grow_tree <- function(influence, splitter, control, object = res) {
   doTrees(
-    data = dat,
-    model = model,
-    covariates = covs,
-    influence = influence,
-    splitter = splitter,
-    control = control
+    .object = object,
+    .covariates = covs,
+    .influence = influence,
+    .splitter = splitter,
+    .control = control
   )
 }
 
@@ -185,6 +198,95 @@ test_that("the native split path never touches the kernel counters", {
   expect_identical(info$n_fail_split, 0L)
 })
 
+# Input contract ---------------------------------------------------------
+# doTrees() takes a fitted object rather than data + model, so everything it
+# needs is either derivable from that fit or a mistake worth naming.
+
+test_that("doTrees() refits nodes with the estimator the fit used", {
+  # Both branches: they build their node fits through separate trafos, and a
+  # wrong argument list does not error -- `$<-` coerces, so csem() falls back to
+  # its own default estimator and returns a fit that converges and looks fine.
+  for (fam in list(c("mat", "native"), c("FIT", "FIT"))) {
+    set.seed(11)
+    tr <- grow_tree(
+      fam[1], fam[2],
+      if (fam[1] == "mat") ctl_mixed else ctl_part
+    )
+    # Leaf refits can legitimately fail on a small node (see n_fail_leaf), so
+    # take the first leaf that produced a fit rather than the first leaf.
+    fits <- Filter(Negate(is.null), partykit::nodeapply(
+      tr,
+      ids = partykit::nodeids(tr, terminal = TRUE),
+      FUN = function(n) partykit::info_node(n)$object
+    ))
+    expect_gt(length(fits), 0L)
+    used <- fits[[1]]$Information$Arguments
+    for (a in c(
+      ".approach_weights", ".GSCA_modes", ".conv_criterion",
+      ".disattenuate", ".iter_max", ".tolerance"
+    )) {
+      expect_identical(
+        used[[a]], res$Information$Arguments[[a]],
+        info = paste(fam[1], fam[2], a)
+      )
+    }
+  }
+})
+
+test_that("fit_csem() refuses an argument list that is not one", {
+  # The failure this prevents is silent: a model string coerces to a list whose
+  # unnamed element matches .model by position, so the fit runs under csem()'s
+  # default estimator instead of the object's.
+  expect_error(fit_csem(dat, model), "argument list")
+})
+
+test_that("doTrees() rejects input it cannot grow a tree from", {
+  expect_error(doTrees(dat, covs), "cSEMResults")
+
+  # Grouping is what the tree is for, so a multigroup fit is refused rather
+  # than unwrapped.
+  res_multi <- csem(
+    .data = dat,
+    .model = model,
+    .id = "z_true",
+    .approach_weights = "GSCA",
+    .disattenuate = TRUE,
+    .conv_criterion = "sum_diff_absolute",
+    .iter_max = 100,
+    .GSCA_modes = "CCMP",
+    .tolerance = 0.0001
+  )
+  expect_error(doTrees(res_multi, covs), "single-group")
+
+  expect_error(doTrees(res, c("z_true", "nope")), "nope")
+  expect_error(doTrees(res, character(0)), "at least one")
+  expect_error(doTrees(res, c("z_true", "x11")), "also indicators")
+})
+
+test_that("the GSCA-only statistics refuse a non-GSCA fit", {
+  res_pls <- csem(.data = dat, .model = model)
+  # calculateGSCAErrors() returns NA rather than erroring off GSCA, and
+  # calculateFIT() errors into a silent NA, so both are caught up front.
+  expect_error(
+    doTrees(res_pls, covs, .influence = "mat", .control = ctl_mixed),
+    "needs a GSCA fit"
+  )
+  expect_error(
+    doTrees(res_pls, covs, .influence = "DLi", .splitter = "FIT",
+            .control = ctl_part),
+    "needs a GSCA fit"
+  )
+  # The distances read model-implied indicator VCVs and are estimator-agnostic,
+  # so this pairing is allowed through and estimates its nodes as PLS-PM. Only
+  # that it runs is asserted: whether a PLS fit yields a significant split on
+  # this fixture is a question about the data, not about the guard.
+  set.seed(11)
+  tr <- doTrees(res_pls, covs, .influence = "DLi", .splitter = "DLi",
+                .control = ctl_part)
+  expect_s3_class(tr, "igsca_tree")
+  expect_identical(attr(tr, "igsca_info")$n_fail_full, 0L)
+})
+
 # Collector diagnostics --------------------------------------------------
 # The counters on attr(tr, "igsca_info") are the port's only window into partial
 # failure: every one of them is reached by a path that still returns a
@@ -192,7 +294,7 @@ test_that("the native split path never touches the kernel counters", {
 
 test_that("a root fit failure is a full failure, not a node failure", {
   local_mocked_bindings(
-    try_fit = function(.data, .model, .id = NULL) list(fit = NULL, ok = FALSE)
+    try_fit = function(.data, .args, .id = NULL) list(fit = NULL, ok = FALSE)
   )
   set.seed(11)
   tr <- grow_tree("mat", "native", ctl_mixed)
@@ -211,11 +313,11 @@ test_that("a fit failure below the root is a node failure", {
   # every child fit fails. Capturing try_fit first is what avoids recursion.
   real_try_fit <- try_fit
   local_mocked_bindings(
-    try_fit = function(.data, .model, .id = NULL) {
+    try_fit = function(.data, .args, .id = NULL) {
       if (nrow(.data) < nrow(dat)) {
         list(fit = NULL, ok = FALSE)
       } else {
-        real_try_fit(.data, .model, .id)
+        real_try_fit(.data, .args, .id)
       }
     }
   )

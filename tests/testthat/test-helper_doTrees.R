@@ -87,17 +87,29 @@ model_trees <- "# Latent variable model
  eta2 ~ eta1 + eta4 + eta3
  "
 
+# The argument list doTrees() replays at every node, as csem() stores it.
+args_trees <- csem(
+  .data = dat,
+  .model = model_trees,
+  .approach_weights = "GSCA",
+  .disattenuate = TRUE,
+  .conv_criterion = "sum_diff_absolute",
+  .iter_max = 100,
+  .GSCA_modes = "CCMP",
+  .tolerance = 0.0001
+)$Information$Arguments
+
 # One pooled node fit, packaged the way the trafo hands it to a kernel.
 node_fixture <- function(max_cuts = 8L, minbucket = 100L) {
-  ind <- parseModel(model_trees)$indicators
-  ft <- try_fit(dat[, ind, drop = FALSE], model_trees)
+  ind <- parseModel(args_trees$.model)$indicators
+  ft <- try_fit(dat[, ind, drop = FALSE], args_trees)
   list(
     model = list(object = ft$fit),
     mf = dat,
     subset = seq_len(nrow(dat)),
     ctrl = list(
       collector = new_collector(),
-      model = model_trees,
+      args = args_trees,
       indicators = ind,
       max_cuts = max_cuts,
       minbucket = minbucket
@@ -105,12 +117,30 @@ node_fixture <- function(max_cuts = 8L, minbucket = 100L) {
   )
 }
 
+test_that("fit_csem() replays the arguments of the fit it was given", {
+  ind <- parseModel(args_trees$.model)$indicators
+  node <- fit_csem(dat[1:500, ind, drop = FALSE], args_trees)
+  used <- node$Information$Arguments
+  expect_identical(used$.approach_weights, "GSCA")
+  expect_identical(used$.GSCA_modes, args_trees$.GSCA_modes)
+  expect_identical(used$.tolerance, args_trees$.tolerance)
+  # .id is dropped, not passed as NULL, so csem()'s own default applies
+  expect_s3_class(node, "cSEMResults_default")
+
+  # The MGA fit the split kernels compare is the same call with .id set
+  g <- cbind(
+    group = factor(rep(1:2, each = 500L)),
+    dat[, ind, drop = FALSE]
+  )
+  expect_s3_class(fit_csem(g, args_trees, .id = "group"), "cSEMResults_multi")
+})
+
 test_that("partition_stat() records a failed auxiliary fit instead of throwing", {
   local_mocked_bindings(
-    try_fit = function(.data, .model, .id = NULL) list(fit = NULL, ok = FALSE)
+    try_fit = function(.data, .args, .id = NULL) list(fit = NULL, ok = FALSE)
   )
   coll <- new_collector()
-  ctrl <- list(collector = coll, model = model_trees, indicators = "x11")
+  ctrl <- list(collector = coll, args = args_trees, indicators = "x11")
   goes_left <- rep(c(TRUE, FALSE), length.out = nrow(dat))
 
   # An unfittable candidate partition must come back as NA, not an exception:

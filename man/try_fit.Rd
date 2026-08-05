@@ -2,13 +2,20 @@
 % Please edit documentation in R/helper_doTrees.R
 \name{try_fit}
 \alias{try_fit}
-\title{Title}
+\title{Fit that reports failure instead of throwing}
 \usage{
-try_fit(.data, .model, .id = NULL)
+try_fit(.data, .args, .id = NULL)
 }
 \arguments{
-\item{.id}{}
+\item{.data}{Data for this node.}
+
+\item{.args}{Argument list of the original \code{\link[=csem]{csem()}} call.}
+
+\item{.id}{Grouping column, or \code{NULL} for a pooled fit.}
+}
+\value{
+List of the fit (\code{NULL} on failure) and whether it converged.
 }
 \description{
-Title
+Fit that reports failure instead of throwing
 }

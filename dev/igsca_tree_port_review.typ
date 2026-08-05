@@ -64,6 +64,11 @@ then:
   TODOs. T5 closed --- every collector field and the scan cache now have tests,
   in `test-postestimate_doTrees.R` and `test-helper_doTrees.R` respectively.
   `FAIL 0 | WARN 0 | SKIP 0 | PASS 121` across the two files, still 2 min 05 s.
+- *Ninth pass* --- P5 fixed, and with it P4, P6 and P3's `doTrees` half:
+  `doTrees()` now takes a *fitted* `cSEMResults` and replays that fit's own
+  `csem()` arguments at every node, so no estimator is hard-coded anywhere. The
+  snapshots did not move, which is the evidence the replay reproduces the old
+  hard-coded call exactly. `PASS 150` in 2 min 25 s.
 
 *All behavioural findings are closed, and the suite now runs and asserts.* Every
 `influence` #sym.times `splitter` combination runs, the three silent failures are
@@ -71,7 +76,7 @@ fixed, each of the 17 configurations is asserted to have *actually split* rather
 than merely not thrown, and every diagnostic the collector carries is now
 asserted somewhere. What remains is the layer that would show a *correct-looking
 but wrong* answer --- #link(<mixed>)[section 5]'s 5.1--5.3 and 5.6 --- plus
-packaging cleanup (P1--P6).
+packaging cleanup (P1--P3; P4--P6 are closed).
 
 == Status at a glance
 
@@ -92,10 +97,10 @@ packaging cleanup (P1--P6).
   [T5], [Collector diagnostics and the scan cache are untested], [#ok],
   [P1], [`NAMESPACE` stale], [#part],
   [P2], [`cSEM:::` / `cSEM::` into the package's own namespace], [#open],
-  [P3], [Roxygen placeholders; wrong `@return`], [#open],
-  [P4], [Argument naming departs from package convention], [#open],
-  [P5], [`fit_csem()` hard-codes the estimator], [#open],
-  [P6], [No input validation], [#open],
+  [P3], [Roxygen placeholders; wrong `@return`], [#part],
+  [P4], [Argument naming departs from package convention], [#ok],
+  [P5], [`fit_csem()` hard-codes the estimator], [#ok],
+  [P6], [No input validation], [#ok],
 )
 
 The test file now carries two controls chosen per branch, five regenerated
@@ -198,11 +203,12 @@ and a `NULL` kernel would die inside `argmax_split()`'s `tryCatch` and silently
 yield a stump. Both guards produce readable errors:
 
 ```r
-doTrees(dat, model, covs, influence = "FIT", splitter = "native")
+# (arguments as of P5's rename; the guards themselves are unchanged)
+doTrees(res, covs, .influence = "FIT", .splitter = "native")
 #> Error: splitter should be any one of 'FIT', 'DLi' or 'DGi' when the influence
 #>        (selector) function is one of 'FIT', 'DLi' or 'DGi'
 
-doTrees(dat, model, covs, influence = "mat", splitter = "nope")
+doTrees(res, covs, .influence = "mat", .splitter = "nope")
 #> Error: 'arg' should be one of "native", "FIT", "DLi", "DGi"
 ```
 
@@ -833,13 +839,18 @@ Two MGA fits each, and the failure message names the broken kernel. This is the
 test that would have caught the missing `ndt_dists()` in seconds:
 
 ```r
-node_fixture <- function() {
-  ind <- parseModel(model)$indicators
-  ft  <- try_fit(dat[, ind, drop = FALSE], model)
-  list(model = list(object = ft$fit),      # what the trafo hands the kernel
-       mf    = dat,
-       ctrl  = list(collector = new_collector(), model = model,
-                    indicators = ind, max_cuts = 20L, minbucket = 30L))
+# As shipped (test-helper_doTrees.R). `args_trees` is the argument list of the
+# csem() call the tree is built from -- see P5; it replaced the model string
+# every one of these call sites used to take.
+node_fixture <- function(max_cuts = 8L, minbucket = 100L) {
+  ind <- parseModel(args_trees$.model)$indicators
+  ft  <- try_fit(dat[, ind, drop = FALSE], args_trees)
+  list(model  = list(object = ft$fit),     # what the trafo hands the kernel
+       mf     = dat,
+       subset = seq_len(nrow(dat)),
+       ctrl   = list(collector = new_collector(), args = args_trees,
+                     indicators = ind, max_cuts = max_cuts,
+                     minbucket = minbucket))
 }
 
 test_that("every split kernel returns a finite statistic", {
@@ -903,8 +914,7 @@ test_that("doTrees installs its splitfun into partykit's split search", {
       real(model, mf, subset, goes_left, ctrl)
     })
   set.seed(11)
-  tr <- doTrees(dat, model, covs, influence = "mat",
-                splitter = "FIT", control = ctl_mixed)
+  tr <- grow_tree("mat", "FIT", ctl_mixed)
   expect_gt(calls$n, 0L)                                    # the contract
   expect_gt(partykit::width(partykit::node_party(tr)), 1L)  # it split
 })
@@ -1106,71 +1116,115 @@ is the cheapest fix --- `@noRd` deletes the file and the warnings with it --- an
 whatever survives as public API needs a real title, real `@param` text and a real
 `@return`.
 
-Two specific errors in `man/doTrees.Rd`:
+Two specific errors in `man/doTrees.Rd`, *both fixed* alongside
+#link(<p5>)[P5]'s signature change:
 
-- *`\value` is wrong.* It claims class `modelparty` and `party`. Actual class is
-  `c("igsca_tree", "constparty", "party")` on both paths; there is no `modelparty`
-  anywhere in the package.
-- *Half the arguments are undocumented.* `data`, `model` and `covariates` did
+- *`\value` was wrong.* It claimed class `modelparty` and `party`. The actual
+  class is `c("igsca_tree", "constparty", "party")` on both paths; there is no
+  `modelparty` anywhere in the package.
+- *Half the arguments were undocumented.* `data`, `model` and `covariates` did
   inherit from `csem_arguments` (roxygen matched them to the dot-prefixed
   `.data` / `.model` / `.covariates` entries). `influence`, `splitter` and
-  `control` did not --- they appear nowhere in `\arguments{}`, which is an
+  `control` did not --- they appeared nowhere in `\arguments{}`, which is an
   `R CMD check` WARNING. They are also the three arguments a reader most needs
-  explained, since `influence` selects between two entirely different algorithms
-  and `splitter` is constrained by which one you picked (B2's `stopifnot`).
+  explained, since `.influence` selects between two entirely different
+  algorithms and `.splitter` is constrained by which one you picked (B2's
+  `stopifnot`). All five are now documented explicitly rather than inherited.
+
+The rest of P3 stands: the other 20-odd `.Rd` files still carry `\title{Title}`
+and empty `@param` entries, and P1's pruning is still the cheapest fix.
 
 == P4. Argument naming departs from the package convention
 
-Every other exported cSEM entry point takes dot-prefixed arguments (`.data`,
-`.model`, `.approach_weights`, ...). `doTrees()` takes bare `data`, `model`,
-`covariates`, `influence`, `splitter`, `control`.
+*Status: fixed*, together with P5 --- the signature was breaking anyway, so both
+landed in one change. `doTrees(.object, .covariates, .influence, .splitter,
+.control)` now matches every other exported cSEM entry point.
 
-(The first pass claimed this also broke `@inheritParams`; that was wrong ---
-roxygen matched the dotted entries to the undotted parameters, as P3 shows. The
-case for renaming rests on API consistency alone, which is still a good enough
-reason while the branch is young. Doing it together with B2's now-settled
-signature would keep the churn to one commit.)
+(The first pass claimed the bare names also broke `@inheritParams`; that was
+wrong --- roxygen matched the dotted entries to the undotted parameters, as P3
+shows. The case for renaming rested on API consistency alone.)
 
-== P5. `fit_csem()` hard-codes the estimator with no override
+== P5. The estimator is no longer chosen by `fit_csem()` at all <p5>
 
-*Location:* `R/helper_doTrees.R:152--164`
+*Status: fixed.* `doTrees()` used to take `data` + `model` and refit every node
+through a `fit_csem()` that hard-coded GSCA, CCMP, `.iter_max = 100` and
+`.tolerance = 1e-4`, with no `...` and no argument to get past it.
+
+It now takes a *fitted* object and replays that fit's own arguments:
 
 ```r
-fit_csem <- function(.data, .model, .id = NULL) {
-  csem(.data = .data, .model = .model, .id = .id,
-       .approach_weights = "GSCA", .disattenuate = TRUE,
-       .conv_criterion = "sum_diff_absolute", .iter_max = 100,
-       .GSCA_modes = "CCMP", .tolerance = 0.0001)
+doTrees(.object, .covariates, .influence, .splitter, .control)
+
+fit_csem <- function(.data, .args, .id = NULL) {
+  if (!is.list(.args)) stop2(...)
+  .args$.data <- .data
+  .args$.id   <- .id
+  do.call(csem, .args)
 }
 ```
 
-Reasonable as a study default, but `doTrees()` gives the user no way past it ---
-no `...`, no argument. Since the tree machinery is estimator-agnostic (nothing
-outside `partition_stat()`'s FIT branch is GSCA-specific), threading `...` from
-`doTrees()` through `try_fit()` into `csem()` costs almost nothing and makes
-`doTrees()` usable for PLS-PM trees too. At minimum, document that the estimator
-is fixed --- especially now that `fit_csem` is exported.
+`.args` is `.object$Information$Arguments`, so the data, the model, the
+estimator, the modes and the convergence settings all arrive from one place and
+cannot drift apart. Three measurements made this design possible:
+
+- *`csem()` stores the whole input `data.frame`* --- non-indicator columns and
+  factors included, and it ignores them when fitting. So the covariates ride
+  along in the original call, `doTrees()` needs no `data` argument, and the rows
+  it partitions are by construction the rows the model was fitted on.
+- *The stored `.model` is a parsed `cSEMModel`*, and `parseModel()` round-trips
+  it identically, so it can be handed straight back to `csem()`. Re-passing the
+  model turned out to be unnecessary.
+- *`do.call(csem, args)` reproduces the original fit exactly*, and a node refit
+  built this way is identical to what the hard-coded call produced --- verified
+  on node sizes 400, 500 and 137 (paths equal), and on the two-group MGA fit.
+  The suite's snapshots did not move.
+
+*Two traps worth recording, both silent.*
+
+`modifyList()` is the obvious way to swap `.data`, and it is wrong. It recurses
+whenever old and new values are both lists --- and a `data.frame` *is* a list ---
+so it merges the node's columns into the stored 1000-row data instead of
+replacing it. Worse, `[[<-.data.frame` *recycles* rather than errors when the
+node size divides the original, so a 500-row node fits happily on a duplicated
+copy of itself and only a node of, say, 137 rows reveals the bug.
+
+`$<-` coerces an atomic to a list. A call site still passing the model *string*
+therefore produced a list whose unnamed first element matched `csem()`'s
+`.model` by position --- yielding a fit that ran, converged, and silently used
+*PLS-PM*, csem's default. It surfaced only as `calculateFIT()` erroring into an
+`NA` deep inside `partition_stat()`, i.e. as a stump. `fit_csem()` now rejects a
+non-list `.args`, and a test asserts the leaf fits' `.approach_weights` on *both*
+branches --- the ctree-only version of that test missed this exactly.
+
+*What this buys.* The tree machinery is estimator-agnostic wherever the
+statistics are: `DLi`/`DGi` read model-implied indicator VCVs and now work on a
+PLS-PM fit. The residual (`mat`/`vec`) and `FIT` statistics are not ---
+`calculateGSCAErrors()` returns `NA` rather than erroring off GSCA, and
+`calculateFIT()` errors --- so those combinations are refused up front rather
+than left to fail deep inside. See P6.
 
 == P6. No input validation
 
-`doTrees()` validates `influence` and `splitter` (via `match.arg`) and nothing
-else. Worth adding, since all three cases currently produce errors from deep
-inside partykit or `csem()`:
+*Status: fixed for the new contract.* `doTrees()` used to validate `influence`
+and `splitter` (via `match.arg`) and nothing else. #link(<p5>)[P5] removed two of
+the original three cases outright --- the data and the indicators now come from
+the fitted object, so they cannot disagree with each other --- and the rest are
+checked in two `@noRd` helpers:
 
-```r
-stopifnot(
-  "`data` must be a data.frame" = is.data.frame(data),
-  "`covariates` must be columns of `data`" =
-    length(covariates) > 0L && all(covariates %in% names(data))
-)
-missing_ind <- setdiff(indicators, names(data))
-if (length(missing_ind)) {
-  stop2("The following indicators are not columns of `data`: ",
-        paste(missing_ind, collapse = ", "))
-}
-```
+- `csem_tree_args()`: `.object` must be a `cSEMResults`, and must not be
+  `cSEMResults_multi`. The multigroup refusal is the substantive one: such an
+  object keeps its `Information` per group and has no top-level `Arguments` to
+  replay, and grouping is what the tree is *for*.
+- `validate_tree_input()`: `.covariates` must be non-empty, must be columns of
+  the object's data (the message says to include them in the `csem()` call,
+  since non-indicator columns are ignored when fitting), and must not also be
+  indicators of the model. Plus the estimator check of #link(<p5>)[P5].
 
 (`stop2()` is the package's own error helper, `R/zz_utils.R:114`.)
+
+The five blocks in `test-postestimate_doTrees.R`'s "Input contract" section
+cover all of it, including the one case that is *allowed*: a `DLi` #sym.times
+`DLi` tree on a PLS-PM fit.
 
 #pagebreak()
 
@@ -1215,7 +1269,7 @@ than accidents:
   [#strike[2]], [#strike[T1--T3 --- regenerate snapshots, drop `length()==5`, split `expect_no_error()`]], [*Done.* 85 assertions, `FAIL 0 | WARN 0`],
   [3], [§5.1--5.3 --- kernel, `argmax_split`, and splitfun-wiring tests], [*Now the head of the queue.* Cheap, fast, and they pin the contracts the port depends on],
   [#strike[4]], [#strike[T5 + §5.5 --- collector and scan-cache tests]], [*Done.* Two-part cache key both covered; `PASS 121` across the two files],
-  [5], [P1--P6 --- prune exports, drop `:::`, fix `\value`, validate inputs], [Cleanup; P4's rename pairs naturally with B2's settled signature. Note `attach_leaf_fits()`, `drop_inner_node_objects()` and `warn_dead_splitter()` are already `@noRd`],
+  [5], [P1--P3 --- prune exports, drop `:::`, fix the remaining `.Rd` placeholders], [*P4--P6 done* with #link(<p5>)[P5]'s signature change. What is left is the export surface: P1's pruning deletes most of P3's `.Rd` warnings with it. Note `attach_leaf_fits()`, `drop_inner_node_objects()`, `warn_dead_splitter()`, `csem_tree_args()` and `validate_tree_input()` are already `@noRd`],
   [6], [#link(<s3>)[S3] follow-up --- raise `minbucket` for large models], [`n_fail_leaf` is now asserted (T5), but the default `30L` still admits leaves the model cannot fit --- the assertion pins the symptom, it does not fix it],
   [7], [§5.6 --- numeric-cutpoint fixture], [Optional; only if the mixed pairs are a real study arm],
   [#strike[8]], [#strike[#link(<testtype>)[§3.2.1] --- replace the `cc$bonferroni` override with a length-2 `testtype`]], [*Done.* The override was measured to be a no-op on all four combinations and deleted with both TODOs],

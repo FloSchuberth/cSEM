@@ -4,10 +4,10 @@
 \alias{idx_permutation}
 \title{Title}
 \usage{
-idx_permutation(n, R, strata = NULL)
+idx_permutation(n, R)
 }
 \arguments{
-\item{strata}{}
+\item{R}{}
 }
 \description{
 Permutation resampling: sample WITHOUT replacement, within each stratum, so
