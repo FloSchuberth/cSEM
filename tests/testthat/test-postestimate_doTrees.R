@@ -407,3 +407,13 @@ test_that("a failed leaf refit is counted and surfaces in coef()", {
   expect_identical(sum(is.na(cf[, "objfun"])), 1L)
   expect_false(anyNA(cf[, "nobs"]))
 })
+
+test_that("csem_tree_args passes raw data and not standardized data", {
+  expect_equal(csem_tree_args(res)$.data, dat)
+  local_mocked_bindings(
+    csem_tree_args = function(.object) {
+      stop("This function uses csem_tree_args")
+    }
+  )
+  expect_error(grow_tree(influence = "mat", splitter = "native", control = igsca_tree_control()), "This function uses csem_tree_args")
+})
