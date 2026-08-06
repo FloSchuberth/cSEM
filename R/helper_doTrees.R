@@ -244,6 +244,7 @@ igsca_tree_control <- function(alpha = 0.05,
 
 #' Casewise sum of squared GSCA residuals (n x 1) -- the "vec" influence.
 #'
+#' 
 #'
 #' @noRd
 influence_vec <- function(E) {
@@ -252,8 +253,9 @@ influence_vec <- function(E) {
 
 
 
-#' Casewise squared-residual matrix (n x q, multivariate) -- COIN_mat.
+#' Casewise GSCA squared-residual matrix (N x (J + P), multivariate) -- COIN_mat.
 #'
+#' Elementwise square of matrix of N cases by (J indicators + P constructs) residuals.
 #'
 #' @noRd
 influence_mat <- function(E) {

@@ -164,7 +164,7 @@ doTrees <- function(
     )
 
     if (!is.null(split_fn)) {
-      # Sets the splitter to one of the three functions that we're looking for.
+      # Sets the splitter to one of the three non-native functions that we're looking for.
       cc$args <- args
       cc$indicators <- indicators
       cc$collector <- collector
@@ -190,8 +190,8 @@ doTrees <- function(
       }
       cc$svsplitfun <- cc$splitfun # never called (maxsurrogate = 0)
     }
-    # TODO: Do I need to pass an explicit converged function?
-    ret <- partykit::ctree(fml, data = data, ytrafo = ytrafo, control = cc)
+    
+    ret <- partykit::ctree(formula = fml, data = data, ytrafo = ytrafo, control = cc)
     class(ret) <- c("igsca_tree", class(ret))
     warn_dead_splitter(collector, splitter)
 
