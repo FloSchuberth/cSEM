@@ -105,7 +105,7 @@ doTrees <- function(
         }
         h <- influence_fn(E)
         ef <- matrix(0, nrow = nrow(mf), ncol = ncol(h))
-        ef[subset, ] <- h
+        ef[subset, ] <- h # I'm sceptical about whether or not this subset is needed. 
         ## object is returned unconditionally: a mixed-pair splitter's kernel
         ## needs the pooled node fit (partition_stat reads model$object), and
         ## extree does not promise object = TRUE on the split path.

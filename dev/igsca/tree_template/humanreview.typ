@@ -330,11 +330,390 @@ return(ret)
 ```
 
 + What does `party(...)` do?
+  - It's just return formatting
 
 ====== `extree_fit(...)`
 
+The opening call with values substituted is
 
-====== `party(...)`
+```r
+extree_fit(
+    data = d,
+    trafo = ytrafo,
+    converged = TRUE,
+    selectfun = ctrl$selectfun,
+    splitfun = ctrl$splitfun,
+    svselectfun = ctrl$svselectfun,
+    svsplitfun = ctrl$svsplitfun,
+    partyvars = d$variables$z,
+    subset = subset,
+    weights = weights,
+    ctrl = control,
+    doFit = TRUE
+)
+```
+
+Substitutes our `trafo` into `mytrafo`
+
+```r
+ret <- list()
+nf <- names(formals(trafo))
+if (all(c("subset", "weights", "info", "estfun", "object") %in% nf)) { # is TRUE
+    mytrafo <- trafo
+} else {
+  ...
+}
+```
+
+Creates an `updatetrafo`, unclear how this is different from `mytrafo` and `trafo`
+
+```r
+if (!ctrl$update) { # is FALSE, so this body does not evaluate
+  rootestfun <- mytrafo(subset = subset, weights = weights)
+  updatetrafo <- function(subset, weights, info, ...) return(rootestfun)
+} else {
+  updatetrafo <- function(subset, weights, info, ...) {
+    ret <- mytrafo(subset = subset, weights = weights, info = info, ...)
+    if (is.null(ret$converged)) {
+      ret$converged <- TRUE
+    }
+    conv <- TRUE
+    if (is.function(converged)) {
+      conv <- converged(subset, weights)
+    }
+    ret$converged <- ret$converged && conv
+    if (!ret$converged) {
+      return(NULL)
+    }
+    ret
+  }
+}
+```
+
++ Does the body of `!ctrl$update$` ever evaluate? At a terminal node?
+
+Some input validation
+
+```r
+nm <- c("model", "trafo", "data", "subset", "weights", "whichvar", "ctrl")
+stopifnot(all(nm == names(formals(selectfun))))
+stopifnot(all(nm == names(formals(splitfun))))
+stopifnot(all(nm == names(formals(svselectfun))))
+stopifnot(all(nm == names(formals(svsplitfun))))
+if (!doFit) 
+    return(mytrafo)
+```
+
+Recursive partitioning
+
+```r
+return(list(
+  nodes = .extree_node(
+    id = 1,
+    data = data,
+    trafo = updatetrafo,
+    selectfun = selectfun,
+    splitfun = splitfun,
+    svselectfun = svselectfun,
+    svsplitfun = svsplitfun,
+    partyvars = partyvars,
+    weights = weights,
+    subset = subset,
+    ctrl = ctrl
+  ),
+  trafo = mytrafo
+))
+```
+
+======= `partykit:::.extree_node()`
+
+Opening call
+
+```r
+.extree_node(
+  id = 1,
+  data = data, # Processed from extree_data()
+  trafo = updatetrafo,
+  selectfun = selectfun,
+  splitfun = splitfun,
+  svselectfun = svselectfun,
+  svsplitfun = svsplitfun,
+  partyvars = partyvars, # Column numbers of potential splitting covariates
+  weights = weights,
+  subset = subset,
+  ctrl = ctrl
+)
+```
+
+Calls `trafo` for the model, which comes from `updatetrafo`
+
+```r
+thismodel <- trafo(
+  subset = subset,
+  weights = weights,
+  info = info,
+  estfun = TRUE,
+  object = TRUE
+)
+```
+
+Applies the selection function on the model
+
+```r
+sf <- selectfun( # TODO: Go back and Investigate where this function came from and how it was made...
+  model = thismodel,
+  trafo = trafo,
+  data = data,
+  subset = subset,
+  weights = weights,
+  whichvar = svars,
+  ctrl = thisctrl
+)
+```
+
++ Wait... Where exactly did `selectfun()` come from? I passed an influence function, but not a selectfun...?
+  - `partykit:::.select()`?
+  - `partykit:::.ctree_test()`? 
+
+Applies Bonferroni correction if relevant
+
+```r
+if (ctrl$bonferroni) {
+  sf$criteria["p.value", ] <- sf$criteria["p.value", ] *
+    sum(!is.na(sf$criteria["p.value", ]))
+}
+```
+
+P-value or statistic handling 
+
+```r
+p <- sf$criteria
+crit <- p[ctrl$criterion, , drop = TRUE] # ctrl$criterion is "p.value" by default, but can be adjusted
+if (all(is.na(crit))) return(partynode(as.integer(id)))
+crit[is.na(crit)] <- -Inf
+# Of crit, which ones are less than the double.xmin?
+## double.xmin smallest non-zero normalized floating-point number (https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/.Machine)
+ties <- which(abs(crit - max(crit, na.rm = TRUE)) < sqrt(.Machine$double.xmin))
+if (length(ties) > 1) {
+  # Break ties by comparing them on the test-statistic instead of just p-value? 
+  # Unclear
+    crit[ties] <- crit[ties] + rank(p["statistic", ties])/(sum(ties) * 1000)
+}
+```
+
+Select the covariate 
+
+```r
+p <- rbind(p, criterion = crit)
+p["statistic", ] <- exp(p["statistic", ])
+p["p.value", ] <- -expm1(p["p.value", ])
+pmin <- p["p.value", .which.max(crit)]
+```
+
+Store the information of the selected covariate
+```r
+names(pmin) <- colnames(model.frame(data))[.which.max(crit)]
+p <- p[, !is.na(p["statistic", ]) & is.finite(p["statistic", ]), drop = FALSE]
+info <- nodeinfo <- c(
+  list(criterion = p, p.value = pmin),
+  sf[!(names(sf) %in% c("criteria", "converged"))],
+  thismodel[!(names(thismodel) %in% c("estfun"))]
+)
+```
+
+Exit condition and do not proceed with recursion
+
+```r
+if (all(crit <= ctrl$logmincriterion)) {
+  return(partynode(as.integer(id), info = info))
+}
+```
+
++ But when would this trigger? and why?
+
+Selection of split-point
+
+```r
+thissplit <- splitfun(
+  model = thismodel,
+  trafo = trafo,
+  data = data,
+  subset = subset,
+  weights = weights,
+  whichvar = jsel,
+  ctrl = thisctrl
+)
+```
+
+The rest is output formatting and handling
+
+
+======= `selectfun()` and `splitfun()`
+
++ Where did it come from?
+  - It was passed in with `ctree_control()` as part of `extree_control()` as `.ctree_select()`
+
+```r
+partykit::ctree_control() {
+  return(c(extree_control(
+    selectfun = .ctree_select(),
+    splitfun = if (splitflavour == "ctree") .ctree_split() else .objfun_test(),
+    svselectfun = .ctree_select(),
+    svsplitfun =.ctree_split(minbucket = 0),
+    ...)
+  ),
+  ...)
+}
+```
+
+
+======== `select`
+
+The internal contents of `.ctree_select()` are
+
+```r
+function (model, trafo, data, subset, weights, whichvar, ctrl) {
+    args <- list(...)
+    ctrl[names(args)] <- args
+    .select(model, trafo, data, subset, weights, whichvar, ctrl, 
+        FUN = .ctree_test)
+}
+```
+
+When summoned it looks like 
+
+```r
+.select <- function(model, trafo, data, subset, weights, whichvar, ctrl, FUN) {
+  ret <- list(criteria = matrix(NA, nrow = 2L, ncol = ncol(model.frame(data))))
+  rownames(ret$criteria) <- c("statistic", "p.value")
+  colnames(ret$criteria) <- names(model.frame(data))
+  if (length(whichvar) == 0) {
+    return(ret)
+  }
+  for (j in whichvar) {
+    tst <- FUN(
+      model = model,
+      trafo = trafo,
+      data = data,
+      subset = subset,
+      weights = weights,
+      j = j,
+      SPLITONLY = FALSE,
+      ctrl = ctrl
+    )
+    ret$criteria["statistic", j] <- tst$statistic
+    ret$criteria["p.value", j] <- tst$p.value
+  }
+  ret
+}
+```
+
+Where `FUN` is equal to `.ctree_test` and is applied to each of the possible splitting covariates
+
+And the inside of `.ctree_test` looks like
+```r
+ix <- data$zindex[[j]] # Get the factor form of the covariate
+iy <- data$yxindex # Decides between .ctree_test_1d and .ctree_test_2d
+Y <- model$estfun # The matrix or vector of GSCA residuals
+if (!is.null(iy)) {
+    stopifnot(NROW(levels(iy)) == (NROW(Y) - 1))
+    return(.ctree_test_2d(data = data, j = j, Y = Y, iy = iy, 
+        subset = subset, weights = weights, SPLITONLY = SPLITONLY, 
+        ctrl = ctrl))
+} else {
+  return(.ctree_test_1d(data = data, j = j, Y = Y, subset = subsetNArm, 
+        weights = weights, SPLITONLY = SPLITONLY, ctrl = ctrl))
+}
+```
+
++ What exactly is `iy` for and what about `.ctree_test_2d()` vs `.ctree_test_1d()`?
+  - Either way, they both route to `.ctree_test_internal()`
+
+Internals of `.ctree_test_internal()` 
+
+```r
+nresample <- ifelse("MonteCarlo" %in% ctrl$testtype, ctrl$nresample, 0L) # How many times to resample to get the p-value...?
+pvalue <- !("Teststatistic" %in% ctrl$testtype) # Doesn't compute p-value if ctrl$testtype is "Teststatistic?"
+```
+
+Apparently you can also do a test for the splitpoint? 
+
+
+```r
+if (ctrl$splittest) { # Not run for the variable selection
+    if (ctrl$teststat != ctrl$splitstat) 
+        warning("Using different test statistics for testing and splitting")
+    teststat <- ctrl$splitstat
+    if (nresample == 0 && pvalue) 
+        stop("MonteCarlo approximation mandatory for splittest = TRUE")
+}
+else {
+    teststat <- ctrl$teststat # Run for the variable selection, equal to quadratic by default
+}
+```
+
+Mysterious `varonly`
+
+```r
+# Equal to FALSE in my running
+varonly <- "MonteCarlo" %in% ctrl$testtype && teststat == "maxtype"
+```
+
+The key test statistic is in this part
+
+```r
+lev <- LinStatExpCov(X = X, Y = Y, ix = ix, iy = iy, subset = subset, 
+        weights = weights, block = cluster, nresample = nresample, 
+        varonly = varonly, checkNAs = FALSE)
+
+tst <- doTest(lev, teststat = teststat, pvalue = pvalue, 
+        lower = TRUE, log = TRUE, ordered = ORDERED, maxselect = MAXSELECT, 
+        minbucket = ctrl$minbucket, pargs = ctrl$pargs)
+```
+
+Apparently, libcoin::doTest() is currently triggered with these values:
+
+```r
+doTest(
+  object = lev,
+  teststat = "quadratic",
+  alternative = "two.sided",
+  pvalue = TRUE,
+  lower = TRUE,
+  log = TRUE,
+  PermutedStatistics = FALSE,
+)
+```
+
+I'm not very clear on exactly what `libcoin::doTest()` and `libcoin::LinStatExpCov()` do, but I know that the return out put of `.select` must be a list with an element called 'criteria', which is a 2 row matrix by NCOL of data. The first row is the statistic and the second row is the p-value, as follows 
+
+```
+print(ret, digits = 2)
+$criteria
+          x31 x32 x33 x11 x12 x13 x41 x42 x43 x44 x21 x22 x23   z_true noise_1 noise_2
+statistic  NA  NA  NA  NA  NA  NA  NA  NA  NA  NA  NA  NA  NA  5.7e+00     1.9     2.0
+p.value    NA  NA  NA  NA  NA  NA  NA  NA  NA  NA  NA  NA  NA -5.1e-58    -2.4    -2.3
+```
+
+
++ How do both `libcoin::doTest()` and `libcoin::LinStatExpCov()` come together to get me a p-value?
+
+======== `split`
+
+The internal contents of `.ctree_split()` are
+
+```r
+function (model, trafo, data, subset, weights, whichvar, ctrl) {
+    args <- list(...)
+    ctrl[names(args)] <- args
+    .split(model, trafo, data, subset, weights, whichvar, ctrl, 
+        FUN = .ctree_test)
+}
+```
+
++ How does this work, roughly? 
+
+
 
 ==== Multigroup Approach
 
