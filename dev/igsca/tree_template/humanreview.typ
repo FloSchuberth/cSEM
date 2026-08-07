@@ -711,9 +711,70 @@ function (model, trafo, data, subset, weights, whichvar, ctrl) {
 }
 ```
 
-+ How does this work, roughly? 
+This calls `partykit:::.split()` which effectively calls
+
+```r
+for (j in whichvar) {
+  ret <- FUN(
+    model = model,
+    trafo = trafo,
+    data = data,
+    subset = subset,
+    weights = weights,
+    j = j,
+    SPLITONLY = TRUE,
+    ctrl = ctrl
+  )
+}
+```
+
+which in the debugger-env is equal to
+
+```r
+ret <- .ctree_test(
+  model = model,
+  trafo = trafo,
+  data = data,
+  subset = 1:1000,
+  weights = NULL,
+  j = 14,
+  SPLITONLY = TRUE, # This is FALSE during variable selection
+  ctrl = ctrl
+)
+```
+
+This eventually goes down to `.ctree_test_internal()` and somehow we get
 
 
+```r
+lev <- LinStatExpCov(...)
+
+tst<- doTest(lev, ...)
+
+sp <- tst$index
+# The actual split point selection
+if (all(is.na(sp))) {
+  return(NULL)
+}
+if (ORDERED) {
+  if (!is.ordered(x)) {
+    if (ctrl$intersplit & sp < length(ux)) {
+      sp <- (ux[sp] + ux[sp + 1]) / 2
+    } else {
+      sp <- ux[sp] # When x is continuous, it goes here
+    }
+  }
+  ret <- .partysplit(as.integer(j), breaks = sp, index = 1L:2L)
+} else {
+  ret <- .partysplit(
+    as.integer(j),
+    index = as.integer(sp) +
+      1L
+  )
+}
+```
+
++ Unclear why doTest is used at all for split point selection. What is happening here?
 
 ==== Multigroup Approach
 
