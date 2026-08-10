@@ -92,8 +92,6 @@ expect_grew <- function(tree) {
   expect_gt(partykit::width(partykit::node_party(tree)), 1)
 }
 
-
-
 # Matrix of Residuals ----------------------------------------------------
 test_that("IGSCA Trees Conditional Test on Matrix of Residuals Runs as expected", {
   set.seed(12353)
