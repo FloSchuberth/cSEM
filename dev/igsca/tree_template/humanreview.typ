@@ -781,3 +781,6 @@ if (ORDERED) {
 ```r
 
 ```
+
+
+= libcoin_call_anatomy.R

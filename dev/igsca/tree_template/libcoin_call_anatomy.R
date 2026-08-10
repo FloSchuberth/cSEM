@@ -150,11 +150,11 @@ d <- partykit::extree_data(
   fml, data = tree_data, yx = "none", nmax = c(yx = Inf, z = Inf)
 )
 mf <- model.frame(d)
-whichvar <- which(d$variables$z > 0)
+whichvar <- which(d$variables$z > 0) # Indexes which variables are the potential split covariates
 
 sub("what extree_data() prepares, and how `j` indexes it")
 cat("`j` indexes the WHOLE model frame, responses first:\n")
-cat("  ", paste0(seq_along(names(mf)), "=", names(mf), collapse = "  "), "\n", sep = "")
+cat(paste0(seq_along(names(mf)), "=", names(mf), collapse = " \n"), "\n", sep = "")
 cat("partitioning variables (extree's `whichvar`): ", paste(whichvar, collapse = " "),
     "  ->  ", paste(names(mf)[whichvar], collapse = " "), "\n", sep = "")
 cat("\nPer covariate, the two X shapes .ctree_test_1d() can hand to libcoin:\n")
