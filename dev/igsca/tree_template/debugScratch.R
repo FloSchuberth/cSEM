@@ -23,3 +23,15 @@ debug(partykit:::.split)
       debug(partykit:::.ctree_test_internal)
 # debug(partykit::party)
 
+
+# For trying to understand how the split-point selection works
+debug(partykit:::.extree_node)
+  debug(argmax_split)
+    debug(partition_stat)
+      debug(split_max_fitdiff)
+      debug(split_max_dli)
+      debug(split_max_dgi)
+
+# For how the list of different possible splitting partitions is constructed
+  debug(node_group_data)
+  debug(candidate_partitions)
