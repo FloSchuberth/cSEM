@@ -121,17 +121,7 @@ testMICOM <- function(
     # }
     
     ### Preparation ==============================================================
-    ## Get pooled data (potentially unstandardized) 
-    X <- .object[[1]]$Information$Data_pooled
-    X <- processData(X, .model = .object[[1]]$Information$Model)
-    
-    ## Remove id column: 
-    # If .id has been supplied, delete column with the id name otherwise skip
-    # if(!is.null(.object[[1]]$Information$Arguments$.id)) {
-    #   X <- X[, -which(colnames(X) == .object[[1]]$Information$Arguments$.id)]
-    # }
-    X <- as.matrix(X)
-    
+
     # Collect initial arguments (from the first object, but could be any other)
     arguments <- .object[[1]]$Information$Arguments
     
@@ -140,6 +130,10 @@ testMICOM <- function(
     X_list <- lapply(.object, function(x) x$Information$Arguments$.data)
     id <- rep(1:length(X_list), sapply(X_list, nrow))
     arguments[[".id"]] <- "id"
+
+    # Get pooled data as concat of separate group datasets, to match the way id is defined
+    X <- bind_rows(X_list)
+    X <- as.matrix(X)
     
     ### Step 1 - Configural invariance ===========================================
     
