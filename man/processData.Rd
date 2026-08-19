@@ -28,11 +28,11 @@ that exogenous variables of a given equation \strong{must} be supplied as
 instruments for themselves. Defaults to \code{NULL}.}
 }
 \value{
-A (N x K) data.frame containing the standardized data with columns ordered
+A (N x K) data.frame containing the data with columns ordered
 according to the order they appear in the measurement model equations provided
 via the \code{.model} argument.
 }
 \description{
-Prepare, standardize, check, and clean data provided via the \code{.data} argument.
+Prepare, check, and clean data provided via the \code{.data} argument.
 }
 \keyword{internal}
