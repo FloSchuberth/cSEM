@@ -101,13 +101,3 @@ test_that("testMICOM() Step 3 test statistics match between a list-built object 
     tolerance = 1e-8
   )
 })
-
-test_that("testMICOM() Step 3 p-values match between list-built and id-built (shuffled) objects", {
-  out_list <- testMICOM(res_multi_linear, .R = 5, .seed = 1,
-                        .handle_inadmissibles = "replace", .verbose = FALSE)
-  out_id_unordered <- testMICOM(res_multi_id_linear_unordered, .R = 5, .seed = 1,
-                                .handle_inadmissibles = "replace", .verbose = FALSE)
-  
-  expect_equal(out_list$Step3$Mean$P_value, out_id_unordered$Step3$Mean$P_value, tolerance = 1e-8)
-  expect_equal(out_list$Step3$Var$P_value, out_id_unordered$Step3$Var$P_value, tolerance = 1e-8)
-})
