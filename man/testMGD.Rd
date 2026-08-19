@@ -102,8 +102,7 @@ named list containing the following list elements:
 \item{\verb{$CI_overlap}}{A list with elements,  \code{Decision}, and \code{Decision_overall}}
 }
 
-If \code{.output_type = "structured"} a tibble (data frame) with the following columns
-is returned.
+If \code{.output_type = "structured"} a tibble (data frame) with the following columns is returned.
 
 \describe{
 \item{\code{Test}}{The name of the test.}
