@@ -121,23 +121,25 @@ testMICOM <- function(
     # }
     
     ### Preparation ==============================================================
-    ## Get pooled data (potentially unstandardized) 
-    X <- .object[[1]]$Information$Data_pooled
-    X <- processData(X, .model = .object[[1]]$Information$Model)
-    
-    ## Remove id column: 
-    # If .id has been supplied, delete column with the id name otherwise skip
-    # if(!is.null(.object[[1]]$Information$Arguments$.id)) {
-    #   X <- X[, -which(colnames(X) == .object[[1]]$Information$Arguments$.id)]
-    # }
-    X <- as.matrix(X)
-    
     # Collect initial arguments (from the first object, but could be any other)
     arguments <- .object[[1]]$Information$Arguments
     
+    # Collect the original (unstandardized) dataset that are supplied by the user from the individual cSEM objects
+    X_list <- lapply(.object, function(x) x$Information$Arguments$.data)
+    
+    # Clean the indivudal datasets using processData
+    X_list_processed <- lapply(X_list, processData,
+                               .model = .object[[1]]$Information$Model,
+                               .instruments = NULL)
+    
+    # Put together individual datasets together
+    X <- do.call(rbind, X_list_processed)
+    X <- as.matrix(X)
+    
+
     # Create a vector "id" to be used to randomly select groups (permutate) and
     # set id as an argument in order to identify the groups.
-    X_list <- lapply(.object, function(x) x$Information$Arguments$.data)
+    # X_list <- lapply(.object, function(x) x$Information$Arguments$.data)
     id <- rep(1:length(X_list), sapply(X_list, nrow))
     arguments[[".id"]] <- "id"
     
