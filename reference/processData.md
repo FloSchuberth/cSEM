@@ -1,7 +1,6 @@
 # Internal: Process data
 
-Prepare, standardize, check, and clean data provided via the `.data`
-argument.
+Prepare, check, and clean data provided via the `.data` argument.
 
 ## Usage
 
@@ -41,6 +40,6 @@ processData(
 
 ## Value
 
-A (N x K) data.frame containing the standardized data with columns
-ordered according to the order they appear in the measurement model
-equations provided via the `.model` argument.
+A (N x K) data.frame containing the data with columns ordered according
+to the order they appear in the measurement model equations provided via
+the `.model` argument.

@@ -52,3 +52,6 @@ Other contributors:
 
 - Gloria Pietropolli ([ORCID](https://orcid.org/0000-0001-7623-8419))
   \[contributor\]
+
+- Kjell S. Slupphaug ([ORCID](https://orcid.org/0009-0005-8324-2834))
+  \[contributor\]
