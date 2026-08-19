@@ -61,7 +61,7 @@ eta2 <~ y21 + y22 + y23
 eta3 =~ y31 + y32 + y33
 "
 
-## Nonlinear model
+## Nonlinear models
 model_nonlinear <- "
 # Structural model
 eta2 ~ eta1
@@ -86,6 +86,18 @@ Y2 =~ y21+y22+y23+y24
 Y3 =~ y31+y32+y33+y34+y35+y36+y37+y38
 ETA2 =~ y4 + y5 + y6
 ETA3 =~ y7 + y8 + y9
+"
+
+model_nonlinear_cubic <- "
+# Reflective measurement model
+ETA1 =~ y1_1 + y1_2 + y1_3
+ETA2 =~ y2_1 + y2_2 + y2_3
+ETA3 =~ y3_1 + y3_2 + y3_3
+
+# Structural model: full cubic polynomial in ETA1, ETA2
+ETA3 ~ ETA1 + ETA2 + ETA1.ETA2 + ETA1.ETA1 + ETA2.ETA2 +
+       ETA1.ETA1.ETA1 + ETA2.ETA2.ETA2 +
+       ETA1.ETA1.ETA2 + ETA2.ETA2.ETA1
 "
 
 ## Model and Sigma matrix for 2nd order DGP
