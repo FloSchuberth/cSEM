@@ -724,7 +724,7 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
     # See trendafilovExploratoryFactorAnalysis2011 regarding how the unique scores becomes 0
     U <- matrix(0, n_case, n_indicators)
   } else if (m <= 0) {
-    stop2("Unique score computation failed, sample size is likely too small or there is an error in the algorithm. Please report to developers.")
+    stop2("Unique score computation failed, sample size is likely too small or there is an error in the algorithm. Please report to developers as you should not be able to see this error.")
   }
 
   # R Optimized version of Hwang et al. (2017) for Obtaining Unique Scores----------------------------------------------------
