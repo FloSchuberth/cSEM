@@ -38,5 +38,5 @@ Intended to be used within the alternating least squares algorithm for either GS
 \details{
 Ensures that the unique scores have a mean of 0.
 
-Following \insertCite{trendafilovExploratoryFactorAnalysis2011;textual}{cSEM}, as the ratio of the sample size to the number of indicators decreases, the unique scores and unique loadings approach 0. This means that both GSCAm and IGSCA will reduce to GSCA at small enough sample sizes.
+Following page 879 of \insertCite{trendafilovExploratoryFactorAnalysis2011;textual}{cSEM}, as the ratio of the sample size to the number of indicators decreases, the unique scores and unique loadings approach 0. This means that both GSCAm and IGSCA will reduce to GSCA at small enough sample sizes.
 }
