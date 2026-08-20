@@ -693,8 +693,8 @@ updateCB <-
 #'
 updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_indicators, Z_normed) {
 
-  # Alternative version of Hwang et al. (2017)
-  # Author: Claude Fable 5 (Anthropic AI assistant).
+  # Alternative version of Hwang et al. (2017) for Obtaining Unique Scores--------------------------------------------------
+  # Author: Claude Fable 5 (Anthropic AI assistant) and revised by Michael S. Truong
   #
   # This alternative version forces U'1 = 0, so that the unique scores have a mean of 0,
   # which makes the Construct scores have a mean of 0 and is needed or else Path estimates
@@ -704,7 +704,7 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
   # 
   # When n_case is small relative to n_constructs and n_indicators, U may be under-identified and parameter bias may be much more apparent.
   # Solutions to this problem are discussed in Hwang et al. (2017), citing Unkel and Trendafilo (2013) and Trendafilo and Unkel (2011). 
-  # It should be noted that likelihood-based covariance structured analysis has similar problems, but faces convergen problems earlier than IGSCA.
+  # It should be noted that likelihood-based covariance structured analysis has similar problems, but faces convergence problems earlier than IGSCA.
   #
   qr_eta <- qr(cbind(1, Eta_normed))
   # The first `k` columns of the Q matrix of [1 | Eta_normed] is equal to the rank of [1 | Eta_normed]. 
@@ -715,11 +715,11 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
   rank_eta <- qr_eta$rank
   m        <- n_case - rank_eta
   if (m > 0) {
-  #   rank_eta + seq_len(m) should equal to `n_constructs + 2: n_case`, unless there is collinearity in [1 | Eta_normed]
+    #   rank_eta + seq_len(m) should equal to `n_constructs + 2: n_case`, unless there is collinearity in [1 | Eta_normed]
     svd_mx <- svd(tcrossprod(x = D, y = qr.qty(qr_eta, Z_normed)[rank_eta + seq_len(m), , drop = FALSE]))
-  # rank_eta should equal to 1 + n_constructs (number of columns of [1 | Eta_normed]), unless there is collinearity
-  # matrix(0, n_constructs, n_indicators) is zero-padding so that we take the matrix product of the parts of Q that we want.
-  U <- qr.qy(qr_eta, rbind(matrix(0, rank_eta, n_indicators), tcrossprod(x = svd_mx$v, y = svd_mx$u)))
+    # rank_eta should equal to 1 + n_constructs (number of columns of [1 | Eta_normed]), unless there is collinearity
+    # matrix(0, n_constructs, n_indicators) is zero-padding so that we take the matrix product of the parts of Q that we want.
+    U <- qr.qy(qr_eta, rbind(matrix(0, rank_eta, n_indicators), tcrossprod(x = svd_mx$v, y = svd_mx$u)))
   } else if (m == 0) {
     # See trendafilovExploratoryFactorAnalysis2011 regarding how the unique scores becomes 0
     U <- matrix(0, n_case, n_indicators)
@@ -727,7 +727,7 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
     stop2("Unique score computation failed, sample size is likely too small or there is an error in the algorithm. Please report to developers.")
   }
 
-  # R Optimized version of Hwang et al. (2017)
+  # R Optimized version of Hwang et al. (2017) for Obtaining Unique Scores----------------------------------------------------
   # qr_eta <- qr(Eta_normed)
   # svd_mx <- svd(tcrossprod(x = D, y = qr.qty(qr_eta, Z_normed)[(n_constructs + 1):n_case, , drop = FALSE]))
   ## Optimized Version of
@@ -738,7 +738,7 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
   ## Utilde <- svd_mx$v %*% t(svd_mx$u)  # (N-P) × J
   ## U <- qr.qy(qr_eta, rbind(matrix(0, n_constructs, n_indicators), svd_mx$v %*% t(svd_mx$u)))
 
-  # Old method based on Hwang et al. (2017) — O(N^2) memory and computation
+  # Old method based on Hwang et al. (2017) for Obtaining Unique Scores — O(N^2) memory and computation-----------------------
   # Eta_Q2 <- qr.Q(qr(Eta_normed), complete = TRUE)[,
   #   (n_constructs + 1):n_case,
   #   drop = FALSE
@@ -749,7 +749,7 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
   
   # U[, .indicator_type == "Composite"] <- 0
 
-  # Update Unique Loadings
+  # Update Unique Loadings------------------------------------------------------------------------------------------------------
 
   # D <- diag(diag(t(U) %*% Z_normed))
   D <- diag(diag(crossprod(U, Z_normed)))
