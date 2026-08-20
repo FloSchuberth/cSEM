@@ -722,6 +722,7 @@ updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_ind
     U <- qr.qy(qr_eta, rbind(matrix(0, rank_eta, n_indicators), tcrossprod(x = svd_mx$v, y = svd_mx$u)))
   } else if (m == 0) {
     # See trendafilovExploratoryFactorAnalysis2011 regarding how the unique scores becomes 0
+    # Because the unique scores are 0, the unique loadings will also become zero --- meaning that GSCA-M converges to GSCA
     U <- matrix(0, n_case, n_indicators)
   } else if (m <= 0) {
     stop2("Unique score computation failed, sample size is likely too small or there is an error in the algorithm. Please report to developers as you should not be able to see this error.")
