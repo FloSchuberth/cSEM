@@ -12,7 +12,7 @@ Defaults to \code{0.05}.}
 
 \item{.approach_inference}{Character string. Approach used to obtain the
 confidence interval for the HTMT. One of: "\emph{bootstrap}" or "\emph{asymptotic}".
-If "\emph{asymptotic}", a Wald interval based on the delta-method standard error
+If "\emph{asymptotic}", a confidence interval based on the delta-method standard error
 is computed; only available for \code{.type_htmt = "htmt"}.
 Defaults to "\emph{bootstrap}".}
 

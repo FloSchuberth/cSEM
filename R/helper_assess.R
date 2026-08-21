@@ -1135,6 +1135,115 @@ calculateRhoT <- function(
 }
 
 
+# =============================================================================
+# Asymptotic (analytic) inference helpers
+# =============================================================================
+
+#' Distribution-free asymptotic covariance matrix of correlations
+#'
+#' Large-sample variance-covariance matrix of the unique sample correlations of
+#' the columns of `.X`, using the estimator of \insertCite{Steiger1982;textual}{cSEM}.
+#'
+#' The correlations are taken in lower-triangular (column-major) order of the
+#' correlation matrix of `.X` - the same order used by the HTMT gradient -
+#' so that a gradient vector and this matrix align by position for a
+#' delta-method confidence interval, i.e.
+#' `Var(f) = t(g) %*% calculateCorVCV(.X) %*% g`.
+#'
+#' @inheritParams csem_arguments
+#'
+#' @return The `(L x L)` asymptotic covariance matrix of the correlations,
+#'   `L = P(P - 1)/2`, in lower-triangular (column-major) order.
+#'
+#' @references
+#'   \insertAllCited{}
+#'
+#' @keywords internal
+calculateCorVCV <- function(.X) {
+  
+  # HERE WE NEED STANDARDIZED DATA
+  n <- nrow(.X)
+  p <- ncol(.X)
+  
+  # (i<j) pairs in vech order: (1,2), (1,3), ..., (1,p), (2,3), ...
+  indices <- which(lower.tri(diag(p)), arr.ind = TRUE)[, c(2, 1)]
+  n_cor <- nrow(indices)
+  
+  R <- cor(.X)
+  
+  products <- array(0, dim = c(n, p, p))
+  for (i in 1:p) {
+    for (j in i:p) {
+      products[, i, j] <- .X[, i] * .X[, j]
+      products[, j, i] <- products[, i, j]
+    }
+  }
+  
+  mu4 <- function(i, j, k, l) mean(products[, i, j] * products[, k, l])
+  
+  vc_r <- matrix(0, nrow = n_cor, ncol = n_cor)
+  
+  for (idx1 in 1:n_cor) {
+    x <- indices[idx1, 1]
+    y <- indices[idx1, 2]
+    
+    for (idx2 in idx1:n_cor) {
+      z <- indices[idx2, 1]
+      t <- indices[idx2, 2]
+      
+      rxy <- R[x, y]
+      rzt <- R[z, t]
+      
+      # Steiger & Hakstian (1982), Eq. 3.4, i dont divide through sd, because the 
+      # standardization
+      cov_val <- mu4(x, y, z, t) -
+        0.5 * rxy * (mu4(x, x, z, t) + mu4(y, y, z, t)) -
+        0.5 * rzt * (mu4(x, y, z, z) + mu4(x, y, t, t)) +
+        0.25 * rxy * rzt * (mu4(x, x, z, z) + mu4(x, x, t, t) +
+                              mu4(y, y, z, z) + mu4(y, y, t, t))
+      
+      vc_r[idx1, idx2] <- cov_val
+      vc_r[idx2, idx1] <- cov_val
+    }
+  }
+  
+  vc_r / n
+}
+
+
+#' Delta-method standard errors of the HTMT
+#'
+#' Combines the per-construct-pair HTMT gradients with the asymptotic covariance
+#' matrix of the indicator correlations ([calculateCorVCV()]) into the
+#' delta-method standard error of each HTMT, `sqrt(t(g) %*% Sigma %*% g)`. The
+#' covariance matrix is formed once and reused for every pair. Gradient vectors
+#' and covariance matrix share the lower-triangular (column-major) ordering of
+#' the indicator correlation matrix, so they align by position.
+#'
+#' No lower bound is imposed on the variance: since `Sigma` is positive
+#' semi-definite, `t(g) %*% Sigma %*% g` is non-negative by construction, so a
+#' negative value would signal a genuine problem and is deliberately allowed to
+#' surface as `NaN` (with a warning) rather than being silently clamped to zero.
+#'
+#' @param .gradients A named list of gradient vectors, one per construct pair,
+#'   each aligned with the lower triangular of the indicator correlation matrix.
+#' @inheritParams csem_arguments 
+#'
+#' @return A named numeric vector of standard errors, one per construct pair.
+#'
+#' @keywords internal
+calculateHTMTasymptoticSE <- function(.gradients, .X) {
+  # in forman() the data is standardized so the input argument in the 
+  # helper_assess() is always standardized
+  Sigma <- calculateCorVCV(.X = .X)          
+  vapply(
+    .gradients,
+    function(g) sqrt(drop(t(g) %*% Sigma %*% g)), # sqrt( t(g) %*% Sigma %*% g )
+    numeric(1)
+  )
+}
+
+
 #' core function that calculates the HTMT
 #' @noRd
 #' 
