@@ -690,6 +690,9 @@ updateCB <-
 #' @param .indicator_type Vector of whether each indicator corresponds to a common factor or composite
 #' @returns List of 2 elements, normalized unique scores (`U`) and normalized unique loadings (`D`)
 #' 
+#' @references
+#'   \insertAllCited{}
+#' 
 #'
 updateUD <- function(D, Eta_normed, .indicator_type, n_constructs, n_case, n_indicators, Z_normed) {
 
