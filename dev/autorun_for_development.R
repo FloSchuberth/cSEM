@@ -37,6 +37,12 @@ library(testthat)
 library(withr)
 # withr::deferred_run()
 
+
+# Following big functions
+library(constructive)
+library(boomer) # pak::pak("moodymudskipper/boomer")
+
+
 # ---- pkgnet: function network as a large, standalone picture ----
 # pkgnet graphs the INSTALLED package, never the source tree. `pkg_path` is only
 # used for the covr coverage overlay, so reinstall first or the network still
