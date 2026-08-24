@@ -28,7 +28,7 @@ f1 <- function(.i, .j) {
           # Class "Quadratic_x"
           "Cubic_Quadratic"       = {class_ij <- "Quadratic_Cubic"},
           "TwInter_Quadratic"     = {class_ij <- "Quadratic_TwInter"},
-          "ThrwInter_Quadrtic"    = {class_ij <- "Quadratic_ThrwInter"},
+          "ThrwInter_Quadratic"   = {class_ij <- "Quadratic_ThrwInter"},
           "QuadTwInter_Quadratic" = {class_ij <- "Quadratic_QuadTwInter"},
           # Class "Cubic_x"
           "TwInter_Cubic"         = {class_ij <- "Cubic_TwInter"},
@@ -795,7 +795,7 @@ CubicCubic <- function(.i, .j, .Q, .H) {
     # 1.) Non of the components match
     
     x <- (M1 - 3 * (1 - .Q[j_single]^2) * M2 - 3 * (1 - .Q[i_single]^2) * M3 +
-            9 * (1 - .Q[i_single]^2) * (1 - .Q[j_single]) * M4) / D -
+            9 * (1 - .Q[i_single]^2) * (1 - .Q[j_single]^2) * M4) / D -
       (M0a / D0a) * (M0b / D0b)
     
   } else {
@@ -977,7 +977,7 @@ CubicQuadTwInter <- function(.i, .j, .Q, .H) {
     # 1.) Non of the components match
     
     x <- (M1 - 3 * (1 - .Q[i_single]^2) * M2 - (1 - .Q[j_quadratic]^2) * M3 +
-            3 * (1 -  .Q[i_single]^2) * (1 - .Q[j_single]^2) * M4) / D -
+            3 * (1 -  .Q[i_single]^2) * (1 - .Q[j_quadratic]^2) * M4) / D -
       (M0a * M0b) / D
     
   } else if (i_single == j_single) {
@@ -1121,7 +1121,7 @@ TwInterQuadTwInter <- function(.i, .j, .Q, .H) {
   
   i           <- names(tw_tab)
   j           <- names(other_tab)
-  i_split     <- unlist(strsplit(j, "\\."))
+  i_split     <- unlist(strsplit(i, "\\."))
   j_split     <- unlist(strsplit(j, "\\."))
   ij          <- c(i_split, j_split)
   ij_match    <- intersect(i_split, j_split)
@@ -1215,7 +1215,7 @@ ThrwInterThrwInter <- function(.i, .j, .Q, .H){
     # 3.) Two components of the first "ThrwInter" term match with two components
     #     of the other "ThrwInter" term.
     
-    x <- (M1 - (1 - .Q[ij_match[1]]^2) * M3 - (1 - .Q[ij_match[2]]^2) * M4 -
+    x <- (M1 - (1 - .Q[ij_match[1]]^2) * M3 - (1 - .Q[ij_match[2]]^2) * M4 +
             (1 - .Q[ij_match[1]]^2) * (1 - .Q[ij_match[2]]^2) * M2) / D -
       (M0a * M0b) / D
   } else {
@@ -1290,7 +1290,7 @@ ThrwInterQuadTwInter <- function(.i, .j, .Q, .H){
     # 2.) One of the components of the "ThrwInter" term matches the "Single"
     #     component of the "QuadTwInter" term.
     
-    x <- (M1 - (1 - .Q[j_quadratic]^2) * M2 - (1 - .Q[j_single]^2) * M3 -
+    x <- (M1 - (1 - .Q[j_quadratic]^2) * M2 - (1 - .Q[j_single]^2) * M3 +
             (1 - .Q[j_single]^2) * (1 - .Q[j_quadratic]^2) * M4) / D -
       (M0a * M0b) / D
     
@@ -1304,7 +1304,7 @@ ThrwInterQuadTwInter <- function(.i, .j, .Q, .H){
     # 4.) One component of the "ThrwInter" term matches the "Single" and another
     #     the "Quadratic" component of the "QuadTwInter" term.
     
-    x <- (M1 - 3 * (1 - .Q[j_quadratic]^2) * M5 - (1 - .Q[j_single]^2) * M3 -
+    x <- (M1 - 3 * (1 - .Q[j_quadratic]^2) * M5 - (1 - .Q[j_single]^2) * M3 +
             3 * (1 - .Q[j_quadratic]^2) * ( 1 - .Q[j_single]^2) *  M6) / D -
       (M0a * M0b) / D
     
@@ -1359,7 +1359,7 @@ QuadTwInercQuadTwInter <- function(.i, .j, .Q, .H) {
   if(length(ij_match) == 0) {
     # 1.) Non of the components match
     
-    x <- (M1 - (1 - .Q[i_quadratic]^2) * M2 - (1 - .Q[j_quadratic]^2) * M3 -
+    x <- (M1 - (1 - .Q[i_quadratic]^2) * M2 - (1 - .Q[j_quadratic]^2) * M3 +
             (1 - .Q[i_quadratic]^2) * (1 - .Q[j_quadratic]^2) * M4) / D -
       (M0a * M0b) / D
     
@@ -1377,7 +1377,7 @@ QuadTwInercQuadTwInter <- function(.i, .j, .Q, .H) {
     # 3.) The "Single" component of the term .i matches the "Quadratic"
     #     component of the term .j
     
-    x <- (M1 - 3 * (1 - .Q[i_single]^2) * M6 - (1 - .Q[i_quadratic]) * M7 -
+    x <- (M1 - 3 * (1 - .Q[i_single]^2) * M6 - (1 - .Q[i_quadratic]^2) * M7 +
             3 * (1 - .Q[i_single]^2) * (1 - .Q[i_quadratic]^2) * M8) / D -
       (M0a * M0b) / D
     
@@ -1385,7 +1385,7 @@ QuadTwInercQuadTwInter <- function(.i, .j, .Q, .H) {
     # 4.) The "Single" component of the term .j matches the "Quadratic"
     #     component of the term .i
     
-    x <- (M1 - 3 * (1 - .Q[j_single]^2) * M7 - (1 - .Q[j_quadratic]) * M6 -
+    x <- (M1 - 3 * (1 - .Q[j_single]^2) * M7 - (1 - .Q[j_quadratic]^2) * M6 +
             3 * (1 - .Q[j_single]^2) * (1 - .Q[j_quadratic]^2) * M8) / D -
       (M0a * M0b) / D
     
@@ -1415,7 +1415,7 @@ QuadTwInercQuadTwInter <- function(.i, .j, .Q, .H) {
     #     "Single" component of .j
     
     x <- (M1 - 3 * (1 - .Q[i_single]^2) * M6 - 3 * (1 - .Q[i_quadratic]^2) * M7 +
-            9 * (1 - .Q[i_quadratic]^2) * (1 - .Q[i_quadratic]^2) * M8) -
+            9 * (1 - .Q[i_single]^2) * (1 - .Q[i_quadratic]^2) * M8)/D -
       (M0a * M0b) / D
     
   }

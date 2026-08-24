@@ -218,7 +218,7 @@ predict <- function(
       .treat_as_continuous = TRUE
       warning2(
         "The following warning occured in the `predict()` function:\n",
-        "The categorical nature of the indicators can currently only be considered",
+        "The categorical nature of the indicators can currently only be considered ",
         "for .benchmark = PLS-PM, the results for benchmark = '", .benchmark, 
          "' treat the indicators as continuous."
       )
@@ -507,7 +507,11 @@ predict <- function(
                 names(u) <- exo_indicators
                 
                 # Simulation of values of the truncated normal distribution for the categorical indicators
-                Xstar <- t(TruncatedNormal::mvrandn(l = l, u = u, Cov_ind[exo_indicators, exo_indicators],.sim_points))
+                if(length(exo_indicators)==1){
+                 Xstar <- matrix(TruncatedNormal::mvrandn(l = l, u = u, Cov_ind[exo_indicators, exo_indicators],.sim_points),ncol = 1)   
+                }else{
+                 Xstar <- t(TruncatedNormal::mvrandn(l = l, u = u, Cov_ind[exo_indicators, exo_indicators],.sim_points))
+                }
                 colnames(Xstar) <- exo_indicators
                 
                 # The continuous indicators are replaced through their original values of the test data
@@ -518,7 +522,7 @@ predict <- function(
                 }
                 
                 # Predict scores for the exogenous constructs
-                eta_hat_exo <- Xstar[,exo_indicators]%*%t(W_train[cons_exo, exo_indicators, drop = FALSE])
+                eta_hat_exo <- Xstar[,exo_indicators,drop = FALSE]%*%t(W_train[cons_exo, exo_indicators, drop = FALSE])
                 
                 # Predict scores for the endogenous constructs (structural prediction)
                 eta_hat_endo_star <- eta_hat_exo %*% t(Gamma_train) %*% t(solve(diag(nrow(B_train)) - B_train))

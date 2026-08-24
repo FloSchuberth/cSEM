@@ -107,7 +107,7 @@
 #' 
 #' \preformatted{
 #' model_to_estimate <- "
-#' Structural model
+#' # Structural model
 #' eta2 ~ eta1
 #' eta3 ~ eta1 + eta2
 #' 
@@ -121,7 +121,7 @@
 #' across groups, write:
 #' \preformatted{
 #'to_compare <- "
-#' Structural parameters to compare
+#' # Structural parameters to compare
 #' eta3 ~ eta1
 #' 
 #' # Loadings to compare
@@ -179,18 +179,17 @@
 #'
 #' \describe{
 #'   \item{`$Information`}{Additional information.}
-#'   \item{`$Klesel`}{A list with elements, `Test_statistic`, `P_value`, and `Decision`}
-#'   \item{`$Chin`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
-#'   \item{`$Sarstedt`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
-#'   \item{`$Keil`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
-#'   \item{`$Nitzl`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
-#'   \item{`$Henseler`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
+#'   \item{`$Klesel`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `VCV_type`.}
+#'   \item{`$Chin`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`.}
+#'   \item{`$Sarstedt`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`.}
+#'   \item{`$Keil`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, `Decision_overall`, and `df`.}
+#'   \item{`$Nitzl`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, `Decision_overall`, and `df`.}
+#'   \item{`$Henseler`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`.}
 #'   \item{`$CI_para`}{A list with elements,  `Decision`, and `Decision_overall`}
 #'   \item{`$CI_overlap`}{A list with elements,  `Decision`, and `Decision_overall`}
 #' }
 #' 
-#' If `.output_type = "structured"` a tibble (data frame) with the following columns 
-#' is returned.
+#' If `.output_type = "structured"` a tibble (data frame) with the following columns is returned.
 #' 
 #' \describe{
 #'   \item{`Test`}{The name of the test.}
@@ -593,11 +592,14 @@ testMGD <- function(
     # pb <- txtProgressBar(min = 0, max = .R_permutation, style = 3)
   }
   
-    # Save old seed and restore on exit! This is important since users may have
+    # Save old seed (if it exists) and restore on exit!
+    # This is important since users may have
     # set a seed before, in which case the global seed would be
-    # overwritten if not explicitly restored
-    old_seed <- .Random.seed
-    on.exit({.Random.seed <<- old_seed})
+    # overwritten if not explicitly restored.
+    if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) {
+      old_seed <- get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
+      on.exit(assign(".Random.seed", old_seed, envir = .GlobalEnv), add = TRUE)
+    }
     
     ## Create seed if not already set
     if(is.null(.seed)) {
@@ -710,7 +712,8 @@ testMGD <- function(
   
   ### Postprocessing ===========================================================
   # Delete potential NA's
-  ref_dist1 <- Filter(Negate(anyNA), ref_dist)
+  # ref_dist1 <- Filter(Negate(anyNA), ref_dist)
+  ref_dist1 <- dropNAResamples(.ref_dist=ref_dist)
   }
   
   # # Order significance levels
@@ -756,23 +759,26 @@ testMGD <- function(
     ref_dist_Chin_temp <- purrr::transpose(ref_dist_Chin)
     names(ref_dist_Chin_temp) <- names(teststat_Chin)
     
+    
     ref_dist_matrices_Chin <- lapply(ref_dist_Chin_temp, function(x) {
       temp <- do.call(cbind, x)
-      temp_ind <- stats::complete.cases(temp)
-      temp[temp_ind, ,drop = FALSE]
+      # drop NAs
+      temp[, colSums(is.na(temp)) == 0, drop = FALSE]
     })
 
     
     # Calculation of the p-values
-    pvalue_Chin <- lapply(1:length(ref_dist_matrices_Chin), function(x) {
+    pvalue_Chin <- lapply(seq_along(ref_dist_matrices_Chin), function(x) {
+      
+      refm <- ref_dist_matrices_Chin[[x]]
+      obs  <- teststat_Chin[[x]][rownames(refm)]
     # # Share of values above the positive test statistic
     # rowMeans(ref_dist_matrices_Chin[[x]] >= abs(teststat_Chin[[x]])) +
     # # share of values of the reference distribution below the negative test statistic
     # rowMeans(ref_dist_matrices_Chin[[x]] <= (-abs(teststat_Chin[[x]])))
     
     # Use correction to ensure that p-value never equals 0 (Phipson & Smyth, 2010)
-    (rowSums(abs(ref_dist_matrices_Chin[[x]]) >= abs(teststat_Chin[[x]])) + 1) /
-      (ncol(ref_dist_matrices_Chin[[x]]) + 1)
+      (rowSums(abs(refm) >= abs(obs)) + 1) / (ncol(refm) + 1)
   })
     
     names(pvalue_Chin) <- names(ref_dist_matrices_Chin)
@@ -1325,7 +1331,7 @@ testMGD <- function(
       "P_value"            = padjusted_Keil,
       "Decision"           = decision_Keil,
       "Decision_overall"   = decision_overall_Keil,
-      "df"                 = purrr::transpose(teststat_Keil)$df[[1]]   
+      "df"                 = purrr::transpose(teststat_Keil)$df   
     )
   }
   
@@ -1336,7 +1342,7 @@ testMGD <- function(
       "P_value"            = padjusted_Nitzl,
       "Decision"           = decision_Nitzl,
       "Decision_overall"   = decision_overall_Nitzl,
-      "df"                 = purrr::transpose(teststat_Nitzl)$df[[1]]
+      "df"                 = purrr::transpose(teststat_Nitzl)$df
       
     )
   }

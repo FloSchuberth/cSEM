@@ -711,6 +711,20 @@ assess(res)
     ##   LOY ~ EXPE           0.3142          NA        NA        NA
     ##   LOY ~ QUAL           0.3714          NA        NA        NA
     ##   LOY ~ VAL            0.3311          NA        NA        NA
+    ## 
+    ## Variance accounted for (VAF):
+    ## =============================
+    ##   Effects        Estimate  Std. error   t-stat.   p-value
+    ##   QUAL ~ IMAG      1.0000          NA        NA        NA
+    ##   VAL ~ IMAG       1.0000          NA        NA        NA
+    ##   VAL ~ EXPE       0.9275          NA        NA        NA
+    ##   SAT ~ IMAG       0.4904          NA        NA        NA
+    ##   SAT ~ EXPE       1.0345          NA        NA        NA
+    ##   SAT ~ QUAL       0.6252          NA        NA        NA
+    ##   LOY ~ IMAG       0.6241          NA        NA        NA
+    ##   LOY ~ EXPE       1.0000          NA        NA        NA
+    ##   LOY ~ QUAL       1.0000          NA        NA        NA
+    ##   LOY ~ VAL        1.0000          NA        NA        NA
     ## ________________________________________________________________________________
 
 ``` r

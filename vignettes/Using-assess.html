@@ -160,7 +160,7 @@ model</h1>
 <h3 class="subtitle project-tagline">Using the <code>assess()</code>
 function</h3>
 <h4 class="author project-author">Manuel Rademaker</h4>
-<h4 class="date project-date">Last edited: 2026-03-29</h4>
+<h4 class="date project-date">Last edited: 2026-07-30</h4>
 </section>
 
 
@@ -283,7 +283,7 @@ KR-20.</li>
 <li>The <strong>root mean square outer residual covariance</strong>
 (<span class="math inline">\(\text{RMS}_{\theta}\)</span>)</li>
 </ul></li>
-<li>The <strong>Goodness-of-Fit</strong> (GoF) proposed by <span class="citation">Tenenhaus, Amanto, and Vinzi (2004)</span>.</li>
+<li>The <strong>Goodness-of-Fit</strong> (GoF) proposed by <span class="citation">Tenenhaus et al. (2004)</span>.</li>
 <li>The <strong>variance inflation factors</strong> (VIF) for the
 structural equations as well as for Mode B regression equations (if
 <code>.approach_weights = &quot;PLS-PM&quot;</code>).</li>
@@ -600,17 +600,17 @@ applicability, intuition, and interpretability in the context of models
 containing constructs modeled as composites or for models estimated
 using a composite-based approach.</p>
 <p>Independent of the approach and model used, a particularly
-controversial issue are cutoff values for fit indices <span class="citation">(e.g., Marsh, Hau, and Wen 2004)</span>. In
-factor-based SEM cutoff values are rather popular. The basis for these
-are numerous simulation studies, most notably <span class="citation">Hu
-and Bentler (1999)</span>. In contrast for composite models - for better
-or worse - no cutoff values have been suggested.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> Using
-<code>assess()</code> to calculate fit indices, the user should always
-keep in mind that the value of a fit index is just <em>some</em>
-indication of good or bad fit. Other aspects related to model fit must
-be considered as well. It is unreasonable to make a binary decision
-about rejection or non-rejection of a model by solely comparing the
-value of a fit index with a (more or less) arbitrary cutoff value.</p>
+controversial issue are cutoff values for fit indices <span class="citation">(e.g., Marsh et al. 2004)</span>. In factor-based SEM
+cutoff values are rather popular. The basis for these are numerous
+simulation studies, most notably <span class="citation">Hu and Bentler
+(1999)</span>. In contrast for composite models - for better or worse -
+no cutoff values have been suggested.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> Using <code>assess()</code> to calculate
+fit indices, the user should always keep in mind that the value of a fit
+index is just <em>some</em> indication of good or bad fit. Other aspects
+related to model fit must be considered as well. It is unreasonable to
+make a binary decision about rejection or non-rejection of a model by
+solely comparing the value of a fit index with a (more or less)
+arbitrary cutoff value.</p>
 <p>The definitions of fit indices calculated by <code>assess()</code>
 are given in the following:</p>
 <ul>
@@ -695,8 +695,7 @@ of the maximum likelihood fitting function is computed by
 <p>The <span class="math inline">\(\chi^2\)</span>-<strong>statistic</strong> is
 defined as: <span class="math display">\[ \chi^2 = (N-1)\cdot F\]</span>
 where <span class="math inline">\(N\)</span> is the sample size.</p>
-<p>Main reference: <span class="citation">K. G. Jöreskog
-(1969)</span></p>
+<p>Main reference: <span class="citation">Jöreskog (1969)</span></p>
 </div>
 <div id="the-chi2textdf-ratio" class="section level4">
 <h4>The <span class="math inline">\(\chi^2/\text{df}\)</span>-ratio</h4>
@@ -705,8 +704,7 @@ is defined as: <span class="math display">\[ \chi^2 = (N-1)\cdot
 F/\text{df}_M\]</span> where <span class="math inline">\(N\)</span> the
 sample size and <span class="math inline">\(\text{df}_M\)</span> the
 degrees of freedom of the estimated model.</p>
-<p>Main reference: <span class="citation">K. G. Jöreskog
-(1969)</span></p>
+<p>Main reference: <span class="citation">Jöreskog (1969)</span></p>
 </div>
 <div id="the-goodness-of-fit-index-gfi" class="section level4">
 <h4>The goodness-of-fit index (GFI)</h4>
@@ -735,7 +733,7 @@ SST from a unweighted least squares (ULS) estimation.</li>
 </ol>
 <p>Note that for any quadratic matrix , we have: <span class="math inline">\(\text{trace}(\boldsymbol{\mathbf{X}}^2) =
 \sum_{i,j} x^2_i\)</span>.</p>
-<p>Main references: <span class="citation">Karl G. Jöreskog and Sörbom
+<p>Main references: <span class="citation">Jöreskog and Sörbom
 (1982)</span>, <span class="citation">Mulaik et al. (1989)</span> and
 <span class="citation">Tanaka and Huba (1985)</span></p>
 </div>
@@ -1083,9 +1081,9 @@ Dillon-Goldstein’s <span class="math inline">\(\rho\)</span></td>
 </div>
 <div id="closed-form-confidence-interval" class="section level4">
 <h4>Closed-form confidence interval</h4>
-<p><span class="citation">Trinchera, Marie, and Marcoulides
-(2018)</span> proposed a closed-form confidence interval (CI) for the
-tau-equivalent reliability (Cronbach’s alpha). To compute the CI, set
+<p><span class="citation">Trinchera et al. (2018)</span> proposed a
+closed-form confidence interval (CI) for the tau-equivalent reliability
+(Cronbach’s alpha). To compute the CI, set
 <code>.closed_form_ci = TRUE</code> when calling <code>assess()</code>
 or invoke <code>calculateRhoT(..., .closed_form_ci = TRUE)</code>
 directly. The level of the CI can be changed by supplying a single value
@@ -1102,18 +1100,19 @@ or a vector of values to <code>.alpha</code>.</p>
 <h2>The Goodness of Fit (GoF)</h2>
 <div id="definition-4" class="section level3">
 <h3>Definition</h3>
-<p>Calculate the Goodness of Fit (GoF) proposed by <span class="citation">Tenenhaus, Amanto, and Vinzi (2004)</span>. Note that,
-contrary to what the name suggests, the GoF is <strong>not</strong> a
-measure of (overall) model fit in a <span class="math inline">\(\chi^2\)</span>-fit test sense. See e.g. <span class="citation">Henseler and Sarstedt (2012)</span> for a
-discussion.</p>
+<p>Calculate the Goodness of Fit (GoF) proposed by <span class="citation">Tenenhaus et al. (2004)</span>. Note that, contrary to
+what the name suggests, the GoF is <strong>not</strong> a measure of
+(overall) model fit in a <span class="math inline">\(\chi^2\)</span>-fit
+test sense. See e.g. <span class="citation">Henseler and Sarstedt
+(2013)</span> for a discussion.</p>
 </div>
 <div id="formulae-4" class="section level3">
 <h3>Formulae</h3>
 <p>The GoF is defined as:</p>
 <p><span class="math display">\[\text{GoF} = \sqrt{\varnothing
 \text{COM}_k \times \varnothing R^2_{structural}} =
-\sqrt{\frac{1}{k}\sum^K_{k=1} \lambda^2_k + \frac{1}{M} \sum^M_{m = 1}
-R^2_{m;structural}} \]</span> where <span class="math inline">\(COM_k\)</span> is the communality of indicator
+\sqrt{\frac{1}{K}\sum^K_{k=1} \lambda^2_k \times \frac{1}{M} \sum^M_{m =
+1} R^2_{m;structural}} \]</span> where <span class="math inline">\(COM_k\)</span> is the communality of indicator
 <span class="math inline">\(k\)</span>, i.e. the variance in the
 indicator that is explained by its connected latent variable and <span class="math inline">\(R^2_{m; structural}\)</span> the R squared of the
 <span class="math inline">\(m\)</span>’th equation of the structural
@@ -1130,13 +1129,13 @@ model.</p>
 <h3>Definition</h3>
 <p>The heterotrait-monotrait ratio of correlations (HTMT) was first
 proposed by<br />
-<span class="citation">Henseler, Ringle, and Sarstedt (2015)</span> to
-assess convergent and discriminant validity.</p>
+<span class="citation">Henseler et al. (2015)</span> to assess
+convergent and discriminant validity.</p>
 </div>
 <div id="formulae-5" class="section level3">
 <h3>Formulae</h3>
-<p>See: <span class="citation">Henseler, Ringle, and Sarstedt
-(2015)</span> on page 121 (equation (6))</p>
+<p>See: <span class="citation">Henseler et al. (2015)</span> on page 121
+(equation (6))</p>
 </div>
 <div id="implementation-5" class="section level3">
 <h3>Implementation</h3>
@@ -1151,15 +1150,15 @@ assess convergent and discriminant validity.</p>
 <!-- Spearman-Brown formulae/prophecy, standarized alpha. In `cSEM` parallel  -->
 <!-- reliability is always identical to tau-equivalent reliability as indicators -->
 <!-- are always standardized. Hence, only $\rho_T$ is reported. -->
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Bentler1990" class="csl-entry">
 Bentler, Peter M. 1990. <span>“Comparative Fit Indexes in Structural
 Models.”</span> <em>Psychological Bulletin</em> 107 (2): 238–46.
 </div>
 <div id="ref-Bentler2006" class="csl-entry">
-———. 2006. <em>EQS 6 <span>Structural</span> <span>Equations</span>
-<span>Program</span> <span>Manual</span></em> (version 6). Encino, CA:
-Multivariate Software, Inc.
+Bentler, Peter M. 2006. <em>EQS 6 <span>Structural</span>
+<span>Equations</span> <span>Program</span> <span>Manual</span></em>.
+Version 6. Encino, CA: Multivariate Software, Inc.
 </div>
 <div id="ref-Bentler1980" class="csl-entry">
 Bentler, Peter M., and Douglas G. Bonett. 1980. <span>“Significance
@@ -1191,7 +1190,7 @@ Structural Equation Modeling.”</span> <em>Journal of the Academy of
 Marketing Science</em> 43 (1): 115–35. <a href="https://doi.org/10.1007/s11747-014-0403-8">https://doi.org/10.1007/s11747-014-0403-8</a>.
 </div>
 <div id="ref-Henseler2012a" class="csl-entry">
-Henseler, Jörg, and Marko Sarstedt. 2012. <span>“Goodness-of-Fit Indices
+Henseler, Jörg, and Marko Sarstedt. 2013. <span>“Goodness-of-Fit Indices
 for Partial Least Squares Path Modeling.”</span> <em>Computational
 Statistics</em> 28 (2): 565–80. <a href="https://doi.org/10.1007/s00180-012-0317-1">https://doi.org/10.1007/s00180-012-0317-1</a>.
 </div>
@@ -1243,8 +1242,8 @@ Structure Models Under Arbitrary <span>GLS</span> Estimation.”</span>
 <div id="ref-Tenenhaus2004" class="csl-entry">
 Tenenhaus, Michel, Silvano Amanto, and Vincenzo Esposito Vinzi. 2004.
 <span>“A Global Goodness-of-Fit Index for <span>PLS</span> Structural
-Equation Modelling.”</span> In <em>Proceedings of the <span>XLII
-SIS</span> Scientific Meeting</em>, 739–42.
+Equation Modelling.”</span> <em>Proceedings of the <span>XLII SIS</span>
+Scientific Meeting</em>, 739–42.
 </div>
 <div id="ref-Trinchera2018" class="csl-entry">
 Trinchera, Laura, Nicolas Marie, and George A. Marcoulides. 2018.

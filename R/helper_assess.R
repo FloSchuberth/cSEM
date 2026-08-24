@@ -720,7 +720,7 @@ calculateRelativeGoF <- function(
 ){
   
   if(inherits(.object, "cSEMResults_multi")) {
-    out <- lapply(.object, calculateGoF)
+    out <- lapply(.object, calculateRelativeGoF)
     return(out)
   } else if(inherits(.object, "cSEMResults_default")) {
     ## Get relevant quantities
@@ -1978,17 +1978,17 @@ calculateGFI <- function(.object, .type_gfi = c("ML", "GLS", "ULS"), ...) {
   
   if(.type_gfi == "ML") {
     # If ML; See Mulaik (1989, p. 345)
-    1 - matrixcalc::matrix.trace(t(solve(Sigma_hat) %*% S - diag(nrow(S))) %*% 
-                                   (solve(Sigma_hat) %*% S - diag(nrow(S)))) / 
-      matrixcalc::matrix.trace(t(solve(Sigma_hat) %*% S) %*% (solve(Sigma_hat) %*% S))
+    1 - trace(t(solve(Sigma_hat) %*% S - diag(nrow(S))) %*% 
+              (solve(Sigma_hat) %*% S - diag(nrow(S)))) / 
+      trace(t(solve(Sigma_hat) %*% S) %*% (solve(Sigma_hat) %*% S))
   } else if(.type_gfi == "GLS") {
     # If GLS; See Tanaka & Huba (1985, p. 199; Eq. 16)
-    1 - matrixcalc::matrix.trace(t(diag(nrow(S)) - Sigma_hat %*% solve(S)) %*% 
-                                   (diag(nrow(S)) - Sigma_hat %*% solve(S))) / nrow(S)
+    1 - trace(t(diag(nrow(S)) - Sigma_hat %*% solve(S)) %*% 
+              (diag(nrow(S)) - Sigma_hat %*% solve(S))) / nrow(S)
   } else if(.type_gfi == "ULS") {
     # If ULS; See Mulaik (1989, p. 345)
-    1 - matrixcalc::matrix.trace(t(S - Sigma_hat) %*% (S - Sigma_hat)) / 
-      matrixcalc::matrix.trace(t(S) %*% S)
+    1 - trace(t(S - Sigma_hat) %*% (S - Sigma_hat)) / 
+      trace(t(S) %*% S)
   }
 }
 

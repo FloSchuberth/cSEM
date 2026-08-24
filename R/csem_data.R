@@ -1,6 +1,6 @@
 #' Internal: Process data
 #'
-#' Prepare, standardize, check, and clean data provided via the `.data` argument.
+#' Prepare, check, and clean data provided via the `.data` argument.
 #'
 #' @usage processData(
 #'   .data        = NULL, 
@@ -10,7 +10,7 @@
 #'
 #' @inheritParams csem_arguments
 #'
-#' @return A (N x K) data.frame containing the standardized data with columns ordered
+#' @return A (N x K) data.frame containing the data with columns ordered
 #'   according to the order they appear in the measurement model equations provided
 #'   via the `.model` argument.
 #'
@@ -54,9 +54,8 @@ processData <- function(
   
   ## Check if data set is symmetric. This is an indicator that a covariance
   ## matrix has been supplied (which is not supported by cSEM):
-  if(
-    matrixcalc::is.square.matrix(as.matrix(.data)) &&
-    matrixcalc::is.symmetric.matrix(as.matrix(.data))) {
+  ## isSymmetric tests both if the matrix is square, and if it's symmetric
+  if (isSymmetric(as.matrix(.data))) {
     warning2("Data is symmetric! Did you provide a covariance or correlation matrix to `.data`?\n",
              "Argument `.data` requires a matrix or data.frame of raw data.")
   }

@@ -92,18 +92,17 @@ named list containing the following list elements:
 
 \describe{
 \item{\verb{$Information}}{Additional information.}
-\item{\verb{$Klesel}}{A list with elements, \code{Test_statistic}, \code{P_value}, and \code{Decision}}
-\item{\verb{$Chin}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
-\item{\verb{$Sarstedt}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
-\item{\verb{$Keil}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
-\item{\verb{$Nitzl}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
-\item{\verb{$Henseler}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
+\item{\verb{$Klesel}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{VCV_type}.}
+\item{\verb{$Chin}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}.}
+\item{\verb{$Sarstedt}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}.}
+\item{\verb{$Keil}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, \code{Decision_overall}, and \code{df}.}
+\item{\verb{$Nitzl}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, \code{Decision_overall}, and \code{df}.}
+\item{\verb{$Henseler}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}.}
 \item{\verb{$CI_para}}{A list with elements,  \code{Decision}, and \code{Decision_overall}}
 \item{\verb{$CI_overlap}}{A list with elements,  \code{Decision}, and \code{Decision_overall}}
 }
 
-If \code{.output_type = "structured"} a tibble (data frame) with the following columns
-is returned.
+If \code{.output_type = "structured"} a tibble (data frame) with the following columns is returned.
 
 \describe{
 \item{\code{Test}}{The name of the test.}
@@ -225,7 +224,7 @@ the model to estimate. Take the simple model:
 
 \preformatted{
 model_to_estimate <- "
-Structural model
+# Structural model
 eta2 ~ eta1
 eta3 ~ eta1 + eta2
 
@@ -239,7 +238,7 @@ If only the path from eta1 to eta3 and the loadings of eta1 are to be compared
 across groups, write:
 \preformatted{
 to_compare <- "
-Structural parameters to compare
+# Structural parameters to compare
 eta3 ~ eta1
 
 # Loadings to compare
