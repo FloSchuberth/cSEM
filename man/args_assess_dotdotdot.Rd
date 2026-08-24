@@ -26,7 +26,7 @@ For "\emph{replace}" resampling continues until there are exactly \code{.R} admi
 Depending on the frequency of inadmissible solutions this may significantly increase
 computing time. Defaults to "\emph{drop}".}
 
-\item{.inference}{Character string. Either \code{none}, \code{bootstrap} or\code{asymptotic}.
+\item{.inference}{Character string. Either \code{none}, \code{bootstrap} or \code{asymptotic}.
 Defaults to \code{none}.}
 
 \item{.null_model}{Logical. Should the degrees of freedom for the null model

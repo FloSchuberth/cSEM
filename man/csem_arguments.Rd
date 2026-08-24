@@ -210,7 +210,7 @@ computing time. Defaults to "\emph{drop}".}
 an integer of the position of the column of \code{.data} whose levels are used
 to split \code{.data} into groups. Defaults to \code{NULL}.}
 
-\item{.inference}{Character string. Either \code{none}, \code{bootstrap} or\code{asymptotic}.
+\item{.inference}{Character string. Either \code{none}, \code{bootstrap} or \code{asymptotic}.
 Defaults to \code{none}.}
 
 \item{.independent}{Character string. The name of the independent variable.}

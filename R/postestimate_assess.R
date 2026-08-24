@@ -516,13 +516,14 @@ assess <- function(
       
       # Get argument values
       args_htmt <- list(...)
+      # Record the inference actually performed, derived from the result itself:
+      # no quantiles -> no inference (incl. internal downgrades); quantiles
+      # without bootstrap runs -> asymptotic; otherwise bootstrap.
       ref <- if(!is.null(out[["HTMT"]])) out[["HTMT"]] else out[["HTMT2"]]
-      if(any(names(args_htmt) == ".inference")) {
-        out$Information[[".inference"]] <- if(is.null(ref$quantiles)) "none"
-        else args_htmt[[".inference"]]
-      } else {
-        out$Information[[".inference"]] <- "none"
-      }
+      out$Information[[".inference"]] <-
+        if(is.null(ref$quantiles))           "none"
+      else if(is.null(ref$nr_admissibles)) "asymptotic"
+      else                                 "bootstrap"
       
       if(any(names(args_htmt) == ".alpha")) {
         out$Information[[".alpha"]] <- args_htmt[[".alpha"]]

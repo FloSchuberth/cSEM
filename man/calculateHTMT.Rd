@@ -35,7 +35,7 @@ Defaults to \code{0.05}.}
 to compute the 1-alpha\% quantile of the bootstrap HTMT values. For possible
 choices see \code{\link[=infer]{infer()}}. Ignored}
 
-\item{.inference}{Character string. Either \code{none}, \code{bootstrap} or\code{asymptotic}.
+\item{.inference}{Character string. Either \code{none}, \code{bootstrap} or \code{asymptotic}.
 Defaults to \code{none}.}
 
 \item{.only_common_factors}{Logical. Should only concepts modeled as common
@@ -79,11 +79,13 @@ Computation of the HTMT/HTMT2 assumes that all intra-block and inter-block
 correlations between indicators are either all-positive or all-negative.
 A warning is given if this is not the case.
 
-To obtain bootstrap confidence intervals for the HTMT/HTMT2 values, set \code{.inference = TRUE}.
+To obtain bootstrap confidence intervals for the HTMT/HTMT2 values, set \code{.inference = "bootstrap"}.
 To choose the type of confidence interval, use \code{.ci}. To control the bootstrap process,
 arguments \code{.R} and \code{.seed} are available. Note, that \code{.alpha} is multiplied by two
 because typically researchers are interested in one-sided bootstrap confidence intervals
 for the HTMT/HTMT2.
+
+To obtain asymptotic confidence intervals for the HTMT values, set \code{.inference = "asymptotic"}.
 
 Since the HTMT and the HTMT2 both assume a reflective measurement
 model only concepts modeled as common factors are considered by default.
