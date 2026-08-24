@@ -32,6 +32,7 @@
 <url><loc>https://floschuberth.github.io/cSEM/reference/calculateAVE.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/calculateCompositeVCV.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/calculateConstructVCV.html</loc></url>
+<url><loc>https://floschuberth.github.io/cSEM/reference/calculateCorVCV.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/calculateCorrectionFactors.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/calculateDf.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/calculateDistance.html</loc></url>
@@ -41,6 +42,7 @@
 <url><loc>https://floschuberth.github.io/cSEM/reference/calculateFitness.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/calculateGoF.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/calculateHTMT.html</loc></url>
+<url><loc>https://floschuberth.github.io/cSEM/reference/calculateHTMTasymptoticSE.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/calculateIndicatorCor.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/calculateInnerWeightsPLS.html</loc></url>
 <url><loc>https://floschuberth.github.io/cSEM/reference/calculateMAE.html</loc></url>

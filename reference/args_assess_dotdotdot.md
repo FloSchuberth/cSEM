@@ -9,7 +9,7 @@ A complete alphabetical list of all possible arguments accepted by
 - .absolute:
 
   Logical. Should the absolute HTMT values be returned? Defaults to
-  `TRUE` .
+  `TRUE`.
 
 - .alpha:
 
@@ -42,7 +42,8 @@ A complete alphabetical list of all possible arguments accepted by
 
 - .inference:
 
-  Logical. Should critical values be computed? Defaults to `FALSE`.
+  Character string. Either `none`, `bootstrap` or `asymptotic`. Defaults
+  to `none`.
 
 - .null_model:
 

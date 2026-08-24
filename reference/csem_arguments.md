@@ -18,7 +18,7 @@ To list all arguments and their possible choices, use
 - .absolute:
 
   Logical. Should the absolute HTMT values be returned? Defaults to
-  `TRUE` .
+  `TRUE`.
 
 - .approach_gcca:
 
@@ -292,6 +292,10 @@ To list all arguments and their possible choices, use
   Logical. Should the full output of summarize be printed. Defaults to
   `TRUE`.
 
+- .gradient:
+
+  Logical. Should the gradient be calculated for the HTMT.
+
 - .graph_attrs:
 
   Character string. Additional attributes that should be passed to the
@@ -323,7 +327,8 @@ To list all arguments and their possible choices, use
 
 - .inference:
 
-  Logical. Should critical values be computed? Defaults to `FALSE`.
+  Character string. Either `none`, `bootstrap` or `asymptotic`. Defaults
+  to `none`.
 
 - .independent:
 

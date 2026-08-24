@@ -69,9 +69,9 @@ for congeneric measurement models. In general, they are used to assess discrimin
 <span> .type_htmt            <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'htmt'</span>,<span class="st">'htmt2'</span><span class="op">)</span>,</span>
 <span> .absolute             <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span> .alpha                <span class="op">=</span> <span class="fl">0.05</span>,</span>
-<span> .ci                   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CI_percentile"</span>, <span class="st">"CI_standard_z"</span>, <span class="st">"CI_standard_t"</span>, </span>
+<span> .ci                   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CI_percentile"</span>, <span class="st">"CI_standard_z"</span>, <span class="st">"CI_standard_t"</span>,</span>
 <span>                           <span class="st">"CI_basic"</span>, <span class="st">"CI_bc"</span>, <span class="st">"CI_bca"</span>, <span class="st">"CI_t_interval"</span><span class="op">)</span>,</span>
-<span> .inference            <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span> .inference            <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"bootstrap"</span>, <span class="st">"asymptotic"</span><span class="op">)</span>,</span>
 <span> .only_common_factors  <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span> .R                    <span class="op">=</span> <span class="fl">499</span>,</span>
 <span> .seed                 <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -95,7 +95,7 @@ Defaults to "<em>htmt</em>"</p></dd>
 
 <dt id="arg--absolute">.absolute<a class="anchor" aria-label="anchor" href="#arg--absolute"></a></dt>
 <dd><p>Logical. Should the absolute HTMT values be returned?
-Defaults to <code>TRUE</code> .</p></dd>
+Defaults to <code>TRUE</code>.</p></dd>
 
 
 <dt id="arg--alpha">.alpha<a class="anchor" aria-label="anchor" href="#arg--alpha"></a></dt>
@@ -106,12 +106,12 @@ Defaults to <code>0.05</code>.</p></dd>
 <dt id="arg--ci">.ci<a class="anchor" aria-label="anchor" href="#arg--ci"></a></dt>
 <dd><p>A character strings naming the type of confidence interval to use
 to compute the 1-alpha% quantile of the bootstrap HTMT values. For possible
-choices see <code><a href="infer.html">infer()</a></code>. Ignored
-if <code>.inference = FALSE</code>. Defaults to "<em>CI_percentile</em>".</p></dd>
+choices see <code><a href="infer.html">infer()</a></code>. Ignored</p></dd>
 
 
 <dt id="arg--inference">.inference<a class="anchor" aria-label="anchor" href="#arg--inference"></a></dt>
-<dd><p>Logical. Should critical values be computed? Defaults to <code>FALSE</code>.</p></dd>
+<dd><p>Character string. Either <code>none</code>, <code>bootstrap</code> or <code>asymptotic</code>.
+Defaults to <code>none</code>.</p></dd>
 
 
 <dt id="arg--only-common-factors">.only_common_factors<a class="anchor" aria-label="anchor" href="#arg--only-common-factors"></a></dt>
@@ -139,13 +139,14 @@ not be altered!</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A named list containing:</p><ul><li><p>the values of the HTMT/HTMT2, i.e., a matrix with the HTMT/HTMT2 values
-at its lower triangular and if <code>.inference = TRUE</code> the upper triangular contains
-the upper limit of the 1-2*.alpha% bootstrap confidence interval if the HTMT/HTMT2 is positive and
+at its lower triangular and if <code>.inference != "none"</code> the upper triangular contains
+the upper limit of the 1-2*.alpha% bootstrap or asymptotic confidence interval
+if the HTMT/HTMT2 is positive and
 the lower limit if the HTMT/HTMT2 is negative.</p></li>
-<li><p>the lower and upper limits of the 1-2*.alpha% bootstrap confidence interval if
-<code>.inference = TRUE</code>; otherwise it is <code>NULL</code>.</p></li>
+<li><p>the lower and upper limits of the 1-2*.alpha% confidence interval if
+<code>.inference</code> is not none; otherwise it is <code>NULL</code>.</p></li>
 <li><p>the number of admissible bootstrap runs, i.e., the number of HTMT/HTMT2 values
-calculated during bootstrap if <code>.inference = TRUE</code>; otherwise it is <code>NULL</code>.
+calculated during bootstrap otherwise it is <code>NULL</code>.
 Note, the HTMT2 is based on the geometric and thus cannot always be calculated.</p></li>
 </ul></div>
     <div class="section level2">
@@ -153,11 +154,12 @@ Note, the HTMT2 is based on the geometric and thus cannot always be calculated.<
     <p>Computation of the HTMT/HTMT2 assumes that all intra-block and inter-block
 correlations between indicators are either all-positive or all-negative.
 A warning is given if this is not the case.</p>
-<p>To obtain bootstrap confidence intervals for the HTMT/HTMT2 values, set <code>.inference = TRUE</code>.
+<p>To obtain bootstrap confidence intervals for the HTMT/HTMT2 values, set <code>.inference = "bootstrap"</code>.
 To choose the type of confidence interval, use <code>.ci</code>. To control the bootstrap process,
 arguments <code>.R</code> and <code>.seed</code> are available. Note, that <code>.alpha</code> is multiplied by two
 because typically researchers are interested in one-sided bootstrap confidence intervals
 for the HTMT/HTMT2.</p>
+<p>To obtain asymptotic confidence intervals for the HTMT values, set <code>.inference = "asymptotic"</code>.</p>
 <p>Since the HTMT and the HTMT2 both assume a reflective measurement
 model only concepts modeled as common factors are considered by default.
 For concepts modeled as composites the HTMT may be computed by setting

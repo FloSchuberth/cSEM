@@ -15,9 +15,9 @@ calculateHTMT(
  .type_htmt            = c('htmt','htmt2'),
  .absolute             = TRUE,
  .alpha                = 0.05,
- .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
+ .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t",
                            "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
- .inference            = FALSE,
+ .inference            = c("none", "bootstrap", "asymptotic"),
  .only_common_factors  = TRUE,
  .R                    = 499,
  .seed                 = NULL,
@@ -43,7 +43,7 @@ calculateHTMT(
 - .absolute:
 
   Logical. Should the absolute HTMT values be returned? Defaults to
-  `TRUE` .
+  `TRUE`.
 
 - .alpha:
 
@@ -55,11 +55,12 @@ calculateHTMT(
   compute the 1-alpha% quantile of the bootstrap HTMT values. For
   possible choices see
   [`infer()`](https://floschuberth.github.io/cSEM/reference/infer.md).
-  Ignored if `.inference = FALSE`. Defaults to "*CI_percentile*".
+  Ignored
 
 - .inference:
 
-  Logical. Should critical values be computed? Defaults to `FALSE`.
+  Character string. Either `none`, `bootstrap` or `asymptotic`. Defaults
+  to `none`.
 
 - .only_common_factors:
 
@@ -88,18 +89,18 @@ calculateHTMT(
 A named list containing:
 
 - the values of the HTMT/HTMT2, i.e., a matrix with the HTMT/HTMT2
-  values at its lower triangular and if `.inference = TRUE` the upper
-  triangular contains the upper limit of the 1-2\*.alpha% bootstrap
-  confidence interval if the HTMT/HTMT2 is positive and the lower limit
-  if the HTMT/HTMT2 is negative.
+  values at its lower triangular and if `.inference != "none"` the upper
+  triangular contains the upper limit of the 1-2\*.alpha% bootstrap or
+  asymptotic confidence interval if the HTMT/HTMT2 is positive and the
+  lower limit if the HTMT/HTMT2 is negative.
 
-- the lower and upper limits of the 1-2\*.alpha% bootstrap confidence
-  interval if `.inference = TRUE`; otherwise it is `NULL`.
+- the lower and upper limits of the 1-2\*.alpha% confidence interval if
+  `.inference` is not none; otherwise it is `NULL`.
 
 - the number of admissible bootstrap runs, i.e., the number of
-  HTMT/HTMT2 values calculated during bootstrap if `.inference = TRUE`;
-  otherwise it is `NULL`. Note, the HTMT2 is based on the geometric and
-  thus cannot always be calculated.
+  HTMT/HTMT2 values calculated during bootstrap otherwise it is `NULL`.
+  Note, the HTMT2 is based on the geometric and thus cannot always be
+  calculated.
 
 ## Details
 
@@ -108,11 +109,14 @@ inter-block correlations between indicators are either all-positive or
 all-negative. A warning is given if this is not the case.
 
 To obtain bootstrap confidence intervals for the HTMT/HTMT2 values, set
-`.inference = TRUE`. To choose the type of confidence interval, use
-`.ci`. To control the bootstrap process, arguments `.R` and `.seed` are
-available. Note, that `.alpha` is multiplied by two because typically
-researchers are interested in one-sided bootstrap confidence intervals
-for the HTMT/HTMT2.
+`.inference = "bootstrap"`. To choose the type of confidence interval,
+use `.ci`. To control the bootstrap process, arguments `.R` and `.seed`
+are available. Note, that `.alpha` is multiplied by two because
+typically researchers are interested in one-sided bootstrap confidence
+intervals for the HTMT/HTMT2.
+
+To obtain asymptotic confidence intervals for the HTMT values, set
+`.inference = "asymptotic"`.
 
 Since the HTMT and the HTMT2 both assume a reflective measurement model
 only concepts modeled as common factors are considered by default. For

@@ -913,6 +913,9 @@ assess(res)
 #> ----------------------- Discriminant validity assessment -----------------------
 #> 
 #>  Heterotrait-monotrait ratio of correlations matrix (HTMT matrix)
+#>  ----------------------------------------------------------------
+#> 
+#>  Values in the lower triangular part are the absolute HTMT values
 #> 
 #>           eta1      eta2 eta3
 #> eta1 1.0000000 0.0000000    0
@@ -921,6 +924,9 @@ assess(res)
 #> 
 #> 
 #>  Advanced heterotrait-monotrait ratio of correlations matrix (HTMT2 matrix)
+#>  --------------------------------------------------------------------------
+#> 
+#>  Values in the lower triangular part are the absolute HTMT2 values
 #> 
 #>           eta1      eta2 eta3
 #> eta1 1.0000000 0.0000000    0
@@ -929,7 +935,7 @@ assess(res)
 #> 
 #> 
 #>  Fornell-Larcker matrix
-#> 
+#>  ----------------------
 #>           eta1      eta2      eta3
 #> eta1 0.4802903 0.4506886 0.4400530
 #> eta2 0.4506886 0.4922660 0.3757225

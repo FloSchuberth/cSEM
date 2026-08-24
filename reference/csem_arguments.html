@@ -68,7 +68,7 @@ Defaults to <code>0.05</code>.</p></dd>
 
 <dt id="arg--absolute">.absolute<a class="anchor" aria-label="anchor" href="#arg--absolute"></a></dt>
 <dd><p>Logical. Should the absolute HTMT values be returned?
-Defaults to <code>TRUE</code> .</p></dd>
+Defaults to <code>TRUE</code>.</p></dd>
 
 
 <dt id="arg--approach-gcca">.approach_gcca<a class="anchor" aria-label="anchor" href="#arg--approach-gcca"></a></dt>
@@ -335,6 +335,10 @@ already?. Defaults to <code>FALSE</code>.</p></dd>
 Defaults to <code>TRUE</code>.</p></dd>
 
 
+<dt id="arg--gradient">.gradient<a class="anchor" aria-label="anchor" href="#arg--gradient"></a></dt>
+<dd><p>Logical. Should the gradient be calculated for the HTMT.</p></dd>
+
+
 <dt id="arg--graph-attrs">.graph_attrs<a class="anchor" aria-label="anchor" href="#arg--graph-attrs"></a></dt>
 <dd><p>Character string. Additional attributes that should be passed
 to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to <em>c("rankdir=LR")</em>.</p></dd>
@@ -363,7 +367,8 @@ to split <code>.data</code> into groups. Defaults to <code>NULL</code>.</p></dd>
 
 
 <dt id="arg--inference">.inference<a class="anchor" aria-label="anchor" href="#arg--inference"></a></dt>
-<dd><p>Logical. Should critical values be computed? Defaults to <code>FALSE</code>.</p></dd>
+<dd><p>Character string. Either <code>none</code>, <code>bootstrap</code> or <code>asymptotic</code>.
+Defaults to <code>none</code>.</p></dd>
 
 
 <dt id="arg--independent">.independent<a class="anchor" aria-label="anchor" href="#arg--independent"></a></dt>
