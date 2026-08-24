@@ -161,7 +161,7 @@
 #' @param .id Character string or integer. A character string giving the name or 
 #'   an integer of the position of the column of `.data` whose levels are used
 #'   to split `.data` into groups. Defaults to `NULL`.
-#' @param .inference Character string. Either `none`, `bootstrap` or`asymptotic`. 
+#' @param .inference Character string. Either `none`, `bootstrap` or `asymptotic`. 
 #'   Defaults to `none`.
 #' @param .independent Character string. The name of the independent variable.
 #' @param .instruments A named list of vectors of instruments. The names

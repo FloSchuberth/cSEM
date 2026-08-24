@@ -1491,13 +1491,13 @@ calculateHTMTcore <- function(
 #' correlations between indicators are either all-positive or all-negative.
 #' A warning is given if this is not the case.
 #' 
-#' To obtain bootstrap confidence intervals for the HTMT/HTMT2 values, set `.inference = bootstrap`.
+#' To obtain bootstrap confidence intervals for the HTMT/HTMT2 values, set `.inference = "bootstrap"`.
 #' To choose the type of confidence interval, use `.ci`. To control the bootstrap process,
 #' arguments `.R` and `.seed` are available. Note, that `.alpha` is multiplied by two
 #' because typically researchers are interested in one-sided bootstrap confidence intervals
 #' for the HTMT/HTMT2. 
 #' 
-#' To obtain asymptotic confidence intervals for the HTMT values, set `.inference = asymptotic`.
+#' To obtain asymptotic confidence intervals for the HTMT values, set `.inference = "asymptotic"`.
 #' 
 #' Since the HTMT and the HTMT2 both assume a reflective measurement
 #' model only concepts modeled as common factors are considered by default.

@@ -516,8 +516,10 @@ assess <- function(
       
       # Get argument values
       args_htmt <- list(...)
+      ref <- if(!is.null(out[["HTMT"]])) out[["HTMT"]] else out[["HTMT2"]]
       if(any(names(args_htmt) == ".inference")) {
-        out$Information[[".inference"]] <- args_htmt[[".inference"]]
+        out$Information[[".inference"]] <- if(is.null(ref$quantiles)) "none"
+        else args_htmt[[".inference"]]
       } else {
         out$Information[[".inference"]] <- "none"
       }
