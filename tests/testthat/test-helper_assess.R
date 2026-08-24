@@ -48,7 +48,7 @@ test_that("analytic HTMT gradients equal numerical gradients", {
   core <- cSEM:::calculateHTMTcore(res_3cf,
                                    .type_htmt           = "htmt",
                                    .absolute            = FALSE,
-                                   .asymptotic          = TRUE,
+                                   .gradient          = TRUE,
                                    .only_common_factors = TRUE)
   grads <- attr(core, "gradients")
   expect_named(grads, c("eta1__eta2", "eta1__eta3", "eta2__eta3"))
@@ -115,7 +115,7 @@ test_that("CI equals estimate +/- z * sqrt(t(g) Sigma g) and layout is correct",
   core <- cSEM:::calculateHTMTcore(res_3cf,
                                    .type_htmt           = "htmt",
                                    .absolute            = FALSE,
-                                   .asymptotic          = TRUE,
+                                   .gradient          = TRUE,
                                    .only_common_factors = TRUE)
   grads <- attr(core, "gradients")
   

@@ -1250,7 +1250,7 @@ calculateHTMTcore <- function(
   .object               = NULL,
   .type_htmt            = NULL,
   .absolute             = NULL,
-  .asymptotic           = FALSE,
+  .gradient           = FALSE,
   .only_common_factors  = NULL
 ){
   
@@ -1421,7 +1421,7 @@ calculateHTMTcore <- function(
     x[3]/sqrt(x[1]*x[2]) * x[4]
   })
   
-  if(.asymptotic == TRUE){
+  if(.gradient == TRUE){
     if(.type_htmt == "htmt2"){
       warning2("Asymptotic confidence intervals are not available for the htmt2 yet.")
     }
@@ -1472,7 +1472,7 @@ calculateHTMTcore <- function(
   # downstream code can form Var(HTMT) = t(g) %*% Sigma %*% g. Attached as an
   # attribute so `out` still behaves as the plain HTMT matrix required by the
   # bootstrap `.user_funs` path; only set when asymptotic inference is requested.
-  if(.asymptotic == TRUE && .type_htmt == "htmt"){
+  if(.gradient == TRUE && .type_htmt == "htmt"){
     attr(out, "gradients") <- gradients
   }
   out
@@ -1589,7 +1589,7 @@ calculateHTMT <- function(
                            .type_htmt = .type_htmt,
                            .absolute =  .absolute,
                            .only_common_factors = .only_common_factors,
-                           .asymptotic = (.inference  == "asymptotic" &&
+                           .gradient = (.inference  == "asymptotic" &&
                                           .type_htmt == "htmt")
   )
   if(is.null(out)) {

@@ -307,7 +307,7 @@ print.cSEMAssess <- function(x, ...) {
     # HTMT
     if(any(names(x) == "HTMT") && !is.null(x$HTMT)) {
       cat2("\n\n\tHeterotrait-monotrait ratio of correlations matrix (HTMT matrix)\n\n", 
-           "\n\n\tValues in the lower triangular part are the", if(x$HTMT$absolute){" absolute "}, "HTMT values\n\n")
+           "\n\tValues in the lower triangular part are the", if(x$HTMT$absolute){" absolute "}, "HTMT values\n\n")
 
       if(x$HTMT$inference != "none") {
         if(x$HTMT$inference == "asymptotic") {
@@ -326,7 +326,7 @@ print.cSEMAssess <- function(x, ...) {
 # HTMT2
     if(any(names(x) == "HTMT2") && !is.null(x$HTMT2)) {
       cat2("\n\n\tAdvanced heterotrait-monotrait ratio of correlations matrix (HTMT2 matrix)\n\n",
-           "\n\n\tValues in the lower triangular part are the", if(x$HTMT$absolute){" absolute "}, "HTMT2 values\n\n")
+           "\n\tValues in the lower triangular part are the", if(x$HTMT$absolute){" absolute "}, "HTMT2 values\n\n")
       
       if(x$HTMT2$inference == "bootstrap") {
         cat2("\tValues in the upper triangular part are the ", 

@@ -72,10 +72,6 @@
 #'   or "*regression*". Defaults to "*PLS-PM*".
 #' @param .args_used A list of function argument names whose value was modified
 #'   by the user.
-#' @param .asymptotic Logical. Should the internal function `calculateHTMTcore()`
-#'   additionally return the gradients required for the delta-method standard error?
-#'   Defaults to `FALSE`.
-#'
 #' @param .attrbutes Character string. Variables used as attributes in IPMA.
 #' @param .benchmark Character string. The procedure to obtain benchmark predictions.
 #'   One of "*lm*", "*unit*", "*PLS-PM*", "*GSCA*", "*PCA*", "*MAXVAR*", or "*NA*".
@@ -146,6 +142,7 @@
 #'   already?. Defaults to `FALSE`.
 #' @param .full_output Logical. Should the full output of summarize be printed.
 #'   Defaults to `TRUE`.
+#' @param .gradient Logical. Should the gradient be calculated for the HTMT. 
 #' @param .graph_attrs Character string. Additional attributes that should be passed 
 #' to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to *c("rankdir=LR")*.
 #' @param .H The (N x J) matrix of construct scores.
@@ -475,7 +472,6 @@ args_default <- function(.choices = FALSE) {
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                  "GSCA", "PCA", "unit", "bartlett", "regression"), 
     .arguments               = NULL,
-    .asymptotic              = FALSE,
     .attributes              = NULL,
     .benchmark               = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR","NA"),
     .bias_corrected          = TRUE,
@@ -508,6 +504,7 @@ args_default <- function(.choices = FALSE) {
     .first_resample          = NULL,
     .force                   = FALSE,
     .full_output             = TRUE,
+    .gradient                = FALSE,
     .graph_attrs             = c("rankdir=LR"),
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,

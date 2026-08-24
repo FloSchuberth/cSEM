@@ -86,10 +86,6 @@ or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
 \item{.args_used}{A list of function argument names whose value was modified
 by the user.}
 
-\item{.asymptotic}{Logical. Should the internal function \code{calculateHTMTcore()}
-additionally return the gradients required for the delta-method standard error?
-Defaults to \code{FALSE}.}
-
 \item{.attrbutes}{Character string. Variables used as attributes in IPMA.}
 
 \item{.benchmark}{Character string. The procedure to obtain benchmark predictions.
@@ -190,6 +186,8 @@ already?. Defaults to \code{FALSE}.}
 
 \item{.full_output}{Logical. Should the full output of summarize be printed.
 Defaults to \code{TRUE}.}
+
+\item{.gradient}{Logical. Should the gradient be calculated for the HTMT.}
 
 \item{.graph_attrs}{Character string. Additional attributes that should be passed
 to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emph{c("rankdir=LR")}.}
