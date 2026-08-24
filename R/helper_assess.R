@@ -1241,6 +1241,16 @@ calculateHTMTasymptoticSE <- function(.gradients, .X) {
     numeric(1)
   )
 }
+#' Internal: Calculate the nth root
+#' @noRd
+#' 
+calculateNthRoot <- function(.x, .n){
+  if(.x < 0 && .n %% 2 == 1){
+    sign(.x) * abs(.x)^(1/.n)
+  } else {
+    .x^(1/.n)
+  }
+}
 
 
 #' core function that calculates the HTMT
@@ -1335,16 +1345,7 @@ calculateHTMTcore <- function(
     list(monocor1,monocor2,hetcor)
   })
   
-  # Real n-th root: for negative .x with odd .n the (negative) real root is
-  # returned; for negative .x with even .n no real root exists and the result
-  # is NaN, i.e., the geometric mean cannot be calculated.
-  calculateNthRoot <- function(.x, .n){
-    if(.x < 0 && .n %% 2 == 1){
-      sign(.x) * abs(.x)^(1/.n)
-    } else {
-      .x^(1/.n)
-    }
-  }
+
 
   if(.type_htmt=='htmt2'){
     # calculate geometric mean of the correlations
