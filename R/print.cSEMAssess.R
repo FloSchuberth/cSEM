@@ -323,7 +323,7 @@ print.cSEMAssess <- function(x, ...) {
       print(x$HTMT$htmts)
     }
 # HTMT2
-    if(any(names(x) == "HTMT2") && !is.null(x$HTMT)) {
+    if(any(names(x) == "HTMT2") && !is.null(x$HTMT2)) {
       cat2("\n\n\tAdvanced heterotrait-monotrait ratio of correlations matrix (HTMT2 matrix)\n\n")
       
       if(x$Information$.inference == "bootstrap") {
