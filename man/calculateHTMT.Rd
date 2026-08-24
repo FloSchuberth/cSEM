@@ -33,8 +33,7 @@ Defaults to \code{0.05}.}
 
 \item{.ci}{A character strings naming the type of confidence interval to use
 to compute the 1-alpha\% quantile of the bootstrap HTMT values. For possible
-choices see \code{\link[=infer]{infer()}}. Ignored
-if \code{.inference = FALSE}. Defaults to "\emph{CI_percentile}".}
+choices see \code{\link[=infer]{infer()}}. Ignored}
 
 \item{.inference}{Character string. Either \code{none}, \code{bootstrap} or\code{asymptotic}.
 Defaults to \code{none}.}
@@ -57,13 +56,14 @@ not be altered!}
 A named list containing:
 \itemize{
 \item the values of the HTMT/HTMT2, i.e., a matrix with the HTMT/HTMT2 values
-at its lower triangular and if \code{.inference = TRUE} the upper triangular contains
-the upper limit of the 1-2*.alpha\% bootstrap confidence interval if the HTMT/HTMT2 is positive and
+at its lower triangular and if \code{.inference != "none"} the upper triangular contains
+the upper limit of the 1-2*.alpha\% bootstrap or asymptotic confidence interval
+if the HTMT/HTMT2 is positive and
 the lower limit if the HTMT/HTMT2 is negative.
 \item the lower and upper limits of the 1-2*.alpha\% confidence interval if
 \code{.inference} is not none; otherwise it is \code{NULL}.
 \item the number of admissible bootstrap runs, i.e., the number of HTMT/HTMT2 values
-calculated during bootstrap if \code{.inference = TRUE}; otherwise it is \code{NULL}.
+calculated during bootstrap otherwise it is \code{NULL}.
 Note, the HTMT2 is based on the geometric and thus cannot always be calculated.
 }
 }

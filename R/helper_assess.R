@@ -1668,7 +1668,7 @@ if(.inference != "none"){
     rownames(quants) <- c(sprintf("%.6g%%L", cl), sprintf("%.6g%%U", cl))
     nr_admissible <- NULL
 
-  } else { # no inference
+  } else if(.inference == "none"){ # no inference
     quants <- NULL
     nr_admissible <- NULL
   }

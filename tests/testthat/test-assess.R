@@ -69,13 +69,15 @@ test_that("Assess works for all choices of .quality_criterion", {
 })
 
 ## Assess using additional arguments
+## .inference is set to "bootstrap" for tests regarding the asymptotic pipeline, 
+## see test-helper_assess.R
 assess(res,   
             .absolute            = TRUE,
             .alpha               = 0.05,
             .ci                  = "CI_percentile",
             .closed_form_ci      = FALSE,
             .handle_inadmissibles= "drop",
-            .inference           = TRUE,
+            .inference           = "bootstrap",
             .null_model          = FALSE,
             .R                   = 199,
             .saturated           = FALSE,
