@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_assess.R
 \name{calculateHTMTasymptoticSE}
 \alias{calculateHTMTasymptoticSE}
-\title{Delta-method standard errors of the HTMT}
+\title{Internal: Delta-method standard errors of the HTMT}
 \usage{
 calculateHTMTasymptoticSE(.gradients, .X)
 }
@@ -16,12 +16,12 @@ each aligned with the lower triangular of the indicator correlation matrix.}
 A named numeric vector of standard errors, one per construct pair.
 }
 \description{
-Combines the per-construct-pair HTMT gradients with the asymptotic covariance
-matrix of the indicator correlations (\code{\link[=calculateCorVCV]{calculateCorVCV()}}) into the
-delta-method standard error of each HTMT, \code{sqrt(t(g) \%*\% Sigma \%*\% g)}. The
-covariance matrix is formed once and reused for every pair. Gradient vectors
-and covariance matrix share the lower-triangular (column-major) ordering of
-the indicator correlation matrix, so they align by position.
+Combines the per-construct-pair HTMT gradients with the asymptotic
+variance-covariance matrix of the indicator correlations (\code{\link[=calculateCorVCV]{calculateCorVCV()}})
+into the delta-method standard error of each HTMT, \code{sqrt(t(g) \%*\% Sigma \%*\% g)}.
+The variance-covariance matrix is formed once and reused for every pair.
+Gradient vectors and variance-covariance matrix share the lower-triangular
+ordering of the indicator correlation matrix, so they align by position.
 }
 \details{
 No lower bound is imposed on the variance: since \code{Sigma} is positive

@@ -308,12 +308,12 @@ print.cSEMAssess <- function(x, ...) {
     if(any(names(x) == "HTMT") && !is.null(x$HTMT)) {
       cat2("\n\n\tHeterotrait-monotrait ratio of correlations matrix (HTMT matrix)\n\n")
 
-      if(x$Information$.inference) {
-        if(x$Information$.approach_inference == "asymptotic") {
+      if(x$Information$.inference != "none") {
+        if(x$Information$.inference == "asymptotic") {
           cat2("\tValues in the upper triangular part are the ",
                paste0(100*(1 - x$Information$.alpha), "% limits of the\n",
                       "\tasymptotic confidence intervals based on the delta-method.\n\n"))
-        } else {
+        } else if(x$Information$.inference == "bootstrap") {
           cat2("\tValues in the upper triangular part are the ",
                paste0(100*(1 - x$Information$.alpha), "%-quantiles of the\n",
               "\tbootstrap confidence intervals (using .ci = '", x$Information$.ci, "')\n",
@@ -326,7 +326,7 @@ print.cSEMAssess <- function(x, ...) {
     if(any(names(x) == "HTMT2") && !is.null(x$HTMT)) {
       cat2("\n\n\tAdvanced heterotrait-monotrait ratio of correlations matrix (HTMT2 matrix)\n\n")
       
-      if(x$Information$.inference) {
+      if(x$Information$.inference == "bootstrap") {
         cat2("\tValues in the upper triangular part are the ", 
              paste0(100*(1 - x$Information$.alpha), "%-quantiles of the\n", 
                     "\tbootstrap confidence intervals (using .ci = '", x$Information$.ci, "')\n",

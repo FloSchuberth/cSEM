@@ -32,12 +32,6 @@ Defaults to "\emph{none}". Note that many postestimation procedures (such as
 indicator correlation matrix (e.g. Bravais-Pearson correlation matrix).
 Only use if you know what you are doing.}
 
-\item{.approach_inference}{Character string. Approach used to obtain the
-confidence interval for the HTMT. One of: "\emph{bootstrap}" or "\emph{asymptotic}".
-If "\emph{asymptotic}", a confidence interval based on the delta-method standard error
-is computed; only available for \code{.type_htmt = "htmt"}.
-Defaults to "\emph{bootstrap}".}
-
 \item{.approach_mgd}{Character string or a vector of character strings.
 Approach used for the multi-group comparison. One of: "\emph{all}", "\emph{Klesel}", "\emph{Chin}",
 "\emph{Sarstedt}", "\emph{Keil}, "\emph{Nitzl}", "\emph{Henseler}", "\emph{CI_para}", or "\emph{CI_overlap}".
@@ -216,7 +210,8 @@ computing time. Defaults to "\emph{drop}".}
 an integer of the position of the column of \code{.data} whose levels are used
 to split \code{.data} into groups. Defaults to \code{NULL}.}
 
-\item{.inference}{Logical. Should critical values be computed? Defaults to \code{FALSE}.}
+\item{.inference}{Character string. Either \code{none}, \code{bootstrap} or\code{asymptotic}.
+Defaults to \code{none}.}
 
 \item{.independent}{Character string. The name of the independent variable.}
 

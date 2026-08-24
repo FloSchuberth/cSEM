@@ -27,11 +27,6 @@
 #'   [testOMF()] or [fit()] implicitly assume a continuous  
 #'   indicator correlation matrix (e.g. Bravais-Pearson correlation matrix).
 #'   Only use if you know what you are doing.
-#' @param .approach_inference Character string. Approach used to obtain the
-#'   confidence interval for the HTMT. One of: "*bootstrap*" or "*asymptotic*".
-#'   If "*asymptotic*", a confidence interval based on the delta-method standard error
-#'   is computed; only available for `.type_htmt = "htmt"`.
-#'   Defaults to "*bootstrap*".
 #' @param .approach_mgd Character string or a vector of character strings. 
 #'   Approach used for the multi-group comparison. One of: "*all*", "*Klesel*", "*Chin*", 
 #'   "*Sarstedt*", "*Keil*, "*Nitzl*", "*Henseler*", "*CI_para*", or "*CI_overlap*". 
@@ -166,7 +161,8 @@
 #' @param .id Character string or integer. A character string giving the name or 
 #'   an integer of the position of the column of `.data` whose levels are used
 #'   to split `.data` into groups. Defaults to `NULL`.
-#' @param .inference Logical. Should critical values be computed? Defaults to `FALSE`.
+#' @param .inference Character string. Either `none`, `bootstrap` or`asymptotic`. 
+#'   Defaults to `none`.
 #' @param .independent Character string. The name of the independent variable.
 #' @param .instruments A named list of vectors of instruments. The names
 #'   of the list elements are the names of the dependent (LHS) constructs of the structural
@@ -406,7 +402,6 @@ NULL
 #' \describe{
 #' \item{.absolute}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.alpha}{Accepted by/Passed down to: [calculateRhoT()], [calculateHTMT()], [calculateCN()]}
-#' \item{.approach_inference}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.ci}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.closed_form_ci}{Accepted by/Passed down to: [calculateRhoT()]}
 #' \item{.handle_inadmissibles}{Accepted by/Passed down to: [calculateHTMT()]}
@@ -428,12 +423,11 @@ NULL
 args_assess_dotdotdot <- function(
     .absolute            = TRUE,
     .alpha               = 0.05,
-    .approach_inference  = c("bootstrap", "asymptotic"),
     .ci                  = c("CI_standard_z", "CI_standard_t", "CI_percentile",
                              "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
     .closed_form_ci      = FALSE,
     .handle_inadmissibles= c("drop", "ignore", "replace"),
-    .inference           = FALSE,
+    .inference           = c("none", "bootstrap", "asymptotic"),
     .null_model          = FALSE,
     .R                   = 499,
     .saturated           = FALSE,
@@ -469,7 +463,6 @@ args_default <- function(.choices = FALSE) {
     .approach_alpha_adjust   = c("none", "bonferroni"),
     .approach_cor_robust     = c("none", "mcd", "spearman"),
     .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
-    .approach_inference      = c("bootstrap", "asymptotic"),
     .approach_mgd            = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl", 
                                  "Henseler","CI_para","CI_overlap"),
     .approach_nl             = c("sequential", "replace"),
@@ -518,7 +511,7 @@ args_default <- function(.choices = FALSE) {
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
-    .inference               = FALSE,
+    .inference               = c("none"),
     .independent             = NULL,
     .instruments             = NULL,
     .iter_max                = 100,

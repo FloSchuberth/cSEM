@@ -9,10 +9,9 @@ calculateHTMT(
  .type_htmt            = c('htmt','htmt2'),
  .absolute             = TRUE,
  .alpha                = 0.05,
- .approach_inference   = c("bootstrap", "asymptotic"),
  .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t",
                            "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
- .inference            = FALSE,
+ .inference            = c("none", "bootstrap", "asymptotic"),
  .only_common_factors  = TRUE,
  .R                    = 499,
  .seed                 = NULL,
@@ -32,18 +31,13 @@ Defaults to \code{TRUE}.}
 \item{.alpha}{A numeric value giving the significance level.
 Defaults to \code{0.05}.}
 
-\item{.approach_inference}{Character string. Approach used to obtain the
-confidence interval for the HTMT. One of: "\emph{bootstrap}" or "\emph{asymptotic}".
-If "\emph{asymptotic}", a confidence interval based on the delta-method standard error
-is computed; only available for \code{.type_htmt = "htmt"}.
-Defaults to "\emph{bootstrap}".}
-
 \item{.ci}{A character strings naming the type of confidence interval to use
 to compute the 1-alpha\% quantile of the bootstrap HTMT values. For possible
 choices see \code{\link[=infer]{infer()}}. Ignored
 if \code{.inference = FALSE}. Defaults to "\emph{CI_percentile}".}
 
-\item{.inference}{Logical. Should critical values be computed? Defaults to \code{FALSE}.}
+\item{.inference}{Character string. Either \code{none}, \code{bootstrap} or\code{asymptotic}.
+Defaults to \code{none}.}
 
 \item{.only_common_factors}{Logical. Should only concepts modeled as common
 factors be included when calculating one of the following quality criteria:
@@ -66,13 +60,11 @@ A named list containing:
 at its lower triangular and if \code{.inference = TRUE} the upper triangular contains
 the upper limit of the 1-2*.alpha\% bootstrap confidence interval if the HTMT/HTMT2 is positive and
 the lower limit if the HTMT/HTMT2 is negative.
-\item the lower and upper limits of the 1-2*.alpha\% bootstrap confidence interval if
-\code{.inference = TRUE}; otherwise it is \code{NULL}.
+\item the lower and upper limits of the 1-2*.alpha\% confidence interval if
+\code{.inference} is not none; otherwise it is \code{NULL}.
 \item the number of admissible bootstrap runs, i.e., the number of HTMT/HTMT2 values
 calculated during bootstrap if \code{.inference = TRUE}; otherwise it is \code{NULL}.
 Note, the HTMT2 is based on the geometric and thus cannot always be calculated.
-\item if .approach_inference is set to "asymptotic" the upper triangular contains
-the upper limit of the 1-2*.alpha\% asymptotic confidence interval.
 }
 }
 \description{

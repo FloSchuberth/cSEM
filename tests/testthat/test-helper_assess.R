@@ -1,5 +1,5 @@
 # Tests for the delta-method (asymptotic) confidence interval of the HTMT:
-#   calculateHTMT(.inference = TRUE, .approach_inference = "asymptotic")
+#   calculateHTMT(.inference = "asymptotic")
 #     -> calculateHTMTcore()            (HTMT + analytic gradients)
 #     -> calculateHTMTasymptoticSE()    (delta-method SE)
 #     -> calculateCorVCV()              (Steiger & Hakstian 1982 acov of correlations)
@@ -40,8 +40,7 @@ ht_asy <- calculateHTMT(res_3cf,
                         .type_htmt          = "htmt",
                         .absolute           = FALSE,
                         .alpha              = 0.05,
-                        .approach_inference = "asymptotic",
-                        .inference          = TRUE)
+                        .inference = "asymptotic")
 
 test_that("analytic HTMT gradients equal numerical gradients", {
   core <- cSEM:::calculateHTMTcore(res_3cf,
@@ -151,8 +150,7 @@ test_that("the CI is invariant to affine transformations of the indicators", {
                          .type_htmt          = "htmt",
                          .absolute           = FALSE,
                          .alpha              = 0.05,
-                         .approach_inference = "asymptotic",
-                         .inference          = TRUE)
+                         .inference = "asymptotic")
   expect_equal(ht_t$quantiles, ht_asy$quantiles, tolerance = 1e-10)
 })
 
@@ -173,8 +171,7 @@ test_that("the CI is invariant to indicator and block ordering", {
                          .type_htmt          = "htmt",
                          .absolute           = FALSE,
                          .alpha              = 0.05,
-                         .approach_inference = "asymptotic",
-                         .inference          = TRUE)
+                         .inference = "asymptotic")
   cn <- colnames(ht_asy$htmts)
   for (p in pairs_3cf) {
     cell   <- which(rownames(ht_asy$htmts) == p[2]) +
@@ -199,37 +196,36 @@ test_that("the CI of a pair is unaffected by indicators outside the pair", {
                           .type_htmt          = "htmt",
                           .absolute           = FALSE,
                           .alpha              = 0.05,
-                          .approach_inference = "asymptotic",
-                          .inference          = TRUE)
+                          .inference = "asymptotic")
   expect_equal(unname(ht_12$quantiles[, 2]), unname(ht_asy$quantiles[, 2]),
                tolerance = 1e-10)
 })
 
 test_that("guards of the asymptotic path fire", {
   # asymptotic CIs are not available for the HTMT2
-  expect_error(
+  expect_warning(
     calculateHTMT(res_3cf, .type_htmt = "htmt2", .absolute = FALSE,
-                  .approach_inference = "asymptotic", .inference = TRUE),
+                  .inference = "asymptotic"),
     "not available for the HTMT2"
   )
   # a supplied .ci is ignored with a warning
   expect_warning(
     calculateHTMT(res_3cf, .type_htmt = "htmt", .absolute = FALSE,
                   .ci = "CI_percentile",
-                  .approach_inference = "asymptotic", .inference = TRUE),
+                  .inference = "asymptotic"),
     "ignored"
   )
   # .absolute = TRUE triggers the recommendation warning
   expect_warning(
     calculateHTMT(res_3cf, .type_htmt = "htmt", .absolute = TRUE,
-                  .approach_inference = "asymptotic", .inference = TRUE),
+                  .inference = "asymptotic"),
     "absolute"
   )
   # only a single .alpha is accepted
   expect_error(
     calculateHTMT(res_3cf, .type_htmt = "htmt", .absolute = FALSE,
                   .alpha = c(0.05, 0.10),
-                  .approach_inference = "asymptotic", .inference = TRUE),
+                  .inference = "asymptotic" ),
     "single numeric probability"
   )
 })
@@ -266,8 +262,7 @@ test_that("the delta-method CI attains nominal coverage (Monte Carlo)", {
     colnames(d) <- paste0("y", 1:6)
     r  <- csem(as.data.frame(d), model_2cf)
     ht <- calculateHTMT(r, .type_htmt = "htmt", .absolute = FALSE,
-                        .alpha = 0.05, .approach_inference = "asymptotic",
-                        .inference = TRUE)
+                        .alpha = 0.05, .inference = "asymptotic")
     lo <- ht$quantiles[1, 2]
     hi <- ht$quantiles[2, 2]
     ests[b]  <- ht$htmts[2, 1]

@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_assess.R
 \name{calculateCorVCV}
 \alias{calculateCorVCV}
-\title{Distribution-free asymptotic covariance matrix of correlations}
+\title{Internal: Distribution-free asymptotic variance-covariance matrix of correlations}
 \usage{
 calculateCorVCV(.X)
 }
@@ -10,16 +10,16 @@ calculateCorVCV(.X)
 \item{.X}{A matrix of processed data (scaled, cleaned and ordered).}
 }
 \value{
-The \verb{(L x L)} asymptotic covariance matrix of the correlations,
-\code{L = P(P - 1)/2}, in lower-triangular (column-major) order.
+The \verb{(L x L)} asymptotic variance-covariance matrix of the correlations,
+\code{L = P(P - 1)/2}, in lower-triangular order.
 }
 \description{
 Large-sample variance-covariance matrix of the unique sample correlations of
 the columns of \code{.X}, using the estimator of \insertCite{Steiger1982;textual}{cSEM}.
 }
 \details{
-The correlations are taken in lower-triangular (column-major) order of the
-correlation matrix of \code{.X} - the same order used by the HTMT gradient -
+The correlations are taken in lower-triangular order of the
+correlation matrix of \code{.X}, the same order used by the HTMT gradient,
 so that a gradient vector and this matrix align by position for a
 delta-method confidence interval, i.e.
 \code{Var(f) = t(g) \%*\% calculateCorVCV(.X) \%*\% g}.

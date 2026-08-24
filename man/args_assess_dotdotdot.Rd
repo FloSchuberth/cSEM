@@ -10,12 +10,6 @@ Defaults to \code{TRUE}.}
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
-\item{.approach_inference}{Character string. Approach used to obtain the
-confidence interval for the HTMT. One of: "\emph{bootstrap}" or "\emph{asymptotic}".
-If "\emph{asymptotic}", a confidence interval based on the delta-method standard error
-is computed; only available for \code{.type_htmt = "htmt"}.
-Defaults to "\emph{bootstrap}".}
-
 \item{.ci}{A vector of character strings naming the confidence interval to compute.
 For possible choices see \code{\link[=infer]{infer()}}.}
 
@@ -32,7 +26,8 @@ For "\emph{replace}" resampling continues until there are exactly \code{.R} admi
 Depending on the frequency of inadmissible solutions this may significantly increase
 computing time. Defaults to "\emph{drop}".}
 
-\item{.inference}{Logical. Should critical values be computed? Defaults to \code{FALSE}.}
+\item{.inference}{Character string. Either \code{none}, \code{bootstrap} or\code{asymptotic}.
+Defaults to \code{none}.}
 
 \item{.null_model}{Logical. Should the degrees of freedom for the null model
 be computed? Defaults to \code{FALSE}.}
@@ -68,7 +63,6 @@ list shows which argument is passed to which function:
 \describe{
 \item{.absolute}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}
 \item{.alpha}{Accepted by/Passed down to: \code{\link[=calculateRhoT]{calculateRhoT()}}, \code{\link[=calculateHTMT]{calculateHTMT()}}, \code{\link[=calculateCN]{calculateCN()}}}
-\item{.approach_inference}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}
 \item{.ci}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}
 \item{.closed_form_ci}{Accepted by/Passed down to: \code{\link[=calculateRhoT]{calculateRhoT()}}}
 \item{.handle_inadmissibles}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}

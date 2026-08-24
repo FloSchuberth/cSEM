@@ -499,37 +499,27 @@ assess <- function(
     # HTMT 
     if(inherits(.object, "cSEMResults_default")) {
       if(any(.quality_criterion %in% c("all", "htmt"))){
-       out[["HTMT"]]  <- calculateHTMT(
-        .object,
-        .only_common_factors  = .only_common_factors,
-        .type_htmt = "htmt",
-        ...
-       )}
+        out[["HTMT"]]  <- calculateHTMT(
+          .object,
+          .only_common_factors  = .only_common_factors,
+          .type_htmt = "htmt",
+          ...
+        )}
       
       if(any(.quality_criterion %in% c("all", "htmt2"))){
-        # HTMT2 has no asymptotic CI; drop .approach_inference so it uses its default
-        # (bootstrap) instead of erroring when .inference = TRUE - and tell the user.
-        dots_htmt2 <- list(...)
-        if(isTRUE(dots_htmt2[[".approach_inference"]] == "asymptotic") &&
-           isTRUE(dots_htmt2[[".inference"]])) {
-          warning2("Asymptotic (delta-method) confidence intervals are available for ",
-                   "the HTMT only. The HTMT2 is reported with bootstrap confidence ",
-                   "intervals instead.")
-        }
-        dots_htmt2[[".approach_inference"]] <- NULL
-        out[["HTMT2"]]  <- do.call(calculateHTMT, c(
-          list(.object,
-               .only_common_factors = .only_common_factors,
-               .type_htmt = "htmt2"),
-          dots_htmt2))
-      }
-    
+        out[["HTMT2"]]  <- calculateHTMT(
+          .object,
+          .only_common_factors  = .only_common_factors,
+          .type_htmt = "htmt2",
+          ...
+        )}
+      
       # Get argument values
       args_htmt <- list(...)
       if(any(names(args_htmt) == ".inference")) {
         out$Information[[".inference"]] <- args_htmt[[".inference"]]
       } else {
-        out$Information[[".inference"]] <- formals(calculateHTMT)[[".inference"]]
+        out$Information[[".inference"]] <- "none"
       }
       
       if(any(names(args_htmt) == ".alpha")) {
@@ -542,20 +532,8 @@ assess <- function(
         out$Information[[".ci"]] <- args_htmt[[".ci"]]
       } else {
         out$Information[[".ci"]] <- "CI_percentile"
-      }
-
-      if(any(names(args_htmt) == ".approach_inference")) {
-        out$Information[[".approach_inference"]] <- args_htmt[[".approach_inference"]]
-      } else {
-        out$Information[[".approach_inference"]] <- "bootstrap"
-      }
-
-      if(any(names(args_htmt) == ".type_htmt")) {
-        out$Information[[".type_htmt"]] <- args_htmt[[".type_htmt"]]
-      } else {
-        # If .type_htmt is not set in the function
-        out$Information[[".type_htmt"]] <- "htmt"
       } 
+      
     } else { # 2nd_order
       warning("Computation of the HTMT",
               " not supported for models containing second-order constructs:\n",
