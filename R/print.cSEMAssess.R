@@ -306,8 +306,10 @@ print.cSEMAssess <- function(x, ...) {
     cat2("\n\n", rule2("Discriminant validity assessment"))
     # HTMT
     if(any(names(x) == "HTMT") && !is.null(x$HTMT)) {
-      cat2("\n\n\tHeterotrait-monotrait ratio of correlations matrix (HTMT matrix)\n\n", 
-           "\n\tValues in the lower triangular part are the", if(x$HTMT$absolute){" absolute "}, "HTMT values\n\n")
+      header_htmt <- "Heterotrait-monotrait ratio of correlations matrix (HTMT matrix)"
+      cat2("\n\n\t", header_htmt,
+           "\n\t", makeLine(type = 1, width = nchar(header_htmt)), "\n",
+           "\n\tValues in the lower triangular part are the ", if(x$HTMT$absolute){"absolute "}, "HTMT values\n\n")
 
       if(x$HTMT$inference != "none") {
         if(x$HTMT$inference == "asymptotic") {
@@ -325,8 +327,10 @@ print.cSEMAssess <- function(x, ...) {
     }
 # HTMT2
     if(any(names(x) == "HTMT2") && !is.null(x$HTMT2)) {
-      cat2("\n\n\tAdvanced heterotrait-monotrait ratio of correlations matrix (HTMT2 matrix)\n\n",
-           "\n\tValues in the lower triangular part are the", if(x$HTMT$absolute){" absolute "}, "HTMT2 values\n\n")
+      header_htmt2 <- "Advanced heterotrait-monotrait ratio of correlations matrix (HTMT2 matrix)"
+      cat2("\n\n\t", header_htmt2,
+           "\n\t", makeLine(type = 1, width = nchar(header_htmt2)), "\n",
+           "\n\tValues in the lower triangular part are the ", if(x$HTMT2$absolute){"absolute "}, "HTMT2 values\n\n")
       
       if(x$HTMT2$inference == "bootstrap") {
         cat2("\tValues in the upper triangular part are the ", 
@@ -338,7 +342,9 @@ print.cSEMAssess <- function(x, ...) {
     }    
 
     if(any(names(x) == "Fornell-Larcker")) {
-      cat2("\n\n\tFornell-Larcker matrix\n\n")
+      fornell_text <- "Fornell-Larcker matrix"
+      cat2("\n\n\t",fornell_text, 
+           "\n\t", makeLine(type = 1, width = nchar(fornell_text)), "\n")
       print(x$`Fornell-Larcker`)
     }
   }
