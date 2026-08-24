@@ -531,7 +531,7 @@ candidate_partitions <- function(j, z, zs, max_cuts, minbucket) {
     }
     keep_min(lapply(mids, function(ct) {
       list(
-        goes_left = zs < ct,
+        goes_left = zs <= ct, # TODO: Revisit whether this should be <= or <. Was originally <.
         split = partykit::partysplit(
           as.integer(j),
           breaks = as.double(ct),
