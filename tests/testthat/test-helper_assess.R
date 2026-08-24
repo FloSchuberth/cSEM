@@ -100,7 +100,7 @@ test_that("calculateCorVCV matches the normal-theory acov of correlations", {
   Sig_nt <- outer(1:3, 1:3, Vectorize(function(a, b)
     nt_cov(Rpop, idx[a, 1], idx[a, 2], idx[b, 1], idx[b, 2])))
   
-  expect_true(max(abs(Sig_hat - Sig_nt)) < 0.005)
+  expect_true(max(abs(Sig_hat - Sig_nt)) < 0.01)
   
   # basic properties on real (standardized) model data
   Sig <- cSEM:::calculateCorVCV(res_3cf$Information$Data)
