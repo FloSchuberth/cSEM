@@ -2,6 +2,22 @@
 
 #  cSEM 0.6.2
 
+- Extend calculateHTMT() to allow for asymptotic inference for the HTMT. Thanks to Jason Berger for his contribution.
+
+- Fix bug in calculating the moments used to estimate non-linear models. 
+
+- Fix bug in testMICOM(). Thanks to manzi0 for this contribution!
+
+- Fix issue with setting a seed in non-interactive session. Thanks to Kjell S. Slupphaug and Jason Berger for their contribution.   
+
+- Fix bug in PLS-PM estimation of non-linear models involing second-order constructs. Thanks Thanks to Kjell S. Slupphaug for this contribution.  
+
+- Fix smaller issue in the print function for `assess()`.
+
+- Replace helper function from the matrixcalc package. Thanks to Kjell S. Slupphaug for this contribution.
+
+- Replace the polycor package by a more efficient implementation to calculate polychoric/polyserial correlations.  Thanks to Kjell S. Slupphaug who contributed this implementation.
+
 - Adjust p-value calculation in testMGD in case of permutation-based tests to prevent that p-values can be exactly 0.
   Thanks to Michael
   
