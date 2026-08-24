@@ -746,7 +746,7 @@ See e.g. @Henseler2012a for a discussion.
 The GoF is defined as:
 
 $$\text{GoF} = \sqrt{\varnothing \text{COM}_k \times \varnothing R^2_{structural}} = 
-\sqrt{\frac{1}{k}\sum^K_{k=1} \lambda^2_k + \frac{1}{M} \sum^M_{m = 1} R^2_{m;structural}} $$
+\sqrt{\frac{1}{K}\sum^K_{k=1} \lambda^2_k \times \frac{1}{M} \sum^M_{m = 1} R^2_{m;structural}} $$
 where $COM_k$ is the communality of indicator $k$, i.e. the variance in the indicator 
 that is explained by its connected latent variable and $R^2_{m; structural}$ the 
 R squared of the $m$'th equation of the structural model.

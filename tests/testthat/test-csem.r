@@ -1,4 +1,4 @@
-context("csem")
+# context("csem")
 
 ## Source 
 source("test-main.R")
@@ -267,4 +267,100 @@ test_that("DPG_2ndorder_composites_of_composites is correctly estimated", {
   expect_equal(path$Estimate, path$Pop_value)
   expect_equal(loadings$Estimate, loadings$Pop_value)
   expect_equal(weights$Estimate, weights$Pop_value)
+})
+
+### Non-linear model with cubic term ===========================================
+# helper function to generate data
+simulate_nonlinear_data <- function(n, seed) {
+  set.seed(seed)
+  
+  rho12 <- -0.30
+  gamma <- c(
+    gamma1   =  0.50, gamma2   = -0.30, gamma12  = -0.20,
+    gamma11  =  0.10, gamma22  = -0.15,
+    gamma111 =  0.08, gamma222 = -0.06,
+    gamma112 =  0.12, gamma122 = -0.10
+  )
+
+  var_signal <- 0.6827232
+  sd_zeta <- sqrt(1 - var_signal)  # forces Var(eta3) = 1; R^2 ends up ~0.68
+  loading <- 0.80
+  err_sd  <- sqrt(1 - loading^2)
+  
+  L <- chol(matrix(c(1, rho12, rho12, 1), 2, 2))
+  eta_exo <- matrix(rnorm(2 * n), n) %*% L
+  eta1 <- eta_exo[, 1]
+  eta2 <- eta_exo[, 2]
+  
+  zeta <- rnorm(n, sd = sd_zeta)
+  eta3 <- gamma["gamma1"] * eta1 + gamma["gamma2"] * eta2 +
+    gamma["gamma12"] * eta1 * eta2 +
+    gamma["gamma11"] * eta1^2 + gamma["gamma22"] * eta2^2 +
+    gamma["gamma111"] * eta1^3 + gamma["gamma222"] * eta2^3 +
+    gamma["gamma112"] * eta1^2 * eta2 + gamma["gamma122"] * eta1 * eta2^2 +
+    zeta
+  
+  make_indicators <- function(eta, prefix) {
+    d <- data.frame(
+      v1 = loading * eta + rnorm(n, sd = err_sd),
+      v2 = loading * eta + rnorm(n, sd = err_sd),
+      v3 = loading * eta + rnorm(n, sd = err_sd)
+    )
+    names(d) <- paste0(prefix, 1:3)
+    d
+  }
+  
+  dat <- cbind(
+    make_indicators(eta1, "y1_"),
+    make_indicators(eta2, "y2_"),
+    make_indicators(eta3, "y3_")
+  )
+  
+  list(data = dat, truth = gamma)
+}
+
+# helper function to extract results
+get_est <- function(name) {
+  tab <- s$Estimates$Path_estimates
+  row <- tab[tab$Name == name, ]
+  if (nrow(row) != 1) {
+    stop(
+      "Could not find a unique path named '", name, "' in Path_estimates.\n",
+      "Available names:\n", paste(tab$Name, collapse = "\n"),
+      "\nAdjust get_est()/the Name strings below to match."
+    )
+  }
+  row$Estimate
+}
+
+# Allowed relative difference between estimate and true value
+tol <- 0.06   
+
+# generate data
+data_nonlinear_cubic <- simulate_nonlinear_data(n = 100000, seed = 20260819)
+
+# Estimate model
+res_single_nonlinear_cubic <- csem(.data = data_nonlinear_cubic$data, .model = model_nonlinear_cubic)
+s   <- summarize(res_single_nonlinear_cubic)
+
+
+test_that("csem estimates the linear effects correctly", {
+  expect_equal(get_est("ETA3 ~ ETA1"), 0.50, tolerance = tol)
+  expect_equal(get_est("ETA3 ~ ETA2"), -0.30, tolerance = tol)
+})
+
+test_that("csem estimates the quadratic and two-way interaction effects correctly", {
+  expect_equal(get_est("ETA3 ~ ETA1.ETA2"), -0.20, tolerance = tol)
+  expect_equal(get_est("ETA3 ~ ETA1.ETA1"), 0.10, tolerance = tol)
+  expect_equal(get_est("ETA3 ~ ETA2.ETA2"), -0.15, tolerance = tol)
+})
+
+test_that("csem recovers the cubic effects (exercises CubicCubic)", {
+  expect_equal(get_est("ETA3 ~ ETA1.ETA1.ETA1"), 0.08, tolerance = tol)
+  expect_equal(get_est("ETA3 ~ ETA2.ETA2.ETA2"), -0.06, tolerance = tol)
+})
+
+test_that("csem recovers the quadratic-times-linear effects", {
+  expect_equal(get_est("ETA3 ~ ETA1.ETA1.ETA2"), 0.12, tolerance = tol)
+  expect_equal(get_est("ETA3 ~ ETA2.ETA2.ETA1"), -0.10, tolerance = tol)
 })

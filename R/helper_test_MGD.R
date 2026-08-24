@@ -38,7 +38,8 @@ calculateDistance <- function(
   }
 
   ## Check if matrices are all symmetric
-  if(!all(sapply(.matrices, matrixcalc::is.symmetric.matrix))) {
+  if(!all(sapply(.matrices, isSymmetric))) { # use base::isSymmetric, instead of
+                                             # matrixcalc::is.symmetrix.matrix
     stop2("All matrices in `.matrices` must be symmetric.")
   }
   
@@ -1059,4 +1060,24 @@ structureTestMGDDecisions <- function(.object){
   return(out)
 }
 
+#' Internal: Drop permutation runs containing missing values
+#' 
+#' Removes those elements of a list of permutation (or resample) test statistics
+#' that contain at least one `NA` or `NaN` anywhere in their structure, including
+#' inside nested lists.
+#' 
+#' Elements that are the literal `NA` sentinel (written when a permutation run is
+#' inadmissible and `.handle_inadmissibles = "drop"`) are removed as well.
+#' 
+#' @usage dropNAResamples(.ref_dist = NULL)
+#' 
+#' @param .ref_dist A list of test statistics, one element per permutation run.
+#' 
+#' @return A list containing only those elements of `.ref_dist` that are free of
+#'   `NA` and `NaN`. Names and relative order are preserved.
+#'   
+#' @keywords internal
 
+dropNAResamples <- function(.ref_dist = NULL) {
+  Filter(function(x) !anyNA(unlist(x)), .ref_dist)
+}

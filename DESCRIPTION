@@ -32,7 +32,11 @@ Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
             person(given = "Gloria", family="Pietropolli",
                    role  = c("ctb"),
                    email="",
-                   comment = c(ORCID = "0000-0001-7623-8419")))
+                   comment = c(ORCID = "0000-0001-7623-8419")),
+            person(given = "Kjell S.", family = " Slupphaug",
+                   role  = c("ctb"),
+                   email = "",
+                   comment = c(ORCID = "0009-0005-8324-2834")))
 Maintainer: Florian Schuberth <f.schuberth@utwente.nl>
 Depends: R (>= 4.1.0)
 Description: Estimate, assess, test, and study linear, nonlinear, hierarchical 
@@ -65,9 +69,8 @@ Imports:
     magrittr,
     MASS,
     Matrix,
-    matrixcalc,
     matrixStats,
-    polycor,
+    pbivnorm,
     progressr,
     psych,
     purrr,
