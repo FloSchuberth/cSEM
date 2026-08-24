@@ -9,9 +9,9 @@ calculateHTMT(
  .type_htmt            = c('htmt','htmt2'),
  .absolute             = TRUE,
  .alpha                = 0.05,
- .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
+ .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t",
                            "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
- .inference            = FALSE,
+ .inference            = c("none", "bootstrap", "asymptotic"),
  .only_common_factors  = TRUE,
  .R                    = 499,
  .seed                 = NULL,
@@ -26,17 +26,17 @@ calculated, i.e., the original HTMT ("\emph{htmt}") or the HTMT2 ("\emph{htmt2}"
 Defaults to "\emph{htmt}"}
 
 \item{.absolute}{Logical. Should the absolute HTMT values be returned?
-Defaults to \code{TRUE} .}
+Defaults to \code{TRUE}.}
 
 \item{.alpha}{A numeric value giving the significance level.
 Defaults to \code{0.05}.}
 
 \item{.ci}{A character strings naming the type of confidence interval to use
 to compute the 1-alpha\% quantile of the bootstrap HTMT values. For possible
-choices see \code{\link[=infer]{infer()}}. Ignored
-if \code{.inference = FALSE}. Defaults to "\emph{CI_percentile}".}
+choices see \code{\link[=infer]{infer()}}. Ignored}
 
-\item{.inference}{Logical. Should critical values be computed? Defaults to \code{FALSE}.}
+\item{.inference}{Character string. Either \code{none}, \code{bootstrap} or \code{asymptotic}.
+Defaults to \code{none}.}
 
 \item{.only_common_factors}{Logical. Should only concepts modeled as common
 factors be included when calculating one of the following quality criteria:
@@ -56,13 +56,14 @@ not be altered!}
 A named list containing:
 \itemize{
 \item the values of the HTMT/HTMT2, i.e., a matrix with the HTMT/HTMT2 values
-at its lower triangular and if \code{.inference = TRUE} the upper triangular contains
-the upper limit of the 1-2*.alpha\% bootstrap confidence interval if the HTMT/HTMT2 is positive and
+at its lower triangular and if \code{.inference != "none"} the upper triangular contains
+the upper limit of the 1-2*.alpha\% bootstrap or asymptotic confidence interval
+if the HTMT/HTMT2 is positive and
 the lower limit if the HTMT/HTMT2 is negative.
-\item the lower and upper limits of the 1-2*.alpha\% bootstrap confidence interval if
-\code{.inference = TRUE}; otherwise it is \code{NULL}.
+\item the lower and upper limits of the 1-2*.alpha\% confidence interval if
+\code{.inference} is not none; otherwise it is \code{NULL}.
 \item the number of admissible bootstrap runs, i.e., the number of HTMT/HTMT2 values
-calculated during bootstrap if \code{.inference = TRUE}; otherwise it is \code{NULL}.
+calculated during bootstrap otherwise it is \code{NULL}.
 Note, the HTMT2 is based on the geometric and thus cannot always be calculated.
 }
 }
@@ -78,11 +79,13 @@ Computation of the HTMT/HTMT2 assumes that all intra-block and inter-block
 correlations between indicators are either all-positive or all-negative.
 A warning is given if this is not the case.
 
-To obtain bootstrap confidence intervals for the HTMT/HTMT2 values, set \code{.inference = TRUE}.
+To obtain bootstrap confidence intervals for the HTMT/HTMT2 values, set \code{.inference = "bootstrap"}.
 To choose the type of confidence interval, use \code{.ci}. To control the bootstrap process,
 arguments \code{.R} and \code{.seed} are available. Note, that \code{.alpha} is multiplied by two
 because typically researchers are interested in one-sided bootstrap confidence intervals
 for the HTMT/HTMT2.
+
+To obtain asymptotic confidence intervals for the HTMT values, set \code{.inference = "asymptotic"}.
 
 Since the HTMT and the HTMT2 both assume a reflective measurement
 model only concepts modeled as common factors are considered by default.

@@ -9,7 +9,7 @@
 Defaults to \code{0.05}.}
 
 \item{.absolute}{Logical. Should the absolute HTMT values be returned?
-Defaults to \code{TRUE} .}
+Defaults to \code{TRUE}.}
 
 \item{.approach_gcca}{Character string. The Kettenring approach to use for GCCA. One of
 "\emph{SUMCORR}", "\emph{MAXVAR}", "\emph{SSQCORR}", "\emph{MINVAR}" or "\emph{GENVAR}". Defaults to
@@ -187,6 +187,8 @@ already?. Defaults to \code{FALSE}.}
 \item{.full_output}{Logical. Should the full output of summarize be printed.
 Defaults to \code{TRUE}.}
 
+\item{.gradient}{Logical. Should the gradient be calculated for the HTMT.}
+
 \item{.graph_attrs}{Character string. Additional attributes that should be passed
 to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to \emph{c("rankdir=LR")}.}
 
@@ -206,7 +208,8 @@ computing time. Defaults to "\emph{drop}".}
 an integer of the position of the column of \code{.data} whose levels are used
 to split \code{.data} into groups. Defaults to \code{NULL}.}
 
-\item{.inference}{Logical. Should critical values be computed? Defaults to \code{FALSE}.}
+\item{.inference}{Character string. Either \code{none}, \code{bootstrap} or \code{asymptotic}.
+Defaults to \code{none}.}
 
 \item{.independent}{Character string. The name of the independent variable.}
 

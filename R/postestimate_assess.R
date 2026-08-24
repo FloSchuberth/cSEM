@@ -499,12 +499,12 @@ assess <- function(
     # HTMT 
     if(inherits(.object, "cSEMResults_default")) {
       if(any(.quality_criterion %in% c("all", "htmt"))){
-       out[["HTMT"]]  <- calculateHTMT(
-        .object,
-        .only_common_factors  = .only_common_factors,
-        .type_htmt = "htmt",
-        ...
-       )}
+        out[["HTMT"]]  <- calculateHTMT(
+          .object,
+          .only_common_factors  = .only_common_factors,
+          .type_htmt = "htmt",
+          ...
+        )}
       
       if(any(.quality_criterion %in% c("all", "htmt2"))){
         out[["HTMT2"]]  <- calculateHTMT(
@@ -513,14 +513,9 @@ assess <- function(
           .type_htmt = "htmt2",
           ...
         )}
-    
+      
       # Get argument values
       args_htmt <- list(...)
-      if(any(names(args_htmt) == ".inference")) {
-        out$Information[[".inference"]] <- args_htmt[[".inference"]]
-      } else {
-        out$Information[[".inference"]] <- formals(calculateHTMT)[[".inference"]]
-      }
       
       if(any(names(args_htmt) == ".alpha")) {
         out$Information[[".alpha"]] <- args_htmt[[".alpha"]]
@@ -528,18 +523,7 @@ assess <- function(
         out$Information[[".alpha"]] <- formals(calculateHTMT)[[".alpha"]]
       } 
       
-      if(any(names(args_htmt) == ".ci")) {
-        out$Information[[".ci"]] <- args_htmt[[".ci"]]
-      } else {
-        out$Information[[".ci"]] <- "CI_percentile"
-      } 
       
-      if(any(names(args_htmt) == ".type_htmt")) {
-        out$Information[[".type_htmt"]] <- args_htmt[[".type_htmt"]]
-      } else {
-        # If .type_htmt is not set in the function
-        out$Information[[".type_htmt"]] <- "htmt"
-      } 
     } else { # 2nd_order
       warning("Computation of the HTMT",
               " not supported for models containing second-order constructs:\n",

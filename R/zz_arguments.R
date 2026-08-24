@@ -8,9 +8,9 @@
 #'
 #' @param .alpha An integer or a numeric vector of significance levels. 
 #'   Defaults to `0.05`.
-#' @param .absolute Logical. Should the absolute HTMT values be returned? 
-#'   Defaults to `TRUE` .
-#' @param .approach_gcca Character string. The Kettenring approach to use for GCCA. One of 
+#' @param .absolute Logical. Should the absolute HTMT values be returned?
+#'   Defaults to `TRUE`.
+#' @param .approach_gcca Character string. The Kettenring approach to use for GCCA. One of
 #' "*SUMCORR*", "*MAXVAR*", "*SSQCORR*", "*MINVAR*" or "*GENVAR*". Defaults to
 #' "*SUMCORR*".
 #' @param .approach_2ndorder Character string. Approach used for models containing
@@ -70,9 +70,8 @@
 #'   obtain composite weights. One of: "*PLS-PM*", "*SUMCORR*", "*MAXVAR*",
 #'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*PCA*", "*unit*", "*bartlett*", 
 #'   or "*regression*". Defaults to "*PLS-PM*".
-#' @param .args_used A list of function argument names whose value was modified 
+#' @param .args_used A list of function argument names whose value was modified
 #'   by the user.
-#'   
 #' @param .attrbutes Character string. Variables used as attributes in IPMA.
 #' @param .benchmark Character string. The procedure to obtain benchmark predictions.
 #'   One of "*lm*", "*unit*", "*PLS-PM*", "*GSCA*", "*PCA*", "*MAXVAR*", or "*NA*".
@@ -143,6 +142,7 @@
 #'   already?. Defaults to `FALSE`.
 #' @param .full_output Logical. Should the full output of summarize be printed.
 #'   Defaults to `TRUE`.
+#' @param .gradient Logical. Should the gradient be calculated for the HTMT. 
 #' @param .graph_attrs Character string. Additional attributes that should be passed 
 #' to the DiagrammeR syntax, e.g., c("rankdir=LR", "ranksep=1.0"). Defaults to *c("rankdir=LR")*.
 #' @param .H The (N x J) matrix of construct scores.
@@ -158,7 +158,8 @@
 #' @param .id Character string or integer. A character string giving the name or 
 #'   an integer of the position of the column of `.data` whose levels are used
 #'   to split `.data` into groups. Defaults to `NULL`.
-#' @param .inference Logical. Should critical values be computed? Defaults to `FALSE`.
+#' @param .inference Character string. Either `none`, `bootstrap` or `asymptotic`. 
+#'   Defaults to `none`.
 #' @param .independent Character string. The name of the independent variable.
 #' @param .instruments A named list of vectors of instruments. The names
 #'   of the list elements are the names of the dependent (LHS) constructs of the structural
@@ -420,11 +421,11 @@ NULL
 args_assess_dotdotdot <- function(
     .absolute            = TRUE,
     .alpha               = 0.05,
-    .ci                  = c("CI_standard_z", "CI_standard_t", "CI_percentile", 
+    .ci                  = c("CI_standard_z", "CI_standard_t", "CI_percentile",
                              "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
     .closed_form_ci      = FALSE,
     .handle_inadmissibles= c("drop", "ignore", "replace"),
-    .inference           = FALSE,
+    .inference           = c("none", "bootstrap", "asymptotic"),
     .null_model          = FALSE,
     .R                   = 499,
     .saturated           = FALSE,
@@ -503,11 +504,12 @@ args_default <- function(.choices = FALSE) {
     .first_resample          = NULL,
     .force                   = FALSE,
     .full_output             = TRUE,
+    .gradient                = FALSE,
     .graph_attrs             = c("rankdir=LR"),
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
-    .inference               = FALSE,
+    .inference               = c("none"),
     .independent             = NULL,
     .instruments             = NULL,
     .iter_max                = 100,

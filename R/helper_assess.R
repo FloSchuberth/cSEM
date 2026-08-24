@@ -1135,6 +1135,124 @@ calculateRhoT <- function(
 }
 
 
+
+
+#' Internal: Distribution-free asymptotic variance-covariance matrix of correlations
+#'
+#' Large-sample variance-covariance matrix of the unique sample correlations of
+#' the columns of `.X`, using the estimator of \insertCite{Steiger1982;textual}{cSEM}.
+#'
+#' The correlations are taken in lower-triangular order of the
+#' correlation matrix of `.X`, the same order used by the HTMT gradient, 
+#' so that a gradient vector and this matrix align by position for a
+#' delta-method confidence interval, i.e.
+#' `Var(f) = t(g) %*% calculateCorVCV(.X) %*% g`.
+#'
+#' @inheritParams csem_arguments
+#'
+#' @return The `(L x L)` asymptotic variance-covariance matrix of the correlations,
+#'   `L = P(P - 1)/2`, in lower-triangular order.
+#'
+#' @references
+#'   \insertAllCited{}
+#'
+#' @keywords internal
+calculateCorVCV <- function(.X) {
+  
+  # .X must be standardized
+  n <- nrow(.X)
+  p <- ncol(.X)
+  
+  # (i<j) pairs in vech order: (1,2), (1,3), ..., (1,p), (2,3), ...
+  indices <- which(lower.tri(diag(p)), arr.ind = TRUE)[, c(2, 1)]
+  n_cor <- nrow(indices)
+  
+  R <- cor(.X)
+  
+  products <- array(0, dim = c(n, p, p))
+  for (i in 1:p) {
+    for (j in i:p) {
+      products[, i, j] <- .X[, i] * .X[, j]
+      products[, j, i] <- products[, i, j]
+    }
+  }
+  
+  mu4 <- function(i, j, k, l) mean(products[, i, j] * products[, k, l])
+  
+  vc_r <- matrix(0, nrow = n_cor, ncol = n_cor)
+  
+  for (idx1 in 1:n_cor) {
+    x <- indices[idx1, 1]
+    y <- indices[idx1, 2]
+    
+    for (idx2 in idx1:n_cor) {
+      z <- indices[idx2, 1]
+      t <- indices[idx2, 2]
+      
+      rxy <- R[x, y]
+      rzt <- R[z, t]
+      
+      # Steiger & Hakstian (1982), Eq. 3.4, i dont divide through sd, because the 
+      # standardization
+      cov_val <- mu4(x, y, z, t) -
+        0.5 * rxy * (mu4(x, x, z, t) + mu4(y, y, z, t)) -
+        0.5 * rzt * (mu4(x, y, z, z) + mu4(x, y, t, t)) +
+        0.25 * rxy * rzt * (mu4(x, x, z, z) + mu4(x, x, t, t) +
+                              mu4(y, y, z, z) + mu4(y, y, t, t))
+      
+      vc_r[idx1, idx2] <- cov_val
+      vc_r[idx2, idx1] <- cov_val
+    }
+  }
+  
+  vc_r / n
+}
+
+
+#' Internal: Delta-method standard errors of the HTMT
+#'
+#' Combines the per-construct-pair HTMT gradients with the asymptotic 
+#' variance-covariance matrix of the indicator correlations ([calculateCorVCV()]) 
+#' into the delta-method standard error of each HTMT, `sqrt(t(g) %*% Sigma %*% g)`. 
+#' The variance-covariance matrix is formed once and reused for every pair. 
+#' Gradient vectors and variance-covariance matrix share the lower-triangular 
+#' ordering of the indicator correlation matrix, so they align by position.
+#'
+#' No lower bound is imposed on the variance: since `Sigma` is positive
+#' semi-definite, `t(g) %*% Sigma %*% g` is non-negative by construction, so a
+#' negative value would signal a genuine problem and is deliberately allowed to
+#' surface as `NaN` (with a warning) rather than being silently clamped to zero.
+#'
+#' @inheritParams csem_arguments 
+#'
+#' @param .gradients A named list of gradient vectors, one per construct pair,
+#'   each aligned with the lower triangular of the indicator correlation matrix.
+#'
+#' @return A named numeric vector of standard errors, one per construct pair.
+#'
+#' @keywords internal
+calculateHTMTasymptoticSE <- function(.gradients, .X) {
+  # in forman() the data is standardized so the input argument in the 
+  # helper_assess() is always standardized
+  Sigma <- calculateCorVCV(.X = .X)          
+  vapply(
+    .gradients,
+    function(g) sqrt(drop(t(g) %*% Sigma %*% g)), # sqrt( t(g) %*% Sigma %*% g )
+    numeric(1)
+  )
+}
+#' Internal: Calculate the nth root
+#' @noRd
+#' 
+calculateNthRoot <- function(.x, .n){
+  if(.x < 0 && .n %% 2 == 1){
+    sign(.x) * abs(.x)^(1/.n)
+  } else {
+    .x^(1/.n)
+  }
+}
+
+
 #' core function that calculates the HTMT
 #' @noRd
 #' 
@@ -1142,6 +1260,7 @@ calculateHTMTcore <- function(
   .object               = NULL,
   .type_htmt            = NULL,
   .absolute             = NULL,
+  .gradient           = FALSE,
   .only_common_factors  = NULL
 ){
   
@@ -1227,6 +1346,7 @@ calculateHTMTcore <- function(
   })
   
 
+
   if(.type_htmt=='htmt2'){
     # calculate geometric mean of the correlations
     avg_cor<-lapply(correlations, function(x){
@@ -1236,13 +1356,13 @@ calculateHTMTcore <- function(
         warning2("The monotrait-heteromethod correlations show different signs.\n",
         "Hence the HTMT2 cannot be calculated.")
       }
-      temp1 <- exp(mean(log(x[[1]])))
+      temp1 <- calculateNthRoot(prod(x[[1]]), length(x[[1]]))
       # monotrait 2
       if(abs(sum(sign(x[[2]]))) != length(x[[2]])){
         warning2("The monotrait-heteromethod correlations show different signs.\n",
         "Hence the HTMT2 cannot be calculated.")
       }
-      temp2 <- exp(mean(log(x[[2]])))
+      temp2 <- calculateNthRoot(prod(x[[2]]), length(x[[2]]))
       # heterotrait
       # If all hetertrait correlations are negative take the absolute value
       # and return later the negative htmt value
@@ -1250,7 +1370,11 @@ calculateHTMTcore <- function(
         x[[3]] = abs(x[[3]])
         sign_identification = -1
       }
-      temp3 <- exp(mean(log(x[[3]])))
+      if(prod(x[[3]]) < 0 && length(x[[3]]) %% 2 == 0){
+        warning2("The heterotrait-heteromethod block could not be computed.\n",
+                 "Hence the HTMT2 cannot be calculated.")
+      }
+      temp3 <- calculateNthRoot(prod(x[[3]]), length(x[[3]]))
       
       # return the geometric means
       c(temp1,temp2,temp3,sign_identification)
@@ -1285,8 +1409,11 @@ calculateHTMTcore <- function(
       }
       temp3 <- mean(x[[3]])
       
+      n1 <- length(x[[1]])
+      n2 <- length(x[[2]])
+      n3 <- length(x[[3]])
       # return the geometric means
-      c(temp1,temp2,temp3,sign_identification)
+      c(temp1,temp2,temp3,sign_identification, n1, n2, n3)
     })
     }
 
@@ -1295,7 +1422,41 @@ calculateHTMTcore <- function(
     x[3]/sqrt(x[1]*x[2]) * x[4]
   })
   
+  if(.gradient == TRUE){
+    if(.type_htmt == "htmt2"){
+      warning2("Asymptotic confidence intervals are not available for the htmt2 yet.")
+    }
+    if(.type_htmt == "htmt"){
+      # Build each gradient over the FULL indicator correlation matrix 
+      Sfull <- .object$Estimates$Indicator_VCV
+      lt   <- lower.tri(Sfull)
+      ind  <- rownames(Sfull)
+      rows <- ind[row(Sfull)[lt]]
+      cols <- ind[col(Sfull)[lt]]
 
+      gradients <- lapply(seq_along(block_pairs), function(p){
+        A    <- block_pairs[[p]][[1]]   # indicators of construct 1
+        B    <- block_pairs[[p]][[2]]   # indicators of construct 2
+        x    <- avg_cor[[p]]            # c(a, b, c, sign, n1, n2, n3)
+        htmt <- htmts[p]
+        if(!is.finite(htmt)){
+          warning2("The asymptotic confidence interval cannot be calculated ", 
+                   "as the HTMT is undefined.")
+        }
+        # A block-average is the mean of its correlations, so its scalar
+        # derivative is shared by each correlation it averages over.
+        g <- numeric(length(rows))
+        g[(rows %in% A) & (cols %in% A)]   <- -htmt / (2 * x[1] * x[5])  # intra 1
+        g[(rows %in% B) & (cols %in% B)]   <- -htmt / (2 * x[2] * x[6])  # intra 2
+        g[((rows %in% A) & (cols %in% B)) |
+          ((rows %in% B) & (cols %in% A))] <-  1 / (x[7] * sqrt(x[1] * x[2]))  # inter
+        g
+      })
+      names(gradients) <- utils::combn(names(ind_blocks), 2,
+                                       FUN = function(z) paste(z, collapse = "__"))
+    }
+  }
+  
   # Sort HTMT values in matrix
   out<-matrix(0,
               nrow=length(names(ind_blocks)),
@@ -1307,6 +1468,14 @@ calculateHTMTcore <- function(
     out <- abs(out)
   }
   diag(out) <- 1
+
+  # Expose the delta-method gradients (named vectors, keyed by correlation) so
+  # downstream code can form Var(HTMT) = t(g) %*% Sigma %*% g. Attached as an
+  # attribute so `out` still behaves as the plain HTMT matrix required by the
+  # bootstrap `.user_funs` path; only set when asymptotic inference is requested.
+  if(.gradient == TRUE && .type_htmt == "htmt"){
+    attr(out, "gradients") <- gradients
+  }
   out
 } 
 
@@ -1323,11 +1492,13 @@ calculateHTMTcore <- function(
 #' correlations between indicators are either all-positive or all-negative.
 #' A warning is given if this is not the case.
 #' 
-#' To obtain bootstrap confidence intervals for the HTMT/HTMT2 values, set `.inference = TRUE`.
+#' To obtain bootstrap confidence intervals for the HTMT/HTMT2 values, set `.inference = "bootstrap"`.
 #' To choose the type of confidence interval, use `.ci`. To control the bootstrap process,
 #' arguments `.R` and `.seed` are available. Note, that `.alpha` is multiplied by two
 #' because typically researchers are interested in one-sided bootstrap confidence intervals
 #' for the HTMT/HTMT2. 
+#' 
+#' To obtain asymptotic confidence intervals for the HTMT values, set `.inference = "asymptotic"`.
 #' 
 #' Since the HTMT and the HTMT2 both assume a reflective measurement
 #' model only concepts modeled as common factors are considered by default.
@@ -1341,9 +1512,9 @@ calculateHTMTcore <- function(
 #'  .type_htmt            = c('htmt','htmt2'),
 #'  .absolute             = TRUE,
 #'  .alpha                = 0.05,
-#'  .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
+#'  .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t",
 #'                            "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
-#'  .inference            = FALSE,
+#'  .inference            = c("none", "bootstrap", "asymptotic"),
 #'  .only_common_factors  = TRUE,
 #'  .R                    = 499,
 #'  .seed                 = NULL,
@@ -1356,19 +1527,19 @@ calculateHTMTcore <- function(
 #' @param .ci A character strings naming the type of confidence interval to use 
 #'   to compute the 1-alpha% quantile of the bootstrap HTMT values. For possible 
 #'   choices see [infer()]. Ignored
-#'   if `.inference = FALSE`. Defaults to "*CI_percentile*".
 #' @param ... Ignored.
 #'
 #' @return A named list containing: 
 #' \itemize{
 #' \item the values of the HTMT/HTMT2, i.e., a matrix with the HTMT/HTMT2 values 
-#' at its lower triangular and if `.inference = TRUE` the upper triangular contains
-#'  the upper limit of the 1-2*.alpha% bootstrap confidence interval if the HTMT/HTMT2 is positive and 
+#' at its lower triangular and if `.inference != "none"` the upper triangular contains
+#'  the upper limit of the 1-2*.alpha% bootstrap or asymptotic confidence interval 
+#'  if the HTMT/HTMT2 is positive and 
 #'  the lower limit if the HTMT/HTMT2 is negative.
-#'  \item the lower and upper limits of the 1-2*.alpha% bootstrap confidence interval if 
-#'  `.inference = TRUE`; otherwise it is `NULL`.
+#'  \item the lower and upper limits of the 1-2*.alpha% confidence interval if 
+#'  `.inference` is not none; otherwise it is `NULL`.
 #'  \item the number of admissible bootstrap runs, i.e., the number of HTMT/HTMT2 values
-#'  calculated during bootstrap if `.inference = TRUE`; otherwise it is `NULL`.
+#'  calculated during bootstrap otherwise it is `NULL`.
 #'  Note, the HTMT2 is based on the geometric and thus cannot always be calculated. 
 #'  }
 #' 
@@ -1386,46 +1557,91 @@ calculateHTMT <- function(
   .type_htmt            = c('htmt','htmt2'),
   .absolute             = TRUE,
   .alpha                = 0.05,
-  .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
+  .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t",
                             "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
-  .inference            = FALSE,
+  .inference            = c("none", "bootstrap", "asymptotic"),
   .only_common_factors  = TRUE,
   .R                    = 499,
   .seed                 = NULL,
   ...
 ){
+  ci_supplied           <- !missing(.ci) # was .ci set explicitly? (asymptotic guard)
   .ci                   <- match.arg(.ci) # allow only one CI
   .type_htmt            <- match.arg(.type_htmt)
+  
+  if(is.logical(.inference) && length(.inference) == 1 && !is.na(.inference)) {
+    warning2("Supplying `.inference` as TRUE/FALSE is deprecated. ",
+             "Use one of 'none', 'bootstrap', or 'asymptotic'. ",
+             "`.inference = ", .inference, "` is interpreted as '",
+             if(.inference) "bootstrap" else "none", "'.")
+    .inference <- if(.inference) "bootstrap" else "none"
+  }
+  .inference            <- match.arg(.inference)
 
   if(inherits(.object, "cSEMResults_multi")) {
-    out <- lapply(.object, calculateHTMT,
-                  .type_htmt     = .type_htmt,
-                  .absolute = .absolute,
-                  .alpha                = .alpha,
-                  .inference            = .inference,
-                  .only_common_factors  = .only_common_factors,
-                  .R                    = .R,
-                  .seed                 = .seed
-                  )
-    return(out)
+    args <- list(.type_htmt = .type_htmt, .absolute = .absolute, .alpha = .alpha,
+                 .inference = .inference, .only_common_factors = .only_common_factors,
+                 .R = .R, .seed = .seed)
+    if(ci_supplied) args$.ci <- .ci
+    return(lapply(.object, function(g) do.call(calculateHTMT, c(list(g), args))))
   }
   
   out <- calculateHTMTcore(.object = .object,
                            .type_htmt = .type_htmt,
                            .absolute =  .absolute,
-                           .only_common_factors = .only_common_factors
-    
+                           .only_common_factors = .only_common_factors,
+                           .gradient = (.inference  == "asymptotic" &&
+                                          .type_htmt == "htmt")
   )
+  if(is.null(out)) {
+    if(.inference != "none") {
+      warning2(
+        "The following issue occurred in the calculateHTMT() function:\n",
+        "No HTMT and no confidence intervals are computed: the model contains ",
+        "less than two constructs modeled as common factors. To compute the ",
+        "HTMT for composites, set `.only_common_factors = FALSE`.")
+    }
+    return(list("htmts" = NULL, "quantiles" = NULL, "nr_admissibles" = NULL))
+  }
+  
+  gradients <- attr(out, "gradients")
+  attr(out, "gradients") <- NULL
   
 # In case of inference
-
-  if(.inference) {
+if(.inference != "none"){
+  
+  if(length(.alpha) != 1){
+    stop2("The following error occured in the calculateHTMT() function:\n",
+          "Only a single numeric probability accepted. You provided:", paste(.alpha, collapse = ", "))
+  }
+  
+  
+  if(.inference == "asymptotic"){
+    if(ci_supplied){
+      warning2("`.ci` is ignored when `.inference = 'asymptotic'`; an asymptotic confidence ",
+               "interval based on the delta-method is returned.")
+    }
+    if(.absolute == TRUE){
+      warning2("For the asymptotic HTMT confidence interval, it is recommended to set .absolute to FALSE.")
+    }
+    if(.type_htmt == "htmt2"){
+      warning2("The following error occured in the calculateHTMT() function:\n",
+               "Asymptotic confidence intervals are not available for the HTMT2. \n",
+             "Therefore `.inference` is set to none. Use `.inference = 'bootstrap'`.")
+      .inference <- "none"
+    }
+    if(!all(.object$Information$Type_of_indicator_correlation == "Pearson")){
+      warning2("The following error occured in the calculateHTMT() function:\n",
+            "Asymptotic (delta-method) confidence intervals require Pearson correlations.\n",
+            "Therefore `.inference` is set to none. Use `.inference = 'bootstrap'`.")
+      .inference <- "none"
+    }
+  }
+  if(.inference == "bootstrap"){
     
     if(.absolute == TRUE){
-      warning2("For resampling the HTMT/HTMT2, it is recommended to to set .absolute to FALSE.")
+      warning2("For resampling the HTMT/HTMT2, it is recommended to set .absolute to FALSE.")
     }
-    
-
     # Bootstrap if necessary
     out_resample <- resamplecSEMResults(
       .object, 
@@ -1447,44 +1663,60 @@ calculateHTMT <- function(
     
     # number of admissible HTMT calculations, i.e., not NaNs
     nr_admissible <- dim(out_resample$Estimates$Estimates_resample$Estimates1$HTMT$Resampled)[1]
+    out_infer <- infer(out_resample, .alpha = .alpha*2, .quantity = .ci)
+    quants <- out_infer$HTMT[[1]] 
+  
+  }
 
-    # Compute quantile
-    if(length(.alpha) == 1) {
-      out_infer <- infer(out_resample, .alpha = .alpha*2, .quantity = .ci)
-      quants <- out_infer$HTMT[[1]] 
-    } else {
-      stop2(
-        "The following error occured in the calculateHTMT() function:\n",
-        "Only a single numeric probability accepted. You provided:", paste(.alpha, sep = ", "))
-    }
-    
+}
+    if(.inference  == "asymptotic") {
+    se_pairs <- calculateHTMTasymptoticSE(gradients,
+                                          .object$Information$Data)
+    se_mat <- matrix(0, nrow(out), ncol(out), dimnames = dimnames(out))
+    se_mat[lower.tri(se_mat)] <- se_pairs
+
+    # asymptotic CI bounds per matrix cell (2 x n^2), same layout as the bootstrap quants
+    zval   <- stats::qnorm(1 - .alpha)
+    quants <- rbind(c(out) - zval * c(se_mat),
+                    c(out) + zval * c(se_mat))
+    cl <- 100 * (1 - 2 * .alpha)
+    rownames(quants) <- c(sprintf("%.6g%%L", cl), sprintf("%.6g%%U", cl))
+    nr_admissible <- NULL
+
+  } else if(.inference == "none"){ # no inference
+    quants <- NULL
+    nr_admissible <- NULL
+  }
+
+  # Assemble: point estimates in the lower triangle, the relevant one-sided CI
+  # bound (upper if HTMT >= 0, else lower) in the upper triangle.
+  if(.inference != "none") {
     quants_for_print <- sapply(1:dim(quants)[2],function(x){
       # if HTMT(2) value is negative report the lower bound
       if(c(out)[x]<0){
-        quants[1,x]  
+        quants[1,x]
       } else { #otherwise report the upper bound
-        quants[2,x] 
+        quants[2,x]
       }
     })
 
-    # Assemble output 
     temp_quantiles <- out
-    temp_quantiles[] <- quants_for_print 
-    
+    temp_quantiles[] <- quants_for_print
+
     out_for_print <- out + t(temp_quantiles)
     diag(out_for_print) <- 1
-    
 
-  }else{ #if inference == FALSE
-    quants <- NULL
-    nr_admissible = NULL
+  } else { #if inference == FALSE
     out_for_print <- out
   }
   
   # Return
   list("htmts" = out_for_print,
        "quantiles" = quants,
-       "nr_admissibles" = nr_admissible)
+       "nr_admissibles" = nr_admissible,
+       "inference" = .inference,
+       "absolute" = .absolute, 
+       "ci"       = .ci)
 }
 
 

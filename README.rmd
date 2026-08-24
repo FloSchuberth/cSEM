@@ -29,7 +29,9 @@ procedures (e.g., verify admissibility of the estimates, assess the
 model fit, test the model fit, compute confidence intervals, compare
 groups, etc.).
 
-## News (2026-08-02):
+## News (2026-08-24):
+
+- Extend calculateHTMT() to allow for asymptotic inference for the HTMT. Thanks to Jason Berger for his contribution.
 
 - Fix bug in calculating the moments used to estimate non-linear models. 
 

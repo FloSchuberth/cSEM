@@ -5,7 +5,7 @@
 \title{Complete list of assess()'s ... arguments}
 \arguments{
 \item{.absolute}{Logical. Should the absolute HTMT values be returned?
-Defaults to \code{TRUE} .}
+Defaults to \code{TRUE}.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
@@ -26,7 +26,8 @@ For "\emph{replace}" resampling continues until there are exactly \code{.R} admi
 Depending on the frequency of inadmissible solutions this may significantly increase
 computing time. Defaults to "\emph{drop}".}
 
-\item{.inference}{Logical. Should critical values be computed? Defaults to \code{FALSE}.}
+\item{.inference}{Character string. Either \code{none}, \code{bootstrap} or \code{asymptotic}.
+Defaults to \code{none}.}
 
 \item{.null_model}{Logical. Should the degrees of freedom for the null model
 be computed? Defaults to \code{FALSE}.}

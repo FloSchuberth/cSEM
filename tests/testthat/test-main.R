@@ -112,6 +112,7 @@ model_2ndorder <- model_Sigma
 ### Data -----------------------------------------------------------------------
 # Add unused columns to threecommonfactors to check if they get removed correctly
 # when not part of the model
+threecommonfactors_org <- threecommonfactors
 threecommonfactors <- as.data.frame(threecommonfactors)
 threecommonfactors$not_used_numeric <- rnorm(nrow(threecommonfactors))
 threecommonfactors$not_used_character <- sample(letters, 
