@@ -1640,7 +1640,7 @@ if(.inference != "none"){
   if(.inference == "bootstrap"){
     
     if(.absolute == TRUE){
-      warning2("For resampling the HTMT/HTMT2, it is recommended to to set .absolute to FALSE.")
+      warning2("For resampling the HTMT/HTMT2, it is recommended to set .absolute to FALSE.")
     }
     # Bootstrap if necessary
     out_resample <- resamplecSEMResults(
