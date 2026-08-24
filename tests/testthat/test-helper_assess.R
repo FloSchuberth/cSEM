@@ -18,7 +18,10 @@ eta3 =~ y31 + y32 + y33
 eta2 ~ eta1
 eta3 ~ eta1 + eta2
 "
-res_3cf <- csem(.data = threecommonfactors_org, .model = model_3cf)
+
+dat_3cf <- cSEM::threecommonfactors
+
+res_3cf <- csem(.data = dat_3cf, .model = model_3cf)
 
 blocks_3cf <- list(
   eta1 = c("y11", "y12", "y13"),
@@ -144,7 +147,7 @@ test_that("CI equals estimate +/- z * sqrt(t(g) Sigma g) and layout is correct",
 })
 
 test_that("the CI is invariant to affine transformations of the indicators", {
-  res_t <- csem(.data = threecommonfactors_org * 3 + 5, .model = model_3cf)
+  res_t <- csem(.data = dat_3cf * 3 + 5, .model = model_3cf)
   ht_t  <- calculateHTMT(res_t,
                          .type_htmt          = "htmt",
                          .absolute           = FALSE,
@@ -165,7 +168,7 @@ test_that("the CI is invariant to indicator and block ordering", {
   eta2 ~ eta1
   eta3 ~ eta1 + eta2
   "
-  res_p <- csem(.data = threecommonfactors_org[, perm_cols], .model = model_perm)
+  res_p <- csem(.data = dat_3cf[, perm_cols], .model = model_perm)
   ht_p  <- calculateHTMT(res_p,
                          .type_htmt          = "htmt",
                          .absolute           = FALSE,
@@ -190,7 +193,7 @@ test_that("the CI of a pair is unaffected by indicators outside the pair", {
   eta2 =~ y21 + y22 + y23
   eta2 ~ eta1
   "
-  res_12 <- csem(.data = threecommonfactors_org, .model = model_12)
+  res_12 <- csem(.data = dat_3cf, .model = model_12)
   ht_12  <- calculateHTMT(res_12,
                           .type_htmt          = "htmt",
                           .absolute           = FALSE,

@@ -306,17 +306,18 @@ print.cSEMAssess <- function(x, ...) {
     cat2("\n\n", rule2("Discriminant validity assessment"))
     # HTMT
     if(any(names(x) == "HTMT") && !is.null(x$HTMT)) {
-      cat2("\n\n\tHeterotrait-monotrait ratio of correlations matrix (HTMT matrix)\n\n")
+      cat2("\n\n\tHeterotrait-monotrait ratio of correlations matrix (HTMT matrix)\n\n", 
+           "\n\n\tValues in the lower triangular part are the", if(x$HTMT$absolute){" absolute "}, "HTMT values\n\n")
 
-      if(x$Information$.inference != "none") {
-        if(x$Information$.inference == "asymptotic") {
+      if(x$HTMT$inference != "none") {
+        if(x$HTMT$inference == "asymptotic") {
           cat2("\tValues in the upper triangular part are the ",
                paste0(100*(1 - x$Information$.alpha), "% limits of the\n",
                       "\tasymptotic confidence intervals based on the delta-method.\n\n"))
-        } else if(x$Information$.inference == "bootstrap") {
+        } else if(x$HTMT$inference == "bootstrap") {
           cat2("\tValues in the upper triangular part are the ",
                paste0(100*(1 - x$Information$.alpha), "%-quantiles of the\n",
-              "\tbootstrap confidence intervals (using .ci = '", x$Information$.ci, "')\n",
+              "\tbootstrap confidence intervals (using .ci = '", x$HTMT$ci, "')\n",
               "\tbased on ", x$HTMT$nr_admissibles ," valid bootstrap runs.\n\n"))
         }
       }
@@ -324,14 +325,15 @@ print.cSEMAssess <- function(x, ...) {
     }
 # HTMT2
     if(any(names(x) == "HTMT2") && !is.null(x$HTMT2)) {
-      cat2("\n\n\tAdvanced heterotrait-monotrait ratio of correlations matrix (HTMT2 matrix)\n\n")
+      cat2("\n\n\tAdvanced heterotrait-monotrait ratio of correlations matrix (HTMT2 matrix)\n\n",
+           "\n\n\tValues in the lower triangular part are the", if(x$HTMT$absolute){" absolute "}, "HTMT2 values\n\n")
       
-      if(x$Information$.inference == "bootstrap") {
+      if(x$HTMT2$inference == "bootstrap") {
         cat2("\tValues in the upper triangular part are the ", 
              paste0(100*(1 - x$Information$.alpha), "%-quantiles of the\n", 
-                    "\tbootstrap confidence intervals (using .ci = '", x$Information$.ci, "')\n",
+                    "\tbootstrap confidence intervals (using .ci = '", x$HTMT2$ci, "')\n",
                     "\tbased on ", x$HTMT2$nr_admissibles ," valid bootstrap runs.\n\n")) 
-      }
+      } 
       print(x$HTMT2$htmts)
     }    
 

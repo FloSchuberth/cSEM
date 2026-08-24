@@ -1712,7 +1712,10 @@ if(.inference != "none"){
   # Return
   list("htmts" = out_for_print,
        "quantiles" = quants,
-       "nr_admissibles" = nr_admissible)
+       "nr_admissibles" = nr_admissible,
+       "inference" = .inference,
+       "absolute" = .absolute, 
+       "ci"       = .ci)
 }
 
 

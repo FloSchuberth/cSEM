@@ -516,14 +516,6 @@ assess <- function(
       
       # Get argument values
       args_htmt <- list(...)
-      # Record the inference actually performed, derived from the result itself:
-      # no quantiles -> no inference (incl. internal downgrades); quantiles
-      # without bootstrap runs -> asymptotic; otherwise bootstrap.
-      ref <- if(!is.null(out[["HTMT"]])) out[["HTMT"]] else out[["HTMT2"]]
-      out$Information[[".inference"]] <-
-        if(is.null(ref$quantiles))           "none"
-      else if(is.null(ref$nr_admissibles)) "asymptotic"
-      else                                 "bootstrap"
       
       if(any(names(args_htmt) == ".alpha")) {
         out$Information[[".alpha"]] <- args_htmt[[".alpha"]]
@@ -531,11 +523,6 @@ assess <- function(
         out$Information[[".alpha"]] <- formals(calculateHTMT)[[".alpha"]]
       } 
       
-      if(any(names(args_htmt) == ".ci")) {
-        out$Information[[".ci"]] <- args_htmt[[".ci"]]
-      } else {
-        out$Information[[".ci"]] <- "CI_percentile"
-      } 
       
     } else { # 2nd_order
       warning("Computation of the HTMT",
