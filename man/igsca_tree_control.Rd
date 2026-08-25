@@ -9,6 +9,7 @@ igsca_tree_control(
   bonferroni = TRUE,
   minbucket = 30L,
   minsplit = 2L * minbucket,
+  minprob = 0.01,
   maxdepth = 3L,
   max_cuts = 20L,
   R_test = 500L,
@@ -43,6 +44,17 @@ indicators the default admits leaves the model may not fit; see the
 \code{n_fail_leaf} counter on the returned tree.}
 
 \item{minsplit}{Minimum number of observations required to attempt a split.}
+
+\item{minprob}{Minimum size of a terminal node as a proportion of its
+parent's. partykit raises \code{minbucket} per node rather than replacing it --
+\code{.extree_node()} computes \eqn{\max(\code{minbucket}, \lceil n_{node}
+\times \code{minprob} \rceil)} and hands the raised value to the variable
+selector and the cutpoint rule alike, so it constrains the non-native
+splitters through \code{candidate_partitions()} as well as partykit's own scan.
+Note that the proportion is of the \emph{node}, not of the sample: at
+\code{minprob = 0.25} a depth-2 leaf can hold a sixteenth of the data. Defaults
+to \code{0.01}, matching \code{\link[partykit:ctree_control]{partykit::ctree_control()}}; with the default
+\code{minbucket = 30L} it does not bind below n = 3000.}
 
 \item{maxdepth}{Maximum depth of the tree, the root counting as 0.}
 

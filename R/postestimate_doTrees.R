@@ -157,6 +157,7 @@ doTrees <- function(
     alpha = control$alpha,
     minsplit = control$minsplit,
     minbucket = control$minbucket,
+    minprob = control$minprob,
     maxdepth = control$maxdepth,
     maxsurrogate = 0L,
     nmax = c(yx = Inf, z = Inf),

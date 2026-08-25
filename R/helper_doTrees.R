@@ -175,6 +175,16 @@ validate_tree_input <- function(data, indicators, covariates, influence,
 #'   indicators the default admits leaves the model may not fit; see the
 #'   `n_fail_leaf` counter on the returned tree.
 #' @param minsplit Minimum number of observations required to attempt a split.
+#' @param minprob Minimum size of a terminal node as a proportion of its
+#'   parent's. partykit raises `minbucket` per node rather than replacing it --
+#'   `.extree_node()` computes \eqn{\max(\code{minbucket}, \lceil n_{node}
+#'   \times \code{minprob} \rceil)} and hands the raised value to the variable
+#'   selector and the cutpoint rule alike, so it constrains the non-native
+#'   splitters through `candidate_partitions()` as well as partykit's own scan.
+#'   Note that the proportion is of the *node*, not of the sample: at
+#'   `minprob = 0.25` a depth-2 leaf can hold a sixteenth of the data. Defaults
+#'   to `0.01`, matching [partykit::ctree_control()]; with the default
+#'   `minbucket = 30L` it does not bind below n = 3000.
 #' @param maxdepth Maximum depth of the tree, the root counting as 0.
 #' @param max_cuts Maximum number of candidate cutpoints scanned per numeric
 #'   covariate. Only the non-native cutpoint rules use this; partykit's own
@@ -213,15 +223,25 @@ igsca_tree_control <- function(alpha = 0.05,
                                bonferroni = TRUE,
                                minbucket = 30L,
                                minsplit = 2L * minbucket,
+                               minprob = 0.01,
                                maxdepth = 3L,
                                max_cuts = 20L,
                                R_test = 500L,
                                coin_distribution = c("asymptotic", "approximate")) {
+  ## NOTE: R_test and coin_distribution keep TODAY'S defaults in this task --
+  ## 500L and "asymptotic"-first. Task 4 raises R_test to 9999L and flips the
+  ## match.arg order. Do not anticipate that here.
+  stopifnot(
+    "`minprob` must be a single number between 0 and 1" =
+      length(minprob) == 1 && is.numeric(minprob) && !is.na(minprob) &&
+      minprob >= 0 && minprob <= 1
+  )
   list(
     alpha = alpha,
     bonferroni = bonferroni,
     minbucket = as.integer(minbucket),
     minsplit = as.integer(minsplit),
+    minprob = minprob,
     maxdepth = as.integer(maxdepth),
     max_cuts = as.integer(max_cuts),
     R_test = as.integer(R_test),

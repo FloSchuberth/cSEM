@@ -162,6 +162,42 @@ test_that("the native split path never touches the kernel counters", {
   expect_identical(info$n_fail_split, 0L)
 })
 
+# minprob ----------------------------------------------------------------
+# partykit's .extree_node() takes mb <- max(minbucket, ceiling(sw * minprob))
+# and hands the raised value to both the selector and the splitter, so
+# candidate_partitions() sees it too. A minprob no split can satisfy must
+# therefore produce a stump on both cutpoint routes -- which is the only way to
+# see that the setting reached the non-native ones at all.
+test_that("minprob raises the effective minbucket on every cutpoint route", {
+  for (sp in c("native", "DLi")) {
+    set.seed(11)
+    binding <- grow_tree(
+      influence = "mat",
+      splitter = sp,
+      control = igsca_tree_control(minprob = 0.9, maxdepth = 1L, max_cuts = 8L)
+    )
+    # n = 1000, so minbucket is raised to 900 at the root and no binary split
+    # can leave both children that large.
+    expect_equal(
+      partykit::width(partykit::node_party(binding)), 1,
+      info = paste0("binding, splitter = ", sp)
+    )
+
+    set.seed(11)
+    slack <- grow_tree(
+      influence = "mat",
+      splitter = sp,
+      control = igsca_tree_control(minprob = 0.01, maxdepth = 1L, max_cuts = 8L)
+    )
+    # ... and the same configuration splits once minprob no longer binds, so
+    # the stump above is minprob's doing and not the fixture's.
+    expect_gt(
+      partykit::width(partykit::node_party(slack)), 1,
+      label = paste0("width(slack, splitter = ", sp, ")")
+    )
+  }
+})
+
 # Input contract ---------------------------------------------------------
 # doTrees() takes a fitted object rather than data + model, so everything it
 # needs is either derivable from that fit or a mistake worth naming.
