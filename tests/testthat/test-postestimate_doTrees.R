@@ -241,6 +241,7 @@ test_that("coin_distribution alone decides whether a run permutes", {
   }
 })
 
+# FIXME: This might be overkill, consider deleting
 test_that("R_test reaches libcoin as nresample, not merely the control list", {
   for (sp in c("native", "DLi")) {
     set.seed(1L)
