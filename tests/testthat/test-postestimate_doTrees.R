@@ -198,6 +198,61 @@ test_that("minprob raises the effective minbucket on every cutpoint route", {
   }
 })
 
+# Permutation invariant --------------------------------------------------
+# coin_distribution is the only thing that decides whether a run permutes, and
+# it decides it for every .splitter alike: the cutpoint search never permutes.
+# partykit hard-zeroes nresample in .ctree_test_internal()'s SPLITONLY branch,
+# and the FIT/DLi/DGi kernels take a deterministic argmax over candidates. A
+# csem() GSCA fit is bit-identical across seeds, so any seed dependence left in
+# a grown tree is libcoin's and nothing else's.
+test_that("coin_distribution alone decides whether a run permutes", {
+  noise_p <- function(splitter, dist, seed) {
+    set.seed(seed)
+    tr <- grow_tree(
+      influence = "mat",
+      splitter = splitter,
+      control = igsca_tree_control(
+        coin_distribution = dist, R_test = 500L, maxdepth = 1L, max_cuts = 8L
+      )
+    )
+    # The noise covariates, not z_true: a Monte Carlo p-value is discrete at
+    # (1 + k) / (R + 1), and z_true is strong enough on this fixture to sit at
+    # the 1 / 501 floor under every seed.
+    attr(tr, "igsca_info")$root_criteria["p.value", c("noise_1", "noise_2")]
+  }
+
+  for (sp in c("native", "DLi")) {
+    # Nothing is drawn, so the p-values cannot depend on the seed.
+    expect_identical(
+      noise_p(sp, "asymptotic", 1L),
+      noise_p(sp, "asymptotic", 2L),
+      info = sp
+    )
+    # ... and under Monte Carlo they must, which is what makes the equality
+    # above evidence of no permutations rather than merely of reproducibility.
+    expect_false(
+      identical(noise_p(sp, "approximate", 1L), noise_p(sp, "approximate", 2L)),
+      label = paste0("approximate p-values differ across seeds, splitter = ", sp)
+    )
+  }
+})
+
+test_that("igsca_tree_control() defaults to Monte Carlo p-values", {
+  ctl <- igsca_tree_control()
+  expect_identical(ctl$coin_distribution, "approximate")
+  expect_identical(ctl$R_test, 9999L)
+  expect_error(
+    igsca_tree_control(R_test = 0L),
+    "positive whole number",
+    fixed = TRUE
+  )
+  expect_error(
+    igsca_tree_control(minprob = 2),
+    "must be a single number",
+    fixed = TRUE
+  )
+})
+
 # Input contract ---------------------------------------------------------
 # doTrees() takes a fitted object rather than data + model, so everything it
 # needs is either derivable from that fit or a mistake worth naming.
