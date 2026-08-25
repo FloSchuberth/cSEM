@@ -180,7 +180,7 @@ test_that("partition_stat() records a failed auxiliary fit instead of throwing",
     ),
     NA_real_
   )
-  expect_identical(coll$n_fail_resample, 1L)
+  expect_identical(coll$n_fail_candidate, 1L)
 })
 
 # This is where cutpoint choice has to be tested: at the tree level the root

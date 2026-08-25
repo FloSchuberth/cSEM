@@ -105,7 +105,7 @@ doTrees <- function(
       h <- influence_fn(E)
       ef <- matrix(0, nrow = nrow(mf), ncol = ncol(h))
       ef[subset, ] <- h # I'm sceptical about whether or not this subset is needed. 
-      ## object is returned unconditionally: a mixed-pair splitter's kernel
+      ## object is returned unconditionally: a non-native splitter's kernel
       ## needs the pooled node fit (partition_stat reads model$object), and
       ## extree does not promise object = TRUE on the split path.
       list(
@@ -212,7 +212,7 @@ doTrees <- function(
     n_fail_node = collector$n_fail_node,
     ## 0 under .splitter = "native"; counts candidate partitions whose
     ## statistic could not be computed under any other splitter.
-    n_fail_resample = collector$n_fail_resample,
+    n_fail_candidate = collector$n_fail_candidate,
     ## Split-kernel scans: n_fail_split counts the scans that produced no
     ## finite statistic. Both stay 0 when splitter = "native".
     n_split_scan = collector$n_split_scan,

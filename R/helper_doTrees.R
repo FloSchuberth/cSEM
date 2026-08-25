@@ -104,7 +104,7 @@ csem_tree_args <- function(.object) {
 #' Check the tree can be grown from this fit
 #'
 #' One thing partykit and csem() would otherwise report from far away:
-#' `calculateGSCAErrors()` returns `NA` (not an error) off a GSCA fit, so the
+#' `calculateGSCAErrors()` returns `NA` (not an error) off a non-GSCA fit, so the
 #' node statistic would fail deep inside the trafo. Every `.influence` value
 #' reads it, so every fit `doTrees()` is given must be a GSCA one.
 #' @noRd
@@ -485,7 +485,7 @@ new_collector <- function() {
   e$root_seen <- FALSE      # first trafo call = root fit (full vs node fail)
   e$n_fail_full <- 0L
   e$n_fail_node <- 0L
-  e$n_fail_resample <- 0L
+  e$n_fail_candidate <- 0L
   # Split-kernel scans: how many argmax_split() calls actually evaluated the
   # kernel, and how many of those produced nothing usable. See argmax_split().
   e$n_split_scan <- 0L
@@ -741,8 +741,8 @@ ndt_pools <- function(single_fit) {
 #' (NPT) or an ndt_dists() distance name -- "DGi"/"DLi" only: Study 1 works
 #' with the model-implied indicator VCV, never the construct VCV (the shared
 #' helper also computes "DGc"/"DLc", which stay unused here). Counts every
-#' failed auxiliary fit into collector$n_fail_resample (recorded, never
-#' redrawn).
+#' candidate partition whose statistic could not be computed into
+#' collector$n_fail_candidate.
 #' 
 #'
 #' @noRd
@@ -750,7 +750,7 @@ partition_stat <- function(stat_kind, model, mf, subset, goes_left, ctrl) {
   coll <- ctrl$collector
   d <- node_group_data(mf, subset, ctrl$indicators, goes_left)
   mga <- try_fit(d, ctrl$args, .id = "group")
-  if (!mga$ok) { coll$n_fail_resample <- coll$n_fail_resample + 1L; return(NA_real_) }
+  if (!mga$ok) { coll$n_fail_candidate <- coll$n_fail_candidate + 1L; return(NA_real_) }
   if (stat_kind == "FITdiff") {
     if (is.null(model$object)) {
       return(NA_real_)
@@ -760,7 +760,7 @@ partition_stat <- function(stat_kind, model, mf, subset, goes_left, ctrl) {
       error = function(e) NULL
     )
     if (is.null(val)) {
-      coll$n_fail_resample <- coll$n_fail_resample + 1L
+      coll$n_fail_candidate <- coll$n_fail_candidate + 1L
       return(NA_real_)
     }
     return(val)
@@ -787,7 +787,7 @@ partition_stat <- function(stat_kind, model, mf, subset, goes_left, ctrl) {
     },
     error = function(e) NULL
   )
-  if (is.null(ds)) { coll$n_fail_resample <- coll$n_fail_resample + 1L; return(NA_real_) }
+  if (is.null(ds)) { coll$n_fail_candidate <- coll$n_fail_candidate + 1L; return(NA_real_) }
   unname(ds[stat_kind])
 }
 

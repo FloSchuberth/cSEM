@@ -98,7 +98,7 @@ for (sp in c("FIT", "DLi", "DGi")) {
 # doTrees() plants its kernel in cc$splitfun and relies on partykit reading it
 # back out of the control object. Nothing in ?ctree_control promises that, so it
 # is an undocumented contract, and it has already survived one partykit upgrade
-# unverified. If a release stops honouring it, every mixed configuration
+# unverified. If a release stops honouring it, every non-native configuration
 # silently falls back to partykit's own maxstat scan and still returns a
 # perfectly plausible tree -- so counting the kernel's invocations is the only
 # way to see it happen.
