@@ -87,7 +87,7 @@ null distribution -- not \emph{which} null, which is the permutation null
 either way. Both settings test the same hypothesis by the same Strasser
 and Weber (1999) framework; they differ only in how its tail is obtained.
 "approximate" (the default) estimates the tail by drawing \code{R_test}
-permutations of it. "asymptotic" draws no permutations at all: libcoin
+permutations of the null distribution. "asymptotic" draws no permutations at all: libcoin
 computes
 the linear statistic's exact conditional expectation and covariance under
 the permutation null in closed form, standardises by them, and reads the
@@ -111,7 +111,7 @@ costs.}
 A named \code{list} of tuning parameters.
 }
 \description{
-Tuning parameters for \code{\link[=doTrees]{doTrees()}}. \code{doTrees()} runs one algorithm --
+\code{doTrees()} runs one algorithm --
 conditional-inference variable selection from libcoin, followed by a
 cutpoint rule chosen with \code{.splitter} -- so every parameter below applies to
 every configuration, except \code{max_cuts}, which only the non-native cutpoint

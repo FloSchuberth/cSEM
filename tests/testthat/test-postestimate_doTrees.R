@@ -34,7 +34,11 @@ res <- csem(
 # four cutpoint rules. The native rule is cheap enough to run at the package
 # defaults; a "FIT"/"DLi"/"DGi" rule re-scans candidate cutpoints with a model
 # comparison statistic, which adds a second or two.
-ctl_mixed <- igsca_tree_control(R_test = 50L, maxdepth = 2L, max_cuts = 8L)
+# R_test is live now that coin_distribution defaults to "approximate": at
+# R_test = 50L with bonferroni over k = 3 covariates the smallest non-zero
+# adjusted p-value is 1 - (1 - 1/50)^3 = 0.0588, which never clears alpha, so a
+# node could only split on an exact 0/50. 999L keeps the resolution honest.
+ctl_mixed <- igsca_tree_control(R_test = 999L, maxdepth = 2L, max_cuts = 8L)
 
 grow_tree <- function(influence, splitter, control, object = res) {
   doTrees(
@@ -215,9 +219,9 @@ test_that("coin_distribution alone decides whether a run permutes", {
         coin_distribution = dist, R_test = 500L, maxdepth = 1L, max_cuts = 8L
       )
     )
-    # The noise covariates, not z_true: a Monte Carlo p-value is discrete at
-    # (1 + k) / (R + 1), and z_true is strong enough on this fixture to sit at
-    # the 1 / 501 floor under every seed.
+    # The noise covariates, not z_true: a libcoin Monte Carlo p-value is k/R
+    # exactly, and z_true is strong enough on this fixture that no permutation
+    # beats it, so it sits at 0 under every seed and could never differ.
     attr(tr, "igsca_info")$root_criteria["p.value", c("noise_1", "noise_2")]
   }
 
@@ -234,6 +238,31 @@ test_that("coin_distribution alone decides whether a run permutes", {
       identical(noise_p(sp, "approximate", 1L), noise_p(sp, "approximate", 2L)),
       label = paste0("approximate p-values differ across seeds, splitter = ", sp)
     )
+  }
+})
+
+test_that("R_test reaches libcoin as nresample, not merely the control list", {
+  for (sp in c("native", "DLi")) {
+    set.seed(1L)
+    rc <- attr(
+      grow_tree(
+        influence = "mat",
+        splitter = sp,
+        control = igsca_tree_control(
+          coin_distribution = "approximate", R_test = 500L, maxdepth = 1L, max_cuts = 8L
+        )
+      ),
+      "igsca_info"
+    )$root_criteria
+
+    # R_test must reach libcoin as nresample, not merely be stored in the control
+    # list: hardcoding `nresample = 9999L` in doTrees() leaves every other test in
+    # this file green. A Monte Carlo p-value from libcoin is k/R exactly, so at
+    # R_test = 500L the raw p-values are multiples of 1/500 -- but root_criteria()
+    # reports them Sidak-adjusted, so the adjustment has to be inverted first.
+    k <- sum(!is.na(rc["p.value", ]))
+    praw <- 1 - (1 - rc["p.value", ])^(1 / k)
+    expect_equal(praw * 500, round(praw * 500), info = sp)
   }
 })
 

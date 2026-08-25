@@ -145,7 +145,7 @@ validate_tree_input <- function(data, indicators, covariates, influence,
 
 #' Tuning parameters for [doTrees()]
 #'
-#' Tuning parameters for [doTrees()]. `doTrees()` runs one algorithm --
+#' `doTrees()` runs one algorithm --
 #' conditional-inference variable selection from libcoin, followed by a
 #' cutpoint rule chosen with `.splitter` -- so every parameter below applies to
 #' every configuration, except `max_cuts`, which only the non-native cutpoint
@@ -213,7 +213,7 @@ validate_tree_input <- function(data, indicators, covariates, influence,
 #'   either way. Both settings test the same hypothesis by the same Strasser
 #'   and Weber (1999) framework; they differ only in how its tail is obtained.
 #'   "approximate" (the default) estimates the tail by drawing `R_test`
-#'   permutations of it. "asymptotic" draws no permutations at all: libcoin
+#'   permutations of the null distribution. "asymptotic" draws no permutations at all: libcoin
 #'   computes
 #'   the linear statistic's exact conditional expectation and covariance under
 #'   the permutation null in closed form, standardises by them, and reads the
