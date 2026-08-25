@@ -7,7 +7,7 @@
 doTrees(
   .object,
   .covariates,
-  .influence = c("mat", "vec", "FIT", "DLi", "DGi"),
+  .influence = c("mat", "vec"),
   .splitter = c("native", "FIT", "DLi", "DGi"),
   .control = igsca_tree_control()
 )
@@ -20,11 +20,10 @@ non-indicator columns, so they can simply ride along in the original call.}
 \item{.covariates}{Character vector of columns of \code{.object}'s data to
 partition on.}
 
-\item{.influence}{Node statistic and, with it, the algorithm family. One of
-"mat", "vec", "FIT", "DLi" or "DGi".}
+\item{.influence}{Node statistic driving variable selection. One of "mat" or
+"vec".}
 
-\item{.splitter}{Cutpoint rule. One of "native", "FIT", "DLi" or "DGi";
-"native" is only available when \code{.influence} is "mat" or "vec".}
+\item{.splitter}{Cutpoint rule. One of "native", "FIT", "DLi" or "DGi".}
 
 \item{.control}{Tuning parameters, see \code{\link[=igsca_tree_control]{igsca_tree_control()}}.}
 }
@@ -41,11 +40,12 @@ tree are those of the fit it was given -- there is nothing to keep in sync and
 no estimator hard-coded here.
 }
 \details{
-\code{.influence} selects the family: \code{"mat"} and \code{"vec"} run conditional-inference
-(COIN) variable selection on casewise GSCA residuals, \code{"FIT"}, \code{"DLi"} and
-\code{"DGi"} run permutation tests on a model-comparison statistic. \code{.splitter}
-chooses the cutpoint within the selected covariate, and \code{"native"} (partykit's
-own maxstat scan) is available only to the COIN family.
+\code{.influence} selects the node statistic that conditional-inference variable
+selection runs on: \code{"mat"} the casewise GSCA squared-residual matrix, \code{"vec"}
+its rowwise sum. \code{.splitter} then chooses the cutpoint within the selected
+covariate -- \code{"native"} is partykit's own maxstat scan, while \code{"FIT"},
+\code{"DLi"} and \code{"DGi"} replace it with a deterministic argmax over candidate
+partitions of a model-comparison statistic.
 }
 \references{
 \insertAllCited{}

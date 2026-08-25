@@ -103,12 +103,10 @@ csem_tree_args <- function(.object) {
 
 #' Check the tree can be grown from this fit
 #'
-#' Two things partykit and csem() would otherwise report from far away, plus one
-#' they would not report at all: `calculateGSCAErrors()` returns `NA` (not an
-#' error) off a GSCA fit, so the COIN families would fail deep inside the trafo,
-#' and `calculateFIT()` errors, which `partition_stat()` turns into a silent
-#' `NA`. The distance statistics read model-implied indicator VCVs and are
-#' genuinely estimator-agnostic, so they are left alone.
+#' One thing partykit and csem() would otherwise report from far away:
+#' `calculateGSCAErrors()` returns `NA` (not an error) off a GSCA fit, so the
+#' node statistic would fail deep inside the trafo. Every `.influence` value
+#' reads it, so every fit `doTrees()` is given must be a GSCA one.
 #' @noRd
 validate_tree_input <- function(data, indicators, covariates, influence,
                                 splitter, args) {
@@ -131,13 +129,14 @@ validate_tree_input <- function(data, indicators, covariates, influence,
       paste(overlap, collapse = ", "), "."
     )
   }
-  needs_gsca <- influence %in% c("mat", "vec", "FIT") || splitter == "FIT"
-  if (needs_gsca && !identical(args$.approach_weights, "GSCA")) {
+  ## Both surviving `.influence` values read calculateGSCAErrors(), which
+  ## returns NA rather than erroring off a non-GSCA fit -- so without this the
+  ## failure would surface deep inside the trafo as a node that would not fit.
+  if (!identical(args$.approach_weights, "GSCA")) {
     stop2(
-      "`.influence = \"", influence, "\"` with `.splitter = \"", splitter,
-      "\"` needs a GSCA fit, but `.object` was fitted with .approach_weights = ",
-      "\"", args$.approach_weights, "\". The residual and FIT statistics are ",
-      "GSCA-specific; the DLi/DGi distances are not."
+      "`.influence = \"", influence, "\"` needs a GSCA fit, but `.object` was ",
+      "fitted with .approach_weights = \"", args$.approach_weights,
+      "\". The casewise residual statistics are GSCA-specific."
     )
   }
   invisible(TRUE)
@@ -146,21 +145,18 @@ validate_tree_input <- function(data, indicators, covariates, influence,
 
 #' Tuning parameters for [doTrees()]
 #'
-#' The two `doTrees()` families read this list differently, and the cost of a
-#' given setting differs by an order of magnitude between them: the
-#' conditional-inference families (`.influence` `"mat"`/`"vec"`) get their
-#' variable selection from libcoin, while the partition families
-#' (`"FIT"`/`"DLi"`/`"DGi"`) run an `R_test` permutation test per covariate per
-#' node, every permutation of which is a two-group model fit.
+#' Tuning parameters for [doTrees()]. `doTrees()` runs one algorithm --
+#' conditional-inference variable selection from libcoin, followed by a
+#' cutpoint rule chosen with `.splitter` -- so every parameter below applies to
+#' every configuration, except `max_cuts`, which only the non-native cutpoint
+#' rules consult.
 #'
 #' @param alpha Significance level a covariate must clear to split a node.
 #' @param bonferroni Adjust the node's p-values for the number of covariates
 #'   tested. The adjustment partykit applies is Šidák, \eqn{1 - (1 - p)^k}, which
 #'   agrees with Bonferroni to first order. `k` is the number of covariates that
-#'   returned a p-value at that node, not the number requested. Both families
-#'   honour this: the engine applies it to whatever the selector returns, so it
-#'   reaches the partition families too -- where it raises the `R_test` floor
-#'   sharply (see below). Defaults to `TRUE`, matching
+#'   returned a p-value at that node, not the number requested. The engine
+#'   applies it to whatever the selector returns. Defaults to `TRUE`, matching
 #'   [partykit::ctree_control()]: every node scans all covariates, so the
 #'   unadjusted p-value is a multiple-comparison statistic reported as if it
 #'   were a single test.
@@ -181,19 +177,11 @@ validate_tree_input <- function(data, indicators, covariates, influence,
 #' @param minsplit Minimum number of observations required to attempt a split.
 #' @param maxdepth Maximum depth of the tree, the root counting as 0.
 #' @param max_cuts Maximum number of candidate cutpoints scanned per numeric
-#'   covariate. Only the partition families use this.
+#'   covariate. Only the non-native cutpoint rules use this; partykit's own
+#'   scan considers every distinct value.
 #' @param R_test Number of resamples. On the conditional-inference path this is
 #'   libcoin's `nresample` and is unused under the default
-#'   `coin_distribution = "asymptotic"`. On the partition path it is the
-#'   permutation count, and it carries a correctness floor rather than just a
-#'   budget: the smallest attainable p-value is \eqn{1 / (R + 1)}, which must
-#'   clear `alpha` strictly, so no node can ever split below it. Unadjusted the
-#'   floor is `R_test >= 20L`; under `bonferroni = TRUE` it becomes
-#'   \eqn{R > (1 - \alpha)^{-1/k} / (1 - (1 - \alpha)^{1/k}) }, which for
-#'   `alpha = 0.05` and `k = 3` covariates is `R_test >= 59L`. The two families
-#'   price a resample very differently -- libcoin permutes a precomputed
-#'   influence matrix, while the partition path refits a two-group model per
-#'   permutation -- so a value that is cheap on one is not on the other.
+#'   `coin_distribution = "asymptotic"`.
 #' @param coin_distribution How the conditional-inference families evaluate the
 #'   null distribution -- not *which* null, which is the permutation null
 #'   either way. Both settings test the same hypothesis by the same Strasser
@@ -216,7 +204,7 @@ validate_tree_input <- function(data, indicators, covariates, influence,
 #'   is also exactly reproducible, since nothing is drawn, whereas the Monte
 #'   Carlo estimate carries a standard error of \eqn{\sqrt{p (1 - p) / R}} --
 #'   at the default `R_test` wide enough to flip a borderline split between
-#'   runs. Ignored by the partition families, which always permute.
+#'   runs.
 #'
 #' @returns A named `list` of tuning parameters.
 #' @seealso [doTrees()]
@@ -332,88 +320,11 @@ csem_converged <- function(fit) {
 }
 
 
-#' Generic extree_fit() driver for the partition family. `d` is an
-#' extree_data object; `selector` already satisfies extree_fit's selectfun
-#' contract and is passed through VERBATIM; `splitter` is a statistic kernel
-#' argmaxed by argmax_split() via the thin splitfun closure below. ctrl must
-#' carry $collector (and, for IGSCA use, $model + $indicators for the
-#' testers). Exposed separately from igsca_tree() so
-#' ctree_equivalence_proof.R can drive it with Gaussian fixtures (no IGSCA
-#' fitting). Note: on this path a trafo's estfun (if any) is node-local
-#' (rows = subset); only the native ctree path needs the full-n scatter.
-#' 
-#'
-#' @noRd
-#' @importFrom partykit ctree_control
-grow_extree <- function(d, trafo, selector, splitter, ctrl) {
-  collector <- ctrl$collector
-  splitfun <- function(model, trafo, data, subset, weights, whichvar, ctrl) {
-    argmax_split(
-      splitter,
-      collector,
-      model,
-      model.frame(data),
-      subset,
-      whichvar,
-      ctrl
-    )
-  }
-
-  ## ctree_control() is only a scaffold: it supplies the extree knobs we do
-  ## not own (criterion, splittry, saveinfo, ...). Everything igsca-specific
-  ## is overridden from ctrl below; the trailing loop also carries the tester
-  ## config (args, indicators, collector, R_test, max_cuts, ...) into the
-  ## ctrl the callbacks receive.
-  ##
-  ## Two scaffold fields are load-bearing and must survive the loop, which they
-  ## do only because igsca_tree_control() happens not to use those names:
-  ##   * `criterion` ("p.value") -- .extree_node() reads it as the *row name* it
-  ##     pulls out of our criteria matrix to rank covariates by. Setting it to
-  ##     "statistic" would silently rank on the raw kernel statistic and ignore
-  ##     every p-value we compute.
-  ##   * `bonferroni` -- .extree_node() applies the Šidák adjustment itself, to
-  ##     whatever the selectfun returned, so partition_select() must keep
-  ##     handing back *unadjusted* p-values. ctrl$bonferroni does overwrite the
-  ##     scaffold's value here, which is the intent: the partition families
-  ##     honour the same switch as the conditional-inference ones. Do not go
-  ##     looking for "Šidák" in partykit's help pages -- it is not there, the
-  ##     option is documented as "Bonferroni" (see ?ctree_control, testtype).
-  ##     The `* sum(!is.na(...))` on the log(1 - p) scale in .extree_node() is
-  ##     the only place the exponential form is stated; see the note under
-  ##     `bonferroni` in igsca_tree_control() for the full trail.
-  ## `testtype` and `nresample` are inert on this path -- they only steer
-  ## libcoin inside ctree's own selectfun, which we have replaced.
-  ectrl <- partykit::ctree_control()
-  ectrl$update <- TRUE
-  ectrl$logmincriterion <- log(1 - ctrl$alpha)
-  ectrl$maxsurrogate <- 0L
-  ectrl$mtry <- Inf
-  for (nm in names(ctrl)) {
-    ectrl[[nm]] <- ctrl[[nm]]
-  }
-
-  n <- nrow(model.frame(d))
-  fit <- partykit::extree_fit(
-    data = d,
-    trafo = trafo,
-    converged = TRUE,
-    selectfun = selector,
-    splitfun = splitfun,
-    svselectfun = selector,
-    svsplitfun = splitfun,
-    partyvars = d$variables$z,
-    subset = seq_len(n),
-    weights = rep.int(1L, n),
-    ctrl = ectrl
-  )
-  fit$nodes
-}
 
 #' Best cutpoint for a covariate under one split kernel
 #'
-#' Scans `whichvar` in order and returns the first covariate's argmax candidate,
-#' reusing the selector's scan when the collector's cache was armed with this
-#' same kernel and subset. Counts scans that ran but produced nothing finite
+#' Scans `whichvar` in order and returns the first covariate's argmax candidate.
+#' Counts scans that ran but produced nothing finite
 #' into `n_fail_split`: that is the signature of a broken kernel, which the
 #' `tryCatch` below would otherwise make indistinguishable from a node with no
 #' admissible partition.
@@ -429,12 +340,6 @@ argmax_split <- function(
 ) {
   scanned <- FALSE
   for (j in whichvar) {
-    hit <- identical(collector$scan_subset, subset) &&
-      identical(collector$scan_splitter, splitter) &&
-      !is.null(collector$scan[[as.character(j)]])
-    if (hit) {
-      return(collector$scan[[as.character(j)]]$split)
-    }
     cands <- candidate_partitions(
       j,
       mf[[j]],
@@ -587,9 +492,6 @@ new_collector <- function() {
   e$n_fail_split <- 0L
   # Leaf refits: failed IGSCA fits at terminal nodes. See attach_leaf_fits().
   e$n_fail_leaf <- 0L
-  e$scan <- list()
-  e$scan_subset <- NULL
-  e$scan_splitter <- NULL
   e
 }
 
@@ -792,30 +694,22 @@ plot.igsca_tree <- function(x, terminal_panel = NULL, FUN = NULL, tp_args = NULL
 
 
 
-# Partition-family selectors & splitters for igsca_tree() -------------------
+# Split kernels for doTrees() ----------------------------------------------
 #
-# The five study methods (registry cut 2026-07-14):
-#   "vec" / "mat"           -> doTrees()'s ctree branch + influence_vec/
-#                              influence_mat (native partykit::ctree; nothing
-#                              lives here)
-#   NPT / NDT_DGi / NDT_DLi -> the plain selector/splitter functions below.
+# doTrees() has one selector -- partykit's own COIN variable selection, driven
+# by the influence_mat/influence_vec statistic -- and four cutpoint rules. This
+# section holds the three that are not partykit's own:
 #
-# Selector contract (= extree_fit's selectfun, passed through verbatim; the
-# formal names below are checked by extree_fit and must not change):
-#   select_*(model, trafo, data, subset, weights, whichvar, ctrl) ->
-#     list(criteria = 2 x p matrix, rows "statistic" [log scale] and
-#          "p.value" [log1p(-p) scale], columns named like model.frame(data))
-# Splitter contract (statistic kernel argmaxed by the engine's splitfun):
+#   split_max_fitdiff / split_max_dli / split_max_dgi
+#
+# Splitter contract (a statistic kernel argmaxed by argmax_split(), which
+# doTrees() installs as the engine's splitfun):
 #   split_*(model, mf, subset, goes_left, ctrl) -> scalar observed statistic
 #
-# Statistic-first scan (spec section 3): observed statistic at every
-# candidate (one 2-group MGA fit each; the node's pooled fit comes free from
-# the trafo as model$object), argmax per covariate, permutation p-value ONLY
-# at the argmax. The within-covariate selection effect is deliberately
-# uncorrected -- that bias is Study 1's measurand. Scan results are cached in
-# ctrl$collector so a matched splitter costs nothing; a mixed pair (any
-# select_* with any split_*) simply re-scans with its own kernel.
-#
+# Each is evaluated at every admissible candidate partition of the selected
+# covariate (one two-group MGA fit each; the node's pooled fit comes free from
+# the trafo as model$object) and the argmax wins. No permutation is involved:
+# see the note under `R_test` in igsca_tree_control().
 
 
 
@@ -899,159 +793,12 @@ partition_stat <- function(stat_kind, model, mf, subset, goes_left, ctrl) {
 
 
 
-#' 
-#' Scan all candidates of covariate j; returns NULL when nothing admissible.
-#' 
-#'
-#' @noRd
-scan_covariate <- function(stat_kind, j, model, mf, subset, ctrl) {
-  cands <- candidate_partitions(j, mf[[j]], mf[[j]][subset],
-                                ctrl$max_cuts, ctrl$minbucket)
-  if (!length(cands)) return(NULL)
-  stats <- vapply(
-    cands,
-    function(cc) {
-      partition_stat(stat_kind, model, mf, subset, cc$goes_left, ctrl)
-    },
-    numeric(1)
-  )
-  if (!any(is.finite(stats))) return(NULL)
-  k <- which.max(stats)
-  list(stat = stats[k], split = cands[[k]]$split, goes_left = cands[[k]]$goes_left)
-}
+## The three split kernels: deliberately repetitive plain functions (no
+## factories). Each is the bare observed-statistic kernel for one candidate
+## partition, argmaxed by argmax_split() when doTrees() is given a .splitter
+## other than "native". Distances are model-implied INDICATOR-VCV only
+## (dGi/dLi) -- Study 1 never works with the construct VCV.
 
-#' One-sided permutation p-value at the argmax partition (post-BootBalVerify
-#' Study 0 conventions, 2026-07-13): permute the child labels, null >= obs
-#' without abs(). Failed resamples are dropped from the null (finite counts)
-#' and counted by partition_stat.
-#' 
-#'
-#' @noRd
-permutation_pvalue <- function(stat_kind, obs, model, mf, subset, goes_left, ctrl) {
-  n <- length(subset)
-  R <- ctrl$R_test
-  perm <- idx_permutation(n, R)
-  nul <- rep(NA_real_, R)
-  for (r in seq_len(R)) {
-    nul[r] <- partition_stat(
-      stat_kind,
-      model,
-      mf,
-      subset,
-      goes_left[perm[r, ]],
-      ctrl
-    )
-  }
-  (1 + sum(nul >= obs, na.rm = TRUE)) / (sum(is.finite(nul)) + 1)
-}
-
-
-#' Shared worker behind the three partition selectors: statistic-first scan
-#' per covariate, cache the argmax for the splitfun, permutation p at the
-#' argmax only. `matched_split_fn` is the splitter function whose kernel
-#' equals this selector's scan statistic -- the cache key grow_extree's
-#' splitfun compares against with identical().
-#'
-#' Returns the same shape .ctree_select() does, and on the same log scales,
-#' because .extree_node() consumes both identically: `statistic` as log(stat)
-#' and `p.value` as log1p(-p), the latter *unadjusted* -- the engine applies
-#' the multiplicity correction to this matrix itself.
-#'
-#'
-#' @noRd
-partition_select <- function(stat_kind, matched_split_fn,
-                             model, data, subset, whichvar, ctrl) {
-  coll <- ctrl$collector
-  mf <- model.frame(data)
-  crit <- matrix(
-    NA_real_,
-    2L,
-    ncol(mf),
-    dimnames = list(c("statistic", "p.value"), names(mf))
-  )
-  ## (re)arm the node-local scan cache for the engine's splitfun
-  coll$scan <- list()
-  coll$scan_subset <- subset
-  coll$scan_splitter <- matched_split_fn
-  if (is.null(model$object)) return(list(criteria = crit))  # node fit failed
-  for (j in whichvar) {
-    sc <- scan_covariate(stat_kind, j, model, mf, subset, ctrl)
-    if (is.null(sc)) {
-      next
-    }
-    coll$scan[[as.character(j)]] <- sc
-    p <- permutation_pvalue(
-      stat_kind,
-      sc$stat,
-      model,
-      mf,
-      subset,
-      sc$goes_left,
-      ctrl
-    )
-    if (!is.finite(p)) {
-      next
-    }
-    ## One-sided world: negative observed statistics must not out-rank
-    ## positive ones on the log scale -- floor them at eps instead of
-    ## folding sign via abs().
-    crit["statistic", j] <- log(max(sc$stat, .Machine$double.eps))
-    crit["p.value", j] <- log1p(-min(p, 1 - 1e-12))
-  }
-  list(criteria = crit)
-}
-
-## The three partition selectors and the splitter kernels: deliberately
-## repetitive plain functions (no factories). Each selector pins its scan
-## statistic and names its matched splitter; each splitter is the bare
-## observed-statistic kernel. Any selector can be paired with any splitter
-## in igsca_tree() -- an unmatched pair just re-scans (cache miss) -- and
-## every kernel can also serve as igsca_ctree()'s mixed-pair `splitter`
-## (COIN variable selection + model-comparison split point, 2026-07-16).
-## Distances are model-implied INDICATOR-VCV only (dGi/dLi) -- Study 1 never
-## works with the construct VCV (user correction 2026-07-16).
-
-#' Variable selection on the NPT statistic (FIT difference).
-#' @noRd
-select_npt <- function(model, trafo, data, subset, weights, whichvar, ctrl) {
-  partition_select(
-    "FITdiff",
-    split_max_fitdiff,
-    model,
-    data,
-    subset,
-    whichvar,
-    ctrl
-  )
-}
-
-#' Variable selection on the NDT geodesic indicator-VCV distance.
-#' @noRd
-select_ndt_dgi <- function(
-  model,
-  trafo,
-  data,
-  subset,
-  weights,
-  whichvar,
-  ctrl
-) {
-  partition_select("DGi", split_max_dgi, model, data, subset, whichvar, ctrl)
-}
-
-#' Variable selection on the NDT squared-Euclidean indicator-VCV distance.
-#' @noRd
-select_ndt_dli <- function(
-  model,
-  trafo,
-  data,
-  subset,
-  weights,
-  whichvar,
-  ctrl
-) {
-  partition_select("DLi", split_max_dli, model, data, subset, whichvar, ctrl)
-}
 
 #' Split kernel: FIT difference at one candidate partition.
 #' @noRd
@@ -1072,31 +819,6 @@ split_max_dli <- function(model, mf, subset, goes_left, ctrl) {
 }
 
 
-#'Permutation resampling: sample WITHOUT replacement, within each stratum, so
-#' every replicate is a permutation of its stratum (each original row used
-#' exactly once per replicate). Mirrors/Near-Copy of boot:::permutation.array.
-#' 
-#'
-#' @noRd
-idx_permutation <- function(n, R) {
-  # Argument removed
-  # , strata = NULL 
-
-  # row r starts as the identity 1:n
-  out <- matrix(rep(seq_len(n), each = R), nrow = R, ncol = n)
-  # if (is.null(strata)) {
-    for (r in seq_len(R)) out[r, ] <- sample.int(n)
-  # } else {
-  #   strata <- as.integer(as.factor(strata))
-  #   for (s in unique(strata)) {
-  #     gp <- which(strata == s)
-  #     if (length(gp) > 1L) {
-  #       for (r in seq_len(R)) out[r, gp] <- sample(gp)
-  #     }
-  #   }
-  # }
-  out
-}
 
 
 #' The four pooled-vs-MGA distances for one MGA fit, given the precomputed

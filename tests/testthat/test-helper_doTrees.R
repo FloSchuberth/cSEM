@@ -159,40 +159,6 @@ test_that("every split kernel returns a finite statistic", {
   }
 })
 
-test_that("partition_select() floors a negative argmax statistic", {
-  # The FIT difference at that median split is negative (-0.004): a two-group
-  # refit can fit worse than the pooled model, and on a noise covariate usually
-  # does. partition_select() reports statistics on the log scale, so without the
-  # .Machine$double.eps floor log() would return NaN and drop the covariate out
-  # of variable selection entirely -- silently, and only for the covariates the
-  # data says least about.
-  fx <- node_fixture()
-  j <- match("noise_1", names(fx$mf))
-  local_mocked_bindings(
-    # Stubbed so the floor is what is under test rather than the fits: a real
-    # scan takes the argmax, which is not guaranteed to be the negative case.
-    scan_covariate = function(...) {
-      list(
-        stat = -0.004,
-        split = NULL,
-        goes_left = rep(TRUE, length(fx$subset))
-      )
-    },
-    permutation_pvalue = function(...) 0.01
-  )
-  crit <- partition_select(
-    stat_kind = "FITdiff",
-    matched_split_fn = split_max_fitdiff,
-    model = fx$model,
-    data = fx$mf,
-    subset = fx$subset,
-    whichvar = j,
-    ctrl = fx$ctrl
-  )$criteria
-  expect_identical(crit["statistic", j], log(.Machine$double.eps))
-  expect_true(is.finite(crit["p.value", j]))
-})
-
 test_that("partition_stat() records a failed auxiliary fit instead of throwing", {
   local_mocked_bindings(
     try_fit = function(.data, .args, .id = NULL) list(fit = NULL, ok = FALSE)
@@ -263,61 +229,4 @@ test_that("argmax_split() returns an admissible cutpoint the kernels disagree on
   # the same candidate, so distinctness across all three would be an assertion
   # about this fixture rather than about the kernels.
   expect_false(isTRUE(all.equal(brs[["FIT"]], brs[["DLi"]])))
-})
-
-# NB: this must not be combined with local_mocked_bindings() on the kernels --
-# the cache key is closure identity, and a mock would change it.
-test_that("argmax_split() reuses a matched scan and rescans a mismatched one", {
-  fx <- node_fixture()
-  j <- match("noise_1", names(fx$mf))
-  coll <- fx$ctrl$collector
-
-  # Arm the cache the way partition_select() does before handing control back
-  # to the engine's splitfun.
-  sc <- scan_covariate(
-    stat_kind = "FITdiff",
-    j = j,
-    model = fx$model,
-    mf = fx$mf,
-    subset = fx$subset,
-    ctrl = fx$ctrl
-  )
-  coll$scan <- stats::setNames(list(sc), as.character(j))
-  coll$scan_subset <- fx$subset
-  coll$scan_splitter <- split_max_fitdiff
-
-  # Matched pair: the selector's argmax comes back untouched, and the kernel is
-  # never evaluated -- an unchanged n_split_scan is what "cache hit" means.
-  expect_identical(
-    argmax_split(
-      splitter = split_max_fitdiff,
-      collector = coll,
-      model = fx$model,
-      mf = fx$mf,
-      subset = fx$subset,
-      whichvar = j,
-      ctrl = fx$ctrl
-    ),
-    sc$split
-  )
-  expect_identical(coll$n_split_scan, 0L)
-
-  # Mismatched pair: a different kernel must rescan with its own statistic ...
-  sp_dli <- argmax_split(
-    split_max_dli, coll, fx$model, fx$mf, fx$subset, j, fx$ctrl
-  )
-  expect_s3_class(sp_dli, "partysplit")
-  expect_identical(coll$n_split_scan, 1L)
-  # ... and DLi genuinely disagrees with FIT about where to cut noise_1.
-  expect_false(isTRUE(all.equal(
-    partykit::breaks_split(sp_dli),
-    partykit::breaks_split(sc$split)
-  )))
-
-  # The other half of the key: same kernel, different node.
-  coll$n_split_scan <- 0L
-  argmax_split(
-    split_max_fitdiff, coll, fx$model, fx$mf, fx$subset[-1L], j, fx$ctrl
-  )
-  expect_identical(coll$n_split_scan, 1L)
 })

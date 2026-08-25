@@ -30,43 +30,11 @@ res <- csem(
 )
 
 # Controls ---------------------------------------------------------------
-# The two influence families cost an order of magnitude apart, so they get
-# separate budgets. The (1) conditional-test family ("mat"/"vec") inherits COIN
-# variable selection from libcoin and is cheap even at the defaults; a mixed
-# splitter only re-scans candidate cutpoints, which adds a second or two. The (2)
-# partition family ("FIT"/"DLi"/"DGi") runs an R_test permutation test per
-# covariate per node and every permutation is a two-group MGA fit, so at the
-# defaults a single call takes about an hour and a half.
-#
-# R_test is inert here: it reaches the conditional-test family only as libcoin's
-# nresample, which the default coin_distribution = "asymptotic" never draws. It
-# is left in place so the setting still applies if a test below opts back into
-# "approximate".
+# doTrees() has one selector -- COIN variable selection, from libcoin -- and
+# four cutpoint rules. The native rule is cheap enough to run at the package
+# defaults; a "FIT"/"DLi"/"DGi" rule re-scans candidate cutpoints with a model
+# comparison statistic, which adds a second or two.
 ctl_mixed <- igsca_tree_control(R_test = 50L, maxdepth = 2L, max_cuts = 8L)
-
-# R_test >= 20L is a correctness floor, not just a budget: permutation_pvalue()
-# returns (1 + k) / (R + 1), so the smallest attainable p-value is 1 / (R + 1),
-# and the split criterion is a strict inequality against alpha = 0.05. At
-# R_test = 19L that floor is exactly 0.05 and no node can ever split, whatever
-# the data says. 24L keeps headroom at 1/25 = 0.04. maxdepth = 1L costs nothing
-# in coverage on this fixture -- measured, the children do not split at
-# maxdepth = 2L either, they only double the runtime.
-#
-# bonferroni is off here against the package default, and that is a budget
-# decision rather than a statistical one. The engine applies Šidák across the
-# k = 3 covariates scanned at each node, which raises the floor above from
-# R_test >= 20L to R_test >= 59L -- 1 - (1 - 1/25)^3 = 0.115 does not clear
-# alpha, so every partition test below would assert against a stump. Paying for
-# it means 59 two-group MGA refits per covariate per node instead of 24. The
-# adjustment is exercised on the conditional-inference path instead, where a
-# resample costs a permutation of a precomputed matrix rather than a model fit.
-ctl_part <- igsca_tree_control(
-  R_test = 24L,
-  max_cuts = 3L,
-  maxdepth = 1L,
-  minbucket = 200L,
-  bonferroni = FALSE
-)
 
 grow_tree <- function(influence, splitter, control, object = res) {
   doTrees(
@@ -125,51 +93,6 @@ for (sp in c("FIT", "DLi", "DGi")) {
 }
 
 
-
-# NPT-FIT Split ---------------------------------------------------------------
-test_that("IGSCA Trees Variable Selection on NPT (FIT) Runs as expected", {
-  set.seed(12353)
-  trees_NPT_FIT <- grow_tree(influence = "FIT", splitter = "FIT", control = ctl_part)
-  expect_grew(trees_NPT_FIT)
-  expect_snapshot(trees_NPT_FIT)
-})
-
-for (sp in c("DLi", "DGi")) {
-  test_that(paste0("FIT selection splits on ", sp), {
-    set.seed(12353)
-    expect_grew(grow_tree(influence = "FIT", splitter = sp, control = ctl_part))
-  })
-}
-
-# dLi Split --------------------------------------------------------------
-test_that("IGSCA Trees Conditional Test on Squared-Euclidean Distance Runs as expected", {
-  set.seed(12353)
-  trees_DLi_FIT <- grow_tree(influence = "DLi", splitter = "FIT", control = ctl_part)
-  expect_grew(trees_DLi_FIT)
-  expect_snapshot(trees_DLi_FIT)
-})
-
-for (sp in c("DLi", "DGi")) {
-  test_that(paste0("DLi selection splits on ", sp), {
-    set.seed(12353)
-    expect_grew(grow_tree(influence = "DLi", splitter =  sp, control = ctl_part))
-  })
-}
-
-# dGi Split --------------------------------------------------------------
-test_that("IGSCA Trees Conditional Test on Geodesic Distance Runs as expected", {
-  set.seed(12353)
-  trees_DGi_FIT <- grow_tree(influence = "DGi", splitter = "FIT", control = ctl_part)
-  expect_grew(trees_DGi_FIT)
-  expect_snapshot(trees_DGi_FIT)
-})
-
-for (sp in c("DLi", "DGi")) {
-  test_that(paste0("DGi selection splits on ", sp), {
-    set.seed(12353)
-    expect_grew(grow_tree(influence = "DGi", splitter = sp, control = ctl_part))
-  })
-}
 
 # Splitfun contract ------------------------------------------------------
 # doTrees() plants its kernel in cc$splitfun and relies on partykit reading it
@@ -244,15 +167,18 @@ test_that("the native split path never touches the kernel counters", {
 # needs is either derivable from that fit or a mistake worth naming.
 
 test_that("doTrees() refits nodes with the estimator the fit used", {
-  # Both branches: they build their node fits through separate trafos, and a
-  # wrong argument list does not error -- `$<-` coerces, so csem() falls back to
-  # its own default estimator and returns a fit that converges and looks fine.
-  for (fam in list(c("mat", "native"), c("FIT", "FIT"))) {
+  # A wrong argument list does not error -- `$<-` coerces, so csem() falls
+  # back to its own default estimator and returns a fit that converges and
+  # looks fine.
+  # One trafo now, but two cutpoint routes: the native scan and a kernel that
+  # re-fits candidate partitions of its own. Both must reach csem() with the
+  # object's argument list.
+  for (fam in list(c("mat", "native"), c("mat", "DLi"))) {
     set.seed(11)
     tr <- grow_tree(
       influence = fam[1],
       splitter = fam[2],
-      control = if (fam[1] == "mat") ctl_mixed else ctl_part
+      control = ctl_mixed
     )
     # Leaf refits can legitimately fail on a small node (see n_fail_leaf), so
     # take the first leaf that produced a fit rather than the first leaf.
@@ -305,28 +231,32 @@ test_that("doTrees() rejects input it cannot grow a tree from", {
   expect_error(doTrees(res, c("z_true", "x11")), "also indicators")
 })
 
-test_that("the GSCA-only statistics refuse a non-GSCA fit", {
+test_that("doTrees() no longer offers the partition influence families", {
+  # "FIT", "DLi" and "DGi" survive as .splitter values only: they are split
+  # kernels, and the selector they are paired with is always the COIN one.
+  for (bad in c("FIT", "DLi", "DGi")) {
+    expect_error(
+      doTrees(res, covs, .influence = bad, .control = ctl_mixed),
+      "should be one of",
+      fixed = TRUE,
+      info = bad
+    )
+  }
+})
+
+test_that("every configuration refuses a non-GSCA fit", {
   res_pls <- csem(.data = dat, .model = model)
-  # calculateGSCAErrors() returns NA rather than erroring off GSCA, and
-  # calculateFIT() errors into a silent NA, so both are caught up front.
-  expect_error(
-    doTrees(res_pls, covs, .influence = "mat", .control = ctl_mixed),
-    "needs a GSCA fit"
-  )
-  expect_error(
-    doTrees(res_pls, covs, .influence = "DLi", .splitter = "FIT",
-            .control = ctl_part),
-    "needs a GSCA fit"
-  )
-  # The distances read model-implied indicator VCVs and are estimator-agnostic,
-  # so this pairing is allowed through and estimates its nodes as PLS-PM. Only
-  # that it runs is asserted: whether a PLS fit yields a significant split on
-  # this fixture is a question about the data, not about the guard.
-  set.seed(11)
-  tr <- doTrees(res_pls, covs, .influence = "DLi", .splitter = "DLi",
-                .control = ctl_part)
-  expect_s3_class(tr, "igsca_tree")
-  expect_identical(attr(tr, "igsca_info")$n_fail_full, 0L)
+  # calculateGSCAErrors() returns NA rather than erroring off a non-GSCA fit,
+  # so the node statistic would fail deep inside the trafo. Both influence
+  # values read it, so there is no configuration left that a PLS fit can grow.
+  for (inf in c("mat", "vec")) {
+    expect_error(
+      doTrees(res_pls, covs, .influence = inf, .control = ctl_mixed),
+      "needs a GSCA fit",
+      fixed = TRUE,
+      info = inf
+    )
+  }
 })
 
 # Collector diagnostics --------------------------------------------------

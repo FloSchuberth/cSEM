@@ -21,10 +21,8 @@ igsca_tree_control(
 \item{bonferroni}{Adjust the node's p-values for the number of covariates
 tested. The adjustment partykit applies is Šidák, \eqn{1 - (1 - p)^k}, which
 agrees with Bonferroni to first order. \code{k} is the number of covariates that
-returned a p-value at that node, not the number requested. Both families
-honour this: the engine applies it to whatever the selector returns, so it
-reaches the partition families too -- where it raises the \code{R_test} floor
-sharply (see below). Defaults to \code{TRUE}, matching
+returned a p-value at that node, not the number requested. The engine
+applies it to whatever the selector returns. Defaults to \code{TRUE}, matching
 \code{\link[partykit:ctree_control]{partykit::ctree_control()}}: every node scans all covariates, so the
 unadjusted p-value is a multiple-comparison statistic reported as if it
 were a single test.
@@ -49,20 +47,12 @@ indicators the default admits leaves the model may not fit; see the
 \item{maxdepth}{Maximum depth of the tree, the root counting as 0.}
 
 \item{max_cuts}{Maximum number of candidate cutpoints scanned per numeric
-covariate. Only the partition families use this.}
+covariate. Only the non-native cutpoint rules use this; partykit's own
+scan considers every distinct value.}
 
 \item{R_test}{Number of resamples. On the conditional-inference path this is
 libcoin's \code{nresample} and is unused under the default
-\code{coin_distribution = "asymptotic"}. On the partition path it is the
-permutation count, and it carries a correctness floor rather than just a
-budget: the smallest attainable p-value is \eqn{1 / (R + 1)}, which must
-clear \code{alpha} strictly, so no node can ever split below it. Unadjusted the
-floor is \code{R_test >= 20L}; under \code{bonferroni = TRUE} it becomes
-\eqn{R > (1 - \alpha)^{-1/k} / (1 - (1 - \alpha)^{1/k}) }, which for
-\code{alpha = 0.05} and \code{k = 3} covariates is \code{R_test >= 59L}. The two families
-price a resample very differently -- libcoin permutes a precomputed
-influence matrix, while the partition path refits a two-group model per
-permutation -- so a value that is cheap on one is not on the other.}
+\code{coin_distribution = "asymptotic"}.}
 
 \item{coin_distribution}{How the conditional-inference families evaluate the
 null distribution -- not \emph{which} null, which is the permutation null
@@ -86,18 +76,17 @@ Prefer the default unless the large-sample approximation is in doubt. It
 is also exactly reproducible, since nothing is drawn, whereas the Monte
 Carlo estimate carries a standard error of \eqn{\sqrt{p (1 - p) / R}} --
 at the default \code{R_test} wide enough to flip a borderline split between
-runs. Ignored by the partition families, which always permute.}
+runs.}
 }
 \value{
 A named \code{list} of tuning parameters.
 }
 \description{
-The two \code{doTrees()} families read this list differently, and the cost of a
-given setting differs by an order of magnitude between them: the
-conditional-inference families (\code{.influence} \code{"mat"}/\code{"vec"}) get their
-variable selection from libcoin, while the partition families
-(\code{"FIT"}/\code{"DLi"}/\code{"DGi"}) run an \code{R_test} permutation test per covariate per
-node, every permutation of which is a two-group model fit.
+Tuning parameters for \code{\link[=doTrees]{doTrees()}}. \code{doTrees()} runs one algorithm --
+conditional-inference variable selection from libcoin, followed by a
+cutpoint rule chosen with \code{.splitter} -- so every parameter below applies to
+every configuration, except \code{max_cuts}, which only the non-native cutpoint
+rules consult.
 }
 \seealso{
 \code{\link[=doTrees]{doTrees()}}
