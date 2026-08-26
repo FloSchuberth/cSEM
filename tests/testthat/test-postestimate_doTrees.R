@@ -464,6 +464,32 @@ test_that("root_criteria survives a tree that never splits", {
   expect_false(anyNA(coef(tr, drop = FALSE)[, c("nobs", "objfun")]))
 })
 
+test_that("a leaf that already carries a fit is not refitted", {
+  # The trafo fits every node it tests and stores that fit. Refitting such a
+  # leaf recomputes numbers the tree already holds -- on a stump, a second
+  # full-sample IGSCA fit -- and lets a redundant refit of an already
+  # converged node count into n_fail_leaf.
+  calls <- 0L
+  real_try_fit <- try_fit
+  local_mocked_bindings(
+    try_fit = function(.data, .args, .id = NULL) {
+      calls <<- calls + 1L
+      real_try_fit(.data, .args, .id)
+    }
+  )
+  set.seed(11)
+  tr <- grow_tree(
+    influence = "mat",
+    splitter = "native",
+    control = ctl_mixed,
+    covariates = setdiff(covs, "z_true")
+  )
+  expect_equal(partykit::width(partykit::node_party(tr)), 1)
+  # The root is the only node, it was tested once, and it is not fitted again.
+  expect_identical(calls, 1L)
+  expect_identical(attr(tr, "igsca_info")$n_fail_leaf, 0L)
+})
+
 test_that("a failed leaf refit is counted and surfaces in coef()", {
   set.seed(12353)
   tr <- grow_tree(influence = "mat", splitter = "native", control = igsca_tree_control())

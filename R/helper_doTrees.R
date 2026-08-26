@@ -550,8 +550,9 @@ new_collector <- function() {
 #' falls back to `"*"` for list-valued info, verified to hold even when the
 #' info carries a full `cSEMResults` object.
 #'
-#' Costs one IGSCA fit per leaf. Failures are counted into
-#' `collector$n_fail_leaf` and leave `converged = FALSE` on that node.
+#' Costs one IGSCA fit per leaf that does not already have one. Failures are
+#' counted into `collector$n_fail_leaf` and leave `converged = FALSE` on that
+#' node.
 #'
 #' Not every leaf has `info = NULL` to begin with: a node partykit attempted to
 #' split and then left terminal keeps the criteria of that test. The fits are
@@ -564,7 +565,25 @@ attach_leaf_fits <- function(tree, mf, args, indicators, collector) {
   ## the same row order as `mf`, which re-deriving them would not be.
   leaf <- tree$fitted[["(fitted)"]]
 
+  ## as.list()/as.partynode() is partykit's own round-trip and is identity-
+  ## preserving when the info is left alone, so only the leaves change.
+  nd <- as.list(partykit::node_party(tree))
+  names(nd) <- vapply(nd, function(n) as.character(n$id), character(1))
+
   fits <- lapply(ids, function(id) {
+    ## A leaf partykit attempted to split already carries the trafo's fit for
+    ## exactly this node's rows, in exactly the fields written below and from
+    ## the same `sum(E^2)`, so refitting recomputes numbers we already have.
+    ## Reuse costs nothing and saves the most expensive fit in the run on a
+    ## stump, where the leaf is the root and its rows are the whole sample. It
+    ## also keeps a redundant refit of an already-converged node from being
+    ## able to count into `n_fail_leaf`. A node that converged but whose
+    ## error calculation threw is stored by the trafo as `converged = FALSE`
+    ## with no object, so requiring both here still refits it.
+    have <- nd[[as.character(id)]]$info
+    if (isTRUE(have$converged) && !is.null(have$object)) {
+      return(NULL)
+    }
     rows <- which(leaf == id)
     ft <- try_fit(mf[rows, indicators, drop = FALSE], args)
     if (!ft$ok) {
@@ -587,11 +606,10 @@ attach_leaf_fits <- function(tree, mf, args, indicators, collector) {
       object = ft$fit
     )
   })
+  ## A NULL entry is a leaf whose fit was reused; the write loop's own
+  ## !is.null() guard then leaves that node's info exactly as it stands.
   names(fits) <- as.character(ids)
 
-  ## as.list()/as.partynode() is partykit's own round-trip and is identity-
-  ## preserving when the info is left alone, so only the leaves change.
-  nd <- as.list(partykit::node_party(tree))
   for (i in seq_along(nd)) {
     key <- as.character(nd[[i]]$id)
     if (is.null(nd[[i]]$kids) && !is.null(fits[[key]])) {
