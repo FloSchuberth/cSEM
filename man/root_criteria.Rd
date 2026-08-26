@@ -19,8 +19,13 @@ columns = tested covariates (all-NA columns dropped by extree), rows
 extree's own statistic-rank tie-break already added). Under
 \code{bonferroni = TRUE} the reported p-values are the Šidák-adjusted ones -- the
 engine adjusts before it stores, so this is the quantity that was actually
-compared against \code{alpha}, not the per-covariate p-value. NULL when the root
-trafo failed (no test ran).
+compared against \code{alpha}, not the per-covariate p-value.
+}
+\details{
+Present whether or not the root went on to split: a root that tested every
+covariate and rejected none still reports the criteria that made it stop.
+\code{NULL} only when no test ran at all, which means the root trafo failed and
+\code{n_fail_full} is 1.
 }
 \seealso{
 \code{\link[=doTrees]{doTrees()}}

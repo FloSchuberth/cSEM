@@ -40,10 +40,11 @@ res <- csem(
 # node could only split on an exact 0/50. 999L keeps the resolution honest.
 ctl_mixed <- igsca_tree_control(R_test = 999L, maxdepth = 2L, max_cuts = 8L)
 
-grow_tree <- function(influence, splitter, control, object = res) {
+grow_tree <- function(influence, splitter, control, object = res,
+                      covariates = covs) {
   doTrees(
     .object = object,
-    .covariates = covs,
+    .covariates = covariates,
     .influence = influence,
     .splitter = splitter,
     .control = control
@@ -436,6 +437,31 @@ test_that("root_criteria records the test that chose the root split", {
   expect_identical(colnames(rc)[which.max(rc["criterion", ])], "z_true")
   expect_lt(rc["p.value", "z_true"], 0.05)
   expect_true(all(rc["p.value", c("noise_1", "noise_2")] > 0.05))
+})
+
+test_that("root_criteria survives a tree that never splits", {
+  # Drop the true grouping variable: the root test still runs and converges,
+  # but nothing clears alpha, so the root stays terminal. A terminal root is
+  # still a leaf, and attach_leaf_fits() used to replace every leaf's info
+  # wholesale -- taking the criteria of the test that had just run with it.
+  set.seed(11)
+  tr <- grow_tree(
+    influence = "mat",
+    splitter = "native",
+    control = ctl_mixed,
+    covariates = setdiff(covs, "z_true")
+  )
+  info <- attr(tr, "igsca_info")
+  expect_equal(partykit::width(partykit::node_party(tr)), 1)
+  # n_fail_full = 0 means the root test ran, so NULL criteria here would claim
+  # a failure that did not happen -- the one thing root_criteria() must not do.
+  expect_identical(info$n_fail_full, 0L)
+  rc <- info$root_criteria
+  expect_identical(colnames(rc), setdiff(covs, "z_true"))
+  expect_true(all(rc["p.value", ] > 0.05))
+  # The leaf refit must still be there: keeping the criteria cannot come at the
+  # cost of the fit fields attach_leaf_fits() exists to write.
+  expect_false(anyNA(coef(tr, drop = FALSE)[, c("nobs", "objfun")]))
 })
 
 test_that("a failed leaf refit is counted and surfaces in coef()", {

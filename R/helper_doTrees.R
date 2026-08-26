@@ -552,6 +552,11 @@ new_collector <- function() {
 #'
 #' Costs one IGSCA fit per leaf. Failures are counted into
 #' `collector$n_fail_leaf` and leave `converged = FALSE` on that node.
+#'
+#' Not every leaf has `info = NULL` to begin with: a node partykit attempted to
+#' split and then left terminal keeps the criteria of that test. The fits are
+#' therefore merged into whatever is already there rather than replacing it, so
+#' those criteria survive for [root_criteria()] and for node inspection.
 #' @noRd
 attach_leaf_fits <- function(tree, mf, args, indicators, collector) {
   ids <- partykit::nodeids(tree, terminal = TRUE)
@@ -590,7 +595,9 @@ attach_leaf_fits <- function(tree, mf, args, indicators, collector) {
   for (i in seq_along(nd)) {
     key <- as.character(nd[[i]]$id)
     if (is.null(nd[[i]]$kids) && !is.null(fits[[key]])) {
-      nd[[i]]$info <- fits[[key]]
+      info <- as.list(nd[[i]]$info)
+      info[names(fits[[key]])] <- fits[[key]]
+      nd[[i]]$info <- info
     }
   }
   tree$node <- partykit::as.partynode(nd)
@@ -627,8 +634,12 @@ drop_inner_node_objects <- function(tree) {
 #' extree's own statistic-rank tie-break already added). Under
 #' `bonferroni = TRUE` the reported p-values are the Šidák-adjusted ones -- the
 #' engine adjusts before it stores, so this is the quantity that was actually
-#' compared against `alpha`, not the per-covariate p-value. NULL when the root
-#' trafo failed (no test ran).
+#' compared against `alpha`, not the per-covariate p-value.
+#'
+#' Present whether or not the root went on to split: a root that tested every
+#' covariate and rejected none still reports the criteria that made it stop.
+#' `NULL` only when no test ran at all, which means the root trafo failed and
+#' `n_fail_full` is 1.
 #'
 #' @param tree A tree returned by [doTrees()].
 #'
