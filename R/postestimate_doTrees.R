@@ -58,13 +58,24 @@ doTrees <- function(
      mat = influence_mat
      # , vec = influence_vec
     ) 
-  ytrafo <- function(data, weights, control) { # TODO: Compare against ctree's example ytrafo in documentation/examples
+  # TODO: Walk through how ctree, extree_fit and .extree_node modify ytrafo
+  #  How `subset` reaches the inner closure, i.e. what partykit does to what we hand it:
+  #   ctree()        - our formals are (data, weights, control), so it calls us as a factory
+  #   extree_fit()   - the returned closure has all of (subset, weights, info, estfun,
+  #                    object), so it is used verbatim rather than wrapped
+  #   .extree_node() - calls it once per node as trafo(subset = <that node's row indices>,
+  #                    weights = <global, unchanged>, ...), recursing on subset[kidids == k]
+  # `subset` is therefore the only argument that identifies the node; `weights` is the same
+  # vector at every depth. The `weights > 0` idiom in ?ctree belongs to the older
+  # (y, x, offset, weights, start) interface, which extree_fit() *does* wrap, re-encoding
+  # node membership as a weight vector via libcoin::ctabs().
+  ytrafo <- function(data, weights, control) {
     # Compare against `partykit::ctree_control()$selectfun`
     # TODO: Uncomment and see in browser
     # browser()
     mf <- model.frame(data)
     function(
-      subset, # TODO: Where does this function even get subset? This doesn't seem to be something accessible to ytrafo? Consider swapping subset with weights > 0?
+      subset,
       weights,
       info = NULL,
       estfun = TRUE,
@@ -73,6 +84,9 @@ doTrees <- function(
     ) {
       # TODO: Uncomment and see in browser
       # browser()
+      # We never pass weights to ctree(), so this is a guard against a future change in partykit:
+      # try_fit() below ignores them, which would silently drop case weights.
+      stopifnot("case weights are not supported by doTrees(). partykit has changed since initial doTrees development, please report to developers." = length(weights) == 0L)
       was_root <- !collector$root_seen
       collector$root_seen <- TRUE
       ft <- try_fit(mf[subset, indicators, drop = FALSE], args) # Returns a fitted csem model (ft$fit) and whether the model converged (ft$ok)
@@ -177,6 +191,9 @@ doTrees <- function(
       whichvar,
       ctrl
     ) {
+      # .extree_node() hands `subset` and `weights` to splitfun just as it does to ytrafo;
+      # argmax_split() partitions on `subset` alone, so weighted rows would be ignored.
+      stopifnot("case weights are not supported by doTrees(). partykit has changed since initial doTrees development, please report to developers." = length(weights) == 0L)
       argmax_split(
         split_fn,
         collector,
