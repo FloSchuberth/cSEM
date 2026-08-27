@@ -7,7 +7,7 @@
 doTrees(
   .object,
   .covariates,
-  .influence = c("mat", "vec"),
+  .influence = "mat",
   .splitter = c("native", "FIT", "DLi", "DGi"),
   .control = igsca_tree_control()
 )
@@ -20,8 +20,7 @@ non-indicator columns, so they can simply ride along in the original call.}
 \item{.covariates}{Character vector of columns of \code{.object}'s data to
 partition on.}
 
-\item{.influence}{Node statistic driving variable selection. One of "mat" or
-"vec".}
+\item{.influence}{Node statistic driving variable selection. Currently only "mat" is supported.}
 
 \item{.splitter}{Cutpoint rule. One of "native", "FIT", "DLi" or "DGi".}
 
@@ -36,16 +35,14 @@ failure counters and root criteria.
 Grows a tree that partitions the rows \code{.object} was fitted on into subgroups
 whose model estimates differ. Every node is refit by replaying \code{.object}'s own
 \code{\link[=csem]{csem()}} arguments, so the estimator, modes and convergence settings of the
-tree are those of the fit it was given -- there is nothing to keep in sync and
-no estimator hard-coded here.
+tree are those of the fit it was given.
 }
 \details{
 \code{.influence} selects the node statistic that conditional-inference variable
-selection runs on: \code{"mat"} the casewise GSCA squared-residual matrix, \code{"vec"}
-its rowwise sum. \code{.splitter} then chooses the cutpoint within the selected
-covariate -- \code{"native"} is partykit's own maxstat scan, while \code{"FIT"},
-\code{"DLi"} and \code{"DGi"} replace it with a deterministic argmax over candidate
-partitions of a model-comparison statistic.
+selection runs on: \code{"mat"} the casewise GSCA squared-residual matrix.
+\code{.splitter} then chooses the cutpoint within the selected covariate -- \code{"native"}
+is partykit's own maxstat scan, while \code{"FIT"}, \code{"DLi"} and \code{"DGi"} replace it with
+a deterministic argmax over candidate partitions of a model-comparison statistic.
 }
 \references{
 \insertAllCited{}

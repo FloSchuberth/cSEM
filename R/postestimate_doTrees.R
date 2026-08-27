@@ -6,19 +6,17 @@
 #' tree are those of the fit it was given.
 #'
 #' `.influence` selects the node statistic that conditional-inference variable
-#' selection runs on: `"mat"` the casewise GSCA squared-residual matrix, `"vec"`
-#' its rowwise sum. `.splitter` then chooses the cutpoint within the selected
-#' covariate -- `"native"` is partykit's own maxstat scan, while `"FIT"`,
-#' `"DLi"` and `"DGi"` replace it with a deterministic argmax over candidate
-#' partitions of a model-comparison statistic.
+#' selection runs on: `"mat"` the casewise GSCA squared-residual matrix.
+#' `.splitter` then chooses the cutpoint within the selected covariate -- `"native"`
+#'  is partykit's own maxstat scan, while `"FIT"`, `"DLi"` and `"DGi"` replace it with
+#'  a deterministic argmax over candidate partitions of a model-comparison statistic.
 #'
 #' @param .object A single-group `cSEMResults` object, as returned by [csem()].
 #'   Its data must contain the `.covariates` columns; [csem()] ignores
 #'   non-indicator columns, so they can simply ride along in the original call.
 #' @param .covariates Character vector of columns of `.object`'s data to
 #'   partition on.
-#' @param .influence Node statistic driving variable selection. One of "mat" or
-#'   "vec".
+#' @param .influence Node statistic driving variable selection. Currently only "mat" is supported.
 #' @param .splitter Cutpoint rule. One of "native", "FIT", "DLi" or "DGi".
 #' @param .control Tuning parameters, see [igsca_tree_control()].
 #'
@@ -32,7 +30,7 @@
 doTrees <- function(
   .object,
   .covariates,
-  .influence = c("mat", "vec"),
+  .influence = "mat",
   .splitter = c("native", "FIT", "DLi", "DGi"),
   .control = igsca_tree_control()
 ) {
