@@ -39,22 +39,10 @@ doTrees <- function(
   splitter <- match.arg(.splitter)
   control <- .control
 
-  split_fn <- switch(
-    splitter,
-    native = NULL,
-    FIT = split_max_fitdiff,
-    DLi = split_max_dli,
-    DGi = split_max_dgi
-  )
-
-  ## Everything the tree needs -- the rows to partition, the covariate columns,
-  ## the model, and the estimator settings for every node refit -- comes from
-  ## the fit itself, so a node cannot be estimated differently from its root.
-  args <- csem_tree_args(.object)
+  args <- csem_tree_args(.object)  # Reuses the fitted model's arguments to fit the csem models in each  node
   data <- as.data.frame(args$.data)
   indicators <- parseModel(args$.model)$indicators
   validate_tree_input(data, indicators, .covariates, influence, splitter, args)
-
   fml <- paste(
     paste(indicators, collapse = " + "),
     "~",
@@ -62,24 +50,32 @@ doTrees <- function(
   ) |>
     stats::as.formula()
 
+  # Environment for collecting  metrics on different kinds of convergence failures found while fitting the tree
   collector <- new_collector()
 
 
-  influence_fn <- switch(influence, mat = influence_mat, vec = influence_vec)
-  # Conditional Tree Route --------------
-  ytrafo <- function(data, weights, control) {
+  influence_fn <- switch(influence, # from .influence character string
+     mat = influence_mat
+     # , vec = influence_vec
+    ) 
+  ytrafo <- function(data, weights, control) { # TODO: Compare against ctree's example ytrafo in documentation/examples
+    # Compare against `partykit::ctree_control()$selectfun`
+    # TODO: Uncomment and see in browser
+    # browser()
     mf <- model.frame(data)
     function(
-      subset,
+      subset, # TODO: Where does this function even get subset? This doesn't seem to be something accessible to ytrafo? Consider swapping subset with weights > 0?
       weights,
       info = NULL,
       estfun = TRUE,
       object = TRUE,
       ...
     ) {
+      # TODO: Uncomment and see in browser
+      # browser()
       was_root <- !collector$root_seen
       collector$root_seen <- TRUE
-      ft <- try_fit(mf[subset, indicators, drop = FALSE], args)
+      ft <- try_fit(mf[subset, indicators, drop = FALSE], args) # Returns a fitted csem model (ft$fit) and whether the model converged (ft$ok)
       E <- if (ft$ok) {
         tryCatch(calculateGSCAErrors(ft$fit), error = function(e) NULL)
       } else {
@@ -101,22 +97,19 @@ doTrees <- function(
       }
       h <- influence_fn(E)
       ef <- matrix(0, nrow = nrow(mf), ncol = ncol(h))
-      ef[subset, ] <- h # I'm sceptical about whether or not this subset is needed. 
-      ## object is returned unconditionally: a non-native splitter's kernel
-      ## needs the pooled node fit (partition_stat reads model$object), and
-      ## extree does not promise object = TRUE on the split path.
+      ef[subset, ] <- h # In case I have forgotten why subset is here, note that the ?ctree does the same in its example function
       list(
-        estfun = ef,
+        estfun = ef, # Yes, this is what downstream `libcoin::LinStatExpCov()` will work with
         converged = TRUE,
-        objfun = sum(E^2),
+        objfun = sum(E^2), # This is equivalent to the objective function of Equation 9 of Hwang et al. (2021, IGSCA): sum(calculateGSCAErrors(ft$fit)^2). AFAIK, this is just used later for prrinting, it doesn't affect the functionality of anything.
         object = ft$fit,
         nobs = length(subset)
       )
     }
   }
-  ## partykit's `testtype` conflates two orthogonal choices: where the
-  ## p-value comes from ("MonteCarlo" = nresample permutations, otherwise the
-  ## asymptotic chi-squared limit of the same conditional null) and whether it
+  ## TODO: Shorten this  
+  ## TODO: Is this the same or different from how ctree controls testtype?
+  ## partykit's `testtype` conflates two orthogonal choices: where the p-value comes from ("MonteCarlo" = nresample permutations, otherwise the asymptotic chi-squared limit of the same conditional null) and whether it
   ## is adjusted for multiplicity. Passing both keywords reaches all four
   ## combinations of our two arguments inside the documented API -- and it is
   ## documented: ?ctree_control says under `testtype` that "Bonferroni and
@@ -139,7 +132,7 @@ doTrees <- function(
   ## fans the keywords out into `bonferroni = "Bonferroni" %in% testtype` and
   ## a single `testtype <- "MonteCarlo"`, and c("Bonferroni", "MonteCarlo")
   ## is the only length-2 vector it accepts.
-  testtype <- c(
+  testtype <- c( # TODO: Needs to be compared against ctree and ctree_control for how they handle this. 
     if (isTRUE(control$bonferroni)) "Bonferroni",
     if (control$coin_distribution == "approximate") "MonteCarlo"
   )
@@ -150,7 +143,7 @@ doTrees <- function(
     teststat = "quadratic", # TODO: Consider maximum? 
     splitstat = "quadratic", # TODO: Consider maximum?
     testtype = testtype, # TODO: Document
-    nresample = control$R_test,
+    nresample = control$R_test, # Number of resamples for the the permutation test
     alpha = control$alpha,
     minsplit = control$minsplit,
     minbucket = control$minbucket,
@@ -159,6 +152,14 @@ doTrees <- function(
     maxsurrogate = 0L,
     nmax = c(yx = Inf, z = Inf),
     saveinfo = TRUE
+  )
+
+  split_fn <- switch(
+    splitter, # From .splitter
+    native = NULL, # See partykit::ctree_control()$splitfun
+    FIT = split_max_fitdiff,
+    DLi = split_max_dli,
+    DGi = split_max_dgi
   )
 
   if (!is.null(split_fn)) {
@@ -188,16 +189,25 @@ doTrees <- function(
     }
     cc$svsplitfun <- cc$splitfun # never called (maxsurrogate = 0)
   }
-  
+  # The main workhors
   ret <- partykit::ctree(formula = fml, data = data, ytrafo = ytrafo, control = cc)
+
+
+# Return output ----------------------------------------------------------
+
+
   class(ret) <- c("igsca_tree", class(ret))
   warn_dead_splitter(collector, splitter)
 
-  ## partykit never calls the trafo at a node it does not try to split, so
+  
+  ## TODO: Maybe clarify this comment depending on whether it's about every node or just the terminal node?
+  #  partykit never calls the trafo at a node it does not try to split, so
   ## leaves arrive with info = NULL and carry no IGSCA fit. Refit them.
+  # TODO: Double check that this is efficient and only fits the nodes that it needs to
   ret <- attach_leaf_fits(ret, ret$data, args, indicators, collector)
 
-  ## MEMORY OPTIMIZATION (opt-in): each inner node's info holds a full
+  ## TODO: Consider deleting this comment
+  ##  MEMORY OPTIMIZATION (opt-in): each inner node's info holds a full
   ## cSEMResults object, so a maxdepth = 3 tree keeps up to 7 of them.
   ## Uncomment the next line to drop them; leaf fits are unaffected.
   ##   ret <- drop_inner_node_objects(ret)
@@ -217,7 +227,7 @@ doTrees <- function(
     n_fail_split = collector$n_fail_split,
     ## Failed IGSCA refits at terminal nodes (attach_leaf_fits).
     n_fail_leaf = collector$n_fail_leaf,
-    root_criteria = root_criteria(ret)
+    root_criteria = root_criteria(ret) # TODO: What is this?
   )
   return(ret)
 }
