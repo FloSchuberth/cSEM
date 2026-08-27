@@ -30,15 +30,7 @@ res <- csem(
 )
 
 # Controls ---------------------------------------------------------------
-# doTrees() has one selector -- COIN variable selection, from libcoin -- and
-# four cutpoint rules. The native rule is cheap enough to run at the package
-# defaults; a "FIT"/"DLi"/"DGi" rule re-scans candidate cutpoints with a model
-# comparison statistic, which adds a second or two.
-# R_test is live now that coin_distribution defaults to "approximate": at
-# R_test = 50L with bonferroni over k = 3 covariates the smallest non-zero
-# adjusted p-value is 1 - (1 - 1/50)^3 = 0.0588, which never clears alpha, so a
-# node could only split on an exact 0/50. 999L keeps the resolution honest.
-ctl_mixed <- igsca_tree_control(R_test = 999L, maxdepth = 2L, max_cuts = 8L)
+ctl_mixed <- igsca_tree_control(R_test = 9999L, maxdepth = 2L, max_cuts = 8L)
 
 grow_tree <- function(influence, splitter, control, object = res,
                       covariates = covs) {
@@ -51,11 +43,6 @@ grow_tree <- function(influence, splitter, control, object = res,
   )
 }
 
-# A returned tree is only evidence of a working configuration if it actually
-# split. argmax_split() turns a throwing kernel into NA and partykit reads that
-# as "no admissible split", so a broken splitter yields a clean-looking stump
-# rather than an error -- which is why absence of an exception asserts nothing
-# here.
 expect_grew <- function(tree) {
   expect_s3_class(tree, "igsca_tree")
   info <- attr(tree, "igsca_info")
@@ -68,7 +55,6 @@ expect_grew <- function(tree) {
 # Matrix of Residuals ----------------------------------------------------
 test_that("IGSCA Trees Conditional Test on Matrix of Residuals Runs as expected", {
   set.seed(12353)
-  # The native path is cheap enough to snapshot at the package defaults.
   trees_mx <- grow_tree(influence = "mat", splitter = "native", control = igsca_tree_control())
   expect_grew(trees_mx)
   expect_snapshot(trees_mx)
