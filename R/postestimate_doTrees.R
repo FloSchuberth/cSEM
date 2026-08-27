@@ -3,8 +3,7 @@
 #' Grows a tree that partitions the rows `.object` was fitted on into subgroups
 #' whose model estimates differ. Every node is refit by replaying `.object`'s own
 #' [csem()] arguments, so the estimator, modes and convergence settings of the
-#' tree are those of the fit it was given -- there is nothing to keep in sync and
-#' no estimator hard-coded here.
+#' tree are those of the fit it was given.
 #'
 #' `.influence` selects the node statistic that conditional-inference variable
 #' selection runs on: `"mat"` the casewise GSCA squared-residual matrix, `"vec"`
@@ -150,9 +149,9 @@ doTrees <- function(
     testtype <- "Univariate"
   }
   cc <- partykit::ctree_control(
-    teststat = "quadratic",
-    splitstat = "quadratic",
-    testtype = testtype,
+    teststat = "quadratic", # TODO: Consider maximum? 
+    splitstat = "quadratic", # TODO: Consider maximum?
+    testtype = testtype, # TODO: Document
     nresample = control$R_test,
     alpha = control$alpha,
     minsplit = control$minsplit,
