@@ -7,8 +7,8 @@ load(testthat::test_path("data/igscaTrees.Rdata")) # Creates dat
 # ~900 fits behind a single node scan. Coarsening them is what makes that scan
 # affordable, and the two are coarsened differently so that a single fixture
 # exercises both branches candidate_partitions() can take on a covariate that
-# is not an unordered factor: noise_1 stays numeric and is cut at midpoints
-# between distinct values, noise_2 is ordinal and is cut between levels.
+# is not an unordered factor: noise_1 stays numeric and is cut at its distinct
+# values, noise_2 is ordinal and is cut between levels.
 dat$noise_1 <- round(dat$noise_1)
 dat$noise_2 <- cut(
   dat$noise_2,

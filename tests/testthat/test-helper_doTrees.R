@@ -80,8 +80,8 @@ load(testthat::test_path("data/igscaTrees.Rdata")) # Creates dat
 # ~900 fits behind a single node scan. Coarsening them is what makes that scan
 # affordable, and the two are coarsened differently so that a single fixture
 # exercises both branches candidate_partitions() can take on a covariate that
-# is not an unordered factor: noise_1 stays numeric and is cut at midpoints
-# between distinct values, noise_2 is ordinal and is cut between levels.
+# is not an unordered factor: noise_1 stays numeric and is cut at its distinct
+# values, noise_2 is ordinal and is cut between levels.
 dat$noise_1 <- round(dat$noise_1)
 dat$noise_2 <- cut(
   dat$noise_2,
@@ -232,12 +232,12 @@ test_that("argmax_split() returns an admissible cutpoint the kernels disagree on
     numeric(1)
   )
   for (k in names(brs)) {
-    # Strictly inside the observed range: an endpoint sends every row one way,
-    # which partykit accepts and grows a degenerate child from.
-    expect_true(
-      is.finite(brs[[k]]) && brs[[k]] > min(z) && brs[[k]] < max(z),
-      info = k
-    )
+    # Strictly below the maximum: the top value sends every row left, which
+    # partykit accepts and grows a degenerate child from.
+    expect_true(is.finite(brs[[k]]) && brs[[k]] < max(z), info = k)
+    # ctree's default reports the observed value below the gap, so a break
+    # that is not one of the covariate's own values is the midpoint rule.
+    expect_true(brs[[k]] %in% z, info = k)
   }
 
   # The kernels are only worth pairing with a selector if they disagree about
@@ -246,4 +246,117 @@ test_that("argmax_split() returns an admissible cutpoint the kernels disagree on
   # the same candidate, so distinctness across all three would be an assertion
   # about this fixture rather than about the kernels.
   expect_false(isTRUE(all.equal(brs[["FIT"]], brs[["DLi"]])))
+})
+
+# candidate_partitions() conventions vs ctree ----------------------------
+# These are pure-function tests: the point is that the candidates handed to a
+# kernel, and the partysplit handed back to partykit, follow the same
+# conventions partykit:::.ctree_test_internal() follows on the native route.
+
+test_that("candidate_partitions() breaks at observed values, as ctree does", {
+  z <- c(1, 2, 4, 8)
+  brk <- function(cands) {
+    vapply(cands, function(cc) partykit::breaks_split(cc$split), numeric(1))
+  }
+  # ctree's default is intersplit = FALSE, which reports the observed value
+  # below the gap rather than the midpoint.
+  obs <- candidate_partitions(1L, z, z, minbucket = 1L)
+  expect_identical(brk(obs), c(1, 2, 4))
+
+  mid <- candidate_partitions(1L, z, z, minbucket = 1L, intersplit = TRUE)
+  expect_identical(brk(mid), c(1.5, 3, 6))
+
+  # Both conventions cut the node's own rows identically -- they differ only
+  # for values that fall in the gap, which is what intersplit is about.
+  expect_identical(
+    lapply(obs, function(cc) cc$goes_left),
+    lapply(mid, function(cc) cc$goes_left)
+  )
+})
+
+test_that("candidate_partitions() emits splits partykit routes as told", {
+  mf <- data.frame(
+    num = c(1, 2, 4, 8, 16, 32),
+    ord = ordered(c("a", "b", "c", "d", "e", "f")),
+    fac = factor(c("a", "b", "c", "a", "b", "c"))
+  )
+  for (j in seq_along(mf)) {
+    z <- mf[[j]]
+    cands <- candidate_partitions(j, z, z, minbucket = 1L)
+    expect_gt(length(cands), 0L)
+    for (cc in cands) {
+      # The kernel is told `goes_left`; partykit later routes rows through
+      # kidids_split(). A candidate whose two disagree scores one partition
+      # and grows another.
+      expect_identical(
+        partykit::kidids_split(cc$split, mf) == 1L,
+        cc$goes_left,
+        info = names(mf)[j]
+      )
+    }
+  }
+  # ctree sets index = 1:2 on every break-valued split it emits.
+  for (v in c("num", "ord")) {
+    j <- match(v, names(mf))
+    sp <- candidate_partitions(j, mf[[j]], mf[[j]], minbucket = 1L)[[1L]]$split
+    expect_identical(partykit::index_split(sp), 1:2, info = v)
+  }
+})
+
+test_that("candidate_partitions() refuses an unordered factor it cannot afford", {
+  # 11 levels is 1023 bipartitions -- the last scan a kernel can be asked for.
+  ok <- factor(rep(letters[1:11], each = 2L))
+  expect_length(candidate_partitions(1L, ok, ok, minbucket = 1L), 1023L)
+
+  too_many <- factor(rep(letters[1:12], each = 2L))
+  expect_error(
+    candidate_partitions(1L, too_many, too_many, minbucket = 1L),
+    "unordered factor"
+  )
+})
+
+test_that("argmax_split() scans a covariate that has missing values", {
+  # partykit drops the covariate's own missing rows before testing it
+  # (`subsetNArm` in partykit:::.ctree_test()) and routes them by the split's
+  # `prob` afterwards. Left in, `zs <= ct` is NA, sum() is NA, and Filter()
+  # silently drops every candidate -- the covariate goes unsplit with no
+  # diagnostic at all.
+  mf <- data.frame(z = c(rep(1:5, each = 20L), rep(NA_real_, 10L)))
+  seen <- integer(0)
+  kern <- function(model, mf, subset, goes_left, ctrl) {
+    seen <<- c(seen, length(subset))
+    as.numeric(sum(goes_left))
+  }
+  sp <- argmax_split(
+    splitter = kern,
+    collector = new_collector(),
+    model = list(object = NULL),
+    mf = mf,
+    subset = seq_len(nrow(mf)),
+    whichvar = 1L,
+    ctrl = list(minbucket = 20L)
+  )
+  expect_s3_class(sp, "partysplit")
+  # The kernel must never be handed a row whose covariate is missing.
+  expect_identical(unique(seen), 100L)
+})
+
+test_that("validate_tree_input() refuses covariate types partykit cannot scan", {
+  ind <- parseModel(args_trees$.model)$indicators
+  d <- dat
+  d$flag <- dat$z_true == levels(dat$z_true)[1L]
+  d$label <- as.character(dat$z_true)
+
+  # partykit dies on both deep inside libcoin -- "object 'X' not found" for a
+  # logical, "cannot handle objects of class 'character'" for a string -- and a
+  # non-native kernel silently never splits them.
+  expect_error(
+    validate_tree_input(d, ind, c("z_true", "flag"), "mat", "FIT", args_trees),
+    "flag"
+  )
+  expect_error(
+    validate_tree_input(d, ind, c("z_true", "label"), "mat", "FIT", args_trees),
+    "label"
+  )
+  expect_true(validate_tree_input(d, ind, "z_true", "mat", "FIT", args_trees))
 })

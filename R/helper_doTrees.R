@@ -129,6 +129,24 @@ validate_tree_input <- function(data, indicators, covariates, influence,
       paste(overlap, collapse = ", "), "."
     )
   }
+  ## partykit scans numeric, ordered and unordered covariates and nothing else.
+  ## A logical dies as "object 'X' not found" inside .ctree_test_1d() and a
+  ## character as "cannot handle objects of class 'character'" inside inum(),
+  ## both far from this call. A non-native kernel is quieter and worse:
+  ## candidate_partitions() offers no candidate and the covariate goes unsplit
+  ## with no diagnostic at all.
+  bad <- covariates[!vapply(
+    data[covariates],
+    function(z) is.numeric(z) || is.factor(z),
+    logical(1)
+  )]
+  if (length(bad)) {
+    stop2(
+      "`.covariates` must name numeric, ordered or unordered factor columns. ",
+      "The following are neither: ", paste(bad, collapse = ", "),
+      ". Convert them first -- a logical or character covariate is a factor."
+    )
+  }
   ## Both surviving `.influence` values read calculateGSCAErrors(), which
   ## returns NA rather than erroring off a non-GSCA fit -- so without this the
   ## failure would surface deep inside the trafo as a node that would not fit.
@@ -335,11 +353,18 @@ argmax_split <- function(
 ) {
   scanned <- FALSE
   for (j in whichvar) {
+    ## partykit tests a covariate on its non-missing rows alone (`subsetNArm`
+    ## in partykit:::.ctree_test()) and routes the missing ones afterwards
+    ## through the chosen split's `prob`. Left in, `zs <= ct` is NA, so
+    ## `sum(goes_left)` is NA, Filter() drops every candidate, and the
+    ## covariate goes unsplit without even counting as a scan.
+    sub_j <- subset[!is.na(mf[[j]][subset])]
     cands <- candidate_partitions(
       j,
       mf[[j]],
-      mf[[j]][subset],
-      ctrl$minbucket
+      mf[[j]][sub_j],
+      ctrl$minbucket,
+      isTRUE(ctrl$intersplit)
     )
     if (!length(cands)) {
       next
@@ -348,7 +373,7 @@ argmax_split <- function(
       cands,
       function(cc) {
         tryCatch(
-          splitter(model, mf, subset, cc$goes_left, ctrl),
+          splitter(model, mf, sub_j, cc$goes_left, ctrl),
           error = function(e) NA_real_
         )
       },
@@ -402,17 +427,33 @@ warn_dead_splitter <- function(collector, splitter) {
 #' Returns every candidate, each a `partysplit` plus the logical vector saying
 #' which of the node's rows go left. Candidates that would leave a child
 #' smaller than `minbucket` are dropped, so an empty list means the covariate
-#' offers no admissible split -- not that a kernel failed.
+#' offers no admissible split -- not that a kernel failed. `zs` must already
+#' have the covariate's missing rows removed; see `argmax_split()`.
 #'
-#' The scan is exhaustive: every midpoint between consecutive distinct values
-#' of a numeric covariate, every one of the `K - 1` cuts of an ordered factor,
-#' and all `2^(K - 1) - 1` bipartitions of an unordered one. This matches what
-#' partykit's own scan considers, but the non-native splitters pay a two-group
-#' IGSCA fit per candidate where partykit pays arithmetic, so their cost at a
-#' node is proportional to the covariate's cardinality. Whether the grid should
-#' be binned first, and how, is left open.
+#' The scan is exhaustive: every cut between consecutive distinct values of a
+#' numeric covariate, every one of the `K - 1` cuts of an ordered factor, and
+#' all `2^(K - 1) - 1` bipartitions of an unordered one. That is the same set
+#' of partitions partykit's own scan considers, and the emitted `partysplit`
+#' follows the same conventions (`z <= breaks` goes left; an ordered break is
+#' an index into `levels(z)`; an unordered `index` is 1/2 per level of `z`,
+#' `NA` for levels absent from the node).
+#'
+#' The costs are not the same, though: the non-native splitters pay a two-group
+#' IGSCA fit per candidate where partykit pays C arithmetic, which is why the
+#' unordered scan is capped far below the ">= 31 levels" at which libcoin
+#' itself refuses. Whether the numeric grid should be binned first, and how, is
+#' left open -- partykit would do it through `nmax`, which `doTrees()` pins at
+#' `Inf`.
+#'
+#' @param j Column index of the covariate in the model frame.
+#' @param z The covariate over all rows, which fixes the factor levels and
+#'   level order the emitted `partysplit` is expressed in.
+#' @param zs The covariate over this node's non-missing rows.
+#' @param minbucket Smallest child either kid may be left with.
+#' @param intersplit Report a numeric break as the midpoint of the gap rather
+#'   than the observed value below it. `FALSE` matches ctree's default.
 #' @noRd
-candidate_partitions <- function(j, z, zs, minbucket) {
+candidate_partitions <- function(j, z, zs, minbucket, intersplit = FALSE) {
   keep_min <- function(cands) {
     Filter(
       function(cc) {
@@ -427,17 +468,32 @@ candidate_partitions <- function(j, z, zs, minbucket) {
     if (length(uz) < 2L) {
       return(list())
     }
-    mids <- (uz[-1L] + uz[-length(uz)]) / 2
-    keep_min(lapply(mids, function(ct) {
-      list(
-        goes_left = zs <= ct, # TODO: Revisit whether this should be <= or <. Was originally <.
-        split = partykit::partysplit(
-          as.integer(j),
-          breaks = as.double(ct),
-          index = 1L:2L
+    ## `<=` is partykit's convention, not a choice: partysplit() defaults to
+    ## right = TRUE, so kidids_split() bins on (-Inf, breaks] and sends
+    ## `z <= breaks` left.
+    cuts <- uz[-length(uz)]
+    ## Which rows go left is fixed by the gap; only the number reported as the
+    ## break differs, and it matters for rows that land inside the gap later.
+    ## ctree reports the observed value below the gap and switches to the
+    ## midpoint under intersplit = TRUE -- see the tail of
+    ## partykit:::.ctree_test_internal(). Taking the midpoint unconditionally
+    ## also risks rounding up onto uz[i + 1] when the two are adjacent doubles,
+    ## which duplicates the next candidate and drops this one.
+    brks <- if (intersplit) (uz[-1L] + cuts) / 2 else cuts
+    keep_min(Map(
+      function(ct, br) {
+        list(
+          goes_left = zs <= ct,
+          split = partykit::partysplit(
+            as.integer(j),
+            breaks = as.double(br),
+            index = 1L:2L
+          )
         )
-      )
-    }))
+      },
+      cuts,
+      brks
+    ))
   } else if (is.ordered(z)) {
     levs <- levels(droplevels(zs))
     K <- length(levs)
@@ -449,7 +505,8 @@ candidate_partitions <- function(j, z, zs, minbucket) {
         goes_left = zs %in% levs[1L:i],
         split = partykit::partysplit(
           as.integer(j),
-          breaks = as.integer(match(levs[i], levels(z)))
+          breaks = as.integer(match(levs[i], levels(z))),
+          index = 1L:2L
         )
       )
     }))
@@ -458,6 +515,18 @@ candidate_partitions <- function(j, z, zs, minbucket) {
     K <- length(levs)
     if (K < 2L) {
       return(list())
+    }
+    ## Every bipartition costs a two-group IGSCA fit here where partykit pays
+    ## C arithmetic, so this scan has to stop well short of the ">= 31 levels"
+    ## at which libcoin itself gives up. 11 levels is already 1023 fits for one
+    ## covariate at one node.
+    if (K > 11L) {
+      stop2(
+        "Scanning the unordered factor in column ", j, " would take 2^", K - 1L,
+        " - 1 candidate partitions, each costing a two-group IGSCA fit. ",
+        "Collapse it to 11 levels or fewer, make it an ordered factor, or use ",
+        "`.splitter = \"native\"`."
+      )
     }
     olev <- levels(z)
     keep_min(lapply(1L:(2L^(K - 1L) - 1L), function(m) {
