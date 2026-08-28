@@ -192,46 +192,10 @@ validate_tree_input <- function(data, indicators, covariates, influence,
 #' @param R_test Number of permutations libcoin draws for the
 #'   conditional-inference variable-selection test. Drawn only under
 #'   `coin_distribution = "approximate"`; ignored entirely under
-#'   `"asymptotic"`. Defaults to `9999L`, matching
-#'   [partykit::ctree_control()]'s `nresample`.
+#'   `"asymptotic"`.
 #'
-#'   This is the tree's only resampler, whatever `.splitter` is set to. The
-#'   cutpoint search never permutes: partykit's own scan sets `nresample = 0L`
-#'   unconditionally in the `SPLITONLY` branch of its `.ctree_test_internal()`,
-#'   and the `"FIT"`, `"DLi"` and `"DGi"` kernels take a deterministic argmax
-#'   over at most `max_cuts` candidate partitions. Making a whole run
-#'   permutation-free is therefore `coin_distribution = "asymptotic"`, on any
-#'   splitter, and not a property of the splitter itself.
-#'
-#'   The Monte Carlo estimate carries a standard error of
-#'   \eqn{\sqrt{p (1 - p) / R}}. At the default and \eqn{p \approx \alpha =
-#'   0.05} that is about 0.0022; at `R_test = 500L` it would be about 0.0097,
-#'   a fifth of `alpha` and wide enough to flip a borderline split between
-#'   runs.
 #' @param coin_distribution How the conditional-inference family evaluates the
-#'   null distribution -- not *which* null, which is the permutation null
-#'   either way. Both settings test the same hypothesis by the same Strasser
-#'   and Weber (1999) framework; they differ only in how its tail is obtained.
-#'   "approximate" (the default) estimates the tail by drawing `R_test`
-#'   permutations of the null distribution. "asymptotic" draws no permutations at all: libcoin
-#'   computes
-#'   the linear statistic's exact conditional expectation and covariance under
-#'   the permutation null in closed form, standardises by them, and reads the
-#'   p-value off the limiting chi-squared distribution -- the large-sample
-#'   shape of that same permutation distribution.
-#'
-#'   So "asymptotic" is still a permutation test; it is the resampling that is
-#'   approximated away, not the conditioning. `?libcoin::LinStatExpCov` states
-#'   the split directly -- the code "computes the linear statistic, its
-#'   expectation and covariance and, *optionally*, `nresample` samples from its
-#'   permutation distribution" -- and Strasser and Weber's title, "The
-#'   Asymptotic Theory of Permutation Statistics", is the whole point.
-#'
-#'   Prefer `"asymptotic"` when exact reproducibility matters more than the
-#'   large-sample approximation: nothing is drawn, so its p-values do not
-#'   depend on the seed. The default trades that for not relying on the
-#'   chi-squared limit; see `R_test` for the Monte Carlo standard error it
-#'   costs.
+#'   null distribution. See `?partykit::ctree_control()` and `?libcoin::LinStatExpCov` for more information.
 #'
 #' @returns A named `list` of tuning parameters.
 #' @seealso [doTrees()]

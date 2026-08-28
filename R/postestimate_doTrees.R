@@ -39,7 +39,7 @@ doTrees <- function(
   splitter <- match.arg(.splitter)
   control <- .control
 
-  args <- csem_tree_args(.object)  # Reuses the fitted model's arguments to fit the csem models in each  node
+  args <- csem_tree_args(.object)  # Safely fetches .object$Information$Arguments
   data <- as.data.frame(args$.data)
   indicators <- parseModel(args$.model)$indicators
   validate_tree_input(data, indicators, .covariates, influence, splitter, args)
@@ -53,9 +53,10 @@ doTrees <- function(
   # Environment for collecting  metrics on different kinds of convergence failures found while fitting the tree
   collector <- new_collector()
 
-
+  # debug(libcoin::LinStatExpCov)
   influence_fn <- switch(influence, # from .influence character string
      mat = influence_mat
+     # Commented out because it's not as powerful as the matrix approach
      # , vec = influence_vec
     ) 
   # TODO: Walk through how ctree, extree_fit and .extree_node modify ytrafo
@@ -72,7 +73,7 @@ doTrees <- function(
   ytrafo <- function(data, weights, control) {
     # Compare against `partykit::ctree_control()$selectfun`
     # TODO: Uncomment and see in browser
-    # browser()
+    browser()
     mf <- model.frame(data)
     function(
       subset,
@@ -83,7 +84,7 @@ doTrees <- function(
       ...
     ) {
       # TODO: Uncomment and see in browser
-      # browser()
+      browser()
       # We never pass weights to ctree(), so this is a guard against a future change in partykit:
       # try_fit() below ignores them, which would silently drop case weights.
       stopifnot("case weights are not supported by doTrees(). partykit has changed since initial doTrees development, please report to developers." = length(weights) == 0L)
@@ -121,37 +122,14 @@ doTrees <- function(
       )
     }
   }
-  ## TODO: Shorten this  
-  ## TODO: Is this the same or different from how ctree controls testtype?
-  ## partykit's `testtype` conflates two orthogonal choices: where the p-value comes from ("MonteCarlo" = nresample permutations, otherwise the asymptotic chi-squared limit of the same conditional null) and whether it
-  ## is adjusted for multiplicity. Passing both keywords reaches all four
-  ## combinations of our two arguments inside the documented API -- and it is
-  ## documented: ?ctree_control says under `testtype` that "Bonferroni and
-  ## Univariate relate to p-values from the asymptotic distribution (adjusted
-  ## or unadjusted)" and that "Bonferroni-adjusted Monte-Carlo p-values are
-  ## computed when both Bonferroni and MonteCarlo are given". This works
-  ## because ctree_control() splits them apart rather than keeping the vector:
-  ## `bonferroni` is derived as `"Bonferroni" %in% testtype`, and `testtype`
-  ## itself is then collapsed by match.arg() to the single remaining keyword.
-  ## The stored control therefore reads testtype = "MonteCarlo",
-  ## bonferroni = TRUE -- not the length-2 vector we passed in. That is the
-  ## form the engine wants: .ctree_test_internal() only ever asks whether
-  ## "MonteCarlo" %in% ctrl$testtype to choose libcoin's nresample, and the
-  ## adjustment is applied elsewhere (see below), so nothing downstream needs
-  ## the "Bonferroni" keyword to survive.
-  ##
-  ## The adjustment itself is not ctree's -- .extree_node() applies it to
-  ## whatever the selectfun returns, before comparing against
-  ## logmincriterion. ctree_control() does not store the vector we pass: it
-  ## fans the keywords out into `bonferroni = "Bonferroni" %in% testtype` and
-  ## a single `testtype <- "MonteCarlo"`, and c("Bonferroni", "MonteCarlo")
-  ## is the only length-2 vector it accepts.
+  
+  # See ?partykit::ctree_control() for the `testtype` argument and how it's internally handled for why Bonferonni is paired with Monte Carlo
   testtype <- c( # TODO: Needs to be compared against ctree and ctree_control for how they handle this. 
-    if (isTRUE(control$bonferroni)) "Bonferroni",
-    if (control$coin_distribution == "approximate") "MonteCarlo"
+    if (isTRUE(control$bonferroni)) "Bonferroni", # Bonferonni corrected p-values
+    if (control$coin_distribution == "approximate") "MonteCarlo" # Use permutation resamples to generate null distribution
   )
-  if (is.null(testtype)) {
-    testtype <- "Univariate"
+  if (is.null(testtype) && control$coin_distribution == "asymptotic") { # testtype is null if the above don't fire, meaning testtype <- c()
+    testtype <- "Univariate" # This means that you use the asymptotic null distribution of the permutation LinStatExpCov statistic
   }
   cc <- partykit::ctree_control(
     teststat = "quadratic", # TODO: Consider maximum? 
