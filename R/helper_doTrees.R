@@ -148,8 +148,7 @@ validate_tree_input <- function(data, indicators, covariates, influence,
 #' `doTrees()` runs one algorithm --
 #' conditional-inference variable selection from libcoin, followed by a
 #' cutpoint rule chosen with `.splitter` -- so every parameter below applies to
-#' every configuration, except `max_cuts`, which only the non-native cutpoint
-#' rules consult.
+#' every configuration.
 #'
 #' @param alpha Significance level a covariate must clear to split a node.
 #' @param bonferroni Adjust the node's p-values for the number of covariates
@@ -186,9 +185,6 @@ validate_tree_input <- function(data, indicators, covariates, influence,
 #'   to `0.01`, matching [partykit::ctree_control()]; with the default
 #'   `minbucket = 30L` it does not bind below n = 3000.
 #' @param maxdepth Maximum depth of the tree, the root counting as 0.
-#' @param max_cuts Maximum number of candidate cutpoints scanned per numeric
-#'   covariate. Only the non-native cutpoint rules use this; partykit's own
-#'   scan considers every distinct value.
 #' @param R_test Number of permutations libcoin draws for the
 #'   conditional-inference variable-selection test. Drawn only under
 #'   `coin_distribution = "approximate"`; ignored entirely under
@@ -206,7 +202,6 @@ igsca_tree_control <- function(alpha = 0.05,
                                minsplit = 2L * minbucket,
                                minprob = 0.01,
                                maxdepth = 3L,
-                               max_cuts = 20L,
                                R_test = 9999L,
                                coin_distribution = c("approximate", "asymptotic")) {
   stopifnot(
@@ -224,7 +219,6 @@ igsca_tree_control <- function(alpha = 0.05,
     minsplit = as.integer(minsplit),
     minprob = minprob,
     maxdepth = as.integer(maxdepth),
-    max_cuts = as.integer(max_cuts),
     R_test = as.integer(R_test),
     coin_distribution = match.arg(coin_distribution)
   )
@@ -345,7 +339,6 @@ argmax_split <- function(
       j,
       mf[[j]],
       mf[[j]][subset],
-      ctrl$max_cuts,
       ctrl$minbucket
     )
     if (!length(cands)) {
@@ -406,12 +399,20 @@ warn_dead_splitter <- function(collector, splitter) {
 
 #' Admissible binary partitions of one covariate
 #'
-#' Returns at most `max_cuts` candidates, each a `partysplit` plus the logical
-#' vector saying which of the node's rows go left. Candidates that would leave
-#' a child smaller than `minbucket` are dropped, so an empty list means the
-#' covariate offers no admissible split -- not that a kernel failed.
+#' Returns every candidate, each a `partysplit` plus the logical vector saying
+#' which of the node's rows go left. Candidates that would leave a child
+#' smaller than `minbucket` are dropped, so an empty list means the covariate
+#' offers no admissible split -- not that a kernel failed.
+#'
+#' The scan is exhaustive: every midpoint between consecutive distinct values
+#' of a numeric covariate, every one of the `K - 1` cuts of an ordered factor,
+#' and all `2^(K - 1) - 1` bipartitions of an unordered one. This matches what
+#' partykit's own scan considers, but the non-native splitters pay a two-group
+#' IGSCA fit per candidate where partykit pays arithmetic, so their cost at a
+#' node is proportional to the covariate's cardinality. Whether the grid should
+#' be binned first, and how, is left open.
 #' @noRd
-candidate_partitions <- function(j, z, zs, max_cuts, minbucket) {
+candidate_partitions <- function(j, z, zs, minbucket) {
   keep_min <- function(cands) {
     Filter(
       function(cc) {
@@ -427,14 +428,6 @@ candidate_partitions <- function(j, z, zs, max_cuts, minbucket) {
       return(list())
     }
     mids <- (uz[-1L] + uz[-length(uz)]) / 2
-    if (length(mids) > max_cuts) {
-      mids <- unique(stats::quantile(
-        zs,
-        probs = seq_len(max_cuts) / (max_cuts + 1),
-        type = 7,
-        names = FALSE
-      ))
-    }
     keep_min(lapply(mids, function(ct) {
       list(
         goes_left = zs <= ct, # TODO: Revisit whether this should be <= or <. Was originally <.

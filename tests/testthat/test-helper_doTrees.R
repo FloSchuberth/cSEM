@@ -74,6 +74,22 @@ test_that("bdiagFit() validates .n_blocks", {
 # layer where cutpoint choice and the scan cache can be observed at all.
 load(testthat::test_path("data/igscaTrees.Rdata")) # Creates dat
 
+# candidate_partitions() scans every admissible cut of a covariate and the
+# non-native cutpoint rules (FIT/DLi/DGi) pay a two-group MGA fit at each one,
+# so the raw noise covariates -- 1000 distinct values in 1000 rows -- would put
+# ~900 fits behind a single node scan. Coarsening them is what makes that scan
+# affordable, and the two are coarsened differently so that a single fixture
+# exercises both branches candidate_partitions() can take on a covariate that
+# is not an unordered factor: noise_1 stays numeric and is cut at midpoints
+# between distinct values, noise_2 is ordinal and is cut between levels.
+dat$noise_1 <- round(dat$noise_1)
+dat$noise_2 <- cut(
+  dat$noise_2,
+  breaks = stats::quantile(dat$noise_2, probs = seq(0, 1, length.out = 21L)),
+  include.lowest = TRUE,
+  ordered_result = TRUE
+)
+
 model_trees <- "# Latent variable model
  eta1 =~ x11 + x12 + x13
  eta2 =~ x21 + x22 + x23
@@ -100,7 +116,7 @@ args_trees <- csem(
 )$Information$Arguments
 
 # One pooled node fit, packaged the way the trafo hands it to a kernel.
-node_fixture <- function(max_cuts = 8L, minbucket = 100L) {
+node_fixture <- function(minbucket = 100L) {
   ind <- parseModel(args_trees$.model)$indicators
   ft <- try_fit(dat[, ind, drop = FALSE], args_trees)
   list(
@@ -111,7 +127,6 @@ node_fixture <- function(max_cuts = 8L, minbucket = 100L) {
       collector = new_collector(),
       args = args_trees,
       indicators = ind,
-      max_cuts = max_cuts,
       minbucket = minbucket
     )
   )
@@ -185,9 +200,11 @@ test_that("partition_stat() records a failed auxiliary fit instead of throwing",
 
 # This is where cutpoint choice has to be tested: at the tree level the root
 # offers no freedom, since z_true is a 2-level factor and candidate_partitions()
-# returns exactly one candidate for it. noise_1 is numeric and yields max_cuts
-# of them, so a kernel that runs but picks the wrong cutpoint is visible here
-# and nowhere else.
+# returns exactly one candidate for it. noise_1 is numeric, and rounding leaves
+# it seven distinct values -- two admissible cuts at minbucket = 100 -- so a
+# kernel that runs but picks the wrong cutpoint is visible here and nowhere
+# else. Two is thin: it is enough for the kernels to disagree on this fixture,
+# but a coarser noise_1 would leave them nothing to disagree about.
 test_that("argmax_split() returns an admissible cutpoint the kernels disagree on", {
   fx <- node_fixture()
   j <- match("noise_1", names(fx$mf)) # column number of noise_1 in the data

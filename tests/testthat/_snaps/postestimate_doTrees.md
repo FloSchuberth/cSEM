@@ -10,11 +10,9 @@
       
       Fitted party:
       [1] root
-      |   [2] z_true in 1
-      |   |   [3] noise_1 <= -1.09783: *
-      |   |   [4] noise_1 > -1.09783: *
-      |   [5] z_true in 2: *
+      |   [2] z_true in 1: *
+      |   [3] z_true in 2: *
       
-      Number of inner nodes:    2
-      Number of terminal nodes: 3
+      Number of inner nodes:    1
+      Number of terminal nodes: 2
 

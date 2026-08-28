@@ -1,5 +1,21 @@
 # doTrees ----------------------------------------------------------------
 load(testthat::test_path("data/igscaTrees.Rdata")) # Creates dat
+
+# candidate_partitions() scans every admissible cut of a covariate and the
+# non-native cutpoint rules (FIT/DLi/DGi) pay a two-group MGA fit at each one,
+# so the raw noise covariates -- 1000 distinct values in 1000 rows -- would put
+# ~900 fits behind a single node scan. Coarsening them is what makes that scan
+# affordable, and the two are coarsened differently so that a single fixture
+# exercises both branches candidate_partitions() can take on a covariate that
+# is not an unordered factor: noise_1 stays numeric and is cut at midpoints
+# between distinct values, noise_2 is ordinal and is cut between levels.
+dat$noise_1 <- round(dat$noise_1)
+dat$noise_2 <- cut(
+  dat$noise_2,
+  breaks = stats::quantile(dat$noise_2, probs = seq(0, 1, length.out = 21L)),
+  include.lowest = TRUE,
+  ordered_result = TRUE
+)
 covs <- c("z_true", grep("^noise_", names(dat), value = TRUE))
 
 model <- "# Latent variable model
@@ -30,7 +46,7 @@ res <- csem(
 )
 
 # Controls ---------------------------------------------------------------
-ctl_mixed <- igsca_tree_control(R_test = 9999L, maxdepth = 2L, max_cuts = 8L)
+ctl_mixed <- igsca_tree_control(R_test = 9999L, maxdepth = 2L)
 
 grow_tree <- function(influence, splitter, control, object = res,
                       covariates = covs) {
@@ -165,7 +181,7 @@ test_that("minprob raises the effective minbucket on every cutpoint route", {
     binding <- grow_tree(
       influence = "mat",
       splitter = sp,
-      control = igsca_tree_control(minprob = 0.9, maxdepth = 1L, max_cuts = 8L)
+      control = igsca_tree_control(minprob = 0.9, maxdepth = 1L)
     )
     # n = 1000, so minbucket is raised to 900 at the root and no binary split
     # can leave both children that large.
@@ -178,7 +194,7 @@ test_that("minprob raises the effective minbucket on every cutpoint route", {
     slack <- grow_tree(
       influence = "mat",
       splitter = sp,
-      control = igsca_tree_control(minprob = 0.01, maxdepth = 1L, max_cuts = 8L)
+      control = igsca_tree_control(minprob = 0.01, maxdepth = 1L)
     )
     # ... and the same configuration splits once minprob no longer binds, so
     # the stump above is minprob's doing and not the fixture's.
@@ -203,7 +219,7 @@ test_that("coin_distribution alone decides whether a run permutes", {
       influence = "mat",
       splitter = splitter,
       control = igsca_tree_control(
-        coin_distribution = dist, R_test = 500L, maxdepth = 1L, max_cuts = 8L
+        coin_distribution = dist, R_test = 500L, maxdepth = 1L
       )
     )
     # The noise covariates, not z_true: a libcoin Monte Carlo p-value is k/R
@@ -237,7 +253,7 @@ test_that("R_test reaches libcoin as nresample, not merely the control list", {
         influence = "mat",
         splitter = sp,
         control = igsca_tree_control(
-          coin_distribution = "approximate", R_test = 500L, maxdepth = 1L, max_cuts = 8L
+          coin_distribution = "approximate", R_test = 500L, maxdepth = 1L
         )
       ),
       "igsca_info"
@@ -464,11 +480,19 @@ test_that("a leaf that already carries a fit is not refitted", {
 })
 
 test_that("a failed leaf refit is counted and surfaces in coef()", {
+  # `alpha = 1` accepts every split partykit can make, which is how leaves too
+  # small to fit are manufactured here: with 13 indicators a leaf of a few dozen
+  # rows fails, and that failure has to stay visible rather than be dropped. The
+  # binned covariates stop the default control at three leaves of ~90 rows, none
+  # of which fail, so the setting is doing the work the fixture used to.
   set.seed(12353)
-  tr <- grow_tree(influence = "mat", splitter = "native", control = igsca_tree_control())
-  # With 13 indicators the default minbucket = 30L admits leaves the model
-  # cannot fit; this tree's n = 68 leaf is one of them.
-  expect_identical(attr(tr, "igsca_info")$n_fail_leaf, 1L)
+  tr <- grow_tree(
+    influence = "mat",
+    splitter = "native",
+    control = igsca_tree_control(alpha = 1, maxdepth = 3L, minbucket = 20L)
+  )
+  n_fail <- attr(tr, "igsca_info")$n_fail_leaf
+  expect_gt(n_fail, 0L)
 
   cf <- coef(tr)
   # One row per leaf, named by node id: rbind() drops NULLs, which is how this
@@ -477,8 +501,10 @@ test_that("a failed leaf refit is counted and surfaces in coef()", {
     rownames(cf),
     as.character(partykit::nodeids(tr, terminal = TRUE))
   )
-  # The failed leaf is an NA objfun, not a dropped row -- it still reports nobs.
-  expect_identical(sum(is.na(cf[, "objfun"])), 1L)
+  # Every failed leaf is an NA objfun, not a dropped row -- and still reports
+  # nobs. Counting them rather than pinning a number keeps this about coef()
+  # surfacing the failures, not about how many this fixture happens to produce.
+  expect_identical(sum(is.na(cf[, "objfun"])), n_fail)
   expect_false(anyNA(cf[, "nobs"]))
 })
 

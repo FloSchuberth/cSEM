@@ -11,7 +11,6 @@ igsca_tree_control(
   minsplit = 2L * minbucket,
   minprob = 0.01,
   maxdepth = 3L,
-  max_cuts = 20L,
   R_test = 9999L,
   coin_distribution = c("approximate", "asymptotic")
 )
@@ -58,54 +57,13 @@ to \code{0.01}, matching \code{\link[partykit:ctree_control]{partykit::ctree_con
 
 \item{maxdepth}{Maximum depth of the tree, the root counting as 0.}
 
-\item{max_cuts}{Maximum number of candidate cutpoints scanned per numeric
-covariate. Only the non-native cutpoint rules use this; partykit's own
-scan considers every distinct value.}
-
 \item{R_test}{Number of permutations libcoin draws for the
 conditional-inference variable-selection test. Drawn only under
 \code{coin_distribution = "approximate"}; ignored entirely under
-\code{"asymptotic"}. Defaults to \code{9999L}, matching
-\code{\link[partykit:ctree_control]{partykit::ctree_control()}}'s \code{nresample}.
-
-This is the tree's only resampler, whatever \code{.splitter} is set to. The
-cutpoint search never permutes: partykit's own scan sets \code{nresample = 0L}
-unconditionally in the \code{SPLITONLY} branch of its \code{.ctree_test_internal()},
-and the \code{"FIT"}, \code{"DLi"} and \code{"DGi"} kernels take a deterministic argmax
-over at most \code{max_cuts} candidate partitions. Making a whole run
-permutation-free is therefore \code{coin_distribution = "asymptotic"}, on any
-splitter, and not a property of the splitter itself.
-
-The Monte Carlo estimate carries a standard error of
-\eqn{\sqrt{p (1 - p) / R}}. At the default and \eqn{p \approx \alpha =
-  0.05} that is about 0.0022; at \code{R_test = 500L} it would be about 0.0097,
-a fifth of \code{alpha} and wide enough to flip a borderline split between
-runs.}
+\code{"asymptotic"}.}
 
 \item{coin_distribution}{How the conditional-inference family evaluates the
-null distribution -- not \emph{which} null, which is the permutation null
-either way. Both settings test the same hypothesis by the same Strasser
-and Weber (1999) framework; they differ only in how its tail is obtained.
-"approximate" (the default) estimates the tail by drawing \code{R_test}
-permutations of the null distribution. "asymptotic" draws no permutations at all: libcoin
-computes
-the linear statistic's exact conditional expectation and covariance under
-the permutation null in closed form, standardises by them, and reads the
-p-value off the limiting chi-squared distribution -- the large-sample
-shape of that same permutation distribution.
-
-So "asymptotic" is still a permutation test; it is the resampling that is
-approximated away, not the conditioning. \code{?libcoin::LinStatExpCov} states
-the split directly -- the code "computes the linear statistic, its
-expectation and covariance and, \emph{optionally}, \code{nresample} samples from its
-permutation distribution" -- and Strasser and Weber's title, "The
-Asymptotic Theory of Permutation Statistics", is the whole point.
-
-Prefer \code{"asymptotic"} when exact reproducibility matters more than the
-large-sample approximation: nothing is drawn, so its p-values do not
-depend on the seed. The default trades that for not relying on the
-chi-squared limit; see \code{R_test} for the Monte Carlo standard error it
-costs.}
+null distribution. See \code{?partykit::ctree_control()} and \code{?libcoin::LinStatExpCov} for more information.}
 }
 \value{
 A named \code{list} of tuning parameters.
@@ -114,8 +72,7 @@ A named \code{list} of tuning parameters.
 \code{doTrees()} runs one algorithm --
 conditional-inference variable selection from libcoin, followed by a
 cutpoint rule chosen with \code{.splitter} -- so every parameter below applies to
-every configuration, except \code{max_cuts}, which only the non-native cutpoint
-rules consult.
+every configuration.
 }
 \seealso{
 \code{\link[=doTrees]{doTrees()}}

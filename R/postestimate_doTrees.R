@@ -73,7 +73,7 @@ doTrees <- function(
   ytrafo <- function(data, weights, control) {
     # Compare against `partykit::ctree_control()$selectfun`
     # TODO: Uncomment and see in browser
-    browser()
+    # browser()
     mf <- model.frame(data)
     function(
       subset,
@@ -84,7 +84,7 @@ doTrees <- function(
       ...
     ) {
       # TODO: Uncomment and see in browser
-      browser()
+      # browser()
       # We never pass weights to ctree(), so this is a guard against a future change in partykit:
       # try_fit() below ignores them, which would silently drop case weights.
       stopifnot("case weights are not supported by doTrees(). partykit has changed since initial doTrees development, please report to developers." = length(weights) == 0L)
@@ -159,7 +159,6 @@ doTrees <- function(
     cc$args <- args
     cc$indicators <- indicators
     cc$collector <- collector
-    cc$max_cuts <- control$max_cuts
     cc$splitfun <- function(
       model,
       trafo,
