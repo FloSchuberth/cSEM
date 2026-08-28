@@ -74,14 +74,6 @@ test_that("bdiagFit() validates .n_blocks", {
 # layer where cutpoint choice and the scan cache can be observed at all.
 load(testthat::test_path("data/igscaTrees.Rdata")) # Creates dat
 
-# candidate_partitions() scans every admissible cut of a covariate and the
-# non-native cutpoint rules (FIT/DLi/DGi) pay a two-group MGA fit at each one,
-# so the raw noise covariates -- 1000 distinct values in 1000 rows -- would put
-# ~900 fits behind a single node scan. Coarsening them is what makes that scan
-# affordable, and the two are coarsened differently so that a single fixture
-# exercises both branches candidate_partitions() can take on a covariate that
-# is not an unordered factor: noise_1 stays numeric and is cut at its distinct
-# values, noise_2 is ordinal and is cut between levels.
 dat$noise_1 <- round(dat$noise_1)
 dat$noise_2 <- cut(
   dat$noise_2,
