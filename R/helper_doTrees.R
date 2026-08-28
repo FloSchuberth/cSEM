@@ -341,63 +341,142 @@ csem_converged <- function(fit) {
 #' into `n_fail_split`: that is the signature of a broken kernel, which the
 #' `tryCatch` below would otherwise make indistinguishable from a node with no
 #' admissible partition.
+#'
+#' This stands in for `partykit:::.split()`, which `doTrees()` bypasses by
+#' replacing `ctrl$splitfun` outright rather than plugging a kernel into
+#' `.split()`'s own `FUN` slot -- the clean route, but `.split()` is internal.
+#' `.split()` does two things around the cutpoint search, and both are
+#' reproduced here: it takes unordered factors multiway without consulting the
+#' cutpoint rule at all, and under `lookahead` it abandons a covariate whose
+#' chosen split leaves a kid the model cannot be refitted in. Neither setting is
+#' exposed by [igsca_tree_control()], so both arrive only through `ctrl`.
 #' @noRd
 argmax_split <- function(
   splitter,
   collector,
   model,
+  trafo,
   mf,
   subset,
   whichvar,
-  ctrl
+  ctrl,
+  weights = integer(0)
 ) {
   scanned <- FALSE
+  got_stat <- FALSE
+  ret <- NULL
   for (j in whichvar) {
-    ## partykit tests a covariate on its non-missing rows alone (`subsetNArm`
-    ## in partykit:::.ctree_test()) and routes the missing ones afterwards
-    ## through the chosen split's `prob`. Left in, `zs <= ct` is NA, so
-    ## `sum(goes_left)` is NA, Filter() drops every candidate, and the
-    ## covariate goes unsplit without even counting as a scan.
-    sub_j <- subset[!is.na(mf[[j]][subset])]
-    cands <- candidate_partitions(
-      j,
-      mf[[j]],
-      mf[[j]][sub_j],
-      ctrl$minbucket,
-      isTRUE(ctrl$intersplit)
-    )
-    if (!length(cands)) {
+    z <- mf[[j]]
+    if (
+      isTRUE(ctrl$multiway) && is.factor(z) && !is.ordered(z) &&
+        identical(as.numeric(ctrl$maxsurrogate), 0) &&
+        nlevels(droplevels(z[subset])) > 1L
+    ) {
+      ## Structural, not a statistic: partykit picks one kid per level and
+      ## never calls the cutpoint rule, so no kernel can override it.
+      ret <- multiway_split(j, z, z[subset], ctrl$minbucket)
+    } else {
+      ## partykit tests a covariate on its non-missing rows alone (`subsetNArm`
+      ## in partykit:::.ctree_test()) and routes the missing ones afterwards
+      ## through the chosen split's `prob`. Left in, `zs <= ct` is NA, so
+      ## `sum(goes_left)` is NA, Filter() drops every candidate, and the
+      ## covariate goes unsplit without even counting as a scan.
+      sub_j <- subset[!is.na(z[subset])]
+      cands <- candidate_partitions(
+        j,
+        z,
+        z[sub_j],
+        ctrl$minbucket,
+        isTRUE(ctrl$intersplit)
+      )
+      if (!length(cands)) {
+        next
+      }
+      stats <- vapply(
+        cands,
+        function(cc) {
+          tryCatch(
+            splitter(model, mf, sub_j, cc$goes_left, ctrl),
+            error = function(e) NA_real_
+          )
+        },
+        numeric(1)
+      )
+      ## The kernel was actually evaluated on this covariate, so the invocation
+      ## counts as a scan regardless of what came back.
+      scanned <- TRUE
+      if (!any(is.finite(stats))) {
+        next
+      }
+      got_stat <- TRUE
+      ret <- cands[[which.max(stats)]]$split
+    }
+    if (is.null(ret)) {
       next
     }
-    stats <- vapply(
-      cands,
-      function(cc) {
-        tryCatch(
-          splitter(model, mf, sub_j, cc$goes_left, ctrl),
-          error = function(e) NA_real_
-        )
-      },
-      numeric(1)
-    )
-    ## The kernel was actually evaluated on this covariate, so the invocation
-    ## counts as a scan regardless of what came back.
-    scanned <- TRUE
-    if (!any(is.finite(stats))) {
+    ## partykit moves on to the next covariate rather than to the next
+    ## cutpoint, so a rejected split takes its whole covariate with it.
+    if (isTRUE(ctrl$lookahead) && !kids_converge(ret, trafo, mf, subset, weights)) {
+      ret <- NULL
       next
     }
-    collector$n_split_scan <- collector$n_split_scan + 1L
-    return(cands[[which.max(stats)]]$split)
+    break
   }
-  ## Falling through after a scan means the kernel ran and never returned a
-  ## finite statistic -- the signature of a broken kernel, which tryCatch above
-  ## turns into NA and partykit would otherwise read as "no admissible split".
-  ## A node with no admissible partition never sets `scanned`, so the two cases
-  ## stay distinguishable in the collector.
+  ## Falling through after a scan that never produced a finite statistic is the
+  ## signature of a broken kernel, which tryCatch above turns into NA and
+  ## partykit would otherwise read as "no admissible split". A node with no
+  ## admissible partition never sets `scanned`, so the two cases stay
+  ## distinguishable in the collector -- and a statistic that lookahead then
+  ## discarded sets `got_stat`, so the kernel is not blamed for it either.
   if (scanned) {
     collector$n_split_scan <- collector$n_split_scan + 1L
-    collector$n_fail_split <- collector$n_fail_split + 1L
+    if (!got_stat) {
+      collector$n_fail_split <- collector$n_fail_split + 1L
+    }
   }
-  NULL
+  ret
+}
+
+#' One kid per level of an unordered factor
+#'
+#' partykit's multiway rule, transcribed from `partykit:::.split()`: levels
+#' absent from the node get no kid (`NA`), levels present but smaller than
+#' `minbucket` are lumped together into one extra kid rather than dropped, and
+#' the resulting ids are re-coded to be consecutive. `NULL` when that leaves a
+#' single kid, which is no split at all.
+#' @noRd
+multiway_split <- function(j, z, zs, minbucket) {
+  K <- nlevels(z)
+  index <- seq_len(K)
+  xt <- tabulate(zs, nbins = K)
+  index[xt == 0L] <- NA_integer_
+  index[xt > 0L & xt < minbucket] <- K + 1L
+  if (length(unique(index)) == 1L) {
+    return(NULL)
+  }
+  partykit::partysplit(
+    as.integer(j),
+    index = as.integer(unclass(factor(index)))
+  )
+}
+
+#' Does the node model refit in every kid this split would create?
+#'
+#' partykit's `lookahead` check, transcribed from `partykit:::.split()`. The
+#' trafo is the same one that fits the node, so this costs one IGSCA fit per
+#' kid on top of the scan that chose the split -- and a kid that fails to fit
+#' counts into `collector$n_fail_node` like any other node fit, which is what
+#' partykit's own lookahead would do with this trafo.
+#' @noRd
+kids_converge <- function(split, trafo, mf, subset, weights) {
+  sp <- partykit::kidids_split(split, mf, obs = subset)
+  all(vapply(
+    unique(sp[!is.na(sp)]),
+    function(i) {
+      isTRUE(trafo(subset[!is.na(sp) & sp == i], weights = weights)$converged)
+    },
+    logical(1)
+  ))
 }
 
 #' Warn when a requested split kernel never produced a usable statistic

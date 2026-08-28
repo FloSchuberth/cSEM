@@ -172,13 +172,17 @@ doTrees <- function(
       # argmax_split() partitions on `subset` alone, so weighted rows would be ignored.
       stopifnot("case weights are not supported by doTrees(). partykit has changed since initial doTrees development, please report to developers." = length(weights) == 0L)
       argmax_split(
-        split_fn,
-        collector,
-        model,
-        model.frame(data),
-        subset,
-        whichvar,
-        ctrl
+        splitter = split_fn,
+        collector = collector,
+        model = model,
+        ## Only ctrl$lookahead reads this, and it needs the very trafo that
+        ## fits the node -- partykit hands the splitfun the same one.
+        trafo = trafo,
+        mf = model.frame(data),
+        subset = subset,
+        whichvar = whichvar,
+        ctrl = ctrl,
+        weights = weights
       )
     }
     cc$svsplitfun <- cc$splitfun # never called (maxsurrogate = 0)

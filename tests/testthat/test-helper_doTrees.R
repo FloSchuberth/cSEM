@@ -360,3 +360,83 @@ test_that("validate_tree_input() refuses covariate types partykit cannot scan", 
   )
   expect_true(validate_tree_input(d, ind, "z_true", "mat", "FIT", args_trees))
 })
+
+# partykit:::.split() branches argmax_split() has to stand in for -------
+# doTrees() replaces ctrl$splitfun outright, so .split() never runs and the two
+# things it does around the cutpoint search are the splitter's to do instead.
+# igsca_tree_control() exposes neither setting, so these are reachable only
+# through ctrl -- which is exactly how partykit hands them over.
+
+test_that("argmax_split() splits an unordered factor multiway, without the kernel", {
+  # Two levels below minbucket, which partykit lumps into one extra kid
+  # rather than dropping: index becomes c(1, 2, 5, 5) before it is re-coded.
+  f <- factor(rep(c("a", "b", "c", "d"), times = c(40L, 40L, 3L, 3L)))
+  mf <- data.frame(f = f)
+  called <- FALSE
+  kern <- function(model, mf, subset, goes_left, ctrl) {
+    called <<- TRUE
+    1
+  }
+  sp <- argmax_split(
+    splitter = kern,
+    collector = new_collector(),
+    model = list(object = NULL),
+    trafo = NULL,
+    mf = mf,
+    subset = seq_len(nrow(mf)),
+    whichvar = 1L,
+    ctrl = list(minbucket = 10L, multiway = TRUE, maxsurrogate = 0L)
+  )
+  # multiway is structural: partykit picks the kids without a statistic, so no
+  # cutpoint rule is consulted and none of the kernels can override it.
+  expect_false(called)
+  expect_identical(partykit::index_split(sp), c(1L, 2L, 3L, 3L))
+})
+
+test_that("argmax_split() drops a split whose kids lookahead rejects", {
+  mf <- data.frame(z = rep(1:5, each = 20L))
+  kern <- function(model, mf, subset, goes_left, ctrl) as.numeric(sum(goes_left))
+  # partykit refits the node model in each kid and abandons the covariate when
+  # any kid fails to converge; only the whole node converges here.
+  trafo <- function(subset, weights = integer(0), ...) {
+    list(converged = length(subset) == nrow(mf))
+  }
+  args <- list(
+    splitter = kern,
+    collector = new_collector(),
+    model = list(object = NULL),
+    trafo = trafo,
+    mf = mf,
+    subset = seq_len(nrow(mf)),
+    whichvar = 1L
+  )
+  expect_null(
+    do.call(argmax_split, c(args, list(ctrl = list(minbucket = 20L, lookahead = TRUE))))
+  )
+  # ... and the same fixture splits with lookahead off, so the NULL above is
+  # the check's doing and not an unsplittable covariate.
+  expect_s3_class(
+    do.call(argmax_split, c(args, list(ctrl = list(minbucket = 20L)))),
+    "partysplit"
+  )
+})
+
+test_that("a lookahead rejection is not blamed on the split kernel", {
+  # warn_dead_splitter() reads n_fail_split == n_split_scan as "this kernel is
+  # broken". A kernel that returned a finite statistic which lookahead then
+  # threw away must not be counted that way.
+  mf <- data.frame(z = rep(1:5, each = 20L))
+  coll <- new_collector()
+  argmax_split(
+    splitter = function(model, mf, subset, goes_left, ctrl) as.numeric(sum(goes_left)),
+    collector = coll,
+    model = list(object = NULL),
+    trafo = function(subset, weights = integer(0), ...) list(converged = FALSE),
+    mf = mf,
+    subset = seq_len(nrow(mf)),
+    whichvar = 1L,
+    ctrl = list(minbucket = 20L, lookahead = TRUE)
+  )
+  expect_identical(coll$n_split_scan, 1L)
+  expect_identical(coll$n_fail_split, 0L)
+})
