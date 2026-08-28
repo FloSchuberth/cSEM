@@ -1,5 +1,13 @@
+# What I am focusing on
+grow_tree(influence = "mat", splitter = "native", control = igsca_tree_control())
+
+airq <- subset(airquality, !is.na(Ozone))
+airct <- ctree(Ozone ~ ., data = airq) # TODO: What does thes influence function and trafo look like for this?
+
+debug(ctree)
+
 # debugonce(grow_tree)
-# debug(doTrees)
+debug(doTrees)
 
 # debug(partykit::ctree)
 

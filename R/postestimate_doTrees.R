@@ -48,16 +48,15 @@ doTrees <- function(
     "~",
     paste(.covariates, collapse = " + ")
   ) |>
-    stats::as.formula()
+    stats::as.formula()# See partykit::ctree_control()$splitfun
 
   # Environment for collecting  metrics on different kinds of convergence failures found while fitting the tree
   collector <- new_collector()
 
   # debug(libcoin::LinStatExpCov)
   influence_fn <- switch(influence, # from .influence character string
-     mat = influence_mat
-     # Commented out because it's not as powerful as the matrix approach
-     # , vec = influence_vec
+     mat = influence_mat #,
+     # vec = influence_vec # Uncomment to see the vector influence function. But it is not that great. Code left here to show how future influence functions may be added
     ) 
   # TODO: Walk through how ctree, extree_fit and .extree_node modify ytrafo
   #  How `subset` reaches the inner closure, i.e. what partykit does to what we hand it:
@@ -71,9 +70,7 @@ doTrees <- function(
   # (y, x, offset, weights, start) interface, which extree_fit() *does* wrap, re-encoding
   # node membership as a weight vector via libcoin::ctabs().
   ytrafo <- function(data, weights, control) {
-    # Compare against `partykit::ctree_control()$selectfun`
-    # TODO: Uncomment and see in browser
-    # browser()
+    browser()
     mf <- model.frame(data)
     function(
       subset,
@@ -83,10 +80,7 @@ doTrees <- function(
       object = TRUE,
       ...
     ) {
-      # TODO: Uncomment and see in browser
-      # browser()
-      # We never pass weights to ctree(), so this is a guard against a future change in partykit:
-      # try_fit() below ignores them, which would silently drop case weights.
+      browser()
       stopifnot("case weights are not supported by doTrees(). partykit has changed since initial doTrees development, please report to developers." = length(weights) == 0L)
       was_root <- !collector$root_seen
       collector$root_seen <- TRUE
@@ -124,7 +118,7 @@ doTrees <- function(
   }
   
   # See ?partykit::ctree_control() for the `testtype` argument and how it's internally handled for why Bonferonni is paired with Monte Carlo
-  testtype <- c( # TODO: Needs to be compared against ctree and ctree_control for how they handle this. 
+  testtype <- c( 
     if (isTRUE(control$bonferroni)) "Bonferroni", # Bonferonni corrected p-values
     if (control$coin_distribution == "approximate") "MonteCarlo" # Use permutation resamples to generate null distribution
   )
@@ -132,17 +126,17 @@ doTrees <- function(
     testtype <- "Univariate" # This means that you use the asymptotic null distribution of the permutation LinStatExpCov statistic
   }
   cc <- partykit::ctree_control(
-    teststat = "quadratic", # TODO: Consider maximum? 
-    splitstat = "quadratic", # TODO: Consider maximum?
-    testtype = testtype, # TODO: Document
+    teststat = "quadratic", # partykit::ctree_control() default
+    splitstat = "quadratic", # partykit::ctree_control() default
+    testtype = testtype, 
     nresample = control$R_test, # Number of resamples for the the permutation test
     alpha = control$alpha,
     minsplit = control$minsplit,
     minbucket = control$minbucket,
     minprob = control$minprob,
     maxdepth = control$maxdepth,
-    maxsurrogate = 0L,
-    nmax = c(yx = Inf, z = Inf),
+    maxsurrogate = 0L, # In the case of missing data in a covariate this is relevant. This is not handled in our function
+    nmax = c(yx = Inf, z = Inf), # Set to default, but this would affect whether or not the covariates or influence function are binned to lower computation costs.
     saveinfo = TRUE
   )
 
@@ -159,7 +153,7 @@ doTrees <- function(
     cc$args <- args
     cc$indicators <- indicators
     cc$collector <- collector
-    cc$splitfun <- function(
+    cc$splitfun <- function( # See partykit::ctree_control()$splitfun for the contract
       model,
       trafo,
       data,
@@ -168,8 +162,6 @@ doTrees <- function(
       whichvar,
       ctrl
     ) {
-      # .extree_node() hands `subset` and `weights` to splitfun just as it does to ytrafo;
-      # argmax_split() partitions on `subset` alone, so weighted rows would be ignored.
       stopifnot("case weights are not supported by doTrees(). partykit has changed since initial doTrees development, please report to developers." = length(weights) == 0L)
       argmax_split(
         splitter = split_fn,
@@ -187,7 +179,7 @@ doTrees <- function(
     }
     cc$svsplitfun <- cc$splitfun # never called (maxsurrogate = 0)
   }
-  # The main workhors
+  # The main workhorse
   ret <- partykit::ctree(formula = fml, data = data, ytrafo = ytrafo, control = cc)
 
 
@@ -195,7 +187,7 @@ doTrees <- function(
 
 
   class(ret) <- c("igsca_tree", class(ret))
-  warn_dead_splitter(collector, splitter)
+  warn_dead_splitter(collector, splitter) # TODO: Verify how this works
 
   
   ## TODO: Maybe clarify this comment depending on whether it's about every node or just the terminal node?
