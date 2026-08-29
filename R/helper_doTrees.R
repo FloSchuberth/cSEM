@@ -393,7 +393,7 @@ argmax_split <- function(
         next
       }
       stats <- vapply(
-        cands,
+        cands, # tryCatch is within vapply, so we take the best split of those associated with convergence success.
         function(cc) {
           tryCatch(
             splitter(model, mf, sub_j, cc$goes_left, ctrl),
