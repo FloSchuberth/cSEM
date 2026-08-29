@@ -910,14 +910,31 @@ ndt_pools <- function(single_fit) {
 #' 
 #' Observed statistic for one candidate partition. `stat_kind` is "FITdiff"
 #' (NPT) or an ndt_dists() distance name -- "DGi"/"DLi" only: Study 1 works
-#' with the model-implied indicator VCV, never the construct VCV (the shared
-#' helper also computes "DGc"/"DLc", which stay unused here). Counts every
-#' candidate partition whose statistic could not be computed into
+#' with the model-implied indicator VCV, never the construct VCV. It is handed
+#' straight to ndt_dists() as the one distance to compute, so a "DLi" run never
+#' reaches calculateDG() and never builds the construct-VCV block matrix.
+#' Counts every candidate partition whose statistic could not be computed into
 #' collector$n_fail_candidate.
 #' 
 #'
 #' @noRd
 partition_stat <- function(stat_kind, model, mf, subset, goes_left, ctrl) {
+  ## Deliberately ahead of the tryCatch below, and ahead of the refit: an
+  ## unknown stat_kind used to fall out of ds[stat_kind] as a silent NA, which
+  ## partykit reads as "no admissible split", so a typo and a genuinely
+  ## unsplittable node were indistinguishable. Raised here it is visible;
+  ## raised inside the tryCatch it would be swallowed into an NA and a bogus
+  ## n_fail_candidate increment. Exact matching, no regex.
+  stat_kinds <- c("FITdiff", "DGc", "DGi", "DLc", "DLi")
+  if (
+    !(length(stat_kind) == 1L && is.character(stat_kind) &&
+        stat_kind %in% stat_kinds)
+  ) {
+    stop2(
+      "The following error occured in the partition_stat() function:\n",
+      "`stat_kind` must be one of ", paste(stat_kinds, collapse = ", "), "."
+    )
+  }
   coll <- ctrl$collector
   d <- node_group_data(mf, subset, ctrl$indicators, goes_left)
   mga <- try_fit(d, ctrl$args, .id = "group")
@@ -954,12 +971,22 @@ partition_stat <- function(stat_kind, model, mf, subset, goes_left, ctrl) {
         coll$ndt_pools <- ndt_pools(model$object)
         coll$ndt_pools_subset <- subset
       }
-      ndt_dists(coll$ndt_pools$Sc, coll$ndt_pools$Si, mga$fit)
+      ndt_dists(coll$ndt_pools$Sc, coll$ndt_pools$Si, mga$fit, dists = stat_kind)
     },
     error = function(e) NULL
   )
   if (is.null(ds)) { coll$n_fail_candidate <- coll$n_fail_candidate + 1L; return(NA_real_) }
-  unname(ds[stat_kind])
+  val <- unname(ds[stat_kind])
+  ## real_scalar() has already turned a complex or NaN distance into NA_real_,
+  ## so a non-finite value here means this candidate's statistic could not be
+  ## computed -- the same thing a throwing bdiagFit() means, and counted the
+  ## same way. Without this the counter reads 0 failures on a DGi tree that
+  ## stumped precisely because every geodesic distance came back complex.
+  if (!is.finite(val)) {
+    coll$n_fail_candidate <- coll$n_fail_candidate + 1L
+    return(NA_real_)
+  }
+  val
 }
 
 
@@ -992,18 +1019,88 @@ split_max_dli <- function(model, mf, subset, goes_left, ctrl) {
 
 
 
-#' The four pooled-vs-MGA distances for one MGA fit, given the precomputed
-#' replicated-block pooled VCVs.
-#' 
+#' A distance that is not one finite real number is not a statistic.
+#'
+#' calculateDG() eigen-decomposes solve(S) %*% Sigma_hat, a NON-symmetric
+#' product, so its eigenvalues are not guaranteed real: it can return a COMPLEX
+#' scalar with no error and no warning, and log() of a negative eigenvalue
+#' returns NaN. A complex value is the dangerous one. Written into the double
+#' vector ndt_dists() returns it coerces the WHOLE vector to complex, so a
+#' distance calculateDL() computed perfectly cleanly comes back complex too;
+#' argmax_split()'s vapply(..., numeric(1)) then rejects the kernel's return
+#' AFTER FUN has returned -- i.e. outside its own per-candidate tryCatch -- and
+#' the type error escapes into partykit and kills the tree instead of degrading
+#' to "no admissible split".
+#'
+#' Anything that is not a length-1 finite double becomes NA_real_, which every
+#' consumer (is.finite() in argmax_split(), which.max()) already handles.
 #'
 #' @noRd
-ndt_dists <- function(Sc_pool, Si_pool, mga_fit) {
-  Sc_mga <- bdiagFit(mga_fit, .type_vcv = "construct")
-  Si_mga <- bdiagFit(mga_fit, .type_vcv = "indicator")
-  c(
-    DGc = calculateDG(.matrix1 = Sc_pool, .matrix2 = Sc_mga),  # geodesic,  construct
-    DGi = calculateDG(.matrix1 = Si_pool, .matrix2 = Si_mga),  # geodesic,  indicator
-    DLc = calculateDL(.matrix1 = Sc_pool, .matrix2 = Sc_mga),  # sq-Euclid, construct
-    DLi = calculateDL(.matrix1 = Si_pool, .matrix2 = Si_mga)   # sq-Euclid, indicator
+real_scalar <- function(x) {
+  if (length(x) != 1L || !is.numeric(x) || !is.finite(x)) {
+    return(NA_real_)
+  }
+  as.double(x)
+}
+
+
+
+#' The pooled-vs-MGA distances for one MGA fit, given the precomputed
+#' replicated-block pooled VCVs.
+#'
+#' `dists` names the distances actually wanted. The others are not computed at
+#' all -- not merely discarded -- and the block-diagonal MGA matrix a skipped
+#' distance would have read is not built either: bdiagFit() runs once per
+#' *candidate partition* and is the dominant cost after the refit itself.
+#'
+#' Isolating the calls is also what keeps a "DLi" run clean. Computing all four
+#' unconditionally into one c() meant a complex value out of calculateDG()
+#' coerced the whole vector to complex, so `ds["DLi"]` in partition_stat() came
+#' back complex even though calculateDL() had never misbehaved.
+#'
+#' The return is always the same named length-4 double, unrequested slots
+#' NA_real_: partition_stat() subscripts it by name, and NA_real_ rather than a
+#' bare (logical) NA is what keeps argmax_split()'s vapply(..., numeric(1))
+#' satisfied.
+#'
+#' @noRd
+ndt_dists <- function(Sc_pool, Si_pool, mga_fit,
+                      dists = c("DGc", "DGi", "DLc", "DLi")) {
+  ## Exact matching, no regex. On the production route partition_stat() has
+  ## already validated stat_kind ahead of its own tryCatch, so this can only
+  ## fire for a direct caller -- where a typo would otherwise return an all-NA
+  ## vector that looks like a node nothing could be computed at.
+  all_dists <- c("DGc", "DGi", "DLc", "DLi")
+  stopifnot(
+    "`dists` must be a non-empty subset of DGc/DGi/DLc/DLi" =
+      length(dists) > 0L && is.character(dists) && all(dists %in% all_dists)
   )
+
+  out <- c(DGc = NA_real_, DGi = NA_real_, DLc = NA_real_, DLi = NA_real_)
+
+  ## One bdiagFit() per VCV type, and only if some requested distance reads it:
+  ## DGc/DLc are construct-VCV distances, DGi/DLi indicator-VCV ones.
+  Sc_mga <- if (any(c("DGc", "DLc") %in% dists)) {
+    bdiagFit(mga_fit, .type_vcv = "construct")
+  }
+  Si_mga <- if (any(c("DGi", "DLi") %in% dists)) {
+    bdiagFit(mga_fit, .type_vcv = "indicator")
+  }
+
+  ## real_scalar() is what keeps `out` a plain double: assigning a complex or a
+  ## NaN geodesic distance straight in would re-poison every other slot.
+  if ("DGc" %in% dists) {                                        # geodesic,  construct
+    out[["DGc"]] <- real_scalar(calculateDG(.matrix1 = Sc_pool, .matrix2 = Sc_mga))
+  }
+  if ("DGi" %in% dists) {                                        # geodesic,  indicator
+    out[["DGi"]] <- real_scalar(calculateDG(.matrix1 = Si_pool, .matrix2 = Si_mga))
+  }
+  if ("DLc" %in% dists) {                                        # sq-Euclid, construct
+    out[["DLc"]] <- real_scalar(calculateDL(.matrix1 = Sc_pool, .matrix2 = Sc_mga))
+  }
+  if ("DLi" %in% dists) {                                        # sq-Euclid, indicator
+    out[["DLi"]] <- real_scalar(calculateDL(.matrix1 = Si_pool, .matrix2 = Si_mga))
+  }
+
+  out
 }

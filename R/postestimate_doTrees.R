@@ -192,7 +192,6 @@ doTrees <- function(
 
 # Return output ----------------------------------------------------------
 
-  browser()
   class(ret) <- c("igsca_tree", class(ret))
   warn_dead_splitter(collector, splitter) # TODO: Verify how this works
 

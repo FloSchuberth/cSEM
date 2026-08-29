@@ -190,6 +190,89 @@ test_that("partition_stat() records a failed auxiliary fit instead of throwing",
   expect_identical(coll$n_fail_candidate, 1L)
 })
 
+# ndt_dists() selectivity -------------------------------------------------
+# The point of `dists` is negative -- what is NOT computed -- so it is mocked
+# rather than fitted: a call that never happens is only observable from inside.
+test_that("ndt_dists() computes only the distance it is asked for", {
+  seen <- character(0)
+  local_mocked_bindings(
+    bdiagFit = function(.object = NULL, .n_blocks = 1L,
+                        .type_vcv = "indicator", .saturated = FALSE) {
+      seen <<- c(seen, paste0("bdiag_", .type_vcv))
+      diag(2)
+    },
+    calculateDG = function(...) { seen <<- c(seen, "DG"); 1 },
+    calculateDL = function(...) { seen <<- c(seen, "DL"); 2 }
+  )
+  d <- ndt_dists(diag(2), diag(2), mga_fit = NULL, dists = "DLi")
+
+  # Still the full named double vector: partition_stat() subscripts it by name,
+  # and NA_real_ (not a bare logical NA) is what argmax_split()'s
+  # vapply(..., numeric(1)) accepts.
+  expect_identical(names(d), c("DGc", "DGi", "DLc", "DLi"))
+  expect_identical(typeof(d), "double")
+  expect_identical(unname(d[["DLi"]]), 2)
+  expect_true(all(is.na(d[c("DGc", "DGi", "DLc")])))
+  # calculateDG() was never reached and the construct VCV was never built.
+  expect_identical(seen, c("bdiag_indicator", "DL"))
+})
+
+test_that("a complex geodesic distance stumps the scan instead of killing the tree", {
+  # calculateDG() eigen-decomposes a non-symmetric product, so it can return a
+  # complex scalar with no error at all. Unguarded it coerced the whole distance
+  # vector to complex, and vapply(..., numeric(1)) in argmax_split() rejects
+  # that AFTER the per-candidate tryCatch has returned -- so the type error
+  # escaped into partykit rather than degrading to "no admissible split".
+  fx <- node_fixture()
+  local_mocked_bindings(
+    calculateDG = function(...) complex(real = 1, imaginary = 2)
+  )
+  expect_no_error(
+    sp <- argmax_split(
+      splitter = split_max_dgi,
+      collector = fx$ctrl$collector,
+      model = fx$model,
+      trafo = NULL,
+      mf = fx$mf,
+      subset = fx$subset,
+      whichvar = match("noise_1", names(fx$mf)),
+      ctrl = fx$ctrl
+    )
+  )
+  expect_null(sp) # nothing finite: no split, but a diagnosed one
+  expect_gt(fx$ctrl$collector$n_fail_candidate, 0L)
+})
+
+test_that("the DLi path never reaches calculateDG()", {
+  fx <- node_fixture()
+  local_mocked_bindings(
+    calculateDG = function(...) stop("calculateDG() must not be called")
+  )
+  goes_left <- fx$mf$noise_1 <= stats::median(fx$mf$noise_1)
+  expect_true(is.finite(
+    partition_stat(
+      stat_kind = "DLi", model = fx$model, mf = fx$mf,
+      subset = fx$subset, goes_left = goes_left, ctrl = fx$ctrl
+    )
+  ))
+})
+
+test_that("partition_stat() refuses an unknown stat_kind loudly", {
+  # ds[stat_kind] turned a typo into a silent NA, which partykit reads as "no
+  # admissible split". The check has to sit ahead of partition_stat()'s own
+  # tryCatch, or it is swallowed into an NA and a bogus counter increment.
+  fx <- node_fixture()
+  expect_error(
+    partition_stat(
+      stat_kind = "DLx", model = fx$model, mf = fx$mf,
+      subset = fx$subset, goes_left = rep(TRUE, length(fx$subset)),
+      ctrl = fx$ctrl
+    ),
+    "stat_kind"
+  )
+  expect_identical(fx$ctrl$collector$n_fail_candidate, 0L)
+})
+
 # This is where cutpoint choice has to be tested: at the tree level the root
 # offers no freedom, since z_true is a 2-level factor and candidate_partitions()
 # returns exactly one candidate for it. noise_1 is numeric, and rounding leaves
