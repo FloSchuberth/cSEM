@@ -53,24 +53,12 @@ doTrees <- function(
   # Environment for collecting  metrics on different kinds of convergence failures found while fitting the tree
   collector <- new_collector()
 
-  # debug(libcoin::LinStatExpCov)
   influence_fn <- switch(influence, # from .influence character string
      mat = influence_mat #,
      # vec = influence_vec # Uncomment to see the vector influence function. But it is not that great. Code left here to show how future influence functions may be added
     ) 
-  # TODO: Walk through how ctree, extree_fit and .extree_node modify ytrafo
-  #  How `subset` reaches the inner closure, i.e. what partykit does to what we hand it:
-  #   ctree()        - our formals are (data, weights, control), so it calls us as a factory
-  #   extree_fit()   - the returned closure has all of (subset, weights, info, estfun,
-  #                    object), so it is used verbatim rather than wrapped
-  #   .extree_node() - calls it once per node as trafo(subset = <that node's row indices>,
-  #                    weights = <global, unchanged>, ...), recursing on subset[kidids == k]
-  # `subset` is therefore the only argument that identifies the node; `weights` is the same
-  # vector at every depth. The `weights > 0` idiom in ?ctree belongs to the older
-  # (y, x, offset, weights, start) interface, which extree_fit() *does* wrap, re-encoding
-  # node membership as a weight vector via libcoin::ctabs().
+  
   ytrafo <- function(data, weights, control) {
-    browser()
     mf <- model.frame(data)
     function(
       subset,
@@ -80,7 +68,12 @@ doTrees <- function(
       object = TRUE,
       ...
     ) {
-      browser()
+      # You can get a sense of ctree's trafo by running the following (from ?ctree)
+      #' airq <- subset(airquality, !is.na(Ozone))
+      #' airct <- ctree(Ozone ~ ., data = airq) 
+      #' airct_list<-unclass(airct)
+      #' airct_list$trafo
+      # Relatedly, you can get a sense of the influence function for by looking-at/debugging-through partykit:::.y2infl()
       stopifnot("case weights are not supported by doTrees(). partykit has changed since initial doTrees development, please report to developers." = length(weights) == 0L)
       was_root <- !collector$root_seen
       collector$root_seen <- TRUE
@@ -108,7 +101,7 @@ doTrees <- function(
       ef <- matrix(0, nrow = nrow(mf), ncol = ncol(h))
       ef[subset, ] <- h # In case I have forgotten why subset is here, note that the ?ctree does the same in its example function
       list(
-        estfun = ef, # Yes, this is what downstream `libcoin::LinStatExpCov()` will work with
+        estfun = ef, # This is what downstream `libcoin::LinStatExpCov()` will work with. You can verify that this specific return item (estfun) is what's important by looking at airct_list$trafo (see the above commented code)
         converged = TRUE,
         objfun = sum(E^2), # This is equivalent to the objective function of Equation 9 of Hwang et al. (2021, IGSCA): sum(calculateGSCAErrors(ft$fit)^2). AFAIK, this is just used later for prrinting, it doesn't affect the functionality of anything.
         object = ft$fit,
@@ -142,16 +135,30 @@ doTrees <- function(
 
   split_fn <- switch(
     splitter, # From .splitter
-    native = NULL, # See partykit::ctree_control()$splitfun
+    native = NULL, 
     FIT = split_max_fitdiff,
     DLi = split_max_dli,
     DGi = split_max_dgi
   )
+  # The relevant code for the native split_fn path is quite deep and written in C. To get a glimpse of it you'd have to run the following code.
+  # It's better to consult Section 4.2 "Splitting criteria" in `vignette("ctree", package = "partykit")`. Basically, by-default, the standardized quadratic linear statistic (c_quad) (returned by LinStatExpCov) is computed for all possible subsets of the data,  and libcoin will give you the index for where to split along the covariate in-order to maximize c_quad
+  #' debug(partykit:::.split)
+  #' airq <- subset(airquality, !is.na(Ozone))
+  #' airct <- ctree(Ozone ~ ., data = airq)
+  # When you're inside .split run
+  #' debug(FUN)
+    #' debug(.ctree_test)
+      #' debug(.ctree_test_1d)
+        #' debug(.ctree_test_internal)
+          # Passes the influence to LinStatExpCov, which goes to doTest, which gives you an index.  
+          #' debug(doTest)
 
   if (!is.null(split_fn)) {
-    # Sets the splitter to one of the three non-native functions that we're looking for.
-    cc$args <- args
-    cc$indicators <- indicators
+    # TODO: Come back to this after I'm done investigating native
+    # Sets the splitter to one of the three non-native functions that we're looking for. 
+    # Otherwise, we just use the built-in one that ctree uses. See above for more details. 
+    cc$args <- args # How to refit the cSEM models
+    cc$indicators <- indicators 
     cc$collector <- collector
     cc$splitfun <- function( # See partykit::ctree_control()$splitfun for the contract
       model,
@@ -185,7 +192,7 @@ doTrees <- function(
 
 # Return output ----------------------------------------------------------
 
-
+  browser()
   class(ret) <- c("igsca_tree", class(ret))
   warn_dead_splitter(collector, splitter) # TODO: Verify how this works
 
