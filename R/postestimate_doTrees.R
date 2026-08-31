@@ -131,7 +131,7 @@ doTrees <- function(
     maxsurrogate = 0L, # In the case of missing data in a covariate this is relevant. This is not handled in our function
     nmax = c(yx = Inf, z = Inf), # Set to default, but this would affect whether or not the covariates or influence function are binned to lower computation costs.
     saveinfo = TRUE,
-    update = TRUE # Fit the model to the terminal nodes
+    update = TRUE # TRUE by default because ytrafo is a function, but does not necessarily refit to terminal nodes
   )
 
   split_fn <- switch(
@@ -153,7 +153,8 @@ doTrees <- function(
         #' debug(.ctree_test_internal)
           # Passes the influence to LinStatExpCov, which goes to doTest, which gives you an index.  
           #' debug(doTest)
-
+  
+  # Over-write our ctree_control object even further
   if (!is.null(split_fn)) {
     # TODO: Come back to this after I'm done investigating native
     # Sets the splitter to one of the three non-native functions that we're looking for. 
@@ -197,17 +198,15 @@ doTrees <- function(
 
   # browser()
   warn_dead_splitter(collector, splitter) # For FIT, DLi or DGi paths. Just throws a warning if all the scans at the candidate split points don't work
-
   
-  
-  #  ytrafo is not called at terminal nodes, so terminal nodes have no csem objects. Here, we refit just the terminal nodes.
-  # TODO: Is attach_leaf_fits really necessary or is the update = TRUE from above enough?
+  # ytrafo is not necessarily called at terminal nodes, so sometimes terminal nodes have no csem objects. Here, we refit just the terminal nodes.
+  ## What determines whether it will or will not have a csem object depends on the reason why the tree stopped growing. (No significant covariate -> ytrafo is called. Sample size smaller that minbucket, etc -> ytrafo is not called, tree is stopped, so no csem model fitted) 
   ret <- attach_leaf_fits(ret, ret$data, args, indicators, collector)
 
   ## Deletes the fitted csem objects in all non-terminal nodes. Can be helpful to save on RAM and potentially IGSCA forests. Commented out for later
   ##   ret <- drop_inner_node_objects(ret)
   
-
+  # TODO: Label each of these appropriately.
   attr(ret, "igsca_info") <- list(
     n_fail_full = collector$n_fail_full,
     n_fail_node = collector$n_fail_node,
