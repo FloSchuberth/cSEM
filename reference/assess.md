@@ -440,7 +440,7 @@ a
 #>  Heterotrait-monotrait ratio of correlations matrix (HTMT matrix)
 #>  ----------------------------------------------------------------
 #> 
-#>  Values in the lower triangular part are the absolute HTMT values
+#>  Values in the lower triangular part are the absolute HTMT values.
 #> 
 #>           eta1      eta2 eta3
 #> eta1 1.0000000 0.0000000    0
@@ -451,7 +451,7 @@ a
 #>  Advanced heterotrait-monotrait ratio of correlations matrix (HTMT2 matrix)
 #>  --------------------------------------------------------------------------
 #> 
-#>  Values in the lower triangular part are the absolute HTMT2 values
+#>  Values in the lower triangular part are the absolute HTMT2 values.
 #> 
 #>           eta1      eta2 eta3
 #> eta1 1.0000000 0.0000000    0
@@ -532,7 +532,7 @@ assess(res, .quality_criterion = c("ave", "rho_C", "htmt"))
 #>  Heterotrait-monotrait ratio of correlations matrix (HTMT matrix)
 #>  ----------------------------------------------------------------
 #> 
-#>  Values in the lower triangular part are the absolute HTMT values
+#>  Values in the lower triangular part are the absolute HTMT values.
 #> 
 #>           eta1      eta2 eta3
 #> eta1 1.0000000 0.0000000    0
@@ -553,7 +553,7 @@ res <- csem(threecommonfactors, model,
 
 ## Look at the resamples
 res$Estimates$Estimates_resample$Estimates1$User_fun$Resampled[1:4, ]
-#> [1] 0.02720758 0.02798854 0.02576361 0.02172005
+#> [1] 0.02787335 0.02564296 0.02627430 0.02766823
 
 ## Use infer() to compute e.g., the 95% percentile confidence interval
 res_infer <- infer(res, .quantity = "CI_percentile")
@@ -562,8 +562,8 @@ res_infer <- infer(res, .quantity = "CI_percentile")
 res_infer$User_fun 
 #> $CI_percentile
 #>            [,1]
-#> 95%L 0.02123655
-#> 95%U 0.03607921
+#> 95%L 0.02070476
+#> 95%U 0.03366771
 #> 
 
 ## Several quality criteria can be resampled simultaneously
@@ -577,7 +577,7 @@ res <- csem(threecommonfactors, model,
             .tolerance = 1e-04
 )
 res$Estimates$Estimates_resample$Estimates1$SRMR$Resampled[1:4, ]
-#> [1] 0.02261039 0.03212498 0.03048434 0.01950768
+#> [1] 0.02304020 0.02743769 0.01779209 0.02620354
 res$Estimates$Estimates_resample$Estimates1$RMS_theta$Resampled[1:4]
-#> [1] 0.1002425 0.1067940 0.1039496 0.1073301
+#> [1] 0.1055020 0.1082660 0.1059854 0.0997948
 ```

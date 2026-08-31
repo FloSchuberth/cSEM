@@ -915,7 +915,7 @@ assess(res)
 #>  Heterotrait-monotrait ratio of correlations matrix (HTMT matrix)
 #>  ----------------------------------------------------------------
 #> 
-#>  Values in the lower triangular part are the absolute HTMT values
+#>  Values in the lower triangular part are the absolute HTMT values.
 #> 
 #>           eta1      eta2 eta3
 #> eta1 1.0000000 0.0000000    0
@@ -926,7 +926,7 @@ assess(res)
 #>  Advanced heterotrait-monotrait ratio of correlations matrix (HTMT2 matrix)
 #>  --------------------------------------------------------------------------
 #> 
-#>  Values in the lower triangular part are the absolute HTMT2 values
+#>  Values in the lower triangular part are the absolute HTMT2 values.
 #> 
 #>           eta1      eta2 eta3
 #> eta1 1.0000000 0.0000000    0
