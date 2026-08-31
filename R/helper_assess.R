@@ -1692,8 +1692,12 @@ if(.inference != "none"){
   # bound (upper if HTMT >= 0, else lower) in the upper triangle.
   if(.inference != "none") {
     quants_for_print <- sapply(1:dim(quants)[2],function(x){
+      forprint <- c(out) < 0 
+      if(is.na(forprint[x])){
+        forprint[x] <- FALSE
+      }
       # if HTMT(2) value is negative report the lower bound
-      if(c(out)[x]<0){
+      if(!forprint[x]){
         quants[1,x]
       } else { #otherwise report the upper bound
         quants[2,x]
