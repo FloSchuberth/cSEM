@@ -362,6 +362,7 @@ argmax_split <- function(
   ctrl,
   weights = integer(0)
 ) {
+  browser()
   scanned <- FALSE
   got_stat <- FALSE
   ret <- NULL
@@ -533,6 +534,7 @@ warn_dead_splitter <- function(collector, splitter) {
 #'   than the observed value below it. `FALSE` matches ctree's default.
 #' @noRd
 candidate_partitions <- function(j, z, zs, minbucket, intersplit = FALSE) {
+  browser()
   keep_min <- function(cands) {
     Filter(
       function(cc) {
@@ -628,11 +630,8 @@ new_collector <- function() {
   e$n_fail_full <- 0L
   e$n_fail_node <- 0L
   e$n_fail_candidate <- 0L
-  # Split-kernel scans: how many argmax_split() calls actually evaluated the
-  # kernel, and how many of those produced nothing usable. See argmax_split().
   e$n_split_scan <- 0L
   e$n_fail_split <- 0L
-  # Leaf refits: failed IGSCA fits at terminal nodes. See attach_leaf_fits().
   e$n_fail_leaf <- 0L
   e
 }

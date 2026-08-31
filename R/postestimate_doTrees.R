@@ -162,7 +162,7 @@ doTrees <- function(
     cc$args <- args # How to refit the cSEM models
     cc$indicators <- indicators 
     cc$collector <- collector
-    cc$splitfun <- function( # See partykit::ctree_control()$splitfun for the contract
+    cc$splitfun <- function( # See partykit::ctree_control()$splitfun, partykit:::.split() and partykit:::.ctree_test() for what this function needs to accept and return.
       model,
       trafo,
       data,
@@ -175,10 +175,8 @@ doTrees <- function(
       argmax_split(
         splitter = split_fn,
         collector = collector,
-        model = model,
-        ## Only ctrl$lookahead reads this, and it needs the very trafo that
-        ## fits the node -- partykit hands the splitfun the same one.
-        trafo = trafo,
+        model = model,        
+        trafo = trafo, # Only ctrl$lookahead reads this, and it needs the very trafo that fits the node -- partykit hands the splitfun the same one.
         mf = model.frame(data),
         subset = subset,
         whichvar = whichvar,
@@ -186,13 +184,13 @@ doTrees <- function(
         weights = weights
       )
     }
-    cc$svsplitfun <- cc$splitfun # never called (maxsurrogate = 0)
+    cc$svsplitfun <- cc$splitfun # never called because (maxsurrogate = 0)
   }
   # The main workhorse
   ret <- partykit::ctree(formula = fml, data = data, ytrafo = ytrafo, control = cc)
 
 
-# Return output ----------------------------------------------------------
+  # Return output ----------------------------------------------------------
 
   class(ret) <- c("igsca_tree", class(ret))
 
