@@ -736,6 +736,11 @@ drop_inner_node_objects <- function(tree) {
 #' engine adjusts before it stores, so this is the quantity that was actually
 #' compared against `alpha`, not the per-covariate p-value.
 #'
+#' Present whether or not the root went on to split: a root that tested every
+#' covariate and rejected none still reports the criteria that made it stop.
+#' `NULL` only when no test ran at all, which means the root trafo failed and
+#' `n_fail_full` is 1.
+#'
 #' @param tree A tree returned by [doTrees()].
 #' @returns The root node's criteria `matrix`, or `NULL` if no test ran.
 #' @seealso [doTrees()]

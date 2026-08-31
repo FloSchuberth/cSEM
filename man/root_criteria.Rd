@@ -21,6 +21,12 @@ extree's own statistic-rank tie-break already added). Under
 engine adjusts before it stores, so this is the quantity that was actually
 compared against \code{alpha}, not the per-covariate p-value.
 }
+\details{
+Present whether or not the root went on to split: a root that tested every
+covariate and rejected none still reports the criteria that made it stop.
+\code{NULL} only when no test ran at all, which means the root trafo failed and
+\code{n_fail_full} is 1.
+}
 \seealso{
 \code{\link[=doTrees]{doTrees()}}
 }
