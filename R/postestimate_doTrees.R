@@ -130,7 +130,8 @@ doTrees <- function(
     maxdepth = control$maxdepth,
     maxsurrogate = 0L, # In the case of missing data in a covariate this is relevant. This is not handled in our function
     nmax = c(yx = Inf, z = Inf), # Set to default, but this would affect whether or not the covariates or influence function are binned to lower computation costs.
-    saveinfo = TRUE
+    saveinfo = TRUE,
+    update = TRUE # Fit the model to the terminal nodes
   )
 
   split_fn <- switch(
@@ -193,23 +194,19 @@ doTrees <- function(
 # Return output ----------------------------------------------------------
 
   class(ret) <- c("igsca_tree", class(ret))
-  warn_dead_splitter(collector, splitter) # TODO: Verify how this works
+
+  # browser()
+  warn_dead_splitter(collector, splitter) # For FIT, DLi or DGi paths. Just throws a warning if all the scans at the candidate split points don't work
 
   
-  ## TODO: Maybe clarify this comment depending on whether it's about every node or just the terminal node?
-  #  partykit never calls the trafo at a node it does not try to split, so
-  ## leaves arrive with info = NULL and carry no IGSCA fit. Refit them.
-  # TODO: Double check that this is efficient and only fits the nodes that it needs to
+  
+  #  ytrafo is not called at terminal nodes, so terminal nodes have no csem objects. Here, we refit just the terminal nodes.
+  # TODO: Is attach_leaf_fits really necessary or is the update = TRUE from above enough?
   ret <- attach_leaf_fits(ret, ret$data, args, indicators, collector)
 
-  ## TODO: Consider deleting this comment
-  ##  MEMORY OPTIMIZATION (opt-in): each inner node's info holds a full
-  ## cSEMResults object, so a maxdepth = 3 tree keeps up to 7 of them.
-  ## Uncomment the next line to drop them; leaf fits are unaffected.
+  ## Deletes the fitted csem objects in all non-terminal nodes. Can be helpful to save on RAM and potentially IGSCA forests. Commented out for later
   ##   ret <- drop_inner_node_objects(ret)
-  ## Do NOT instead delete `object = ft$fit` from the ytrafo above: a
-  ## non-native splitter reads model$object while the tree is still growing,
-  ## so removing it there silently disables every non-native splitter.
+  
 
   attr(ret, "igsca_info") <- list(
     n_fail_full = collector$n_fail_full,

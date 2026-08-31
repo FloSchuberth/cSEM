@@ -736,7 +736,6 @@ attach_leaf_fits <- function(tree, mf, args, indicators, collector) {
 #' the criteria, `nobs` and `objfun` intact. Terminal nodes are untouched, so
 #' the leaf fits attached by `attach_leaf_fits()` survive.
 #'
-#' Not called by default -- see the commented-out line in [doTrees()].
 #' @noRd
 drop_inner_node_objects <- function(tree) {
   nd <- as.list(partykit::node_party(tree))
