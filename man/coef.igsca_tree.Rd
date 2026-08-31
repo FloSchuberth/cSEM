@@ -2,14 +2,18 @@
 % Please edit documentation in R/helper_doTrees.R
 \name{coef.igsca_tree}
 \alias{coef.igsca_tree}
-\title{Per-node fit summaries of an igsca tree}
+\title{Per-node parameter estimates of an igsca tree}
 \usage{
-\method{coef}{igsca_tree}(object, node = NULL, drop = TRUE, ...)
+\method{coef}{igsca_tree}(object, node = NULL, parameters = "all", drop = TRUE, ...)
 }
 \arguments{
 \item{object}{A tree returned by \code{\link[=doTrees]{doTrees()}}.}
 
 \item{node}{Node ids to report. Defaults to the terminal nodes.}
+
+\item{parameters}{Which parameter estimates to report. Passed on to
+\code{\link[=tidy]{tidy()}}, which validates it. Defaults to \code{"all"}. The effect estimates
+are not available here; see below.}
 
 \item{drop}{If \code{TRUE} (the default), a single-node result is simplified from
 a one-row matrix to a named vector.}
@@ -17,16 +21,15 @@ a one-row matrix to a named vector.}
 \item{...}{Ignored.}
 }
 \value{
-A \code{matrix} with columns \code{nobs} and \code{objfun}, one row per node, row
-names being the node ids; a named vector when one node is requested and
-\code{drop = TRUE}.
+A \code{matrix} whose first column is \code{nobs} and whose remaining columns
+are one parameter estimate each, one row per node, row names being the
+node ids; a named vector when one node is requested and \code{drop = TRUE}.
 }
 \description{
-Reports the number of observations and the objective function value of each
-node's fit. Terminal nodes carry the fits \code{\link[=doTrees]{doTrees()}} attaches after growing;
-a node whose fit failed returns an \code{NA} row rather than being dropped, so the
-rows always correspond to \code{node}.
+Reports the number of observations and the parameter estimates of each
+node's fit, one column per estimate. The estimates are those of \code{\link[=tidy]{tidy()}}
+applied to the node's \code{cSEMResults}, named by that node's \code{term}.
 }
 \seealso{
-\code{\link[=doTrees]{doTrees()}}
+\code{\link[=doTrees]{doTrees()}}, \code{\link[=tidy]{tidy()}}
 }
