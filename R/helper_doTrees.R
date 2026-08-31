@@ -643,17 +643,8 @@ new_collector <- function() {
 #' Fit the IGSCA model at every terminal node and attach it to the tree
 #'
 #' partykit only calls the trafo at nodes it *attempts to split*, so leaves come
-#' back with `info = NULL` and every leaf-reading method sees nothing:
-#' [coef.igsca_tree()] returned `NULL` for any tree with at least one split, and
-#' [plot.igsca_tree()] drew unlabelled terminal boxes. More importantly the tree
-#' carried no per-leaf IGSCA fit at all, which is the main thing a SEM tree is
-#' for. Refitting once after the tree is grown fills both gaps.
+#' back with `info = NULL` and every leaf-reading method sees nothing.
 #'
-#' The fits are written into the terminal nodes' own `info`, so the methods can
-#' read them through the ordinary [partykit::info_node()] route rather than a
-#' side table. Printed output is unaffected: partykit's `formatinfo_node()`
-#' falls back to `"*"` for list-valued info, verified to hold even when the
-#' info carries a full `cSEMResults` object.
 #'
 #' Costs one IGSCA fit per leaf that does not already have one. Failures are
 #' counted into `collector$n_fail_leaf` and leave `converged = FALSE` on that
@@ -666,8 +657,7 @@ new_collector <- function() {
 #' @noRd
 attach_leaf_fits <- function(tree, mf, args, indicators, collector) {
   ids <- partykit::nodeids(tree, terminal = TRUE)
-  ## Use the party object's own fitted node ids: they are guaranteed to be in
-  ## the same row order as `mf`, which re-deriving them would not be.
+  
   leaf <- tree$fitted[["(fitted)"]]
 
   ## as.list()/as.partynode() is partykit's own round-trip and is identity-
@@ -676,15 +666,7 @@ attach_leaf_fits <- function(tree, mf, args, indicators, collector) {
   names(nd) <- vapply(nd, function(n) as.character(n$id), character(1))
 
   fits <- lapply(ids, function(id) {
-    ## A leaf partykit attempted to split already carries the trafo's fit for
-    ## exactly this node's rows, in exactly the fields written below and from
-    ## the same `sum(E^2)`, so refitting recomputes numbers we already have.
-    ## Reuse costs nothing and saves the most expensive fit in the run on a
-    ## stump, where the leaf is the root and its rows are the whole sample. It
-    ## also keeps a redundant refit of an already-converged node from being
-    ## able to count into `n_fail_leaf`. A node that converged but whose
-    ## error calculation threw is stored by the trafo as `converged = FALSE`
-    ## with no object, so requiring both here still refits it.
+    
     have <- nd[[as.character(id)]]$info
     if (isTRUE(have$converged) && !is.null(have$object)) {
       return(NULL)
@@ -700,9 +682,6 @@ attach_leaf_fits <- function(tree, mf, args, indicators, collector) {
         object = NULL
       ))
     }
-    ## Sum of squared casewise GSCA residuals, matching the objfun the ctree
-    ## trafo stores on inner nodes. calculateGSCAErrors() can throw on an
-    ## otherwise converged fit, so the fit is kept either way.
     E <- tryCatch(calculateGSCAErrors(ft$fit), error = function(e) NULL)
     list(
       nobs = length(rows),
@@ -711,8 +690,7 @@ attach_leaf_fits <- function(tree, mf, args, indicators, collector) {
       object = ft$fit
     )
   })
-  ## A NULL entry is a leaf whose fit was reused; the write loop's own
-  ## !is.null() guard then leaves that node's info exactly as it stands.
+  
   names(fits) <- as.character(ids)
 
   for (i in seq_along(nd)) {
