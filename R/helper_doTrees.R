@@ -662,7 +662,7 @@ attach_leaf_fits <- function(tree, mf, args, indicators, collector) {
 
   ## as.list()/as.partynode() is partykit's own round-trip and is identity-
   ## preserving when the info is left alone, so only the leaves change.
-  nd <- as.list(partykit::node_party(tree))
+  nd <- as.list(partykit::node_party(tree)) # This is the idiom to go
   names(nd) <- vapply(nd, function(n) as.character(n$id), character(1))
 
   fits <- lapply(ids, function(id) {
@@ -695,9 +695,9 @@ attach_leaf_fits <- function(tree, mf, args, indicators, collector) {
 
   for (i in seq_along(nd)) {
     key <- as.character(nd[[i]]$id)
-    if (is.null(nd[[i]]$kids) && !is.null(fits[[key]])) {
+    if (is.null(nd[[i]]$kids) && !is.null(fits[[key]])) { # Makes sure that we're not over-writing already fitted models or inner nodes
       info <- as.list(nd[[i]]$info)
-      info[names(fits[[key]])] <- fits[[key]]
+      info[names(fits[[key]])] <- fits[[key]] # Rewrites the entire info, nobs, converged, objfun and object
       nd[[i]]$info <- info
     }
   }
@@ -735,13 +735,6 @@ drop_inner_node_objects <- function(tree) {
 #' `bonferroni = TRUE` the reported p-values are the Šidák-adjusted ones -- the
 #' engine adjusts before it stores, so this is the quantity that was actually
 #' compared against `alpha`, not the per-covariate p-value.
-#'
-#' Present whether or not the root went on to split: a root that tested every
-#' covariate and rejected none still reports the criteria that made it stop.
-#' `NULL` only when no test ran at all, which means the root trafo failed and
-#' `n_fail_full` is 1.
-#'
-#' @param tree A tree returned by [doTrees()].
 #'
 #' @returns The root node's criteria `matrix`, or `NULL` if no test ran.
 #' @seealso [doTrees()]

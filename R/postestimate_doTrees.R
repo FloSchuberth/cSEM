@@ -196,7 +196,6 @@ doTrees <- function(
 
   class(ret) <- c("igsca_tree", class(ret))
 
-  # browser()
   warn_dead_splitter(collector, splitter) # For FIT, DLi or DGi paths. Just throws a warning if all the scans at the candidate split points don't work
   
   # ytrafo is not necessarily called at terminal nodes, so sometimes terminal nodes have no csem objects. Here, we refit just the terminal nodes.
@@ -206,20 +205,14 @@ doTrees <- function(
   ## Deletes the fitted csem objects in all non-terminal nodes. Can be helpful to save on RAM and potentially IGSCA forests. Commented out for later
   ##   ret <- drop_inner_node_objects(ret)
   
-  # TODO: Label each of these appropriately.
   attr(ret, "igsca_info") <- list(
-    n_fail_full = collector$n_fail_full,
-    n_fail_node = collector$n_fail_node,
-    ## 0 under .splitter = "native"; counts candidate partitions whose
-    ## statistic could not be computed under any other splitter.
-    n_fail_candidate = collector$n_fail_candidate,
-    ## Split-kernel scans: n_fail_split counts the scans that produced no
-    ## finite statistic. Both stay 0 when splitter = "native".
-    n_split_scan = collector$n_split_scan,
-    n_fail_split = collector$n_fail_split,
-    ## Failed IGSCA refits at terminal nodes (attach_leaf_fits).
-    n_fail_leaf = collector$n_fail_leaf,
-    root_criteria = root_criteria(ret) # TODO: What is this?
+    n_fail_full = collector$n_fail_full, # Convergence failure on root
+    n_fail_node = collector$n_fail_node, # Convergence failure on a node. Similar to n_fail_leaf, but includes inner nodes.
+    n_fail_candidate = collector$n_fail_candidate, # Relevant to non-native splitters (FIT, DLi, DGi)
+    n_split_scan = collector$n_split_scan, # Number of scans in a selected covariate
+    n_fail_split = collector$n_fail_split,  # Failed to split on non-native splitters (FIT, DLi, DGi)
+    n_fail_leaf = collector$n_fail_leaf, # Convergence failure on a terminal node, fitted via attach_leaf_fits
+    root_criteria = root_criteria(ret) # Solely on the root node: The different permutation statistics, their p-value and the criterion that was used to decide whether a split should occur.
   )
   return(ret)
 }
