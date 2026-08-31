@@ -442,7 +442,12 @@ test_that("root_criteria survives a tree that never splits", {
   expect_true(all(rc["p.value", ] > 0.05))
   # The leaf refit must still be there: keeping the criteria cannot come at the
   # cost of the fit fields attach_leaf_fits() exists to write.
-  expect_false(anyNA(coef(tr, drop = FALSE)[, c("nobs", "objfun")]))
+  cf <- coef(tr, drop = FALSE)
+  expect_false(anyNA(cf[, "nobs"]))
+  # The estimate columns exist and are filled, which is only true if the leaf
+  # kept the fitted object coef() tidies.
+  expect_gt(ncol(cf), 1L)
+  expect_false(anyNA(cf[, -1L, drop = FALSE]))
 })
 
 test_that("a leaf that already carries a fit is not refitted", {
@@ -493,10 +498,10 @@ test_that("a failed leaf refit is counted and surfaces in coef()", {
     rownames(cf),
     as.character(partykit::nodeids(tr, terminal = TRUE))
   )
-  # Every failed leaf is an NA objfun, not a dropped row -- and still reports
-  # nobs. Counting them rather than pinning a number keeps this about coef()
-  # surfacing the failures, not about how many this fixture happens to produce.
-  expect_identical(sum(is.na(cf[, "objfun"])), n_fail)
+  # Every failed leaf is a row of NA estimates, not a dropped row -- and still
+  # reports nobs. Counting them rather than pinning a number keeps this about
+  # coef() surfacing the failures, not about how many this fixture produces.
+  expect_identical(sum(apply(is.na(cf[, -1L, drop = FALSE]), 1L, all)), n_fail)
   expect_false(anyNA(cf[, "nobs"]))
 })
 
