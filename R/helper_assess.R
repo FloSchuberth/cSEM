@@ -1536,6 +1536,7 @@ calculateHTMTcore <- function(
 #'  the upper limit of the 1-2*.alpha% bootstrap or asymptotic confidence interval 
 #'  if the HTMT/HTMT2 is positive and 
 #'  the lower limit if the HTMT/HTMT2 is negative.
+#'  If the HTMT/HTMT2 could not be calculated the upper limit is reported.
 #'  \item the lower and upper limits of the 1-2*.alpha% confidence interval if 
 #'  `.inference` is not none; otherwise it is `NULL`.
 #'  \item the number of admissible bootstrap runs, i.e., the number of HTMT/HTMT2 values
@@ -1692,15 +1693,14 @@ if(.inference != "none"){
   # bound (upper if HTMT >= 0, else lower) in the upper triangle.
   if(.inference != "none") {
     quants_for_print <- sapply(1:dim(quants)[2],function(x){
-      forprint <- c(out) < 0 
-      if(is.na(forprint[x])){
-        forprint[x] <- FALSE
-      }
-      # if HTMT(2) value is negative report the lower bound
-      if(!forprint[x]){
-        quants[1,x]
-      } else { #otherwise report the upper bound
+      if(is.na(c(out)[x])){
+        quants[2,x] 
+      }else{
+      if(c(out)[x]<0){
+        quants[1,x]  
+      }else { #otherwise report the upper bound
         quants[2,x]
+      }
       }
     })
 
