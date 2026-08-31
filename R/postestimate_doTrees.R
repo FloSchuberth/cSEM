@@ -69,10 +69,10 @@ doTrees <- function(
       ...
     ) {
       # You can get a sense of ctree's trafo by running the following (from ?ctree)
-      #' airq <- subset(airquality, !is.na(Ozone))
-      #' airct <- ctree(Ozone ~ ., data = airq) 
-      #' airct_list<-unclass(airct)
-      #' airct_list$trafo
+      # airq <- subset(airquality, !is.na(Ozone))
+      # airct <- ctree(Ozone ~ ., data = airq) 
+      # airct_list<-unclass(airct)
+      # airct_list$trafo
       # Relatedly, you can get a sense of the influence function for by looking-at/debugging-through partykit:::.y2infl()
       stopifnot("case weights are not supported by doTrees(). partykit has changed since initial doTrees development, please report to developers." = length(weights) == 0L)
       was_root <- !collector$root_seen
@@ -143,16 +143,16 @@ doTrees <- function(
   )
   # The relevant code for the native split_fn path is quite deep and written in C. To get a glimpse of it you'd have to run the following code.
   # It's better to consult Section 4.2 "Splitting criteria" in `vignette("ctree", package = "partykit")`. Basically, by-default, the standardized quadratic linear statistic (c_quad) (returned by LinStatExpCov) is computed for all possible subsets of the data,  and libcoin will give you the index for where to split along the covariate in-order to maximize c_quad
-  #' debug(partykit:::.split)
-  #' airq <- subset(airquality, !is.na(Ozone))
-  #' airct <- ctree(Ozone ~ ., data = airq)
+  # debug(partykit:::.split)
+  # airq <- subset(airquality, !is.na(Ozone))
+  # airct <- ctree(Ozone ~ ., data = airq)
   # When you're inside .split run
-  #' debug(FUN)
-    #' debug(.ctree_test)
-      #' debug(.ctree_test_1d)
-        #' debug(.ctree_test_internal)
+  # debug(FUN)
+    # debug(.ctree_test)
+      # debug(.ctree_test_1d)
+        # debug(.ctree_test_internal)
           # Passes the influence to LinStatExpCov, which goes to doTest, which gives you an index.  
-          #' debug(doTest)
+          # debug(doTest)
   
   # Over-write our ctree_control object even further
   if (!is.null(split_fn)) {
