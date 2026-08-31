@@ -362,6 +362,7 @@ argmax_split <- function(
   ctrl,
   weights = integer(0)
 ) {
+  browser()
   scanned <- FALSE
   got_stat <- FALSE
   ret <- NULL
@@ -533,6 +534,7 @@ warn_dead_splitter <- function(collector, splitter) {
 #'   than the observed value below it. `FALSE` matches ctree's default.
 #' @noRd
 candidate_partitions <- function(j, z, zs, minbucket, intersplit = FALSE) {
+  browser()
   keep_min <- function(cands) {
     Filter(
       function(cc) {

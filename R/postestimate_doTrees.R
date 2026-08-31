@@ -171,6 +171,7 @@ doTrees <- function(
       whichvar,
       ctrl
     ) {
+      browser()
       stopifnot("case weights are not supported by doTrees(). partykit has changed since initial doTrees development, please report to developers." = length(weights) == 0L)
       argmax_split(
         splitter = split_fn,
