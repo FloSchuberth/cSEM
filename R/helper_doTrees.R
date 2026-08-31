@@ -736,6 +736,7 @@ drop_inner_node_objects <- function(tree) {
 #' engine adjusts before it stores, so this is the quantity that was actually
 #' compared against `alpha`, not the per-covariate p-value.
 #'
+#' @param tree A tree returned by [doTrees()].
 #' @returns The root node's criteria `matrix`, or `NULL` if no test ran.
 #' @seealso [doTrees()]
 #' @importFrom partykit info_node node_party
@@ -748,40 +749,64 @@ root_criteria <- function(tree) {
   info$criterion
 }
 
-#' Per-node fit summaries of an igsca tree
+#' Per-node parameter estimates of an igsca tree
 #'
-#' Reports the number of observations and the objective function value of each
-#' node's fit. Terminal nodes carry the fits [doTrees()] attaches after growing;
-#' a node whose fit failed returns an `NA` row rather than being dropped, so the
-#' rows always correspond to `node`.
+#' Reports the number of observations and the parameter estimates of each
+#' node's fit, one column per estimate. The estimates are those of [tidy()]
+#' applied to the node's `cSEMResults`, named by that node's `term`. 
+#'
 #'
 #' @param object A tree returned by [doTrees()].
 #' @param node Node ids to report. Defaults to the terminal nodes.
+#' @param parameters Which parameter estimates to report. Passed on to
+#'   [tidy()], which validates it. Defaults to `"all"`. The effect estimates
+#'   are not available here; see below.
 #' @param drop If `TRUE` (the default), a single-node result is simplified from
 #'   a one-row matrix to a named vector.
 #' @param ... Ignored.
 #'
-#' @returns A `matrix` with columns `nobs` and `objfun`, one row per node, row
-#'   names being the node ids; a named vector when one node is requested and
-#'   `drop = TRUE`.
-#' @seealso [doTrees()]
+#' @returns A `matrix` whose first column is `nobs` and whose remaining columns
+#'   are one parameter estimate each, one row per node, row names being the
+#'   node ids; a named vector when one node is requested and `drop = TRUE`.
+#' @seealso [doTrees()], [tidy()]
 #' @export
 #' @importFrom partykit nodeids info_node nodeapply
-coef.igsca_tree <- function(object, node = NULL, drop = TRUE, ...) {
+coef.igsca_tree <- function(object, node = NULL, parameters = "all",
+                            drop = TRUE, ...) {
+  if (identical(parameters, "Effect_estimates")) {
+    stop2(
+      "`parameters = \"Effect_estimates\"` is not supported by coef(): an ",
+      "indirect or total effect carries the same term as the path of the ",
+      "same name, so its estimates cannot be told apart by column name. ",
+      "Use tidy() on a node's fit for those."
+    )
+  }
   if (is.null(node)) {
     node <- partykit::nodeids(object, terminal = TRUE)
   }
+  rows <- partykit::nodeapply(object, ids = node, FUN = function(n) {
+    i <- partykit::info_node(n)
+    nobs <- if (is.null(i$nobs)) NA_real_ else as.numeric(i$nobs)
+    
+    if (is.null(i$object)) {
+      return(c(nobs = nobs))
+    }
+    est <- tidy(i$object, parameters = parameters)
+    
+    est <- est[!est$op %in% c("Indirect_effect", "Total_effect"), ]
+    c(
+      nobs = nobs,
+      stats::setNames(as.numeric(est$estimate), est$term)
+    )
+  })
+  
+  cols <- unique(unlist(lapply(rows, names), use.names = FALSE))
   cf <- do.call(
     "rbind",
-    partykit::nodeapply(object, ids = node, FUN = function(n) {
-      i <- partykit::info_node(n)
-      ## A node whose fit failed, or one never visited by the trafo, has no
-      ## info. Return an NA row rather than NULL: rbind() silently drops NULLs,
-      ## which is how this method used to return NULL for a whole tree.
-      c(
-        nobs = if (is.null(i$nobs)) NA_real_ else as.numeric(i$nobs),
-        objfun = if (is.null(i$objfun)) NA_real_ else as.numeric(i$objfun)
-      )
+    lapply(rows, function(r) {
+      out <- stats::setNames(rep(NA_real_, length(cols)), cols)
+      out[names(r)] <- r
+      out
     })
   )
   rownames(cf) <- as.character(node)
