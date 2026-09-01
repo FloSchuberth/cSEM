@@ -861,10 +861,16 @@ plot.igsca_tree <- function(x, terminal_panel = NULL, FUN = NULL, tp_args = NULL
 # the trafo as model$object) and the argmax wins. No permutation is involved:
 # see the note under `R_test` in igsca_tree_control().
 
-#' 
+#' Reserved name of the two-level grouping column partition_stat() adds to a node's data
+#' and hands csem() as `.id`.
+#'
+#' @noRd
+TREE_GROUP_COL <- "TREETEMPGROUP"
+
+#'
 #' Observed statistic for one candidate partition. `stat_kind` is "FITdiff"
-#' (NPT) or an ndt_dists() distance name -- "DGi"/"DLi" only. 
-#' 
+#' (NPT) or an ndt_dists() distance name -- "DGi"/"DLi" only.
+#'
 #' @noRd
 partition_stat <- function(stat_kind, model, mf, subset, goes_left, ctrl) {
   
@@ -879,13 +885,10 @@ partition_stat <- function(stat_kind, model, mf, subset, goes_left, ctrl) {
     )
   }
   coll <- ctrl$collector
-  if (isTRUE(ctrl$multiway)) {
-    stop2("partition_stat may need to be adjusted to support multiway-splitting")
-  } else {
-    d <- cbind(.TREETEMPGROUP = factor(ifelse(goes_left, 1L, 2L), levels = c(1L, 2L)), mf[subset, ctrl$indicators, drop = FALSE])
-  }
-  # TODO: add stopifnot at the beginning of doTrees() to make sure that .TREETEMPGROUP is not a variable name in any of the data
-  mga <- try_fit(d, ctrl$args, .id = ".TREETEMPGROUP")
+  ## Two groups, always: the statistic is a pooled-vs-2-group comparison
+  d <- mf[subset, ctrl$indicators, drop = FALSE]
+  d[[TREE_GROUP_COL]] <- factor(ifelse(goes_left, 1L, 2L), levels = c(1L, 2L))
+  mga <- try_fit(d, ctrl$args, .id = TREE_GROUP_COL)
   if (!mga$ok) {
     coll$n_fail_candidate <- coll$n_fail_candidate + 1L
     return(NA_real_)

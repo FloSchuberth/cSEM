@@ -44,6 +44,14 @@ doTrees <- function(
 
   args <- csem_tree_args(.object)  # Safely fetches .object$Information$Arguments
   data <- as.data.frame(args$.data)
+  # partition_stat() adds a column named TREE_GROUP_COL ("TREETEMPGROUP") to each
+  # candidate node's data and hands it to csem() as `.id`. A column of that name
+  # already in the data would be silently overwritten there, so refuse it here
+  # where the user can still see which column is in the way. Exact matching, no regex.
+  stopifnot(
+    "`.object` was fitted on data containing a column named TREETEMPGROUP. doTrees() reserves that name for the grouping column it builds at every candidate split; please rename it." =
+      !(TREE_GROUP_COL %in% names(data))
+  )
   indicators <- parseModel(args$.model)$indicators
   validate_tree_input(data, indicators, .covariates, influence, splitter, args)
   fml <- paste(
@@ -161,6 +169,15 @@ doTrees <- function(
   
   # Over-write our ctree_control object even further
   if (!is.null(split_fn)) {
+    # The FIT/DLi/DGi kernels score a candidate by refitting it as a TWO-group
+    # MGA (partition_stat() builds a grouping column with levels 1/2), so they
+    # can only ever put a number on a binary split. partykit's multiway rule
+    # asks for one kid per factor level instead, and argmax_split() would take
+    # its multiway branch -- multiway_split()
+    stopifnot(
+      "multiway splitting is not supported by the 'FIT', 'DLi' and 'DGi' splitters, which score two-group refits only. partykit has changed since initial doTrees development, please report to developers." =
+        !isTRUE(cc$multiway)
+    )
     cc$args <- args # How to refit the cSEM models
     cc$indicators <- indicators 
     cc$collector <- collector

@@ -345,6 +345,14 @@ test_that("doTrees() rejects input it cannot grow a tree from", {
   expect_error(doTrees(res, c("z_true", "nope")), "nope")
   expect_error(doTrees(res, character(0)), "at least one")
   expect_error(doTrees(res, c("z_true", "x11")), "also indicators")
+
+  # partition_stat() adds its own TREETEMPGROUP column to every candidate node
+  # and hands it to csem() as `.id`, so a real column of that name would be
+  # silently overwritten rather than partitioned on.
+  res_clash <- res
+  res_clash$Information$Arguments$.data <-
+    cbind(as.data.frame(res$Information$Arguments$.data), TREETEMPGROUP = 1)
+  expect_error(doTrees(res_clash, covs), "TREETEMPGROUP", fixed = TRUE)
 })
 
 test_that("every configuration refuses a non-GSCA fit", {
