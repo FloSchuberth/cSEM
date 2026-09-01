@@ -134,7 +134,8 @@ doTrees <- function(
     maxsurrogate = 0L, # In the case of missing data in a covariate this is relevant. This is not handled in our function
     nmax = c(yx = Inf, z = Inf), # Set to default, but this would affect whether or not the covariates or influence function are binned to lower computation costs.
     saveinfo = TRUE,
-    update = TRUE # TRUE by default because ytrafo is a function, but does not necessarily refit to terminal nodes
+    update = TRUE, # TRUE by default because ytrafo is a function, but does not necessarily refit to terminal nodes
+    lookahead = FALSE # Not supported by IGSCA trees
   )
 
   split_fn <- switch(
@@ -159,13 +160,10 @@ doTrees <- function(
   
   # Over-write our ctree_control object even further
   if (!is.null(split_fn)) {
-    # TODO: Come back to this after I'm done investigating native
-    # Sets the splitter to one of the three non-native functions that we're looking for. 
-    # Otherwise, we just use the built-in one that ctree uses. See above for more details. 
     cc$args <- args # How to refit the cSEM models
     cc$indicators <- indicators 
     cc$collector <- collector
-    cc$splitfun <- function( # See partykit::ctree_control()$splitfun, partykit:::.split() and partykit:::.ctree_test() for what this function needs to accept and return.
+    cc$splitfun <- function( # See partykit::ctree_control()$splitfun -> partykit:::.split() + partykit:::.ctree_test() for what this function needs to accept and return.
       model,
       trafo,
       data,
@@ -174,7 +172,7 @@ doTrees <- function(
       whichvar,
       ctrl
     ) {
-      browser()
+      # browser()
       stopifnot("case weights are not supported by doTrees(). partykit has changed since initial doTrees development, please report to developers." = length(weights) == 0L)
       argmax_split(
         splitter = split_fn,
