@@ -464,15 +464,103 @@ warn_dead_splitter <- function(collector, splitter) {
 
 #' Admissible binary partitions of one covariate
 #'
+#' Enumerates every binary partition of a node's rows that one covariate
+#' admits, for `argmax_split()` to score with a two-group IGSCA fit. A
+#' partition family has to materialise its candidates and refit the model on
+#' each one; ctree never does, because libcoin scores every cutpoint of a
+#' covariate in a single pass.
+#'
+#' partykit has three splitters that do not share an implementation, so the
+#' citations below are split by what is being matched. Quoted expressions are
+#' from partykit 1.3-0.
+#'
+#' **The `partysplit` encoding is ctree's**, from
+#' `partykit:::.ctree_test_internal()` (`R/ctree.R`): numeric and ordered
+#' covariates get `.partysplit(j, breaks = sp, index = 1L:2L)`, unordered ones
+#' `.partysplit(j, index = as.integer(sp) + 1L)`. Driving that function on a
+#' node directly confirms all three conventions this code relies on -- an
+#' ordered break is a position in `levels(z)`, not in the node's own levels;
+#' an unordered `index` is 1/2 over `levels(z)` with `NA` for levels the node
+#' never sees; a numeric break is an observed value with `zs <= break` going
+#' to kid 1.
+#'
+#' **The enumeration has no ctree counterpart to cite.** ctree never builds a
+#' candidate list in R: libcoin scores every cutpoint of a covariate in one C
+#' pass, enumerating the `2^(K - 1) - 1` factor bipartitions inside `doTest()`
+#' under `maxselect`. The candidate *set* is the same, but the R-level
+#' enumerators are the objective-function splitters, which is what this
+#' function structurally is -- `partykit:::mob_grow_findsplit()`
+#' (`R/modelparty.R`) and `partykit:::.objfun_test()` (`R/extree.R`):
+#'
+#' * **Numeric.** mob takes `uz <- sort(unique(zselect))` and forms
+#'   `zs <- zselect <= uz[i]`; `.objfun_test()` does the same over the
+#'   integer-coded covariate, `sleft <- subset[ix[subset] <= u]` for `u` in
+#'   `which(ixtab > 0)`. The cut dropped here up front -- `zs <= max(uz)`,
+#'   which sends every row left -- is one both generate and then reject on
+#'   `minbucket`.
+#' * **Ordered.** The cumulative level sets come from the ordered branch of
+#'   `partykit:::.mob_grow_getlevels()` (`R/utils.R`) or, inside
+#'   `.objfun_test()`, from the same `ix[subset] <= u` loop the numeric case
+#'   uses (`ORDERED <- is.ordered(x) || is.numeric(x)`). `match(levs[i],
+#'   levels(z))` is mob's `match(levels(zselect)[which.min(dev)], olevels)`.
+#' * **Unordered.** `.mob_grow_getlevels()` builds the same `2^(K - 1) - 1`
+#'   bit-pattern matrix `intToBits(m)` builds here, in the same order, over the
+#'   levels surviving `factor(zselect)` (that is, `droplevels(zs)`); membership
+#'   is `zselect %in% levels(zselect)[w]`. Re-expanding to `z`'s original
+#'   levels with `NA` for absent ones is mob's
+#'   `ix <- structure(rep.int(NA_integer_, length(olevels)), names = olevels)`
+#'   then `ix[colnames(al)] <- !al[which.min(dev), ]; as.integer(ix) + 1L` --
+#'   that negation is why the selected group is kid `1L` here.
+#' * **`keep_min()`** is partykit's
+#'   `if (length(sleft) < ctrl$minbucket || length(sright) < ctrl$minbucket) return(Inf)`,
+#'   applied as a filter rather than as an infinite objective value.
+#' * **The `K > 11L` refusal has no partykit counterpart.** partykit scores a
+#'   nominal split with a closed-form test or a cheap refit; here every
+#'   candidate costs a full two-group IGSCA fit.
+#'
+#' The one place this deliberately parts company with ctree is `intersplit`;
+#' see that argument. partykit's remaining branch, the `ctrl$multiway` one, is
+#' `multiway_split()`.
+#'
 #' @param j Column index of the covariate in the model frame.
 #' @param z The covariate over all rows, which fixes the factor levels and
 #'   level order the emitted `partysplit` is expressed in.
 #' @param zs The covariate over this node's non-missing rows.
 #' @param minbucket Smallest child either kid may be left with.
 #' @param intersplit Report a numeric break as the midpoint of the gap rather
-#'   than the observed value below it. `FALSE` matches ctree's default.
-#' @return A `partysplit` object plus the the logical vector saying
-#' which of the node's rows go left.
+#'   than the observed value below it. `FALSE`, the default, matches both ctree
+#'   (`intersplit = FALSE`) and mob (`numsplit = "left"`). `TRUE` follows mob's
+#'   `numsplit = "center"`, `mean(uz[which.min(dev) + 0:1])`, interpolating
+#'   between the values present *in this node*. ctree's `intersplit = TRUE` is
+#'   **not** the same rule: it interpolates against `ux`, the distinct values of
+#'   the whole learning sample (`.ctree_test_1d()` sets `ux <- levels(X)` from
+#'   the `extree_data()` index, then `.ctree_test_internal()` takes
+#'   `(ux[sp] + ux[sp + 1])/2`). On a node holding only `1, 3, 5` out of a
+#'   global `1:5`, ctree reports `3.5` where this function reports `4` -- the
+#'   same partition of the node, a different threshold for new data.
+#' @return A list of candidate partitions, one per admissible split, each a
+#'   list with `$split` (a `partysplit`) and `$goes_left` (the logical vector
+#'   over `zs` saying which of the node's rows go to the first kid). Empty when
+#'   the covariate is constant in the node or every cut violates `minbucket`.
+#'
+#' @examples
+#' ## Numeric: one cut per distinct value except the largest, `zs <= ct`.
+#' zn <- c(1, 2, 2, 3, 5, 8)
+#' candidate_partitions(1L, zn, zn, minbucket = 1L)
+#'
+#' ## Ordered: K - 1 cumulative level sets; the break is an index into
+#' ## levels(z), so it stays comparable across nodes.
+#' zo <- factor(c("lo", "lo", "mid", "hi", "hi"),
+#'              levels = c("lo", "mid", "hi"), ordered = TRUE)
+#' candidate_partitions(2L, zo, zo, minbucket = 1L)
+#'
+#' ## Unordered: all 2^(K - 1) - 1 bipartitions, carried in `index` rather
+#' ## than `breaks`; 1 = first kid, 2 = second.
+#' zf <- factor(c("a", "a", "b", "b", "c", "c"))
+#' candidate_partitions(3L, zf, zf, minbucket = 1L)
+#'
+#' ## Nothing to split on.
+#' candidate_partitions(1L, zn, rep(2, 4), minbucket = 1L)
 #' @noRd
 candidate_partitions <- function(j, z, zs, minbucket, intersplit = FALSE) {
   # browser()
@@ -504,7 +592,7 @@ candidate_partitions <- function(j, z, zs, minbucket, intersplit = FALSE) {
     keep_min(Map(
       function(ct, br) {
         list(
-          goes_left = zs <= ct, # TODO: See where I can find the partykit code for this equivalent. partysplit? kidsids_split? .ctree_test_internal?
+          goes_left = zs <= ct, # mob_grow_findsplit(): `zs <- zselect <= uz[i]`
           split = partykit::partysplit(
             as.integer(j),
             breaks = as.double(br),
@@ -523,7 +611,7 @@ candidate_partitions <- function(j, z, zs, minbucket, intersplit = FALSE) {
     }
     keep_min(lapply(1L:(K - 1L), function(i) {
       list(
-        goes_left = zs %in% levs[1L:i], # TODO: See where I can find the partykit code for this equivalent. partysplit? kidsids_split? .ctree_test_internal?
+        goes_left = zs %in% levs[1L:i], # .mob_grow_getlevels(), ordered branch
         split = partykit::partysplit(
           as.integer(j),
           breaks = as.integer(match(levs[i], levels(z))),
@@ -553,7 +641,7 @@ candidate_partitions <- function(j, z, zs, minbucket, intersplit = FALSE) {
       idx <- rep(NA_integer_, length(olev))
       idx[match(levs, olev)] <- ifelse(levs %in% g, 1L, 2L)
       list(
-        goes_left = zs %in% g, # TODO: See where I can find the partykit code for this equivalent. partysplit? kidsids_split? .ctree_test_internal?
+        goes_left = zs %in% g, # mob_grow_findsplit(): `zselect %in% levels(zselect)[w]`
         split = partykit::partysplit(as.integer(j), index = idx)
       )
     }))
