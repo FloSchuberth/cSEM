@@ -5,12 +5,15 @@
 #' [csem()] arguments, so the estimator, modes and convergence settings of the
 #' tree are those of the fit it was given.
 #'
-#' `.influence` selects the node statistic that conditional-inference variable
-#' selection runs on: `"mat"` the casewise GSCA squared-residual matrix.
-#' `.splitter` then chooses the cutpoint within the selected covariate -- `"native"`
-#'  is partykit's own maxstat scan, while `"FIT"`, `"DLi"` and `"DGi"` replace it with
-#'  a deterministic argmax over candidate partitions of a model-comparison statistic.
-#'
+#' `.influence` chooses the statistic that will be permuted (the conditional-inference or COIN procedure) 
+#' to find which covariate is significantly associated with the transformed 'Y' variable. Currently, only
+#' `"mat"` is supported, which means that the the transformed 'Y' variable is the casewise GSCA squared-residual matrix. 
+#' 
+#' `.splitter` then chooses the cutpoint within the selected covariate. `"native"` is the `partykit::ctree()` default that
+#'  chooses the data partitions that maximize the influence statistic. `"FIT"`, `"DLi"` and `"DGi"` behave similarly,
+#'  but fit multigroup GSCA models on every possible data partition and maximize the difference in either `"FIT"`, `"DLi"` or `"DGi"`
+#'  between the pooled vs multigroup GSCA models.
+#' 
 #' @param .object A single-group `cSEMResults` object, as returned by [csem()].
 #'   Its data must contain the `.covariates` columns; [csem()] ignores
 #'   non-indicator columns, so they can simply ride along in the original call.

@@ -38,11 +38,14 @@ whose model estimates differ. Every node is refit by replaying \code{.object}'s 
 tree are those of the fit it was given.
 }
 \details{
-\code{.influence} selects the node statistic that conditional-inference variable
-selection runs on: \code{"mat"} the casewise GSCA squared-residual matrix.
-\code{.splitter} then chooses the cutpoint within the selected covariate -- \code{"native"}
-is partykit's own maxstat scan, while \code{"FIT"}, \code{"DLi"} and \code{"DGi"} replace it with
-a deterministic argmax over candidate partitions of a model-comparison statistic.
+\code{.influence} chooses the statistic that will be permuted (the conditional-inference or COIN procedure)
+to find which covariate is significantly associated with the transformed 'Y' variable. Currently, only
+\code{"mat"} is supported, which means that the the transformed 'Y' variable is the casewise GSCA squared-residual matrix.
+
+\code{.splitter} then chooses the cutpoint within the selected covariate. \code{"native"} is the \code{partykit::ctree()} default that
+chooses the data partitions that maximize the influence statistic. \code{"FIT"}, \code{"DLi"} and \code{"DGi"} behave similarly,
+but fit multigroup GSCA models on every possible data partition and maximize the difference in either \code{"FIT"}, \code{"DLi"} or \code{"DGi"}
+between the pooled vs multigroup GSCA models.
 }
 \references{
 \insertAllCited{}
