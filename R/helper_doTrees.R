@@ -464,15 +464,6 @@ warn_dead_splitter <- function(collector, splitter) {
 
 #' Admissible binary partitions of one covariate
 #'
-#' Enumerates every binary partition of a node's rows that one covariate
-#' admits, for `argmax_split()` to score with a two-group IGSCA fit. A
-#' partition family has to materialise its candidates and refit the model on
-#' each one; ctree never does, because libcoin scores every cutpoint of a
-#' covariate in a single pass.
-#'
-#' partykit has three splitters that do not share an implementation, so the
-#' citations below are split by what is being matched. Quoted expressions are
-#' from partykit 1.3-0.
 #'
 #' **The `partysplit` encoding is ctree's**, from
 #' `partykit:::.ctree_test_internal()` (`R/ctree.R`): numeric and ordered
@@ -484,13 +475,6 @@ warn_dead_splitter <- function(collector, splitter) {
 #' never sees; a numeric break is an observed value with `zs <= break` going
 #' to kid 1.
 #'
-#' **The enumeration has no ctree counterpart to cite.** ctree never builds a
-#' candidate list in R: libcoin scores every cutpoint of a covariate in one C
-#' pass, enumerating the `2^(K - 1) - 1` factor bipartitions inside `doTest()`
-#' under `maxselect`. The candidate *set* is the same, but the R-level
-#' enumerators are the objective-function splitters, which is what this
-#' function structurally is -- `partykit:::mob_grow_findsplit()`
-#' (`R/modelparty.R`) and `partykit:::.objfun_test()` (`R/extree.R`):
 #'
 #' * **Numeric.** mob takes `uz <- sort(unique(zselect))` and forms
 #'   `zs <- zselect <= uz[i]`; `.objfun_test()` does the same over the
@@ -511,16 +495,6 @@ warn_dead_splitter <- function(collector, splitter) {
 #'   `ix <- structure(rep.int(NA_integer_, length(olevels)), names = olevels)`
 #'   then `ix[colnames(al)] <- !al[which.min(dev), ]; as.integer(ix) + 1L` --
 #'   that negation is why the selected group is kid `1L` here.
-#' * **`keep_min()`** is partykit's
-#'   `if (length(sleft) < ctrl$minbucket || length(sright) < ctrl$minbucket) return(Inf)`,
-#'   applied as a filter rather than as an infinite objective value.
-#' * **The `K > 11L` refusal has no partykit counterpart.** partykit scores a
-#'   nominal split with a closed-form test or a cheap refit; here every
-#'   candidate costs a full two-group IGSCA fit.
-#'
-#' The one place this deliberately parts company with ctree is `intersplit`;
-#' see that argument. partykit's remaining branch, the `ctrl$multiway` one, is
-#' `multiway_split()`.
 #'
 #' @param j Column index of the covariate in the model frame.
 #' @param z The covariate over all rows, which fixes the factor levels and
