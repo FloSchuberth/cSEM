@@ -368,7 +368,7 @@ argmax_split <- function(
       # Placeholder for multiway_split funcitonality (not currently supported)
       ret <- multiway_split(j, z, z[subset], ctrl$minbucket)
     } else {
-      sub_j <- subset[!is.na(z[subset])]
+      sub_j <- subset[!is.na(z[subset])] # Further subset the covariate data on only the non-missing covariate values
       cands <- candidate_partitions(
         j = j,
         z = z,
@@ -464,27 +464,6 @@ warn_dead_splitter <- function(collector, splitter) {
 
 #' Admissible binary partitions of one covariate
 #'
-#' Returns every candidate, each a `partysplit` plus the logical vector saying
-#' which of the node's rows go left. Candidates that would leave a child
-#' smaller than `minbucket` are dropped, so an empty list means the covariate
-#' offers no admissible split -- not that a kernel failed. `zs` must already
-#' have the covariate's missing rows removed; see `argmax_split()`.
-#'
-#' The scan is exhaustive: every cut between consecutive distinct values of a
-#' numeric covariate, every one of the `K - 1` cuts of an ordered factor, and
-#' all `2^(K - 1) - 1` bipartitions of an unordered one. That is the same set
-#' of partitions partykit's own scan considers, and the emitted `partysplit`
-#' follows the same conventions (`z <= breaks` goes left; an ordered break is
-#' an index into `levels(z)`; an unordered `index` is 1/2 per level of `z`,
-#' `NA` for levels absent from the node).
-#'
-#' The costs are not the same, though: the non-native splitters pay a two-group
-#' IGSCA fit per candidate where partykit pays C arithmetic, which is why the
-#' unordered scan is capped far below the ">= 31 levels" at which libcoin
-#' itself refuses. Whether the numeric grid should be binned first, and how, is
-#' left open -- partykit would do it through `nmax`, which `doTrees()` pins at
-#' `Inf`.
-#'
 #' @param j Column index of the covariate in the model frame.
 #' @param z The covariate over all rows, which fixes the factor levels and
 #'   level order the emitted `partysplit` is expressed in.
@@ -492,11 +471,14 @@ warn_dead_splitter <- function(collector, splitter) {
 #' @param minbucket Smallest child either kid may be left with.
 #' @param intersplit Report a numeric break as the midpoint of the gap rather
 #'   than the observed value below it. `FALSE` matches ctree's default.
+#' @return A `partysplit` object plus the the logical vector saying
+#' which of the node's rows go left.
 #' @noRd
 candidate_partitions <- function(j, z, zs, minbucket, intersplit = FALSE) {
-  browser()
+  # browser()
+  # Returns only candidate partitions whose child nodes would have a sample size that is greater than or equal to the minbucket.
   keep_min <- function(cands) {
-    Filter(
+    Filter( 
       function(cc) {
         nl <- sum(cc$goes_left)
         nl >= minbucket && (length(zs) - nl) >= minbucket
@@ -504,27 +486,25 @@ candidate_partitions <- function(j, z, zs, minbucket, intersplit = FALSE) {
       cands
     )
   }
+  # Create list of break points based on the metric of z
   if (is.numeric(z) && !is.factor(z)) {
     uz <- sort(unique(zs))
     if (length(uz) < 2L) {
       return(list())
     }
-    ## `<=` is partykit's convention, not a choice: partysplit() defaults to
-    ## right = TRUE, so kidids_split() bins on (-Inf, breaks] and sends
-    ## `z <= breaks` left.
-    cuts <- uz[-length(uz)]
-    ## Which rows go left is fixed by the gap; only the number reported as the
-    ## break differs, and it matters for rows that land inside the gap later.
-    ## ctree reports the observed value below the gap and switches to the
-    ## midpoint under intersplit = TRUE -- see the tail of
-    ## partykit:::.ctree_test_internal(). Taking the midpoint unconditionally
-    ## also risks rounding up onto uz[i + 1] when the two are adjacent doubles,
-    ## which duplicates the next candidate and drops this one.
-    brks <- if (intersplit) (uz[-1L] + cuts) / 2 else cuts
+    # Vector of cut points in uz
+    cuts <- uz[-length(uz)] # Equivalent to uz[1:(length(uz)-1)]
+    
+    # Takes the midpoint between the cuts as the candidate break points
+    brks <- if (intersplit) {
+      (uz[-1L] + cuts) / 2
+    } else {
+      cuts
+    }
     keep_min(Map(
       function(ct, br) {
         list(
-          goes_left = zs <= ct,
+          goes_left = zs <= ct, # TODO: See where I can find the partykit code for this equivalent. partysplit? kidsids_split? .ctree_test_internal?
           split = partykit::partysplit(
             as.integer(j),
             breaks = as.double(br),
@@ -543,7 +523,7 @@ candidate_partitions <- function(j, z, zs, minbucket, intersplit = FALSE) {
     }
     keep_min(lapply(1L:(K - 1L), function(i) {
       list(
-        goes_left = zs %in% levs[1L:i],
+        goes_left = zs %in% levs[1L:i], # TODO: See where I can find the partykit code for this equivalent. partysplit? kidsids_split? .ctree_test_internal?
         split = partykit::partysplit(
           as.integer(j),
           breaks = as.integer(match(levs[i], levels(z))),
@@ -557,10 +537,8 @@ candidate_partitions <- function(j, z, zs, minbucket, intersplit = FALSE) {
     if (K < 2L) {
       return(list())
     }
-    ## Every bipartition costs a two-group IGSCA fit here where partykit pays
-    ## C arithmetic, so this scan has to stop well short of the ">= 31 levels"
-    ## at which libcoin itself gives up. 11 levels is already 1023 fits for one
-    ## covariate at one node.
+    # Maximum number of levels in a nominal covariate. 
+    # 11 levels is 1023 fits for one covariate at one node.
     if (K > 11L) {
       stop2(
         "Scanning the unordered factor in column ", j, " would take 2^", K - 1L,
@@ -575,7 +553,7 @@ candidate_partitions <- function(j, z, zs, minbucket, intersplit = FALSE) {
       idx <- rep(NA_integer_, length(olev))
       idx[match(levs, olev)] <- ifelse(levs %in% g, 1L, 2L)
       list(
-        goes_left = zs %in% g,
+        goes_left = zs %in% g, # TODO: See where I can find the partykit code for this equivalent. partysplit? kidsids_split? .ctree_test_internal?
         split = partykit::partysplit(as.integer(j), index = idx)
       )
     }))
