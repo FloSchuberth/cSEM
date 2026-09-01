@@ -345,26 +345,64 @@ test_that("candidate_partitions() emits splits partykit routes as told", {
     ord = ordered(c("a", "b", "c", "d", "e", "f")),
     fac = factor(c("a", "b", "c", "a", "b", "c"))
   )
-  for (j in seq_along(mf)) {
-    z <- mf[[j]]
-    cands <- candidate_partitions(j, z, z, minbucket = 1L)
-    expect_gt(length(cands), 0L)
-    for (cc in cands) {
-      # The kernel is told `goes_left`; partykit later routes rows through
-      # kidids_split(). A candidate whose two disagree scores one partition
-      # and grows another.
-      expect_identical(
-        partykit::kidids_split(cc$split, mf) == 1L,
-        cc$goes_left,
-        info = names(mf)[j]
-      )
+  # minbucket = 2L leaves every branch non-empty but does make keep_min() drop
+  # candidates, so the routing convention is checked on a filtered list too --
+  # at minbucket = 1L nothing is ever filtered and the guard goes unexercised.
+  for (mb in c(1L, 2L)) {
+    for (j in seq_along(mf)) {
+      z <- mf[[j]]
+      cands <- candidate_partitions(j, z, z, minbucket = mb)
+      expect_gt(length(cands), 0L)
+      for (cc in cands) {
+        # The kernel is told `goes_left`; partykit later routes rows through
+        # kidids_split(). A candidate whose two disagree scores one partition
+        # and grows another.
+        expect_identical(
+          partykit::kidids_split(cc$split, mf) == 1L,
+          cc$goes_left,
+          info = paste0(names(mf)[j], ", minbucket = ", mb)
+        )
+      }
     }
   }
+  # keep_min() bit: at minbucket = 2 the two extreme cuts are inadmissible.
+  expect_length(candidate_partitions(1L, mf$num, mf$num, minbucket = 1L), 5L)
+  expect_length(candidate_partitions(1L, mf$num, mf$num, minbucket = 2L), 3L)
+
   # ctree sets index = 1:2 on every break-valued split it emits.
   for (v in c("num", "ord")) {
     j <- match(v, names(mf))
     sp <- candidate_partitions(j, mf[[j]], mf[[j]], minbucket = 1L)[[1L]]$split
     expect_identical(partykit::index_split(sp), 1:2, info = v)
+  }
+})
+
+test_that("candidate_partitions() enumerates the node's levels, not the column's", {
+  # `z` and `zs` differ at every node below the root: a level is dropped by a
+  # parent split, or lost with the covariate's missing rows in argmax_split().
+  # Sized off nlevels(z) rather than the node's own levels, this node costs
+  # 2^15 - 1 candidates -- each one a two-group IGSCA fit -- for the three
+  # bipartitions it actually has, and slips past the K > 11L guard doing it,
+  # since that guard counts the levels the node has.
+  z  <- factor(letters[1:16], levels = letters[1:16])
+  zs <- factor(rep(letters[1:3], each = 40L), levels = letters[1:16])
+  cands <- candidate_partitions(1L, z, zs, minbucket = 1L)
+  expect_length(cands, 3L) # 2^(3 - 1) - 1
+
+  # Levels absent from the node stay NA, which is how partykit says "route this
+  # one by `prob`". A real kid id would send a level never seen here down an arm
+  # picked by a bit pattern.
+  idx <- partykit::index_split(cands[[1L]]$split)
+  expect_identical(idx[4:16], rep(NA_integer_, 13L))
+  expect_true(all(idx[1:3] %in% 1:2))
+
+  # The routing convention has to survive z != zs, which is the case the
+  # same-vector fixtures above cannot see.
+  for (cc in cands) {
+    expect_identical(
+      partykit::kidids_split(cc$split, data.frame(f = zs)) == 1L,
+      cc$goes_left
+    )
   }
 })
 

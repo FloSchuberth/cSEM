@@ -473,8 +473,6 @@ warn_dead_splitter <- function(collector, splitter) {
 #'   over `zs` saying which of the node's rows go to the first kid). Empty when
 #'   the covariate is constant in the node or every cut violates `minbucket`.
 #'
-#' @importFrom partykit mob_grow_getlevels
-#' 
 #' @examples
 #' ## Numeric: one cut per distinct value except the largest, `zs <= ct`.
 #' zn <- c(1, 2, 2, 3, 5, 8)
@@ -560,14 +558,15 @@ candidate_partitions <- function(j, z, zs, minbucket) {
     return(cands)
   } else if (is.factor(z)) {
     
-    levs <- levels(droplevels(zs))
+    zs <- droplevels(zs)
+    levs <- levels(zs)
     K <- length(levs)
 
     if (K < 2L) {
       return(list())
     }
 
-    # Maximum number of levels in a nominal covariate. 
+    # Maximum number of levels in a nominal covariate.
     # 11 levels is 1023 fits for one covariate at one node.
     if (K > 11L) {
       stop2(
@@ -577,32 +576,33 @@ candidate_partitions <- function(j, z, zs, minbucket) {
         "`.splitter = \"native\"`."
       )
     }
+    # observed levels
+    observed_levs <- levels(z)
+    pos <- match(levs, observed_levs) # Gives the mapping of zs (levs) to z (observed_levs)
 
     # Taken from partykit:::mob_grow_getlevels(), GPL-2 and GPL-3 License
-    nl <- nlevels(z)
-    ## Stirling number of the second kind S(K, n = 2) 
-    mi <- 2^(nl - 1L) - 1L
-    indx <- matrix(0, nrow = mi, ncol = nl)
+    ## Stirling number of the second kind S(K, n = 2)
+    mi <- 2L^(K - 1L) - 1L
+    indx <- matrix(0L, nrow = mi, ncol = K, dimnames = list(NULL, levs))
     for (i in 1L:mi) {
         ii <- i
-        for (l in 1L:nl) {
+        for (l in 1L:K) {
             indx[i, l] <- ii%%2L
             ii <- ii%/%2L
         }
     }
-    rownames(indx) <- apply(indx, 1L, function(x) {
-      paste(levels(z)[x > 0], collapse = "+")
-    })
-    colnames(indx) <- as.character(levels(z))
     storage.mode(indx) <- "logical"
-    
-    cands <- lapply(seq(mi), function(m) {  
+
+    cands <- lapply(seq_len(mi), function(m) {
+      sel <- unname(indx[m, ]) 
+      idx <- rep(NA_integer_, length(observed_levs)) 
+      idx[pos] <- ifelse(sel, 1L, 2L) # Selected group is kid 1, as goes_left says
       list(
-        goes_left = zs %in% colnames(indx)[indx[m, , drop = FALSE]], 
+        # Uses vector recycling to get the corresponding true/false values
+        goes_left = sel[as.integer(zs)],
         split = partykit::partysplit(
           varid = as.integer(j),
-          index = as.integer(indx[m, , drop = FALSE]) + 1L,
-          right = TRUE
+          index = idx
         )
       )
     }) |>
