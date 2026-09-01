@@ -578,6 +578,7 @@ candidate_partitions <- function(j, z, zs, minbucket) {
     }
     # observed levels
     observed_levs <- levels(z)
+    # boomer::boom(match(levs, observed_levs))
     pos <- match(levs, observed_levs) # Gives the mapping of zs (levs) to z (observed_levs)
 
     # Taken from partykit:::mob_grow_getlevels(), GPL-2 and GPL-3 License
@@ -592,11 +593,11 @@ candidate_partitions <- function(j, z, zs, minbucket) {
         }
     }
     storage.mode(indx) <- "logical"
-
+    
     cands <- lapply(seq_len(mi), function(m) {
       sel <- unname(indx[m, ]) 
       idx <- rep(NA_integer_, length(observed_levs)) 
-      idx[pos] <- ifelse(sel, 1L, 2L) # Selected group is kid 1, as goes_left says
+      idx[pos] <- ifelse(sel, 1L, 2L) # goes_left is 1L, the rest is 2L or NA_integer_
       list(
         # Uses vector recycling to get the corresponding true/false values
         goes_left = sel[as.integer(zs)],
