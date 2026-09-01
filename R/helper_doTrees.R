@@ -601,7 +601,7 @@ candidate_partitions <- function(j, z, zs, minbucket) {
         goes_left = zs %in% colnames(indx)[indx[m, , drop = FALSE]], 
         split = partykit::partysplit(
           varid = as.integer(j),
-          index = idx, # TODO: Fix
+          index = as.integer(indx[m, , drop = FALSE]) + 1L,
           right = TRUE
         )
       )
