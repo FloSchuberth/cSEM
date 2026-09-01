@@ -861,49 +861,13 @@ plot.igsca_tree <- function(x, terminal_panel = NULL, FUN = NULL, tp_args = NULL
 # the trafo as model$object) and the argmax wins. No permutation is involved:
 # see the note under `R_test` in igsca_tree_control().
 
-
-
-#'Node data for one candidate partition: children as `group` levels 1/2.
-#' 
-#'
-#' @noRd
-node_group_data <- function(mf, subset, indicators, goes_left) {
-  d <- mf[subset, indicators, drop = FALSE]
-  cbind(group = factor(ifelse(goes_left, 1L, 2L), levels = c(1L, 2L)), d)
-}
-
-
-
-#' Pooled model-implied VCVs replicated to 2 blocks (constant per node;
-#' cached in the collector under $ndt_pools keyed by the subset).
-#' 
-#'
-#' @noRd
-ndt_pools <- function(single_fit) {
-  list(
-    Sc = bdiagFit(single_fit, .n_blocks = 2L, .type_vcv = "construct"),
-    Si = bdiagFit(single_fit, .n_blocks = 2L, .type_vcv = "indicator")
-  )
-}
-
 #' 
 #' Observed statistic for one candidate partition. `stat_kind` is "FITdiff"
-#' (NPT) or an ndt_dists() distance name -- "DGi"/"DLi" only: Study 1 works
-#' with the model-implied indicator VCV, never the construct VCV. It is handed
-#' straight to ndt_dists() as the one distance to compute, so a "DLi" run never
-#' reaches calculateDG() and never builds the construct-VCV block matrix.
-#' Counts every candidate partition whose statistic could not be computed into
-#' collector$n_fail_candidate.
+#' (NPT) or an ndt_dists() distance name -- "DGi"/"DLi" only. 
 #' 
-#'
 #' @noRd
 partition_stat <- function(stat_kind, model, mf, subset, goes_left, ctrl) {
-  ## Deliberately ahead of the tryCatch below, and ahead of the refit: an
-  ## unknown stat_kind used to fall out of ds[stat_kind] as a silent NA, which
-  ## partykit reads as "no admissible split", so a typo and a genuinely
-  ## unsplittable node were indistinguishable. Raised here it is visible;
-  ## raised inside the tryCatch it would be swallowed into an NA and a bogus
-  ## n_fail_candidate increment. Exact matching, no regex.
+  
   stat_kinds <- c("FITdiff", "DGc", "DGi", "DLc", "DLi")
   if (
     !(length(stat_kind) == 1L && is.character(stat_kind) &&
@@ -915,15 +879,23 @@ partition_stat <- function(stat_kind, model, mf, subset, goes_left, ctrl) {
     )
   }
   coll <- ctrl$collector
-  d <- node_group_data(mf, subset, ctrl$indicators, goes_left)
-  mga <- try_fit(d, ctrl$args, .id = "group")
-  if (!mga$ok) { coll$n_fail_candidate <- coll$n_fail_candidate + 1L; return(NA_real_) }
+  if (isTRUE(ctrl$multiway)) {
+    stop2("partition_stat may need to be adjusted to support multiway-splitting")
+  } else {
+    d <- cbind(.TREETEMPGROUP = factor(ifelse(goes_left, 1L, 2L), levels = c(1L, 2L)), mf[subset, ctrl$indicators, drop = FALSE])
+  }
+  # TODO: add stopifnot at the beginning of doTrees() to make sure that .TREETEMPGROUP is not a variable name in any of the data
+  mga <- try_fit(d, ctrl$args, .id = ".TREETEMPGROUP")
+  if (!mga$ok) {
+    coll$n_fail_candidate <- coll$n_fail_candidate + 1L
+    return(NA_real_)
+  }
   if (stat_kind == "FITdiff") {
     if (is.null(model$object)) {
       return(NA_real_)
     }
     val <- tryCatch(
-      calculateFIT(mga$fit) - calculateFIT(model$object),
+      calculateFIT(mga$fit) - calculateFIT(model$object), # model$object is the parent
       error = function(e) NULL
     )
     if (is.null(val)) {
@@ -932,29 +904,26 @@ partition_stat <- function(stat_kind, model, mf, subset, goes_left, ctrl) {
     }
     return(val)
   }
-  ## NDT distances need the node's pooled 2-block VCVs (computed once/node).
-  ## cSEM internals (bdiagFit/calculateDG/calculateDL) can throw; guard so no
-  ## exception escapes the selector (would make SimDesign redraw the rep).
-  ## Invariant: within one tree-growing call, `subset` uniquely identifies a
-  ## node and model$object (the pooled fit) is invariant per node, so this
-  ## single-slot cache keyed on subset alone cannot collide across nodes.
+  
   ds <- tryCatch(
     {
-      if (
-        is.null(coll$ndt_pools_subset) ||
-          !identical(coll$ndt_pools_subset, subset)
-      ) {
-        if (is.null(model$object)) {
-          return(NA_real_)
-        }
-        coll$ndt_pools <- ndt_pools(model$object)
-        coll$ndt_pools_subset <- subset
+      if (is.null(model$object)) {
+        return(NA_real_)
+      } else {
+        ndt_dists(
+          Sc_pool = bdiagFit(model$object, .n_blocks = 2L, .type_vcv = "construct"),
+          Si_pool = bdiagFit(model$object, .n_blocks = 2L, .type_vcv = "indicator"),
+          mga_fit = mga$fit,
+          dists = stat_kind
+        )
       }
-      ndt_dists(coll$ndt_pools$Sc, coll$ndt_pools$Si, mga$fit, dists = stat_kind)
     },
     error = function(e) NULL
   )
-  if (is.null(ds)) { coll$n_fail_candidate <- coll$n_fail_candidate + 1L; return(NA_real_) }
+  if (is.null(ds)) {
+    coll$n_fail_candidate <- coll$n_fail_candidate + 1L
+    return(NA_real_)
+  }
   val <- unname(ds[stat_kind])
   ## real_scalar() has already turned a complex or NaN distance into NA_real_,
   ## so a non-finite value here means this candidate's statistic could not be
@@ -967,15 +936,6 @@ partition_stat <- function(stat_kind, model, mf, subset, goes_left, ctrl) {
   }
   val
 }
-
-
-
-## The three split kernels: deliberately repetitive plain functions (no
-## factories). Each is the bare observed-statistic kernel for one candidate
-## partition, argmaxed by argmax_split() when doTrees() is given a .splitter
-## other than "native". Distances are model-implied INDICATOR-VCV only
-## (dGi/dLi) -- Study 1 never works with the construct VCV.
-
 
 #' Split kernel: FIT difference at one candidate partition.
 #' @noRd
