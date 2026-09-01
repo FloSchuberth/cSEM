@@ -5,21 +5,25 @@
 #' [csem()] arguments, so the estimator, modes and convergence settings of the
 #' tree are those of the fit it was given.
 #'
-#' `.influence` chooses the statistic that will be permuted (the conditional-inference or COIN procedure) 
-#' to find which covariate is significantly associated with the transformed 'Y' variable. Currently, only
-#' `"mat"` is supported, which means that the the transformed 'Y' variable is the casewise GSCA squared-residual matrix. 
-#' 
-#' `.splitter` then chooses the cutpoint within the selected covariate. `"native"` is the `partykit::ctree()` default that
-#'  chooses the data partitions that maximize the influence statistic. `"FIT"`, `"DLi"` and `"DGi"` behave similarly,
-#'  but fit multigroup GSCA models on every possible data partition and maximize the difference in either `"FIT"`, `"DLi"` or `"DGi"`
-#'  between the pooled vs multigroup GSCA models.
+#' `.influence` chooses the statistic that will be permuted (the
+#' conditional-inference or COIN procedure) to find which covariate is
+#' significantly associated with the transformed 'Y' variable. Currently only
+#' `"mat"` is supported: the transformed 'Y' is the casewise GSCA
+#' squared-residual matrix \insertCite{Hwang2021a}{cSEM}.
+#'
+#' `.splitter` then chooses the cutpoint within the selected covariate.
+#' `"native"` is the [partykit::ctree()] default, which maximizes the influence
+#' statistic. `"FIT"`, `"DLi"` and `"DGi"` instead refit a two-group GSCA model
+#' on every candidate partition and maximize either the FIT *difference*, or
+#' the `"DLi"`/`"DGi"` matrix *distance*, between the pooled and multigroup
+#' model-implied covariance matrices.
 #' 
 #' @param .object A single-group `cSEMResults` object, as returned by [csem()].
 #'   Its data must contain the `.covariates` columns; [csem()] ignores
 #'   non-indicator columns, so they can simply ride along in the original call.
 #' @param .covariates Character vector of columns of `.object`'s data to
 #'   partition on.
-#' @param .influence Node statistic driving variable selection. Currently only "mat" is supported.
+#' @param .influence Node statistic driving variable selection.
 #' @param .splitter Cutpoint rule. One of "native", "FIT", "DLi" or "DGi".
 #' @param .control Tuning parameters, see [igsca_tree_control()].
 #'
@@ -37,17 +41,16 @@ doTrees <- function(
   .splitter = c("native", "FIT", "DLi", "DGi"),
   .control = igsca_tree_control()
 ) {
-  # Preparation
   influence <- match.arg(.influence)
   splitter <- match.arg(.splitter)
   control <- .control
 
-  args <- csem_tree_args(.object)  # Safely fetches .object$Information$Arguments
+  args <- csem_tree_args(.object) # Safely fetches .object$Information$Arguments
   data <- as.data.frame(args$.data)
   # partition_stat() adds a column named TREE_GROUP_COL ("TREETEMPGROUP") to each
   # candidate node's data and hands it to csem() as `.id`. A column of that name
   # already in the data would be silently overwritten there, so refuse it here
-  # where the user can still see which column is in the way. Exact matching, no regex.
+  # where the user can still see which column is in the way.
   stopifnot(
     "`.object` was fitted on data containing a column named TREETEMPGROUP. doTrees() reserves that name for the grouping column it builds at every candidate split; please rename it." =
       !(TREE_GROUP_COL %in% names(data))
@@ -59,15 +62,16 @@ doTrees <- function(
     "~",
     paste(.covariates, collapse = " + ")
   ) |>
-    stats::as.formula()# See partykit::ctree_control()$splitfun
+    stats::as.formula() # See partykit::ctree_control()$splitfun
 
-  # Environment for collecting  metrics on different kinds of convergence failures found while fitting the tree
+  # Counters for the convergence failures hit while growing the tree
   collector <- new_collector()
 
-  influence_fn <- switch(influence, # from .influence character string
-     mat = influence_mat #,
-     # vec = influence_vec # Uncomment to see the vector influence function. But it is not that great. Code left here to show how future influence functions may be added
-    ) 
+  influence_fn <- switch(
+    influence,
+    mat = influence_mat #,
+    # vec = influence_vec  # Extension point: a second influence function plugs in here
+  )
   
   ytrafo <- function(data, weights, control) {
     mf <- model.frame(data)
@@ -79,12 +83,9 @@ doTrees <- function(
       object = TRUE,
       ...
     ) {
-      # You can get a sense of ctree's trafo by running the following (from ?ctree)
-      # airq <- subset(airquality, !is.na(Ozone))
-      # airct <- ctree(Ozone ~ ., data = airq) 
-      # airct_list<-unclass(airct)
-      # airct_list$trafo
-      # Relatedly, you can get a sense of the influence function for by looking-at/debugging-through partykit:::.y2infl()
+      # To see what ctree hands a trafo:
+      #   unclass(partykit::ctree(Ozone ~ ., subset(airquality, !is.na(Ozone))))$trafo
+      # partykit:::.y2infl() is the influence function it uses by default.
       stopifnot("case weights are not supported by doTrees(). partykit has changed since initial doTrees development, please report to developers." = length(weights) == 0L)
       was_root <- !collector$root_seen
       collector$root_seen <- TRUE
@@ -100,6 +101,9 @@ doTrees <- function(
         } else {
           collector$n_fail_node <- collector$n_fail_node + 1L
         }
+        ## partykit drops this node's info entirely, so attach_leaf_fits() would
+        ## otherwise repeat the identical failing fit and count it a second time.
+        record_failed_subset(collector, subset)
         return(list(
           estfun = NULL,
           converged = FALSE,
@@ -110,11 +114,11 @@ doTrees <- function(
       }
       h <- influence_fn(E)
       ef <- matrix(0, nrow = nrow(mf), ncol = ncol(h))
-      ef[subset, ] <- h # In case I have forgotten why subset is here, note that the ?ctree does the same in its example function
+      ef[subset, ] <- h # ?ctree's own example trafo also writes only the subset rows into a full-length estfun
       list(
-        estfun = ef, # This is what downstream `libcoin::LinStatExpCov()` will work with. You can verify that this specific return item (estfun) is what's important by looking at airct_list$trafo (see the above commented code)
+        estfun = ef, # The one element libcoin::LinStatExpCov() consumes downstream
         converged = TRUE,
-        objfun = sum(E^2), # This is equivalent to the objective function of Equation 9 of Hwang et al. (2021, IGSCA): sum(calculateGSCAErrors(ft$fit)^2). AFAIK, this is just used later for prrinting, it doesn't affect the functionality of anything.
+        objfun = sum(E^2), # Eq. 9 of Hwang et al. (2021, IGSCA). Reported only; nothing downstream reads it.
         object = ft$fit,
         nobs = length(subset)
       )
@@ -139,8 +143,8 @@ doTrees <- function(
     minbucket = control$minbucket,
     minprob = control$minprob,
     maxdepth = control$maxdepth,
-    maxsurrogate = 0L, # In the case of missing data in a covariate this is relevant. This is not handled in our function
-    nmax = c(yx = Inf, z = Inf), # Set to default, but this would affect whether or not the covariates or influence function are binned to lower computation costs.
+    maxsurrogate = 0L, # Surrogate splits for missing covariate values; unsupported here (cf. cc$svsplitfun below)
+    nmax = c(yx = Inf, z = Inf), # Default: no binning of covariates or influence values
     saveinfo = TRUE,
     update = TRUE, # TRUE by default because ytrafo is a function, but does not necessarily refit to terminal nodes
     lookahead = FALSE, # Not supported by IGSCA trees
@@ -149,37 +153,31 @@ doTrees <- function(
 
   split_fn <- switch(
     splitter, # From .splitter
-    native = NULL, 
+    native = NULL,
     FIT = split_max_fitdiff,
     DLi = split_max_dli,
     DGi = split_max_dgi
   )
-  # The relevant code for the native split_fn path is quite deep and written in C. To get a glimpse of it you'd have to run the following code.
-  # It's better to consult Section 4.2 "Splitting criteria" in `vignette("ctree", package = "partykit")`. Basically, by-default, the standardized quadratic linear statistic (c_quad) (returned by LinStatExpCov) is computed for all possible subsets of the data,  and libcoin will give you the index for where to split along the covariate in-order to maximize c_quad
-  # debug(partykit:::.split)
-  # airq <- subset(airquality, !is.na(Ozone))
-  # airct <- ctree(Ozone ~ ., data = airq)
-  # When you're inside .split run
-  # debug(FUN)
-    # debug(.ctree_test)
-      # debug(.ctree_test_1d)
-        # debug(.ctree_test_internal)
-          # Passes the influence to LinStatExpCov, which goes to doTest, which gives you an index.  
-          # debug(doTest)
+  # Native path: the search is written in C. Section 4.2 "Splitting criteria" in
+  # vignette("ctree", package = "partykit") is the readable account -- the
+  # standardized quadratic linear statistic (c_quad) from LinStatExpCov is
+  # maximized over cutpoints and libcoin returns the index to split at.
+  # To watch it: debug(partykit:::.split); partykit::ctree(Ozone ~ ., subset(airquality, !is.na(Ozone)))
+  # Inside, the chain is FUN -> .ctree_test -> .ctree_test_1d -> .ctree_test_internal -> doTest.
   
   # Over-write our ctree_control object even further
   if (!is.null(split_fn)) {
     # The FIT/DLi/DGi kernels score a candidate by refitting it as a TWO-group
     # MGA (partition_stat() builds a grouping column with levels 1/2), so they
     # can only ever put a number on a binary split. partykit's multiway rule
-    # asks for one kid per factor level instead, and argmax_split() would take
-    # its multiway branch -- multiway_split()
+    # asks for one kid per factor level instead, and argmax_split() would answer
+    # with multiway_split(), which no kernel ever scores.
     stopifnot(
       "multiway splitting is not supported by the 'FIT', 'DLi' and 'DGi' splitters, which score two-group refits only. partykit has changed since initial doTrees development, please report to developers." =
         !isTRUE(cc$multiway)
     )
     cc$args <- args # How to refit the cSEM models
-    cc$indicators <- indicators 
+    cc$indicators <- indicators
     cc$collector <- collector
     cc$splitfun <- function( # See partykit::ctree_control()$splitfun -> partykit:::.split() + partykit:::.ctree_test() for what this function needs to accept and return.
       model,
@@ -215,16 +213,18 @@ doTrees <- function(
 
   warn_dead_splitter(collector, splitter) # For FIT, DLi or DGi paths. Just throws a warning if all the scans at the candidate split points don't work
   
-  # ytrafo is not necessarily called at terminal nodes, so sometimes terminal nodes have no csem objects. Here, we refit just the terminal nodes.
-  ## What determines whether it will or will not have a csem object depends on the reason why the tree stopped growing. (No significant covariate -> ytrafo is called. Sample size smaller that minbucket, etc -> ytrafo is not called, tree is stopped, so no csem model fitted) 
+  # partykit only calls ytrafo at nodes it attempts to split, so a node stopped
+  # by minbucket/maxdepth carries no csem object, while one stopped by a failed
+  # test does. Refit only the leaves that need it.
   ret <- attach_leaf_fits(ret, ret$data, args, indicators, collector)
 
-  ## Deletes the fitted csem objects in all non-terminal nodes. Can be helpful to save on RAM and potentially IGSCA forests. Commented out for later
+  ## Not wired up: drop_inner_node_objects(ret) frees the inner-node
+  ## cSEMResults (RAM, forests) at the cost of node inspection.
   ##   ret <- drop_inner_node_objects(ret)
   
   attr(ret, "igsca_info") <- list(
     n_fail_full = collector$n_fail_full, # Convergence failure on root
-    n_fail_node = collector$n_fail_node, # Convergence failure on a node. Similar to n_fail_leaf, but includes inner nodes.
+    n_fail_node = collector$n_fail_node, # Convergence failure on nodes below the root. Similar to n_fail_leaf, but includes inner nodes.
     n_fail_candidate = collector$n_fail_candidate, # Relevant to non-native splitters (FIT, DLi, DGi)
     n_split_scan = collector$n_split_scan, # Number of scans in a selected covariate
     n_fail_split = collector$n_fail_split,  # Failed to split on non-native splitters (FIT, DLi, DGi)
