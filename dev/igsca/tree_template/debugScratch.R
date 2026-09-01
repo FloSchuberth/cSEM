@@ -1,10 +1,21 @@
 # What I am focusing on
-grow_tree(influence = "mat", splitter = "native", control = igsca_tree_control())
+# grow_tree(influence = "mat", splitter = "native", control = igsca_tree_control())
 
 airq <- subset(airquality, !is.na(Ozone))
 airct <- ctree(Ozone ~ ., data = airq) # TODO: What does thes influence function and trafo look like for this?
-
-debug(ctree)
+airct_list <- unclass(airct)
+airct_list$trafo
+# debug(ctree)
+debug(partykit::ctree_control()$splitfun)
+# boomer::rig_in_place(partykit:::.split)
+debug(partykit:::.split)
+# When you're inside .split run
+  debug(FUN)
+    debug(.ctree_test)
+      debug(.ctree_test_1d)
+        debug(.ctree_test_internal)
+        # Passes the influence to LinStatExpCov, which goes to doTest, which gives you an index.  
+        debug(doTest)
 
 # debugonce(grow_tree)
 debug(doTrees)
