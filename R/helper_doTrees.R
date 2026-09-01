@@ -463,39 +463,6 @@ warn_dead_splitter <- function(collector, splitter) {
 #' Admissible binary partitions of one covariate
 #'
 #'
-#' **The `partysplit` encoding is ctree's**, from
-#' `partykit:::.ctree_test_internal()` (`R/ctree.R`): numeric and ordered
-#' covariates get `.partysplit(j, breaks = sp, index = 1L:2L)`, unordered ones
-#' `.partysplit(j, index = as.integer(sp) + 1L)`. Driving that function on a
-#' node directly confirms all three conventions this code relies on -- an
-#' ordered break is a position in `levels(z)`, not in the node's own levels;
-#' an unordered `index` is 1/2 over `levels(z)` with `NA` for levels the node
-#' never sees; a numeric break is an observed value with `zs <= break` going
-#' to kid 1.
-#'
-#'
-#' * **Numeric.** mob takes `uz <- sort(unique(zselect))` and forms
-#'   `zs <- zselect <= uz[i]`; `.objfun_test()` does the same over the
-#'   integer-coded covariate, `sleft <- subset[ix[subset] <= u]` for `u` in
-#'   `which(ixtab > 0)`. The cut dropped here up front -- `zs <= max(uz)`,
-#'   which sends every row left -- is one both generate and then reject on
-#'   `minbucket`. Only the observed-value convention is implemented, that is
-#'   ctree's `intersplit = FALSE` and mob's `numsplit = "left"`; the
-#'   interpolated-midpoint variants are not supported.
-#' * **Ordered.** The cumulative level sets come from the ordered branch of
-#'   `partykit:::.mob_grow_getlevels()` (`R/utils.R`) or, inside
-#'   `.objfun_test()`, from the same `ix[subset] <= u` loop the numeric case
-#'   uses (`ORDERED <- is.ordered(x) || is.numeric(x)`). `match(levs[i],
-#'   levels(z))` is mob's `match(levels(zselect)[which.min(dev)], olevels)`.
-#' * **Unordered.** `.mob_grow_getlevels()` builds the same `2^(K - 1) - 1`
-#'   bit-pattern matrix `intToBits(m)` builds here, in the same order, over the
-#'   levels surviving `factor(zselect)` (that is, `droplevels(zs)`); membership
-#'   is `zselect %in% levels(zselect)[w]`. Re-expanding to `z`'s original
-#'   levels with `NA` for absent ones is mob's
-#'   `ix <- structure(rep.int(NA_integer_, length(olevels)), names = olevels)`
-#'   then `ix[colnames(al)] <- !al[which.min(dev), ]; as.integer(ix) + 1L` --
-#'   that negation is why the selected group is kid `1L` here.
-#'
 #' @param j Column index of the covariate in the model frame.
 #' @param z The covariate over all rows, which fixes the factor levels and
 #'   level order the emitted `partysplit` is expressed in.
@@ -526,7 +493,7 @@ warn_dead_splitter <- function(collector, splitter) {
 #' candidate_partitions(1L, zn, rep(2, 4), minbucket = 1L)
 #' @noRd
 candidate_partitions <- function(j, z, zs, minbucket) {
-  # browser()
+
   # Returns only candidate partitions whose child nodes would have a sample size that is greater than or equal to the minbucket.
   keep_min <- function(cands) {
     Filter( 
@@ -537,41 +504,58 @@ candidate_partitions <- function(j, z, zs, minbucket) {
       cands
     )
   }
-  # Create list of break points based on the metric of z
+
+  # Create list of break points based on the metric of z.
+  # Given 
   if (is.numeric(z) && !is.factor(z)) {
     uz <- sort(unique(zs))
+
     if (length(uz) < 2L) {
       return(list())
     }
     # Vector of cut points in uz
     cuts <- uz[-length(uz)] # Equivalent to uz[1:(length(uz)-1)]
 
-    keep_min(lapply(cuts, function(ct) {
+    # How goes_left for numeric should be done for numeric variables by looking at how data is split for the Wind covariate in ctree.
+    # library(partykit)
+    # airq <- subset(airquality, !is.na(Ozone))
+    # airct <- partykit::ctree(Ozone ~ ., data = airq)
+    # airct
+    # plot(airct)
+    cands <- lapply(cuts, function(ct) {
       list(
-        goes_left = zs <= ct, # mob_grow_findsplit(): `zs <- zselect <= uz[i]`
+        goes_left = zs <= ct, 
         split = partykit::partysplit(
-          as.integer(j),
-          breaks = as.double(ct),
-          index = 1L:2L
+          varid = as.integer(j), 
+          breaks = as.double(ct), # Where to cut
+          index = 1L:2L, # How to number the different parts
+          right = TRUE # So cut is (-Inf, ct] and zs <= ct goes left
         )
       )
-    }))
+    }) |> 
+      keep_min()
+
+    return(cands)
   } else if (is.ordered(z)) {
     levs <- levels(droplevels(zs))
     K <- length(levs)
     if (K < 2L) {
       return(list())
     }
-    keep_min(lapply(1L:(K - 1L), function(i) {
+    cands <- lapply(1L:(K - 1L), function(i) {
       list(
-        goes_left = zs %in% levs[1L:i], # .mob_grow_getlevels(), ordered branch
+        goes_left = zs %in% levs[1L:i], 
         split = partykit::partysplit(
-          as.integer(j),
+          varid = as.integer(j),
           breaks = as.integer(match(levs[i], levels(z))),
-          index = 1L:2L
+          index = 1L:2L,
+          right = TRUE 
         )
       )
-    }))
+    }) |>
+      keep_min()
+
+    return(cands)
   } else if (is.factor(z)) {
     levs <- levels(droplevels(zs))
     K <- length(levs)
@@ -589,16 +573,28 @@ candidate_partitions <- function(j, z, zs, minbucket) {
       )
     }
     olev <- levels(z)
-    keep_min(lapply(1L:(2L^(K - 1L) - 1L), function(m) {
+
+    # From `partykit:::.ctree_test_internal()` (`R/ctree.R`): unordered covariates get `.partysplit(j, index = as.integer(sp) + 1L)`
+    cands <- lapply(1L:(2L^(K - 1L) - 1L), function(m) {
       g <- levs[as.logical(intToBits(m))[1L:K]]
       idx <- rep(NA_integer_, length(olev))
       idx[match(levs, olev)] <- ifelse(levs %in% g, 1L, 2L)
       list(
         goes_left = zs %in% g, # mob_grow_findsplit(): `zselect %in% levels(zselect)[w]`
-        split = partykit::partysplit(as.integer(j), index = idx)
+        split = partykit::partysplit(
+          varid = as.integer(j),
+          index = idx,
+          right = TRUE
+        )
       )
-    }))
-  } else list()
+    }) |>
+      keep_min()
+
+    return(cands)
+  } else {
+    warning2("Covariate ", j, " is of an invalid data type. Please see candidate_partitions() for what is supported.")
+    return(list())
+  }
 }
 
 #' @returns List
