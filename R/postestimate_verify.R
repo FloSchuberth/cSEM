@@ -145,7 +145,7 @@ verify <- function(.object){
       "UniqueLoading" = all(x2$Unique_loading_estimates[indicator_c] == 0)
     )
 
-    stat["6"] <- !any(zeroness)
+    stat["6"] <- !all(zeroness)
     
     class(stat) <- "cSEMVerify"
     stat 
