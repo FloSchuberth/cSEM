@@ -135,7 +135,8 @@ doTrees <- function(
     nmax = c(yx = Inf, z = Inf), # Set to default, but this would affect whether or not the covariates or influence function are binned to lower computation costs.
     saveinfo = TRUE,
     update = TRUE, # TRUE by default because ytrafo is a function, but does not necessarily refit to terminal nodes
-    lookahead = FALSE # Not supported by IGSCA trees
+    lookahead = FALSE, # Not supported by IGSCA trees
+    intersplit = FALSE # Explicitly set to ctree_control defaults
   )
 
   split_fn <- switch(
