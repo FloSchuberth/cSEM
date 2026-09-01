@@ -337,16 +337,6 @@ test_that("candidate_partitions() breaks at observed values, as ctree does", {
   # below the gap rather than the midpoint.
   obs <- candidate_partitions(1L, z, z, minbucket = 1L)
   expect_identical(brk(obs), c(1, 2, 4))
-
-  mid <- candidate_partitions(1L, z, z, minbucket = 1L, intersplit = TRUE)
-  expect_identical(brk(mid), c(1.5, 3, 6))
-
-  # Both conventions cut the node's own rows identically -- they differ only
-  # for values that fall in the gap, which is what intersplit is about.
-  expect_identical(
-    lapply(obs, function(cc) cc$goes_left),
-    lapply(mid, function(cc) cc$goes_left)
-  )
 })
 
 test_that("candidate_partitions() emits splits partykit routes as told", {
@@ -466,52 +456,4 @@ test_that("argmax_split() splits an unordered factor multiway, without the kerne
   # cutpoint rule is consulted and none of the kernels can override it.
   expect_false(called)
   expect_identical(partykit::index_split(sp), c(1L, 2L, 3L, 3L))
-})
-
-test_that("argmax_split() drops a split whose kids lookahead rejects", {
-  mf <- data.frame(z = rep(1:5, each = 20L))
-  kern <- function(model, mf, subset, goes_left, ctrl) as.numeric(sum(goes_left))
-  # partykit refits the node model in each kid and abandons the covariate when
-  # any kid fails to converge; only the whole node converges here.
-  trafo <- function(subset, weights = integer(0), ...) {
-    list(converged = length(subset) == nrow(mf))
-  }
-  args <- list(
-    splitter = kern,
-    collector = new_collector(),
-    model = list(object = NULL),
-    trafo = trafo,
-    mf = mf,
-    subset = seq_len(nrow(mf)),
-    whichvar = 1L
-  )
-  expect_null(
-    do.call(argmax_split, c(args, list(ctrl = list(minbucket = 20L, lookahead = TRUE))))
-  )
-  # ... and the same fixture splits with lookahead off, so the NULL above is
-  # the check's doing and not an unsplittable covariate.
-  expect_s3_class(
-    do.call(argmax_split, c(args, list(ctrl = list(minbucket = 20L)))),
-    "partysplit"
-  )
-})
-
-test_that("a lookahead rejection is not blamed on the split kernel", {
-  # warn_dead_splitter() reads n_fail_split == n_split_scan as "this kernel is
-  # broken". A kernel that returned a finite statistic which lookahead then
-  # threw away must not be counted that way.
-  mf <- data.frame(z = rep(1:5, each = 20L))
-  coll <- new_collector()
-  argmax_split(
-    splitter = function(model, mf, subset, goes_left, ctrl) as.numeric(sum(goes_left)),
-    collector = coll,
-    model = list(object = NULL),
-    trafo = function(subset, weights = integer(0), ...) list(converged = FALSE),
-    mf = mf,
-    subset = seq_len(nrow(mf)),
-    whichvar = 1L,
-    ctrl = list(minbucket = 20L, lookahead = TRUE)
-  )
-  expect_identical(coll$n_split_scan, 1L)
-  expect_identical(coll$n_fail_split, 0L)
 })

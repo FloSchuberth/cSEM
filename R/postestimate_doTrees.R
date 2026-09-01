@@ -136,7 +136,7 @@ doTrees <- function(
     saveinfo = TRUE,
     update = TRUE, # TRUE by default because ytrafo is a function, but does not necessarily refit to terminal nodes
     lookahead = FALSE, # Not supported by IGSCA trees
-    intersplit = FALSE # Explicitly set to ctree_control defaults
+    intersplit = FALSE # Not supported by IGSCA trees; candidate_partitions() always breaks at the observed value
   )
 
   split_fn <- switch(
@@ -179,7 +179,7 @@ doTrees <- function(
         splitter = split_fn,
         collector = collector,
         model = model,        
-        trafo = trafo, # Only ctrl$lookahead reads this, and it needs the very trafo that fits the node -- partykit hands the splitfun the same one.
+        trafo = trafo, # Accepted for partykit's splitfun contract but unread: argmax_split() dropped it with lookahead support.
         mf = model.frame(data),
         subset = subset,
         whichvar = whichvar,

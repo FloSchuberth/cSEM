@@ -373,8 +373,7 @@ argmax_split <- function(
         j = j,
         z = z,
         zs = z[sub_j],
-        minbucket = ctrl$minbucket,
-        intersplit = isTRUE(ctrl$intersplit)
+        minbucket = ctrl$minbucket
       )
       if (!length(cands)) {
         next
@@ -481,7 +480,9 @@ warn_dead_splitter <- function(collector, splitter) {
 #'   integer-coded covariate, `sleft <- subset[ix[subset] <= u]` for `u` in
 #'   `which(ixtab > 0)`. The cut dropped here up front -- `zs <= max(uz)`,
 #'   which sends every row left -- is one both generate and then reject on
-#'   `minbucket`.
+#'   `minbucket`. Only the observed-value convention is implemented, that is
+#'   ctree's `intersplit = FALSE` and mob's `numsplit = "left"`; the
+#'   interpolated-midpoint variants are not supported.
 #' * **Ordered.** The cumulative level sets come from the ordered branch of
 #'   `partykit:::.mob_grow_getlevels()` (`R/utils.R`) or, inside
 #'   `.objfun_test()`, from the same `ix[subset] <= u` loop the numeric case
@@ -501,17 +502,6 @@ warn_dead_splitter <- function(collector, splitter) {
 #'   level order the emitted `partysplit` is expressed in.
 #' @param zs The covariate over this node's non-missing rows.
 #' @param minbucket Smallest child either kid may be left with.
-#' @param intersplit Report a numeric break as the midpoint of the gap rather
-#'   than the observed value below it. `FALSE`, the default, matches both ctree
-#'   (`intersplit = FALSE`) and mob (`numsplit = "left"`). `TRUE` follows mob's
-#'   `numsplit = "center"`, `mean(uz[which.min(dev) + 0:1])`, interpolating
-#'   between the values present *in this node*. ctree's `intersplit = TRUE` is
-#'   **not** the same rule: it interpolates against `ux`, the distinct values of
-#'   the whole learning sample (`.ctree_test_1d()` sets `ux <- levels(X)` from
-#'   the `extree_data()` index, then `.ctree_test_internal()` takes
-#'   `(ux[sp] + ux[sp + 1])/2`). On a node holding only `1, 3, 5` out of a
-#'   global `1:5`, ctree reports `3.5` where this function reports `4` -- the
-#'   same partition of the node, a different threshold for new data.
 #' @return A list of candidate partitions, one per admissible split, each a
 #'   list with `$split` (a `partysplit`) and `$goes_left` (the logical vector
 #'   over `zs` saying which of the node's rows go to the first kid). Empty when
@@ -536,7 +526,7 @@ warn_dead_splitter <- function(collector, splitter) {
 #' ## Nothing to split on.
 #' candidate_partitions(1L, zn, rep(2, 4), minbucket = 1L)
 #' @noRd
-candidate_partitions <- function(j, z, zs, minbucket, intersplit = FALSE) {
+candidate_partitions <- function(j, z, zs, minbucket) {
   # browser()
   # Returns only candidate partitions whose child nodes would have a sample size that is greater than or equal to the minbucket.
   keep_min <- function(cands) {
@@ -556,27 +546,17 @@ candidate_partitions <- function(j, z, zs, minbucket, intersplit = FALSE) {
     }
     # Vector of cut points in uz
     cuts <- uz[-length(uz)] # Equivalent to uz[1:(length(uz)-1)]
-    
-    # Takes the midpoint between the cuts as the candidate break points
-    brks <- if (intersplit) {
-      (uz[-1L] + cuts) / 2
-    } else {
-      cuts
-    }
-    keep_min(Map(
-      function(ct, br) {
-        list(
-          goes_left = zs <= ct, # mob_grow_findsplit(): `zs <- zselect <= uz[i]`
-          split = partykit::partysplit(
-            as.integer(j),
-            breaks = as.double(br),
-            index = 1L:2L
-          )
+
+    keep_min(lapply(cuts, function(ct) {
+      list(
+        goes_left = zs <= ct, # mob_grow_findsplit(): `zs <- zselect <= uz[i]`
+        split = partykit::partysplit(
+          as.integer(j),
+          breaks = as.double(ct),
+          index = 1L:2L
         )
-      },
-      cuts,
-      brks
-    ))
+      )
+    }))
   } else if (is.ordered(z)) {
     levs <- levels(droplevels(zs))
     K <- length(levs)
