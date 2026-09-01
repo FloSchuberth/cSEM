@@ -578,7 +578,7 @@ candidate_partitions <- function(j, z, zs, minbucket) {
       )
     }
 
-    # Taken from partykit:::mob_grow_getlevels()
+    # Taken from partykit:::mob_grow_getlevels(), GPL-2 and GPL-3 License
     nl <- nlevels(z)
     ## Stirling number of the second kind S(K, n = 2) 
     mi <- 2^(nl - 1L) - 1L
