@@ -473,6 +473,8 @@ warn_dead_splitter <- function(collector, splitter) {
 #'   over `zs` saying which of the node's rows go to the first kid). Empty when
 #'   the covariate is constant in the node or every cut violates `minbucket`.
 #'
+#' @importFrom partykit mob_grow_getlevels
+#' 
 #' @examples
 #' ## Numeric: one cut per distinct value except the largest, `zs <= ct`.
 #' zn <- c(1, 2, 2, 3, 5, 8)
@@ -557,11 +559,14 @@ candidate_partitions <- function(j, z, zs, minbucket) {
 
     return(cands)
   } else if (is.factor(z)) {
+    
     levs <- levels(droplevels(zs))
     K <- length(levs)
+
     if (K < 2L) {
       return(list())
     }
+
     # Maximum number of levels in a nominal covariate. 
     # 11 levels is 1023 fits for one covariate at one node.
     if (K > 11L) {
@@ -572,18 +577,31 @@ candidate_partitions <- function(j, z, zs, minbucket) {
         "`.splitter = \"native\"`."
       )
     }
-    olev <- levels(z)
 
-    # From `partykit:::.ctree_test_internal()` (`R/ctree.R`): unordered covariates get `.partysplit(j, index = as.integer(sp) + 1L)`
-    cands <- lapply(1L:(2L^(K - 1L) - 1L), function(m) {
-      g <- levs[as.logical(intToBits(m))[1L:K]]
-      idx <- rep(NA_integer_, length(olev))
-      idx[match(levs, olev)] <- ifelse(levs %in% g, 1L, 2L)
+    # Taken from partykit:::mob_grow_getlevels()
+    nl <- nlevels(z)
+    ## Stirling number of the second kind S(K, n = 2) 
+    mi <- 2^(nl - 1L) - 1L
+    indx <- matrix(0, nrow = mi, ncol = nl)
+    for (i in 1L:mi) {
+        ii <- i
+        for (l in 1L:nl) {
+            indx[i, l] <- ii%%2L
+            ii <- ii%/%2L
+        }
+    }
+    rownames(indx) <- apply(indx, 1L, function(x) {
+      paste(levels(z)[x > 0], collapse = "+")
+    })
+    colnames(indx) <- as.character(levels(z))
+    storage.mode(indx) <- "logical"
+    
+    cands <- lapply(seq(mi), function(m) {  
       list(
-        goes_left = zs %in% g, # mob_grow_findsplit(): `zselect %in% levels(zselect)[w]`
+        goes_left = zs %in% colnames(indx)[indx[m, , drop = FALSE]], 
         split = partykit::partysplit(
           varid = as.integer(j),
-          index = idx,
+          index = idx, # TODO: Fix
           right = TRUE
         )
       )
@@ -837,25 +855,6 @@ plot.igsca_tree <- function(x, terminal_panel = NULL, FUN = NULL, tp_args = NULL
   partykit::plot.party(x, terminal_panel = terminal_panel, tp_args = tp_args, ...)
 }
 
-
-
-# Split kernels for doTrees() ----------------------------------------------
-#
-# doTrees() has one selector -- partykit's own COIN variable selection, driven
-# by the influence_mat/influence_vec statistic -- and four cutpoint rules. This
-# section holds the three that are not partykit's own:
-#
-#   split_max_fitdiff / split_max_dli / split_max_dgi
-#
-# Splitter contract (a statistic kernel argmaxed by argmax_split(), which
-# doTrees() installs as the engine's splitfun):
-#   split_*(model, mf, subset, goes_left, ctrl) -> scalar observed statistic
-#
-# Each is evaluated at every admissible candidate partition of the selected
-# covariate (one two-group MGA fit each; the node's pooled fit comes free from
-# the trafo as model$object) and the argmax wins. No permutation is involved:
-# see the note under `R_test` in igsca_tree_control().
-
 #' Reserved name of the two-level grouping column partition_stat() adds to a node's data
 #' and hands csem() as `.id`.
 #'
@@ -954,13 +953,6 @@ split_max_dli <- function(model, mf, subset, goes_left, ctrl) {
 #' replicated-block pooled VCVs.
 #'
 #' `dists` names the distances actually wanted.
-#'
-#' Isolating the calls is also what keeps a "DLi" run clean. Computing all four
-#' unconditionally into one c() meant a complex value out of calculateDG()
-#' coerced the whole vector to complex, so `ds["DLi"]` in partition_stat() came
-#' back complex even though calculateDL() had never misbehaved.
-#'
-#'
 #' @noRd
 ndt_dists <- function(Sc_pool, Si_pool, mga_fit,
                       dists = c("DGc", "DGi", "DLc", "DLi")) {
