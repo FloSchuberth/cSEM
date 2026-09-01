@@ -365,7 +365,7 @@ argmax_split <- function(
         identical(as.numeric(ctrl$maxsurrogate), 0) &&
         nlevels(droplevels(z[subset])) > 1L
     ) {
-      # FIXME: Placeholder for multiway_split funcitonality (not currently supported)
+      # Placeholder for multiway_split funcitonality (not currently supported)
       ret <- multiway_split(j, z, z[subset], ctrl$minbucket)
     } else {
       sub_j <- subset[!is.na(z[subset])]
