@@ -353,7 +353,7 @@ argmax_split <- function(
   ctrl,
   weights = integer(0)
 ) {
-  browser()
+  # browser()
   scanned <- FALSE
   got_stat <- FALSE
   ret <- NULL # looping over whichvar is the same idiom as in partykit:::.split
