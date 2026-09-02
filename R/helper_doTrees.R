@@ -103,10 +103,8 @@ csem_tree_args <- function(.object) {
 
 #' Check the tree can be grown from this fit
 #'
-#' One thing partykit and csem() would otherwise report from far away:
-#' `calculateGSCAErrors()` returns `NA` (not an error) off a non-GSCA fit, so the
-#' node statistic would fail deep inside the trafo. Every `.influence` value
-#' reads it, so every fit `doTrees()` is given must be a GSCA one.
+#' Catches, up front, what partykit and csem() would otherwise report from far
+#' away. Each check records at its own site why the failure is hard to read.
 #' @noRd
 validate_tree_input <- function(data, indicators, covariates, influence,
                                 splitter, args) {
@@ -146,6 +144,27 @@ validate_tree_input <- function(data, indicators, covariates, influence,
       "The following are neither: ", paste(bad, collapse = ", "),
       ". Convert them first -- a logical or character covariate is a factor."
     )
+  }
+  ## The unordered-factor scan costs 2^(K - 1) - 1 two-group IGSCA fits, so
+  ## candidate_partitions() refuses above 11 levels. That refusal fires from
+  ## inside partykit's splitfun, i.e. after an arbitrary amount of tree growth
+  ## and naming a model-frame column index rather than the user's covariate.
+  ## Same limit, checked up front and by name.
+  if (!identical(splitter, "native")) {
+    too_many <- covariates[vapply(
+      data[covariates],
+      function(z) is.factor(z) && !is.ordered(z) && nlevels(droplevels(z)) > 11L,
+      logical(1)
+    )]
+    if (length(too_many)) {
+      stop2(
+        "`.splitter = \"", splitter, "\"` scans every binary grouping of an ",
+        "unordered factor, each costing a two-group IGSCA fit. The following ",
+        "have more than 11 levels: ", paste(too_many, collapse = ", "),
+        ". Collapse them, make them ordered factors, or use ",
+        "`.splitter = \"native\"`."
+      )
+    }
   }
   ## Both surviving `.influence` values read calculateGSCAErrors(), which
   ## returns NA rather than erroring off a non-GSCA fit -- so without this the
@@ -208,8 +227,10 @@ validate_tree_input <- function(data, indicators, covariates, influence,
 #'   `coin_distribution = "approximate"`; ignored entirely under
 #'   `"asymptotic"`.
 #'
-#' @param coin_distribution How the conditional-inference family evaluates the
-#'   null distribution. See `?partykit::ctree_control()` and `?libcoin::LinStatExpCov` for more information.
+#' @param coin_distribution How the null distribution of the permutation
+#'   statistic is evaluated: `"approximate"` draws `R_test` permutation
+#'   resamples, `"asymptotic"` uses its limiting distribution. See
+#'   `?partykit::ctree_control()` and `?libcoin::LinStatExpCov`.
 #'
 #' @returns A named `list` of tuning parameters.
 #' @seealso [doTrees()]
@@ -245,8 +266,8 @@ igsca_tree_control <- function(alpha = 0.05,
 
 #' Casewise sum of squared GSCA residuals (n x 1) -- the "vec" influence.
 #'
-#' 
-#'
+#' Not wired up: see the commented switch arm in doTrees(), which is the
+#' extension point a second influence function would use.
 #' @noRd
 influence_vec <- function(E) {
   matrix(rowSums(E^2), ncol = 1L)
@@ -336,9 +357,8 @@ csem_converged <- function(fit) {
 
 #' Best cutpoint for a (list of) covariate(s) based on the type of splitter statistic
 #'
-#' 'Best cutpoint' is defined as the partition of data along the covariate
-#' that maximizes the difference in the statistic between the multigroup and pooled
-#' csem model.
+#' 'Best' is the candidate partition maximizing whatever `splitter` returns;
+#' see partition_stat() for what the shipped kernels score.
 #'
 #' This function is based off of `partykit:::.split()`.
 #' @noRd
@@ -353,9 +373,7 @@ argmax_split <- function(
   ctrl,
   weights = integer(0)
 ) {
-  scanned <- FALSE
-  got_stat <- FALSE
-  ret <- NULL # looping over whichvar is the same idiom as in partykit:::.split
+  ret <- NULL
   if (length(whichvar) == 0) return(ret) 
   for (j in whichvar) { # Presumably whichvar is given in the order of the statistically significant covariates
     z <- mf[[j]]
@@ -393,23 +411,18 @@ argmax_split <- function(
         },
         numeric(1)
       )
-      ## The kernel was actually evaluated on this covariate, so the invocation
-      ## counts as a scan regardless of what came back.
-      scanned <- TRUE
+      ## Counted per covariate, not per node: a kernel that dies on one
+      ## covariate but works on the next has to stay visible to
+      ## warn_dead_splitter(), which compares the two counters.
+      collector$n_split_scan <- collector$n_split_scan + 1L
       if (!any(is.finite(stats))) {
+        collector$n_fail_split <- collector$n_fail_split + 1L
         next
       }
-      got_stat <- TRUE
-      ret <- cands[[which.max(stats)]]$split # Here is where the maximum is taken. cands is a nested list
+      ret <- cands[[which.max(stats)]]$split
     }
     if (!is.null(ret)) {
-      (break)()
-    }
-  }
-  if (scanned) {
-    collector$n_split_scan <- collector$n_split_scan + 1L # Successful scan of covariate
-    if (!got_stat) {
-      collector$n_fail_split <- collector$n_fail_split + 1L # Failure to split on this covariate
+      break
     }
   }
   return(ret)
@@ -450,11 +463,23 @@ warn_dead_splitter <- function(collector, splitter) {
   if (splitter == "native" || n == 0L || collector$n_fail_split < n) {
     return(invisible(NULL))
   }
-  warning2(paste0(
-    "The '", splitter, "' split kernel produced no usable statistic at any of ",
-    "the ", n, " node(s) where it was scanned, so no split point could be ",
-    "chosen from it and the tree was grown as if no split were admissible. ",
+  ## n_fail_candidate separates the two ways this happens: > 0 means the kernel
+  ## ran and the two-group refits it scores did not converge, which is a
+  ## property of the data, not of the kernel.
+  cause <- if (collector$n_fail_candidate > 0L) {
+    paste0(
+      "All ", collector$n_fail_candidate, " candidate partition(s) failed to ",
+      "produce a usable two-group fit, so this is most likely the data (or ",
+      "`minbucket`) rather than the kernel."
+    )
+  } else {
     "Check that the kernel runs standalone via partition_stat()."
+  }
+  warning2(paste0(
+    "The '", splitter, "' split kernel produced no usable statistic in any of ",
+    "the ", n, " covariate scan(s) it was asked for, so no split point could ",
+    "be chosen from it and the tree was grown as if no split were admissible. ",
+    cause
   ))
   invisible(NULL)
 }
@@ -505,8 +530,6 @@ candidate_partitions <- function(j, z, zs, minbucket) {
     )
   }
 
-  # Create list of break points based on the metric of z.
-  # Given 
   if (is.numeric(z) && !is.factor(z)) {
     uz <- sort(unique(zs))
 
@@ -516,12 +539,8 @@ candidate_partitions <- function(j, z, zs, minbucket) {
     # Vector of cut points in uz
     cuts <- uz[-length(uz)] # Equivalent to uz[1:(length(uz)-1)]
 
-    # How goes_left for numeric should be done for numeric variables by looking at how data is split for the Wind covariate in ctree.
-    # library(partykit)
-    # airq <- subset(airquality, !is.na(Ozone))
-    # airct <- partykit::ctree(Ozone ~ ., data = airq)
-    # airct
-    # plot(airct)
+    # Matches ctree's own numeric convention; cf. the Wind cut in
+    # plot(ctree(Ozone ~ ., subset(airquality, !is.na(Ozone)))).
     cands <- lapply(cuts, function(ct) {
       list(
         goes_left = zs <= ct, 
@@ -576,7 +595,8 @@ candidate_partitions <- function(j, z, zs, minbucket) {
         "`.splitter = \"native\"`."
       )
     }
-    # observed levels
+    # The covariate's FULL level set, including levels absent from this node --
+    # the partysplit's index has to be expressed over it, not over levs.
     observed_levs <- levels(z)
     # boomer::boom(match(levs, observed_levs))
     pos <- match(levs, observed_levs) # Gives the mapping of zs (levs) to z (observed_levs)
@@ -616,8 +636,8 @@ candidate_partitions <- function(j, z, zs, minbucket) {
   }
 }
 
-#' @returns List
-#'
+#' Counters for the failures hit while growing one tree
+#' @noRd
 new_collector <- function() {
   e <- new.env(parent = emptyenv())
   e$root_seen <- FALSE      # first trafo call = root fit (full vs node fail)
@@ -627,17 +647,38 @@ new_collector <- function() {
   e$n_split_scan <- 0L
   e$n_fail_split <- 0L
   e$n_fail_leaf <- 0L
+  e$failed_subsets <- list()  # row sets whose trafo fit already failed
   e
 }
 
 
 
 
+#' Remember / recall a node whose trafo fit already failed
+#'
+#' partykit drops a node's info entirely when the trafo fails there
+#' (`updatetrafo()` returns `NULL`, so `.extree_node()` returns a bare
+#' `partynode`), which makes such a leaf indistinguishable from one the trafo
+#' never visited. Fingerprinting the row set is what lets `attach_leaf_fits()`
+#' tell them apart.
+#' @noRd
+record_failed_subset <- function(collector, subset) {
+  collector$failed_subsets[[length(collector$failed_subsets) + 1L]] <-
+    as.integer(subset)
+  invisible(NULL)
+}
+
+#' @noRd
+subset_failed <- function(collector, rows) {
+  rows <- as.integer(rows)
+  any(vapply(collector$failed_subsets, identical, logical(1), rows))
+}
+
+
 #' Fit the IGSCA model at every terminal node and attach it to the tree
 #'
 #' partykit only calls the trafo at nodes it *attempts to split*, so leaves come
 #' back with `info = NULL` and every leaf-reading method sees nothing.
-#'
 #'
 #' Costs one IGSCA fit per leaf that does not already have one. Failures are
 #' counted into `collector$n_fail_leaf` and leave `converged = FALSE` on that
@@ -655,7 +696,7 @@ attach_leaf_fits <- function(tree, mf, args, indicators, collector) {
 
   ## as.list()/as.partynode() is partykit's own round-trip and is identity-
   ## preserving when the info is left alone, so only the leaves change.
-  nd <- as.list(partykit::node_party(tree)) # This is the idiom to go
+  nd <- as.list(partykit::node_party(tree))
   names(nd) <- vapply(nd, function(n) as.character(n$id), character(1))
 
   fits <- lapply(ids, function(id) {
@@ -665,6 +706,16 @@ attach_leaf_fits <- function(tree, mf, args, indicators, collector) {
       return(NULL)
     }
     rows <- which(leaf == id)
+    ## Already failed in the trafo: the refit is deterministic, so it would fail
+    ## again and book one event into n_fail_leaf on top of n_fail_full/n_fail_node.
+    if (subset_failed(collector, rows)) {
+      return(list(
+        nobs = length(rows),
+        converged = FALSE,
+        objfun = NA_real_,
+        object = NULL
+      ))
+    }
     ft <- try_fit(mf[rows, indicators, drop = FALSE], args)
     if (!ft$ok) {
       collector$n_fail_leaf <- collector$n_fail_leaf + 1L
@@ -690,7 +741,7 @@ attach_leaf_fits <- function(tree, mf, args, indicators, collector) {
     key <- as.character(nd[[i]]$id)
     if (is.null(nd[[i]]$kids) && !is.null(fits[[key]])) { # Makes sure that we're not over-writing already fitted models or inner nodes
       info <- as.list(nd[[i]]$info)
-      info[names(fits[[key]])] <- fits[[key]] # Rewrites the entire info, nobs, converged, objfun and object
+      info[names(fits[[key]])] <- fits[[key]] # merge, don't replace: the node's criteria must survive
       nd[[i]]$info <- info
     }
   }
@@ -702,7 +753,8 @@ attach_leaf_fits <- function(tree, mf, args, indicators, collector) {
 #'
 #' Every inner node's info carries a full `cSEMResults` object, because
 #' `saveinfo = TRUE` persists whatever the trafo returned and the trafo must
-#' return it (see the note in [doTrees()]). A `maxdepth = 3` tree can therefore
+#' return it (`saveinfo = TRUE` in doTrees()'s ctree_control() call persists
+#' whatever the trafo returned). A `maxdepth = 3` tree can therefore
 #' retain up to seven of them. This drops those payloads after growing, leaving
 #' the criteria, `nobs` and `objfun` intact. Terminal nodes are untouched, so
 #' the leaf fits attached by `attach_leaf_fits()` survive.
@@ -731,8 +783,13 @@ drop_inner_node_objects <- function(tree) {
 #'
 #' Present whether or not the root went on to split: a root that tested every
 #' covariate and rejected none still reports the criteria that made it stop.
-#' `NULL` only when no test ran at all, which means the root trafo failed and
-#' `n_fail_full` is 1.
+#'
+#' `NULL` whenever no test ran, which is *not* the same as a failed fit.
+#' `partykit:::.extree_node()` returns a bare node carrying no info on four
+#' paths: the root trafo failed (`n_fail_full` is 1), `maxdepth` is 0,
+#' fewer rows than `minsplit`, or every covariate returned an NA criterion
+#' (e.g. all of them constant). Only the first sets `n_fail_full`, so `NULL`
+#' criteria on their own do not imply a failure.
 #'
 #' @param tree A tree returned by [doTrees()].
 #' @returns The root node's criteria `matrix`, or `NULL` if no test ran.
@@ -808,8 +865,10 @@ coef.igsca_tree <- function(object, node = NULL, parameters = "all",
     })
   )
   rownames(cf) <- as.character(node)
-  if (drop) {
-    drop(cf)
+  ## Not drop(): that also collapses a single-column result, so a tree whose
+  ## every leaf refit failed (nobs the only column) would come back as a vector.
+  if (drop && nrow(cf) == 1L) {
+    cf[1L, ]
   } else {
     cf
   }
@@ -856,16 +915,16 @@ plot.igsca_tree <- function(x, terminal_panel = NULL, FUN = NULL, tp_args = NULL
   partykit::plot.party(x, terminal_panel = terminal_panel, tp_args = tp_args, ...)
 }
 
-#' Reserved name of the two-level grouping column partition_stat() adds to a node's data
-#' and hands csem() as `.id`.
-#'
+#' Grouping column partition_stat() adds to a node's data and passes csem() as
+#' `.id`. See doTrees(), which refuses data already carrying this name.
 #' @noRd
 TREE_GROUP_COL <- "TREETEMPGROUP"
 
+#' Observed statistic for one candidate partition
 #'
-#' Observed statistic for one candidate partition. `stat_kind` is "FITdiff"
-#' (NPT) or an ndt_dists() distance name -- "DGi"/"DLi" only.
-#'
+#' `stat_kind` is "FITdiff" or one of ndt_dists()'s distance names. Only the
+#' indicator-level distances have split kernels; DGc/DLc are reachable by
+#' calling this directly.
 #' @noRd
 partition_stat <- function(stat_kind, model, mf, subset, goes_left, ctrl) {
   
@@ -896,7 +955,10 @@ partition_stat <- function(stat_kind, model, mf, subset, goes_left, ctrl) {
       calculateFIT(mga$fit) - calculateFIT(model$object), # model$object is the parent
       error = function(e) NULL
     )
-    if (is.null(val)) {
+    ## Mirrors the distance branch below: FIT is 1 - SS_unexplained/SS_total, so
+    ## a degenerate node yields NaN/Inf with no error, and an Inf would win
+    ## which.max() in argmax_split() outright.
+    if (is.null(val) || !is.finite(val)) {
       coll$n_fail_candidate <- coll$n_fail_candidate + 1L
       return(NA_real_)
     }
@@ -973,7 +1035,7 @@ ndt_dists <- function(Sc_pool, Si_pool, mga_fit,
     bdiagFit(mga_fit, .type_vcv = "indicator")
   }
 
-  ## real_scalar() is forces a plain double. This is necessary because calculateDG() can
+  ## real_scalar() forces a plain double. This is necessary because calculateDG() can
   ## return a complex scalar, which would silently convert the type of data of every other 
   ## distance. 
   ##
