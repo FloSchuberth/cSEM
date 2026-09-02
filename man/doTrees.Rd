@@ -20,7 +20,7 @@ non-indicator columns, so they can simply ride along in the original call.}
 \item{.covariates}{Character vector of columns of \code{.object}'s data to
 partition on.}
 
-\item{.influence}{Node statistic driving variable selection. Currently only "mat" is supported.}
+\item{.influence}{Node statistic driving variable selection.}
 
 \item{.splitter}{Cutpoint rule. One of "native", "FIT", "DLi" or "DGi".}
 
@@ -38,14 +38,18 @@ whose model estimates differ. Every node is refit by replaying \code{.object}'s 
 tree are those of the fit it was given.
 }
 \details{
-\code{.influence} chooses the statistic that will be permuted (the conditional-inference or COIN procedure)
-to find which covariate is significantly associated with the transformed 'Y' variable. Currently, only
-\code{"mat"} is supported, which means that the the transformed 'Y' variable is the casewise GSCA squared-residual matrix.
+\code{.influence} chooses the statistic that will be permuted (the
+conditional-inference or COIN procedure) to find which covariate is
+significantly associated with the transformed 'Y' variable. Currently only
+\code{"mat"} is supported: the transformed 'Y' is the casewise GSCA
+squared-residual matrix \insertCite{Hwang2021a}{cSEM}.
 
-\code{.splitter} then chooses the cutpoint within the selected covariate. \code{"native"} is the \code{partykit::ctree()} default that
-chooses the data partitions that maximize the influence statistic. \code{"FIT"}, \code{"DLi"} and \code{"DGi"} behave similarly,
-but fit multigroup GSCA models on every possible data partition and maximize the difference in either \code{"FIT"}, \code{"DLi"} or \code{"DGi"}
-between the pooled vs multigroup GSCA models.
+\code{.splitter} then chooses the cutpoint within the selected covariate.
+\code{"native"} is the \code{\link[partykit:ctree]{partykit::ctree()}} default, which maximizes the influence
+statistic. \code{"FIT"}, \code{"DLi"} and \code{"DGi"} instead refit a two-group GSCA model
+on every candidate partition and maximize either the FIT \emph{difference}, or
+the \code{"DLi"}/\code{"DGi"} matrix \emph{distance}, between the pooled and multigroup
+model-implied covariance matrices.
 }
 \references{
 \insertAllCited{}

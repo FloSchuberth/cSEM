@@ -54,8 +54,8 @@ grow_tree <- function(influence, splitter, control, object = res,
 expect_grew <- function(tree) {
   expect_s3_class(tree, "igsca_tree")
   info <- attr(tree, "igsca_info")
-  expect_identical(info$n_fail_full, 0L) # TODO: ?
-  expect_identical(info$n_fail_split, 0L) # No failures to split
+  expect_identical(info$n_fail_full, 0L) # the root fit converged
+  expect_identical(info$n_fail_split, 0L)
   # The width of the grown tree should be greater than 1 (there should be more than a stub)
   expect_gt(partykit::width(partykit::node_party(tree)), 1)
 }
@@ -76,23 +76,6 @@ for (sp in c("FIT", "DLi", "DGi")) {
   })
 }
 
-# Vector of Residuals ----------------------------------------------------
-# test_that("IGSCA Trees Conditional Test on Vector of Residuals Runs as expected", {
-#   set.seed(12353)
-#   trees_vec <- grow_tree(influence = "vec", splitter = "native", control = igsca_tree_control())
-#   expect_grew(trees_vec)
-#   expect_snapshot(trees_vec)
-# })
-
-# for (sp in c("FIT", "DLi", "DGi")) {
-#   test_that(paste0("Vector of Residuals selection splits on ", sp), {
-#     set.seed(12353)
-#     expect_grew(grow_tree(influence = "vec", splitter = sp, control = ctl_mixed))
-#   })
-# }
-
-
-
 # Splitfun contract ------------------------------------------------------
 # doTrees() plants its kernel in cc$splitfun and relies on partykit reading it
 # back out of the control object. Nothing in ?ctree_control promises that, so it
@@ -103,30 +86,27 @@ for (sp in c("FIT", "DLi", "DGi")) {
 # way to see it happen.
 test_that("doTrees() installs its splitfun into partykit's split search", {
   calls <- new.env(parent = emptyenv())
-  # Represents the number of times that split_max_fitdiff is called
   calls$n <- 0L
   # Capturing the real kernel first is what stops the mock recursing into itself.
   real <- split_max_fitdiff
   local_mocked_bindings(
     split_max_fitdiff = function(model, mf, subset, goes_left, ctrl) {
-      # `calls`` will be modified even without `<<-` syntax because it is an environment
+      # an environment, so no <<- needed (unlike `calls` in the leaf-refit test below)
       calls$n <- calls$n + 1L
       real(model, mf, subset, goes_left, ctrl)
     }
   )
   set.seed(11)
   tr <- grow_tree(influence = "mat", splitter = "FIT", control = ctl_mixed)
-  # print(calls$n)
   expect_gt(calls$n, 0L)
   # ... and the tree that came back is one the kernel actually shaped.
   expect_grew(tr)
 })
 
 # Dead split kernel ------------------------------------------------------
-# argmax_split() turns a throwing kernel into NA, which partykit reads as "no
-# admissible split" -- so a broken kernel yields a clean-looking stump. These
-# tests pin the diagnostic that separates that from a genuinely unsplittable
-# node.
+# A throwing kernel becomes NA becomes a clean-looking stump (see
+# ?warn_dead_splitter). These pin the diagnostic that tells that apart from a
+# genuinely unsplittable node.
 test_that("a dead split kernel is reported, not silently a stump", {
   local_mocked_bindings(
     split_max_dli = function(model, mf, subset, goes_left, ctrl) {
@@ -140,7 +120,8 @@ test_that("a dead split kernel is reported, not silently a stump", {
   )
   info <- attr(tr, "igsca_info")
   expect_gt(info$n_fail_split, 0L)
-  expect_identical(info$n_fail_split, info$n_split_scan) # TODO: Why should these be identical?
+  # The mock throws on every candidate, so every covariate scan fails.
+  expect_identical(info$n_fail_split, info$n_split_scan)
   # The tree really is the stump the diagnostic is warning about
   expect_equal(partykit::width(partykit::node_party(tr)), 1)
 })
@@ -162,11 +143,9 @@ test_that("the native split path never touches the kernel counters", {
 })
 
 # minprob ----------------------------------------------------------------
-# partykit's .extree_node() takes mb <- max(minbucket, ceiling(sw * minprob))
-# and hands the raised value to both the selector and the splitter, so
-# candidate_partitions() sees it too. A minprob no split can satisfy must
-# therefore produce a stump on both cutpoint routes -- which is the only way to
-# see that the setting reached the non-native ones at all.
+# minprob is raised into minbucket before both the selector and the splitter see
+# it (see ?igsca_tree_control), so a minprob no split can satisfy must stump both
+# cutpoint routes -- the only way to see it reached the non-native ones at all.
 test_that("minprob raises the effective minbucket on every cutpoint route", {
   for (sp in c("native", "DLi")) {
     set.seed(11)
@@ -236,7 +215,6 @@ test_that("coin_distribution alone decides whether a run permutes", {
   }
 })
 
-# FIXME: This might be overkill, consider deleting
 test_that("R_test reaches libcoin as nresample, not merely the control list", {
   for (sp in c("native", "DLi")) {
     set.seed(1L)
@@ -283,9 +261,6 @@ test_that("igsca_tree_control() defaults to Monte Carlo p-values", {
 # needs is either derivable from that fit or a mistake worth naming.
 
 test_that("doTrees() refits nodes with the estimator the fit used", {
-  # A wrong argument list does not error -- `$<-` coerces, so csem() falls
-  # back to its own default estimator and returns a fit that converges and
-  # looks fine.
   # One trafo now, but two cutpoint routes: the native scan and a kernel that
   # re-fits candidate partitions of its own. Both must reach csem() with the
   # object's argument list.
@@ -346,9 +321,7 @@ test_that("doTrees() rejects input it cannot grow a tree from", {
   expect_error(doTrees(res, character(0)), "at least one")
   expect_error(doTrees(res, c("z_true", "x11")), "also indicators")
 
-  # partition_stat() adds its own TREETEMPGROUP column to every candidate node
-  # and hands it to csem() as `.id`, so a real column of that name would be
-  # silently overwritten rather than partitioned on.
+  # A real column of this name would be silently overwritten, not partitioned on.
   res_clash <- res
   res_clash$Information$Arguments$.data <-
     cbind(as.data.frame(res$Information$Arguments$.data), TREETEMPGROUP = 1)
@@ -358,16 +331,12 @@ test_that("doTrees() rejects input it cannot grow a tree from", {
 test_that("every configuration refuses a non-GSCA fit", {
   res_pls <- csem(.data = dat, .model = model)
   # calculateGSCAErrors() returns NA rather than erroring off a non-GSCA fit,
-  # so the node statistic would fail deep inside the trafo. Both influence
-  # values read it, so there is no configuration left that a PLS fit can grow.
-  for (inf in c("mat")) { # , "vec"
-    expect_error(
-      doTrees(res_pls, covs, .influence = inf, .control = ctl_mixed),
-      "needs a GSCA fit",
-      fixed = TRUE,
-      info = inf
-    )
-  }
+  # so the node statistic would otherwise fail deep inside the trafo.
+  expect_error(
+    doTrees(res_pls, covs, .influence = "mat", .control = ctl_mixed),
+    "needs a GSCA fit",
+    fixed = TRUE
+  )
 })
 
 # Collector diagnostics --------------------------------------------------
@@ -389,6 +358,40 @@ test_that("a root fit failure is a full failure, not a node failure", {
   # No fit means no test ran, so there is nothing to split on and no criteria.
   expect_null(info$root_criteria)
   expect_equal(partykit::width(partykit::node_party(tr)), 1)
+})
+
+test_that("a root fit failure is booked once, not again as a leaf failure", {
+  # partykit drops the info of a node whose trafo failed, so attach_leaf_fits()
+  # cannot tell it from a leaf that was never visited. Unguarded it repeats the
+  # identical (deterministic) failing fit and counts one event twice.
+  calls <- 0L
+  local_mocked_bindings(
+    try_fit = function(.data, .args, .id = NULL) {
+      calls <<- calls + 1L
+      list(fit = NULL, ok = FALSE)
+    }
+  )
+  set.seed(11)
+  tr <- grow_tree(influence = "mat", splitter = "native", control = ctl_mixed)
+  info <- attr(tr, "igsca_info")
+  expect_identical(info$n_fail_full, 1L)
+  expect_identical(info$n_fail_leaf, 0L)
+  expect_identical(calls, 1L)
+})
+
+test_that("root_criteria() is NULL whenever no test ran, not only on failure", {
+  # The documented contract used to be "NULL implies the root trafo failed".
+  # partykit returns an info-less root on three further paths that never reach
+  # the trafo at all, so NULL on its own says nothing about n_fail_full.
+  for (ctl in list(
+    igsca_tree_control(maxdepth = 0L),
+    igsca_tree_control(minsplit = nrow(dat) + 10L)
+  )) {
+    set.seed(11)
+    info <- attr(grow_tree("mat", "native", control = ctl), "igsca_info")
+    expect_identical(info$n_fail_full, 0L)
+    expect_null(info$root_criteria)
+  }
 })
 
 test_that("a fit failure below the root is a node failure", {
@@ -511,6 +514,35 @@ test_that("a failed leaf refit is counted and surfaces in coef()", {
   # coef() surfacing the failures, not about how many this fixture produces.
   expect_identical(sum(apply(is.na(cf[, -1L, drop = FALSE]), 1L, all)), n_fail)
   expect_false(anyNA(cf[, "nobs"]))
+})
+
+test_that("coef() keeps its matrix shape when every leaf refit failed", {
+  # drop() collapses a single-column result too, so a multi-leaf tree whose
+  # leaves all failed (nobs the only column) came back as a bare named vector,
+  # losing the row-per-node contract coef() documents. Fail every fit below the
+  # root: the root splits, then every leaf is objectless.
+  real_try_fit <- try_fit
+  local_mocked_bindings(
+    try_fit = function(.data, .args, .id = NULL) {
+      if (nrow(.data) < nrow(dat)) {
+        list(fit = NULL, ok = FALSE)
+      } else {
+        real_try_fit(.data, .args, .id)
+      }
+    }
+  )
+  set.seed(11)
+  tr <- grow_tree(influence = "mat", splitter = "native", control = ctl_mixed)
+  ids <- partykit::nodeids(tr, terminal = TRUE)
+  expect_gt(length(ids), 1L)
+
+  cf <- coef(tr)
+  expect_true(is.matrix(cf))
+  expect_identical(rownames(cf), as.character(ids))
+  expect_identical(colnames(cf), "nobs")
+  expect_false(anyNA(cf[, "nobs"]))
+  # drop = TRUE still simplifies the case it documents: exactly one node.
+  expect_false(is.matrix(coef(tr, node = ids[1L])))
 })
 
 test_that("csem_tree_args passes raw data and not standardized data", {

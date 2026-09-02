@@ -68,10 +68,7 @@ test_that("bdiagFit() validates .n_blocks", {
 })
 
 # doTrees node-level helpers ---------------------------------------------
-# These call the partition machinery directly, one node at a time. At the tree
-# level the root gives a kernel no freedom -- z_true is a 2-level factor, so
-# candidate_partitions() returns exactly one candidate -- so this is the only
-# layer where cutpoint choice and the scan cache can be observed at all.
+# These call the partition machinery directly, one node at a time.
 load(testthat::test_path("data/igscaTrees.Rdata")) # Creates dat
 
 dat$noise_1 <- round(dat$noise_1)
@@ -142,10 +139,9 @@ test_that("fit_csem() replays the arguments of the fit it was given", {
   expect_s3_class(fit_csem(g, args_trees, .id = "group"), "cSEMResults_multi")
 })
 
-# A kernel that throws is caught by argmax_split() and turned into NA, which
-# partykit reads as "no admissible split" -- so at the tree level a broken kernel
-# and a genuinely unsplittable node look identical. Called directly, a kernel
-# either returns a finite statistic or it does not, and the failure names it.
+# At the tree level a broken kernel and an unsplittable node look identical (see
+# ?warn_dead_splitter). Called directly, a kernel either returns a finite
+# statistic or names its failure.
 test_that("every split kernel returns a finite statistic", {
   fx <- node_fixture()
   # A median split on a noise covariate: no group difference is expected here,
@@ -218,11 +214,11 @@ test_that("ndt_dists() computes only the distance it is asked for", {
 })
 
 test_that("a complex geodesic distance stumps the scan instead of killing the tree", {
-  # calculateDG() eigen-decomposes a non-symmetric product, so it can return a
-  # complex scalar with no error at all. Unguarded it coerced the whole distance
-  # vector to complex, and vapply(..., numeric(1)) in argmax_split() rejects
-  # that AFTER the per-candidate tryCatch has returned -- so the type error
-  # escaped into partykit rather than degrading to "no admissible split".
+  # calculateDG() can return a complex scalar with no error (see ndt_dists()).
+  # Unguarded it coerced the whole distance vector to complex, and
+  # vapply(..., numeric(1)) in argmax_split() rejects that AFTER the
+  # per-candidate tryCatch has returned -- so the type error escaped into
+  # partykit rather than degrading to "no admissible split".
   fx <- node_fixture()
   local_mocked_bindings(
     calculateDG = function(...) complex(real = 1, imaginary = 2)
@@ -282,9 +278,8 @@ test_that("partition_stat() refuses an unknown stat_kind loudly", {
 # but a coarser noise_1 would leave them nothing to disagree about.
 test_that("argmax_split() returns an admissible cutpoint the kernels disagree on", {
   fx <- node_fixture()
-  j <- match("noise_1", names(fx$mf)) # column number of noise_1 in the data
+  j <- match("noise_1", names(fx$mf))
   z <- fx$mf[[j]]
-  # Function for getting the cutpoint in mf$j to split the data on
   cutpoint <- function(kern) {
     sp <- argmax_split(
       splitter = kern,
@@ -377,6 +372,12 @@ test_that("candidate_partitions() emits splits partykit routes as told", {
   }
 })
 
+test_that("candidate_partitions() scans the numeric grid exhaustively", {
+  z <- as.numeric(1:200)
+  expect_length(candidate_partitions(1L, z, z, minbucket = 1L), 199L)
+  expect_length(candidate_partitions(1L, z, z, minbucket = 20L), 161L)
+})
+
 test_that("candidate_partitions() enumerates the node's levels, not the column's", {
   # `z` and `zs` differ at every node below the root: a level is dropped by a
   # parent split, or lost with the covariate's missing rows in argmax_split().
@@ -442,6 +443,22 @@ test_that("argmax_split() scans a covariate that has missing values", {
   expect_s3_class(sp, "partysplit")
   # The kernel must never be handed a row whose covariate is missing.
   expect_identical(unique(seen), 100L)
+})
+
+test_that("validate_tree_input() refuses an unaffordable factor by name, up front", {
+  # candidate_partitions() also refuses it, but from inside partykit's splitfun:
+  # after arbitrary tree growth, and naming a model-frame column index rather
+  # than the covariate. The native scan does not refit, so it is exempt.
+  ind <- parseModel(args_trees$.model)$indicators
+  d <- dat
+  d$many <- factor(rep(letters[1:12], length.out = nrow(dat)))
+  expect_error(
+    validate_tree_input(d, ind, c("z_true", "many"), "mat", "DLi", args_trees),
+    "many"
+  )
+  expect_true(
+    validate_tree_input(d, ind, c("z_true", "many"), "mat", "native", args_trees)
+  )
 })
 
 test_that("validate_tree_input() refuses covariate types partykit cannot scan", {

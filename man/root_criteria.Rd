@@ -24,8 +24,13 @@ compared against \code{alpha}, not the per-covariate p-value.
 \details{
 Present whether or not the root went on to split: a root that tested every
 covariate and rejected none still reports the criteria that made it stop.
-\code{NULL} only when no test ran at all, which means the root trafo failed and
-\code{n_fail_full} is 1.
+
+\code{NULL} whenever no test ran, which is \emph{not} the same as a failed fit.
+\code{partykit:::.extree_node()} returns a bare node carrying no info on four
+paths: the root trafo failed (\code{n_fail_full} is 1), \code{maxdepth} is 0,
+fewer rows than \code{minsplit}, or every covariate returned an NA criterion
+(e.g. all of them constant). Only the first sets \code{n_fail_full}, so \code{NULL}
+criteria on their own do not imply a failure.
 }
 \seealso{
 \code{\link[=doTrees]{doTrees()}}

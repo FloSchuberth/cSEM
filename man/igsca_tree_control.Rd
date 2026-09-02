@@ -62,8 +62,10 @@ conditional-inference variable-selection test. Drawn only under
 \code{coin_distribution = "approximate"}; ignored entirely under
 \code{"asymptotic"}.}
 
-\item{coin_distribution}{How the conditional-inference family evaluates the
-null distribution. See \code{?partykit::ctree_control()} and \code{?libcoin::LinStatExpCov} for more information.}
+\item{coin_distribution}{How the null distribution of the permutation
+statistic is evaluated: \code{"approximate"} draws \code{R_test} permutation
+resamples, \code{"asymptotic"} uses its limiting distribution. See
+\code{?partykit::ctree_control()} and \code{?libcoin::LinStatExpCov}.}
 }
 \value{
 A named \code{list} of tuning parameters.
