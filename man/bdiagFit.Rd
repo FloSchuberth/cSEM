@@ -5,10 +5,11 @@
 \title{Block-diagonalized model-implied correlation matrices}
 \usage{
 bdiagFit(
-  .object    = NULL,
-  .n_blocks  = args_default()$.n_blocks,
-  .type_vcv  = args_default()$.type_vcv,
-  .saturated = args_default()$.saturated
+  .object      = NULL,
+  .n_blocks    = args_default()$.n_blocks,
+  .type_vcv    = args_default()$.type_vcv,
+  .saturated   = args_default()$.saturated,
+  .block_names = args_default()$.block_names
   )
 }
 \arguments{
@@ -25,6 +26,14 @@ One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".
 
 \item{.saturated}{Logical. Should a saturated structural model be used?
 Defaults to \code{FALSE}.}
+
+\item{.block_names}{Character vector. One label per block of the
+block-diagonal matrix built by \code{\link[=bdiagFit]{bdiagFit()}}, appended to each block's
+row and column names as \code{"<name>_<label>"}. Must be unique and as long as
+the number of blocks. Defaults to \code{NULL}, i.e. the group names for a
+multigroup object and \code{1:.n_blocks} for a replicated single-group one.
+Supply it to give a pooled matrix the same dimnames as the multigroup
+matrix it is compared against.}
 }
 \value{
 A block-diagonal \code{matrix}.
@@ -39,6 +48,15 @@ diagonal. The block-diagonal matrices of a single-group model (repeated
 as many times as the multigroup model has groups) and of the multigroup
 model then have identical dimensions and can be compared with any matrix
 distance.
+}
+\details{
+Each block's rows and columns are suffixed with a block label. The two
+branches take that label from different places -- the group name for a
+multigroup object, the block's position for a replicated single-group one --
+because a pooled object has no groups to take names from. \code{.block_names}
+overrides either default, which is what makes the two comparable by name.
+\code{\link[=doTrees]{doTrees()}} relies on that: it asserts a pooled and a multigroup matrix
+carry identical dimnames before measuring the distance between them.
 }
 \seealso{
 \code{\link[=fit]{fit()}}, \code{\link[=csem]{csem()}}

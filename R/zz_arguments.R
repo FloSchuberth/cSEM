@@ -83,6 +83,13 @@
 #'   is centered at `2*theta - theta*_hat`,
 #'   where `theta*_hat` is the average over all `.R` bootstrap estimates of `theta`.
 #'   Defaults to `TRUE`
+#' @param .block_names Character vector. One label per block of the
+#'   block-diagonal matrix built by [bdiagFit()], appended to each block's
+#'   row and column names as `"<name>_<label>"`. Must be unique and as long as
+#'   the number of blocks. Defaults to `NULL`, i.e. the group names for a
+#'   multigroup object and `1:.n_blocks` for a replicated single-group one.
+#'   Supply it to give a pooled matrix the same dimnames as the multigroup
+#'   matrix it is compared against.
 #' @param .by_equation Should the criteria be computed for each structural model
 #'   equation separately? Defaults to `TRUE`.
 #' @param .C A (J x J) composite variance-covariance matrix.
@@ -505,6 +512,7 @@ args_default <- function(.choices = FALSE) {
     .attributes              = NULL,
     .benchmark               = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR","NA"),
     .bias_corrected          = TRUE,
+    .block_names             = NULL,
     .by_equation             = TRUE,
     .C                       = NULL,
     .candidates              = NULL,

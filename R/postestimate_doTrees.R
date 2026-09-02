@@ -22,7 +22,11 @@
 #'   Its data must contain the `.covariates` columns; [csem()] ignores
 #'   non-indicator columns, so they can simply ride along in the original call.
 #' @param .covariates Character vector of columns of `.object`'s data to
-#'   partition on.
+#'   partition on. Must be numeric, ordered or unordered factors, and completely
+#'   observed: a missing value is refused rather than routed, because with
+#'   surrogate splits, [partykit::ctree()] assigns such a row by a random
+#'   draw that is not repeated between growing the tree and recording its
+#'   fitted partition. Impute or subset before fitting `.object`.
 #' @param .influence Node statistic driving variable selection.
 #' @param .splitter Cutpoint rule. One of "native", "FIT", "DLi" or "DGi".
 #' @param .control Tuning parameters, see [igsca_tree_control()].
@@ -143,7 +147,7 @@ doTrees <- function(
     minbucket = control$minbucket,
     minprob = control$minprob,
     maxdepth = control$maxdepth,
-    maxsurrogate = 0L, # Surrogate splits for missing covariate values; unsupported here (cf. cc$svsplitfun below)
+    maxsurrogate = 0L, # Surrogate splits for missing covariate values; unsupported here (cf. cc$svsplitfun below). validate_tree_input() refuses missing covariates because of it.
     nmax = c(yx = Inf, z = Inf), # Default: no binning of covariates or influence values
     saveinfo = TRUE,
     update = TRUE, # TRUE by default because ytrafo is a function, but does not necessarily refit to terminal nodes

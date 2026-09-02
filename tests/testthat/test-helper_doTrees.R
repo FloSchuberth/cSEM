@@ -24,29 +24,36 @@ test_that("bdiagFit() repeats a single-group implied VCV block-diagonally", {
   }
 })
 
+# One multigroup IGSCA fit, shared by the bdiagFit() and ndt_dists() tests
+# below. Model syntax and csem() arguments as in tests/testthat/test-csem_fit.R.
+# The grouping variable is deliberately not coded 1/2: labelling blocks by group
+# name and by block index coincide when it is, which is why the two branches
+# disagreeing went unnoticed for so long.
+model_IGSCA <- "
+OrgPres =~ cei1 + cei2 + cei3
+OrgIden <~ ma1 + ma2 + ma3
+AffJoy <~ orgcmt1 + orgcmt2 + orgcmt3
+AffLove  <~ orgcmt5 + orgcmt6 + orgcmt8
+
+OrgIden ~ OrgPres
+AffLove ~ OrgIden
+AffJoy  ~ OrgIden"
+
+dat_mg <- BergamiBagozzi2000
+dat_mg$grp <- factor(paste0("g", dat_mg$gender))
+
+res_mg <- csem(
+  .data = dat_mg,
+  .model = model_IGSCA,
+  .approach_weights = "GSCA",
+  .id = "grp",
+  .tolerance = 1e-4,
+  .conv_criterion = "sum_diff_absolute",
+  .GSCA_modes = "NCMP",
+  .iter_max = 600
+)
+
 test_that("bdiagFit() block-diagonalizes multigroup fits in group order", {
-  # Model syntax and csem() arguments as in tests/testthat/test-csem_fit.R
-  model_IGSCA <- "
-  OrgPres =~ cei1 + cei2 + cei3
-  OrgIden <~ ma1 + ma2 + ma3
-  AffJoy <~ orgcmt1 + orgcmt2 + orgcmt3
-  AffLove  <~ orgcmt5 + orgcmt6 + orgcmt8
-
-  OrgIden ~ OrgPres
-  AffLove ~ OrgIden
-  AffJoy  ~ OrgIden"
-
-  res_mg <- csem(
-    .data = BergamiBagozzi2000,
-    .model = model_IGSCA,
-    .approach_weights = "GSCA",
-    .id = "gender",
-    .tolerance = 1e-4,
-    .conv_criterion = "sum_diff_absolute",
-    .GSCA_modes = "NCMP",
-    .iter_max = 600
-  )
-
   Sigma_list <- fit(res_mg, .saturated = FALSE, .type_vcv = "indicator")
   B          <- bdiagFit(res_mg, .type_vcv = "indicator")
 
@@ -65,6 +72,36 @@ test_that("bdiagFit() block-diagonalizes multigroup fits in group order", {
 test_that("bdiagFit() validates .n_blocks", {
   expect_error(bdiagFit(res_pls, .n_blocks = 0))
   expect_error(bdiagFit(res_pls, .n_blocks = 1.5))
+})
+
+test_that("bdiagFit() aligns a pooled matrix with an MGA through .block_names", {
+  # One group of res_mg stands in for a pooled fit: same indicators, and it
+  # takes the replication branch, which is the branch a pooled object takes.
+  pooled <- res_mg[[1]]
+  mga    <- bdiagFit(res_mg, .type_vcv = "indicator")
+
+  # The defaults disagree by construction -- group names against block indices.
+  # That is the disagreement .block_names exists to resolve.
+  expect_false(identical(
+    dimnames(bdiagFit(pooled, .n_blocks = 2L, .type_vcv = "indicator")),
+    dimnames(mga)
+  ))
+
+  aligned <- bdiagFit(pooled, .n_blocks = 2L, .type_vcv = "indicator",
+                      .block_names = names(res_mg))
+  expect_identical(dimnames(aligned), dimnames(mga))
+  # Only the labels moved: the blocks are the same replication as before.
+  expect_equal(
+    unname(aligned),
+    kronecker(diag(2), unname(fit(pooled, .saturated = FALSE,
+                                  .type_vcv = "indicator")))
+  )
+})
+
+test_that("bdiagFit() validates .block_names", {
+  expect_error(bdiagFit(res_pls, .n_blocks = 2, .block_names = "one"))
+  expect_error(bdiagFit(res_pls, .n_blocks = 2, .block_names = c("a", "a")))
+  expect_error(bdiagFit(res_pls, .n_blocks = 2, .block_names = c("a", NA)))
 })
 
 # doTrees node-level helpers ---------------------------------------------
@@ -211,6 +248,24 @@ test_that("ndt_dists() computes only the distance it is asked for", {
   expect_true(all(is.na(d[c("DGc", "DGi", "DLc")])))
   # calculateDG() was never reached and the construct VCV was never built.
   expect_identical(seen, c("bdiag_indicator", "DL"))
+})
+
+test_that("ndt_dists() refuses a pooled matrix the MGA does not conform to", {
+  # calculateDL() indexes positionally and returns a number for a wrong
+  # .n_blocks, a mismatched indicator set or a flipped group order alike, so
+  # matching dimnames is the only check there is.
+  pooled  <- bdiagFit(res_mg[[1]], .n_blocks = 2L, .type_vcv = "indicator")
+  aligned <- bdiagFit(res_mg[[1]], .n_blocks = 2L, .type_vcv = "indicator",
+                      .block_names = names(res_mg))
+
+  expect_error(
+    ndt_dists(Sc_pool = NULL, Si_pool = pooled, mga_fit = res_mg, dists = "DLi"),
+    "dimnames"
+  )
+  expect_true(is.finite(
+    ndt_dists(Sc_pool = NULL, Si_pool = aligned, mga_fit = res_mg,
+              dists = "DLi")[["DLi"]]
+  ))
 })
 
 test_that("a complex geodesic distance stumps the scan instead of killing the tree", {
@@ -458,6 +513,27 @@ test_that("validate_tree_input() refuses an unaffordable factor by name, up fron
   )
   expect_true(
     validate_tree_input(d, ind, c("z_true", "many"), "mat", "native", args_trees)
+  )
+})
+
+test_that("validate_tree_input() refuses a covariate with missing values", {
+  # With maxsurrogate = 0 partykit routes a missing row by an unrepeated
+  # sample() draw, once while growing the node and again when recording
+  # tree$fitted, so the two partitions of one tree need not agree. Refused up
+  # front rather than routed; see the note at the check.
+  ind <- parseModel(args_trees$.model)$indicators
+  d <- dat
+  d$z_na <- dat$z_true
+  d$z_na[1L] <- NA
+
+  expect_error(
+    validate_tree_input(d, ind, c("z_true", "z_na"), "mat", "DLi", args_trees),
+    "z_na"
+  )
+  # The native scan routes them the same way, so it is not exempt.
+  expect_error(
+    validate_tree_input(d, ind, "z_na", "mat", "native", args_trees),
+    "z_na"
   )
 })
 

@@ -10,11 +10,20 @@
 #' model then have identical dimensions and can be compared with any matrix
 #' distance.
 #'
+#' Each block's rows and columns are suffixed with a block label. The two
+#' branches take that label from different places -- the group name for a
+#' multigroup object, the block's position for a replicated single-group one --
+#' because a pooled object has no groups to take names from. `.block_names`
+#' overrides either default, which is what makes the two comparable by name.
+#' [doTrees()] relies on that: it asserts a pooled and a multigroup matrix
+#' carry identical dimnames before measuring the distance between them.
+#'
 #' @usage bdiagFit(
-#'   .object    = NULL,
-#'   .n_blocks  = args_default()$.n_blocks,
-#'   .type_vcv  = args_default()$.type_vcv,
-#'   .saturated = args_default()$.saturated
+#'   .object      = NULL,
+#'   .n_blocks    = args_default()$.n_blocks,
+#'   .type_vcv    = args_default()$.type_vcv,
+#'   .saturated   = args_default()$.saturated,
+#'   .block_names = args_default()$.block_names
 #'   )
 #'
 #' @inheritParams csem_arguments
@@ -23,10 +32,11 @@
 #' @seealso [fit()], [csem()]
 #' @export
 #' @importFrom Matrix bdiag
-bdiagFit <- function(.object    = NULL,
-                     .n_blocks  = args_default()$.n_blocks,
-                     .type_vcv  = args_default()$.type_vcv,
-                     .saturated = args_default()$.saturated) {
+bdiagFit <- function(.object      = NULL,
+                     .n_blocks    = args_default()$.n_blocks,
+                     .type_vcv    = args_default()$.type_vcv,
+                     .saturated   = args_default()$.saturated,
+                     .block_names = args_default()$.block_names) {
 
 ## Warning Checks ----------------------------------------------------------
   stopifnot(
@@ -48,8 +58,10 @@ bdiagFit <- function(.object    = NULL,
     Sigma_bdiag <- Matrix::bdiag(Sigma_list) |>
       as.matrix()
 
-    new_names <- unlist(lapply(names(Sigma_list), function(g) {
-      paste0(rownames(Sigma_list[[g]]), "_", g)
+    block_names <- resolve_block_names(.block_names, names(Sigma_list))
+
+    new_names <- unlist(lapply(seq_along(Sigma_list), function(i) {
+      paste0(rownames(Sigma_list[[i]]), "_", block_names[i])
     }))
 
     dimnames(Sigma_bdiag) <- list(new_names, new_names)
@@ -63,13 +75,36 @@ bdiagFit <- function(.object    = NULL,
   Sigma_bdiag <- Matrix::bdiag(replicate(.n_blocks, Sigma, simplify = FALSE)) |>
     as.matrix()
 
-  new_names <- unlist(lapply(seq_len(.n_blocks), function(i) {
-    paste0(rownames(Sigma), "_", i)
+  block_names <- resolve_block_names(.block_names, seq_len(.n_blocks))
+
+  new_names <- unlist(lapply(block_names, function(b) {
+    paste0(rownames(Sigma), "_", b)
   }))
 
   dimnames(Sigma_bdiag) <- list(new_names, new_names)
 
   return(Sigma_bdiag)
+}
+
+
+#' Resolve and check bdiagFit()'s block labels
+#'
+#' `NULL` takes `default`, which each branch of bdiagFit() supplies for itself.
+#' The labels are pasted onto the block's variable names, so duplicates would
+#' make the block-diagonal matrix ambiguous to index by name -- and the whole
+#' point of supplying them is to be able to compare dimnames.
+#' @noRd
+resolve_block_names <- function(.block_names, default) {
+  if (is.null(.block_names)) {
+    .block_names <- default
+  }
+  stopifnot(
+    "`.block_names` must give one label per block" =
+      length(.block_names) == length(default),
+    "`.block_names` must not be NA" = !anyNA(.block_names),
+    "`.block_names` must be unique" = !anyDuplicated(.block_names)
+  )
+  as.character(.block_names)
 }
 
 
@@ -143,6 +178,45 @@ validate_tree_input <- function(data, indicators, covariates, influence,
       "`.covariates` must name numeric, ordered or unordered factor columns. ",
       "The following are neither: ", paste(bad, collapse = ", "),
       ". Convert them first -- a logical or character covariate is a factor."
+    )
+  }
+  ## Note by Claude: Missing covariate values are refused rather than routed, because partykit
+  ## cannot route them repeatably under this configuration and every way of
+  ## making it do so is an imputation rule in disguise:
+  ##
+  ##   * With no surrogate splits -- doTrees() sets `maxsurrogate = 0L`, see the
+  ##     `cc$svsplitfun` note in doTrees() for why -- kidids_node() assigns each
+  ##     missing row by `sample(seq_along(prob), sum(nax), prob = prob)`, an
+  ##     independent draw per call. It is drawn twice on different occasions:
+  ##     once inside .extree_node(), fixing the rows the node's model was fitted
+  ##     on, and again in ctree()'s closing fitted_node() call, fixing
+  ##     `tree$fitted`. Nothing ties the two together, so at a near-even `prob`
+  ##     roughly half the missing rows land in a different leaf on every
+  ##     re-evaluation. attach_leaf_fits() reads `tree$fitted`, so a refitted
+  ##     leaf and its siblings can end up describing different partitions, and
+  ##     predict() can disagree with coef() on one object.
+  ##   * `majority = TRUE` collapses `prob` to an indicator and makes the draw
+  ##     deterministic, but the rule it commits to is "every missing row belongs
+  ##     to the larger kid" -- deterministic is not the same as correct.
+  ##   * Surrogate splits would route by an associated covariate, but this
+  ##     package's splitfun refits IGSCA per candidate, so each surrogate
+  ##     candidate would cost a two-group refit, and single-covariate trees have
+  ##     nothing to surrogate with.
+  ##   * MIA would let the split search place NA on a side, which is the most
+  ##     defensible of the four, but candidate_partitions() emits no NA-left /
+  ##     NA-right variants, so it would work for `.splitter = "native"` only.
+  ##
+  ## Refusing matches the package's existing stance: processData() errors on
+  ## missing indicators rather than dropping rows. Imputing or subsetting is
+  ## then the user's decision, made knowingly.
+  has_na <- covariates[vapply(data[covariates], anyNA, logical(1))]
+  if (length(has_na)) {
+    stop2(
+      "`.covariates` must be completely observed. The following contain ",
+      "missing values: ", paste(has_na, collapse = ", "),
+      ". partykit routes a missing row by an unrepeated random draw once ",
+      "surrogate splits are off, which doTrees() cannot make reproducible; ",
+      "impute or subset before fitting `.object`."
     )
   }
   ## The unordered-factor scan costs 2^(K - 1) - 1 two-group IGSCA fits, so
@@ -970,9 +1044,15 @@ partition_stat <- function(stat_kind, model, mf, subset, goes_left, ctrl) {
       if (is.null(model$object)) {
         return(NA_real_)
       } else {
+        ## The pooled blocks are labelled with the group names the multigroup
+        ## blocks will carry, so ndt_dists()' dimname assertion has something to
+        ## check. Here that is c("1", "2") -- the levels of TREE_GROUP_COL --
+        ## which is what the replication branch would have used anyway.
         ndt_dists(
-          Sc_pool = bdiagFit(model$object, .n_blocks = 2L, .type_vcv = "construct"),
-          Si_pool = bdiagFit(model$object, .n_blocks = 2L, .type_vcv = "indicator"),
+          Sc_pool = bdiagFit(model$object, .n_blocks = 2L, .type_vcv = "construct",
+                             .block_names = names(mga$fit)),
+          Si_pool = bdiagFit(model$object, .n_blocks = 2L, .type_vcv = "indicator",
+                             .block_names = names(mga$fit)),
           mga_fit = mga$fit,
           dists = stat_kind
         )
@@ -1033,6 +1113,25 @@ ndt_dists <- function(Sc_pool, Si_pool, mga_fit,
   }
   Si_mga <- if (any(c("DGi", "DLi") %in% dists)) {
     bdiagFit(mga_fit, .type_vcv = "indicator")
+  }
+
+  ## calculateDG()/calculateDL() index positionally and never read dimnames, so
+  ## they return a number for a wrong `.n_blocks`, a group whose model carries a
+  ## different indicator set, a construct-versus-indicator mix-up and a flipped
+  ## group order alike. Matching dimnames is the only thing that ties the pooled
+  ## matrix -- built by the caller -- to the multigroup one built here; callers
+  ## align them by passing bdiagFit()'s `.block_names`.
+  if (!is.null(Sc_mga)) {
+    stopifnot(
+      "`Sc_pool` and the multigroup construct VCV must have identical dimnames" =
+        identical(dimnames(Sc_pool), dimnames(Sc_mga))
+    )
+  }
+  if (!is.null(Si_mga)) {
+    stopifnot(
+      "`Si_pool` and the multigroup indicator VCV must have identical dimnames" =
+        identical(dimnames(Si_pool), dimnames(Si_mga))
+    )
   }
 
   ## real_scalar() forces a plain double. This is necessary because calculateDG() can

@@ -99,6 +99,14 @@ is centered at \verb{2*theta - theta*_hat},
 where \verb{theta*_hat} is the average over all \code{.R} bootstrap estimates of \code{theta}.
 Defaults to \code{TRUE}}
 
+\item{.block_names}{Character vector. One label per block of the
+block-diagonal matrix built by \code{\link[=bdiagFit]{bdiagFit()}}, appended to each block's
+row and column names as \code{"<name>_<label>"}. Must be unique and as long as
+the number of blocks. Defaults to \code{NULL}, i.e. the group names for a
+multigroup object and \code{1:.n_blocks} for a replicated single-group one.
+Supply it to give a pooled matrix the same dimnames as the multigroup
+matrix it is compared against.}
+
 \item{.by_equation}{Should the criteria be computed for each structural model
 equation separately? Defaults to \code{TRUE}.}
 
