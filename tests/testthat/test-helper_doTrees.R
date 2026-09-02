@@ -378,15 +378,79 @@ test_that("argmax_split() returns an admissible cutpoint the kernels disagree on
 # kernel, and the partysplit handed back to partykit, follow the same
 # conventions partykit:::.ctree_test_internal() follows on the native route.
 
-test_that("candidate_partitions() breaks at observed values, as ctree does", {
+brk <- function(cands) {
+  vapply(cands, function(cc) partykit::breaks_split(cc$split), numeric(1))
+}
+
+test_that("candidate_partitions() breaks where ctree's intersplit says to", {
   z <- c(1, 2, 4, 8)
-  brk <- function(cands) {
-    vapply(cands, function(cc) partykit::breaks_split(cc$split), numeric(1))
-  }
   # ctree's default is intersplit = FALSE, which reports the observed value
   # below the gap rather than the midpoint.
   obs <- candidate_partitions(1L, z, z, minbucket = 1L)
+  mid <- candidate_partitions(1L, z, z, minbucket = 1L, intersplit = TRUE)
   expect_identical(brk(obs), c(1, 2, 4))
+  expect_identical(brk(mid), c(1.5, 3, 6))
+  # Only the reported break moves. Every kernel scores `goes_left`, so if
+  # intersplit reached that too it would change which partition wins, and not
+  # merely how the winner is written down.
+  expect_identical(
+    lapply(obs, `[[`, "goes_left"),
+    lapply(mid, `[[`, "goes_left")
+  )
+})
+
+test_that("candidate_partitions() reports an observed break when no midpoint fits", {
+  # Two adjacent doubles have no double between them, so their exact midpoint
+  # is a tie, and IEEE rounds a tie to the even mantissa. For the pair below
+  # that is the larger of the two: a break lands on b, where right = TRUE makes
+  # the interval (-Inf, b] and kidids_split() routes b left -- while goes_left,
+  # keyed on the observed value, sends it right. partykit's own interpolation
+  # has no guard for this.
+  #
+  # The parity matters, which is why this pair and not the obvious one: at
+  # c(1, 1 + double.eps) the tie rounds the other way, onto the smaller value,
+  # where the fallback would have put the break anyway.
+  a <- 1 - .Machine$double.eps / 2 # the predecessor of 1
+  skip_if_not((a + 1) / 2 == 1, "platform rounds the tie away from the larger value")
+  z <- c(a, 1, 3)
+  cands <- candidate_partitions(1L, z, z, minbucket = 1L, intersplit = TRUE)
+  # First cut falls back to a -- unguarded it would report 1. The second gap is
+  # wide enough to hold a midpoint, and gets one.
+  expect_identical(brk(cands), c(a, 2))
+  for (cc in cands) {
+    expect_identical(
+      partykit::kidids_split(cc$split, data.frame(v = z)) == 1L,
+      cc$goes_left
+    )
+  }
+})
+
+test_that("argmax_split() takes intersplit off the control object", {
+  # doTrees() sets it once, on the ctree_control() object partykit hands back to
+  # splitfun as `ctrl`. Reading it anywhere else would leave the native route
+  # honouring the setting and the refitting ones ignoring it.
+  mf <- data.frame(num = c(1, 2, 4, 8, 16, 32))
+  args <- list(
+    # Maximized by the largest admissible left kid, so both runs settle on the
+    # same candidate and the reported break is the only thing free to differ.
+    splitter = function(model, mf, subset, goes_left, ctrl) {
+      as.numeric(sum(goes_left))
+    },
+    collector = new_collector(),
+    model = list(object = NULL),
+    trafo = NULL,
+    mf = mf,
+    subset = seq_len(nrow(mf)),
+    whichvar = 1L
+  )
+  sp <- function(ctrl) {
+    partykit::breaks_split(do.call(argmax_split, c(args, list(ctrl = ctrl))))
+  }
+  # Absent, as in the bare ctrl lists the tests above build: isTRUE() reads
+  # that as the default rather than erroring on NULL.
+  expect_identical(sp(list(minbucket = 1L)), 16)
+  expect_identical(sp(list(minbucket = 1L, intersplit = FALSE)), 16)
+  expect_identical(sp(list(minbucket = 1L, intersplit = TRUE)), 24)
 })
 
 test_that("candidate_partitions() emits splits partykit routes as told", {
@@ -398,26 +462,48 @@ test_that("candidate_partitions() emits splits partykit routes as told", {
   # minbucket = 2L leaves every branch non-empty but does make keep_min() drop
   # candidates, so the routing convention is checked on a filtered list too --
   # at minbucket = 1L nothing is ever filtered and the guard goes unexercised.
-  for (mb in c(1L, 2L)) {
-    for (j in seq_along(mf)) {
-      z <- mf[[j]]
-      cands <- candidate_partitions(j, z, z, minbucket = mb)
-      expect_gt(length(cands), 0L)
-      for (cc in cands) {
-        # The kernel is told `goes_left`; partykit later routes rows through
-        # kidids_split(). A candidate whose two disagree scores one partition
-        # and grows another.
-        expect_identical(
-          partykit::kidids_split(cc$split, mf) == 1L,
-          cc$goes_left,
-          info = paste0(names(mf)[j], ", minbucket = ", mb)
-        )
+  # Both intersplit settings, because moving the break is exactly the way to
+  # break the agreement this test is about.
+  for (isp in c(FALSE, TRUE)) {
+    for (mb in c(1L, 2L)) {
+      for (j in seq_along(mf)) {
+        z <- mf[[j]]
+        cands <- candidate_partitions(j, z, z, minbucket = mb, intersplit = isp)
+        expect_gt(length(cands), 0L)
+        for (cc in cands) {
+          # The kernel is told `goes_left`; partykit later routes rows through
+          # kidids_split(). A candidate whose two disagree scores one partition
+          # and grows another.
+          expect_identical(
+            partykit::kidids_split(cc$split, mf) == 1L,
+            cc$goes_left,
+            info = paste0(
+              names(mf)[j], ", minbucket = ", mb, ", intersplit = ", isp
+            )
+          )
+        }
       }
     }
   }
   # keep_min() bit: at minbucket = 2 the two extreme cuts are inadmissible.
+  # It filters on goes_left, which intersplit leaves alone, so the admissible
+  # set is the same under both.
   expect_length(candidate_partitions(1L, mf$num, mf$num, minbucket = 1L), 5L)
   expect_length(candidate_partitions(1L, mf$num, mf$num, minbucket = 2L), 3L)
+  expect_length(
+    candidate_partitions(1L, mf$num, mf$num, minbucket = 2L, intersplit = TRUE),
+    3L
+  )
+  # Ordered and unordered factors are untouched by it, as in partykit, whose
+  # own interpolation is guarded with !is.ordered(x).
+  for (v in c("ord", "fac")) {
+    j <- match(v, names(mf))
+    expect_identical(
+      candidate_partitions(j, mf[[j]], mf[[j]], minbucket = 1L, intersplit = TRUE),
+      candidate_partitions(j, mf[[j]], mf[[j]], minbucket = 1L),
+      info = v
+    )
+  }
 
   # ctree sets index = 1:2 on every break-valued split it emits.
   for (v in c("num", "ord")) {

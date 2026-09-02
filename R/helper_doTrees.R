@@ -305,6 +305,7 @@ validate_tree_input <- function(data, indicators, covariates, influence,
 #'   statistic is evaluated: `"approximate"` draws `R_test` permutation
 #'   resamples, `"asymptotic"` uses its limiting distribution. See
 #'   `?partykit::ctree_control()` and `?libcoin::LinStatExpCov`.
+#' @param intersplit Where to report the break of a *numeric* covariate. `FALSE` is the default in partykit and `TRUE` is the default for semtree.
 #'
 #' @returns A named `list` of tuning parameters.
 #' @seealso [doTrees()]
@@ -316,14 +317,17 @@ igsca_tree_control <- function(alpha = 0.05,
                                minprob = 0.01,
                                maxdepth = 3L,
                                R_test = 9999L,
-                               coin_distribution = c("approximate", "asymptotic")) {
+                               coin_distribution = c("approximate", "asymptotic"),
+                               intersplit = FALSE) {
   stopifnot(
     "`minprob` must be a single number in [0, 1]" =
       length(minprob) == 1 && is.numeric(minprob) && !is.na(minprob) &&
       minprob >= 0 && minprob <= 1,
     "`R_test` must be a single positive whole number" =
       length(R_test) == 1 && is.numeric(R_test) && !is.na(R_test) &&
-      R_test >= 1 && R_test == round(R_test)
+      R_test >= 1 && R_test == round(R_test),
+    "`intersplit` must be a single TRUE or FALSE" =
+      length(intersplit) == 1 && is.logical(intersplit) && !is.na(intersplit)
   )
   list(
     alpha = alpha,
@@ -333,7 +337,8 @@ igsca_tree_control <- function(alpha = 0.05,
     minprob = minprob,
     maxdepth = as.integer(maxdepth),
     R_test = as.integer(R_test),
-    coin_distribution = match.arg(coin_distribution)
+    coin_distribution = match.arg(coin_distribution),
+    intersplit = intersplit
   )
 }
 
@@ -464,7 +469,8 @@ argmax_split <- function(
         j = j,
         z = z,
         zs = z[sub_j],
-        minbucket = ctrl$minbucket
+        minbucket = ctrl$minbucket,
+        intersplit = isTRUE(ctrl$intersplit)
       )
       if (!length(cands)) {
         next
@@ -567,6 +573,11 @@ warn_dead_splitter <- function(collector, splitter) {
 #'   level order the emitted `partysplit` is expressed in.
 #' @param zs The covariate over this node's non-missing rows.
 #' @param minbucket Smallest child either kid may be left with.
+#' @param intersplit Report a numeric break at the observed value below the gap
+#'   (`FALSE`) or at the midpoint of it (`TRUE`); see [igsca_tree_control()].
+#'   Moves `$split` only, never `$goes_left`, so the partition scored is the
+#'   same either way. Ignored for ordered and unordered factors, as partykit
+#'   ignores it for ordered ones.
 #' @return A list of candidate partitions, one per admissible split, each a
 #'   list with `$split` (a `partysplit`) and `$goes_left` (the logical vector
 #'   over `zs` saying which of the node's rows go to the first kid). Empty when
@@ -576,6 +587,9 @@ warn_dead_splitter <- function(collector, splitter) {
 #' ## Numeric: one cut per distinct value except the largest, `zs <= ct`.
 #' zn <- c(1, 2, 2, 3, 5, 8)
 #' candidate_partitions(1L, zn, zn, minbucket = 1L)
+#'
+#' ## Same partitions, breaks reported at the midpoints instead.
+#' candidate_partitions(1L, zn, zn, minbucket = 1L, intersplit = TRUE)
 #'
 #' ## Ordered: K - 1 cumulative level sets; the break is an index into
 #' ## levels(z), so it stays comparable across nodes.
@@ -591,7 +605,7 @@ warn_dead_splitter <- function(collector, splitter) {
 #' ## Nothing to split on.
 #' candidate_partitions(1L, zn, rep(2, 4), minbucket = 1L)
 #' @noRd
-candidate_partitions <- function(j, z, zs, minbucket) {
+candidate_partitions <- function(j, z, zs, minbucket, intersplit = FALSE) {
 
   # Returns only candidate partitions whose child nodes would have a sample size that is greater than or equal to the minbucket.
   keep_min <- function(cands) {
@@ -613,19 +627,40 @@ candidate_partitions <- function(j, z, zs, minbucket) {
     # Vector of cut points in uz
     cuts <- uz[-length(uz)] # Equivalent to uz[1:(length(uz)-1)]
 
-    # Matches ctree's own numeric convention; cf. the Wind cut in
-    # plot(ctree(Ozone ~ ., subset(airquality, !is.na(Ozone)))).
-    cands <- lapply(cuts, function(ct) {
+    # Where the break is *reported*. `cuts` stays on the observed value under
+    # either setting, because it is what goes_left below is built from, and
+    # moving that would move the partition the kernels are scoring.
+    #
+    # As done in score-based semtree  for continuous covariates using the sctest_continuous() function https://github.com/brandmaier/semtree/blob/e1b95f65b271867f42a516d4e3cf09eca6efc253/R/sctest_continuous.R#L72-L74,
+    # called through the ScoreSplit function https://github.com/brandmaier/semtree/blob/e1b95f65b271867f42a516d4e3cf09eca6efc253/R/scoreSplit.R#L108-L114.
+    #
+    # ctree does not do cutpoints by default (cf. the Wind cut in below)
+    # plot(ctree(Ozone ~ ., subset(airquality, !is.na(Ozone))))
+    brks <- if (intersplit) {
+      # cuts is the low-point. uz[-1L] is the upper point
+      mid <- (cuts + uz[-1L]) / 2
+      # In the rare case that two doubles are adjacent, then the above midpoint operation is inappropriate. This ifelse should correct things. That's because the midpoint would round up.
+      # a <- 1 - .Machine$double.eps/2 
+      # b <- 1
+      # ab <- (a + b)/2
+      # identical(ab, b)
+      # identical(ab, a)
+      ifelse(mid < uz[-1L], yes = mid, no = cuts)
+    } else {
+      cuts
+    }
+
+    cands <- lapply(seq_along(cuts), function(i) {
       list(
-        goes_left = zs <= ct, 
+        goes_left = zs <= cuts[i],
         split = partykit::partysplit(
-          varid = as.integer(j), 
-          breaks = as.double(ct), # Where to cut
+          varid = as.integer(j),
+          breaks = as.double(brks[i]), # Where to cut
           index = 1L:2L, # How to number the different parts
-          right = TRUE # So cut is (-Inf, ct] and zs <= ct goes left
+          right = TRUE # So cut is (-Inf, brks[i]] and zs <= cuts[i] goes left
         )
       )
-    }) |> 
+    }) |>
       keep_min()
 
     return(cands)

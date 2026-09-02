@@ -237,6 +237,9 @@ test_that("igsca_tree_control() defaults to Monte Carlo p-values", {
   ctl <- igsca_tree_control()
   expect_identical(ctl$coin_distribution, "approximate")
   expect_identical(ctl$R_test, 9999L)
+  # ctree_control()'s own default, so a tree reports the break ctree would.
+  expect_false(ctl$intersplit)
+  expect_true(igsca_tree_control(intersplit = TRUE)$intersplit)
   expect_error(
     igsca_tree_control(R_test = 0L),
     "positive whole number",
@@ -247,6 +250,51 @@ test_that("igsca_tree_control() defaults to Monte Carlo p-values", {
     "must be a single number",
     fixed = TRUE
   )
+  expect_error(
+    igsca_tree_control(intersplit = NA),
+    "single TRUE or FALSE",
+    fixed = TRUE
+  )
+})
+
+# intersplit -------------------------------------------------------------
+# Where a numeric break is reported is one setting for both cutpoint routes:
+# partykit's .ctree_test_internal() interpolates it on the native one,
+# candidate_partitions() on the refitting ones. Neither moves the partition, so
+# the reported break is the whole of what there is to check -- and checking the
+# partition stayed put is what makes it a reporting change rather than a
+# modelling one.
+test_that("intersplit moves the reported numeric break on every cutpoint route", {
+  # noise_1 alone, because at the root z_true wins and a two-level factor has no
+  # break to move. `alpha = 1` accepts the split that leaves, and the asymptotic
+  # null keeps this off the permutation path, which cutpoints never touch.
+  split_at <- function(splitter, isp) {
+    set.seed(11)
+    tr <- grow_tree(
+      influence = "mat",
+      splitter = splitter,
+      covariates = "noise_1",
+      control = igsca_tree_control(
+        alpha = 1, maxdepth = 1L, coin_distribution = "asymptotic",
+        intersplit = isp
+      )
+    )
+    list(
+      brk = partykit::breaks_split(
+        partykit::split_node(partykit::node_party(tr))
+      ),
+      leaves = tr$fitted[["(fitted)"]]
+    )
+  }
+  for (sp in c("native", "DLi")) {
+    obs <- split_at(sp, FALSE)
+    mid <- split_at(sp, TRUE)
+    # noise_1 is rounded to whole numbers, so the observed break is an integer
+    # and the gap above it is exactly 1 wide.
+    expect_identical(obs$brk, round(obs$brk), info = sp)
+    expect_identical(mid$brk, obs$brk + 0.5, info = sp)
+    expect_identical(obs$leaves, mid$leaves, info = sp)
+  }
 })
 
 # Input contract ---------------------------------------------------------

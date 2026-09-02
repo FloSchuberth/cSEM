@@ -12,7 +12,8 @@ igsca_tree_control(
   minprob = 0.01,
   maxdepth = 3L,
   R_test = 9999L,
-  coin_distribution = c("approximate", "asymptotic")
+  coin_distribution = c("approximate", "asymptotic"),
+  intersplit = FALSE
 )
 }
 \arguments{
@@ -66,6 +67,8 @@ conditional-inference variable-selection test. Drawn only under
 statistic is evaluated: \code{"approximate"} draws \code{R_test} permutation
 resamples, \code{"asymptotic"} uses its limiting distribution. See
 \code{?partykit::ctree_control()} and \code{?libcoin::LinStatExpCov}.}
+
+\item{intersplit}{Where to report the break of a \emph{numeric} covariate. \code{FALSE} is the default in partykit and \code{TRUE} is the default for semtree.}
 }
 \value{
 A named \code{list} of tuning parameters.

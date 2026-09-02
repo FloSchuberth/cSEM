@@ -20,7 +20,7 @@ non-indicator columns, so they can simply ride along in the original call.}
 \item{.covariates}{Character vector of columns of \code{.object}'s data to
 partition on. Must be numeric, ordered or unordered factors, and completely
 observed: a missing value is refused rather than routed, because with
-surrogate splits off \code{\link[partykit:ctree]{partykit::ctree()}} assigns such a row by a random
+surrogate splits, \code{\link[partykit:ctree]{partykit::ctree()}} assigns such a row by a random
 draw that is not repeated between growing the tree and recording its
 fitted partition. Impute or subset before fitting \code{.object}.}
 

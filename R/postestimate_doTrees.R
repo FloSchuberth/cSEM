@@ -152,7 +152,7 @@ doTrees <- function(
     saveinfo = TRUE,
     update = TRUE, # TRUE by default because ytrafo is a function, but does not necessarily refit to terminal nodes
     lookahead = FALSE, # Not supported by IGSCA trees
-    intersplit = FALSE # Not supported by IGSCA trees; candidate_partitions() always breaks at the observed value
+    intersplit = control$intersplit
   )
 
   split_fn <- switch(
