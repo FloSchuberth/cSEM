@@ -77,23 +77,16 @@ for (sp in c("FIT", "DLi", "DGi")) {
 }
 
 # Splitfun contract ------------------------------------------------------
-# doTrees() plants its kernel in cc$splitfun and relies on partykit reading it
-# back out of the control object. Nothing in ?ctree_control promises that, so it
-# is an undocumented contract, and it has already survived one partykit upgrade
-# unverified. If a release stops honouring it, every non-native configuration
-# silently falls back to partykit's own maxstat scan and still returns a
-# perfectly plausible tree -- so counting the kernel's invocations is the only
-# way to see it happen.
 test_that("doTrees() installs its splitfun into partykit's split search", {
   calls <- new.env(parent = emptyenv())
   calls$n <- 0L
   # Capturing the real kernel first is what stops the mock recursing into itself.
-  real <- split_max_fitdiff
+  real_fn <- split_max_fitdiff
   local_mocked_bindings(
     split_max_fitdiff = function(model, mf, subset, goes_left, ctrl) {
       # an environment, so no <<- needed (unlike `calls` in the leaf-refit test below)
       calls$n <- calls$n + 1L
-      real(model, mf, subset, goes_left, ctrl)
+      real_fn(model, mf, subset, goes_left, ctrl)
     }
   )
   set.seed(11)

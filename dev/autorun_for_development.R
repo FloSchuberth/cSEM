@@ -64,7 +64,7 @@ if (!interactive()) {
   # and the simulation discards igraph's layout, so leave it off for reading.
   # g <- visNetwork::visNodes(g, physics = TRUE)
   g <- visNetwork::visExport(g, type = "png", name = "cSEM_function_network")
-  out <- here::here("dev/igsca/function_network.html")
+  out <- here::here("dev/function_network.html")
   # selfcontained = TRUE genuinely inlines everything, but saveWidget creates
   # "<name>_files" next to `out` and then unlinks it relative to getwd(), so the
   # scaffolding is orphaned whenever those differ. Saving from the target
