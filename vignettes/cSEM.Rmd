@@ -249,7 +249,7 @@ data import and data processing capabilities. While these topics may have been
 overwhelming for newcomers several years ago, data import and data transformation
 have become extremely simple and user-friendly if the right tools packages
 are used. The best place to start is
-the [Rstudio Cheat sheet webpage](https://posit.co/resources/cheatsheets/),
+the [Rstudio Cheat sheet webpage](https://opensource.posit.co/resources/cheatsheets/),
 especially the *Data Import* and the *Data Transformation* cheat sheets.
 
 **cSEM** is relatively flexible as to the type of data accepted. Currently the following

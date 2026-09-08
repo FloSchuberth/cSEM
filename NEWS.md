@@ -1,8 +1,6 @@
-# <Development version: cSEM 0.6.1.9999 
+# <Development version: cSEM 0.7.0.9999 
 
-#  cSEM 0.6.2
-
-- Extend calculateHTMT() to allow for asymptotic inference for the HTMT. Thanks to Jason Berger for his contribution.
+#  cSEM 0.7.0
 
 - Fix bug in calculating the moments used to estimate non-linear models. 
 
