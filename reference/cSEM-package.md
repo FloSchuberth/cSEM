@@ -55,3 +55,6 @@ Other contributors:
 
 - Kjell S. Slupphaug ([ORCID](https://orcid.org/0009-0005-8324-2834))
   \[contributor\]
+
+- Jason J. Berger ([ORCID](https://orcid.org/0009-0002-5207-9032))
+  \[contributor\]

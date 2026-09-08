@@ -91,7 +91,7 @@ Sharma P, Sarstedt M, Shmueli G, Kim KH, Thiele KO (2019). “PLS-Based
 Model Selection: The Role of Alternative Explanations in Information
 Systems Research.” *Journal of the Association for Information Systems*,
 **20**(4).
-[doi:10.17005/1jais.00538](https://doi.org/10.17005/1jais.00538) .
+[doi:10.17705/1jais.00538](https://doi.org/10.17705/1jais.00538) .
 
 ## See also
 
