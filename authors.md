@@ -28,6 +28,9 @@
 - **Kjell S. Slupphaug**. Contributor.
   [](https://orcid.org/0009-0005-8324-2834)
 
+- **Jason J. Berger**. Contributor.
+  [](https://orcid.org/0009-0002-5207-9032)
+
 ## Citation
 
 Source:
