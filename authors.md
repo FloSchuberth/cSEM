@@ -34,7 +34,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/FloSchuberth/cSEM/blob/master/inst/CITATION)
+[`inst/CITATION`](https://github.com/FloSchuberth/cSEM/blob/v0.7.1/inst/CITATION)
 
 Rademaker, Manuel E. and Schuberth, Florian (2020). cSEM:
 Composite-Based Structural Equation Modeling. Package version: 0.7.1.
