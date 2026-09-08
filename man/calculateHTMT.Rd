@@ -60,6 +60,7 @@ at its lower triangular and if \code{.inference != "none"} the upper triangular 
 the upper limit of the 1-2*.alpha\% bootstrap or asymptotic confidence interval
 if the HTMT/HTMT2 is positive and
 the lower limit if the HTMT/HTMT2 is negative.
+If the HTMT/HTMT2 could not be calculated the upper limit is reported.
 \item the lower and upper limits of the 1-2*.alpha\% confidence interval if
 \code{.inference} is not none; otherwise it is \code{NULL}.
 \item the number of admissible bootstrap runs, i.e., the number of HTMT/HTMT2 values

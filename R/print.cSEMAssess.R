@@ -309,7 +309,7 @@ print.cSEMAssess <- function(x, ...) {
       header_htmt <- "Heterotrait-monotrait ratio of correlations matrix (HTMT matrix)"
       cat2("\n\n\t", header_htmt,
            "\n\t", makeLine(type = 1, width = nchar(header_htmt)), "\n",
-           "\n\tValues in the lower triangular part are the ", if(x$HTMT$absolute){"absolute "}, "HTMT values\n\n")
+           "\n\tValues in the lower triangular part are the ", if(x$HTMT$absolute){"absolute "}, "HTMT values.\n\n")
 
       if(x$HTMT$inference != "none") {
         if(x$HTMT$inference == "asymptotic") {
@@ -330,7 +330,7 @@ print.cSEMAssess <- function(x, ...) {
       header_htmt2 <- "Advanced heterotrait-monotrait ratio of correlations matrix (HTMT2 matrix)"
       cat2("\n\n\t", header_htmt2,
            "\n\t", makeLine(type = 1, width = nchar(header_htmt2)), "\n",
-           "\n\tValues in the lower triangular part are the ", if(x$HTMT2$absolute){"absolute "}, "HTMT2 values\n\n")
+           "\n\tValues in the lower triangular part are the ", if(x$HTMT2$absolute){"absolute "}, "HTMT2 values.\n\n")
       
       if(x$HTMT2$inference == "bootstrap") {
         cat2("\tValues in the upper triangular part are the ", 
