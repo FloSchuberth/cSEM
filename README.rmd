@@ -31,6 +31,8 @@ groups, etc.).
 
 ## News (2026-08-24):
 
+- Release of cSEM version 0.7.1.
+
 - Extend calculateHTMT() to allow for asymptotic inference for the HTMT. Thanks to Jason Berger for his contribution.
 
 - Fix bug in calculating the moments used to estimate non-linear models. 
@@ -49,9 +51,9 @@ groups, etc.).
 
 - Adjust p-value calculation in testMGD in case of permutation-based tests to prevent that p-values   can be exactly 0. Thanks to Michael
   
-- Fix bug in BasicCIResample(). Thanks to Michael.
+- Fix bug in BasicCIResample(). Thanks to Michael Truong.
 
-- Implementation of doModelSearch() to perform AGAS-PLS. Thanks to Gloria.
+- Implementation of doModelSearch() to perform AGAS-PLS. Thanks to Gloria Pietropolli.
 
 - Release of cSEM version 0.6.1
 
