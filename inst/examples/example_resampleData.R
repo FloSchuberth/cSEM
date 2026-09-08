@@ -10,7 +10,7 @@ str(res_boot1, max.level = 3, list.len = 3)
 res_boot1a <- resampleData(.data = satisfaction, .seed = 2364)
 res_boot1b <- resampleData(.data = satisfaction, .seed = 2364)
                            
-identical(res_boot1, res_boot1a) # TRUE
+identical(res_boot1a, res_boot1b) # TRUE
 
 ### Jackknife ---------------------------------------------------------------
 
