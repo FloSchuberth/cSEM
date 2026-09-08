@@ -1,8 +1,7 @@
 ## Submission 
 ## Notes
 
-- This is version 0.6.1
-- Added NeedsCompilation: no to the description file as asked by the CRAN team.
+- This is version 0.7.0
 
 ## Tests
 

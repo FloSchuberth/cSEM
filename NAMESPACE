@@ -76,8 +76,10 @@ export(verify)
 import(crayon)
 import(stats)
 import(utils)
-importFrom(cli,boxx)
-importFrom(cli,rule)
+importFrom(cli,
+  boxx,
+  rule
+)
 importFrom(lifecycle,deprecate_soft)
 importFrom(magrittr,"%>%")
 importFrom(matrixStats,rowProds)
