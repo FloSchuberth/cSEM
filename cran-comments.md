@@ -1,3 +1,10 @@
+## Resubmission
+This is a resubmission. In this version I have:
+
+* I have updated the data in the description file. 
+
+* I have fixed the issue with the DOI. 
+
 ## Submission 
 ## Notes
 
