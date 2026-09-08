@@ -1,6 +1,6 @@
-# <Development version: cSEM 0.7.0.9999 
+# <Development version: cSEM 0.7.1.9999 
 
-#  cSEM 0.7.0
+#  cSEM 0.7.1
 
 - Fix bug in calculating the moments used to estimate non-linear models. 
 
