@@ -31,6 +31,9 @@
 - **Jason J. Berger**. Contributor.
   [](https://orcid.org/0009-0002-5207-9032)
 
+- **Michael S. Truong**. Contributor.
+  [](https://orcid.org/0009-0006-4521-6528)
+
 ## Citation
 
 Source:
