@@ -27,7 +27,6 @@ abstract: Estimate, assess, test, and study linear, nonlinear, hierarchical and 
 authors:
 - family-names: Rademaker
   given-names: Manuel E.
-  email: manuel-rademaker@outlook.de
   orcid: https://orcid.org/0000-0002-8902-3561
 - family-names: Schuberth
   given-names: Florian
@@ -39,7 +38,6 @@ preferred-citation:
   authors:
   - family-names: Rademaker
     given-names: Manuel E.
-    email: manuel-rademaker@outlook.de
     orcid: https://orcid.org/0000-0002-8902-3561
   - family-names: Schuberth
     given-names: Florian

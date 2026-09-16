@@ -30,12 +30,12 @@ Useful links:
 Authors:
 \itemize{
   \item Florian Schuberth \email{f.schuberth@utwente.nl} (\href{https://orcid.org/0000-0002-2110-9086}{ORCID})
-  \item Manuel E. Rademaker \email{manuel-rademaker@outlook.de} (\href{https://orcid.org/0000-0002-8902-3561}{ORCID})
+  \item Manuel E. Rademaker (\href{https://orcid.org/0000-0002-8902-3561}{ORCID})
 }
 
 Other contributors:
 \itemize{
-  \item Tamara Schamberger \email{tamara.schamberger@uni-wuerzburg.de} (\href{https://orcid.org/0000-0002-7845-784X}{ORCID}) [contributor]
+  \item Tamara Schamberger (\href{https://orcid.org/0000-0002-7845-784X}{ORCID}) [contributor]
   \item Michael Klesel (\href{https://orcid.org/0000-0002-2884-1819}{ORCID}) [contributor]
   \item Huu Phuc Nguyen (\href{https://orcid.org/0009-0000-9344-7132}{ORCID}) [contributor]
   \item Theo K. Dijkstra [contributor]
@@ -43,6 +43,7 @@ Other contributors:
   \item Gloria Pietropolli (\href{https://orcid.org/0000-0001-7623-8419}{ORCID}) [contributor]
   \item Kjell S. Slupphaug (\href{https://orcid.org/0009-0005-8324-2834}{ORCID}) [contributor]
   \item Jason J. Berger (\href{https://orcid.org/0009-0002-5207-9032}{ORCID}) [contributor]
+  \item Michael S. Truong \email{emstruonger@gmail.com} (\href{https://orcid.org/0009-0006-4521-6528}{ORCID}) [contributor]
 }
 
 }
