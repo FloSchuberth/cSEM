@@ -377,17 +377,6 @@ csem <- function(
       paste0(class(.data), collapse = ", ")
     )
   }
-  if(inherits(.data,  "list")) {
-    c_names <- unique(unlist(lapply(.data, colnames)))
-  } else {
-    c_names <- colnames(.data)
-  }
-  
-  if(length(grep("\\.", c_names)) > 0) {
-   stop2(
-   "At least one variable name in your data set contain a `.` (dot).",
-   " Dots are a reserved special character in cSEM. Please rename these variables in your data and the model description.") 
-  }
   
   ## Parse model
   model_original <- parseModel(.model, .instruments = .instruments)

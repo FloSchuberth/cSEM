@@ -59,8 +59,7 @@ processData <- function(
     warning2("Data is symmetric! Did you provide a covariance or correlation matrix to `.data`?\n",
              "Argument `.data` requires a matrix or data.frame of raw data.")
   }
-  
-  
+
   ## Check if any of the columns are character and convert them to factors
   # Allowed types: character (converted to factor), numeric (double, integer), 
   # factor (ordered and unordered), or logical 
@@ -108,9 +107,10 @@ processData <- function(
                                                     colnames(.data)), "`.", collapse = ", "),
          " Please verify your model description.")
   }
+
   # Order data according to the ordering of the measurement model; delete
   # all columns that are not needed
-  .data <- .data[, colnames(.model$measurement)]
+  .data <- .data[, colnames(.model$measurement), drop = FALSE]
 
   # Check if remaining data set contains NAs
   .data_temp <- .data[!complete.cases(.data), , drop = FALSE]
@@ -121,6 +121,19 @@ processData <- function(
           paste0("`", rownames(.data_temp), "`", collapse = ", "),
           "\nRemove NAs or use imputation methods to replace them.")
   }
+
+  # Check if any (used) variables are constants
+  is.constant <- apply(
+    X = .data,
+    MARGIN = 2,
+    FUN = function(x) length(unique(x)) <= 1
+  )
+
+  if (any(is.constant)) {
+    stop2("Some variables are constants or have no variance:\n  ",
+          paste0(colnames(.data)[is.constant], collapse = ", "))
+  }
+
   ## Return
   return(.data)
 }
