@@ -120,10 +120,11 @@ tests are implemented:
 Other miscellaneous post-estimation functions belong do the do-family of functions.
 Currently, three do functions are implemented:
 
+- `doRedundancyAnalysis()`: performs a redundancy analysis
 - `doIPMA()`: performs an importance-performance matrix analysis
 - `doNonlinearEffectsAnalysis()`: performs a nonlinear effects analysis such as 
    floodlight and surface analysis
-- `doRedundancyAnalysis()`: performs a redundancy analysis
+- `doModelSearch()`: performs an automated model search
 
 All functions require a `cSEMResults` object.
 
