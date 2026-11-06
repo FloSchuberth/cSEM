@@ -136,7 +136,6 @@ sum_res_2sls <- summarize(res_2sls)
 
 ## Test for endogeneity
 test_ha <- testHausman(res_2sls, .R = 200)
-#> Warning: number of columns of result is not a multiple of vector length (arg 22)
 test_ha
 #> ________________________________________________________________________________
 #> ───────────────────────── Regression-based Hausman test ────────────────────────
@@ -156,17 +155,17 @@ test_ha
 #>   Dependent construct: 'eta5'
 #> 
 #>  Independent construct    Estimate  Std. error   t-stat.   p-value
-#>  eta1                      -0.3000      0.1255   -2.3901    0.0168
-#>  eta2                       0.4999      0.0951    5.2570    0.0000
-#>  eta6                       0.2501      0.1250    2.0006    0.0454
-#>  Resid_eta6                 0.9784      0.2713    3.6061    0.0003
+#>  eta1                      -0.3000      0.1089   -2.7534    0.0059
+#>  eta2                       0.4999      0.0932    5.3623    0.0000
+#>  eta6                       0.2501      0.1296    1.9293    0.0537
+#>  Resid_eta6                 0.9784      0.2756    3.5498    0.0004
 #> 
 #>   Dependent construct: 'eta6'
 #> 
 #>  Independent construct    Estimate  Std. error   t-stat.   p-value
-#>  eta3                       0.4999      0.0573    8.7296    0.0000
-#>  eta4                       0.2501      0.0596    4.1978    0.0000
-#>  eta5                       0.5001      0.1173    4.2629    0.0000
-#>  Resid_eta5                -0.0056      0.1420   -0.0393    0.9686
+#>  eta3                       0.4999      0.0611    8.1835    0.0000
+#>  eta4                       0.2501      0.0584    4.2813    0.0000
+#>  eta5                       0.5001      0.1091    4.5829    0.0000
+#>  Resid_eta5                -0.0056      0.1446   -0.0386    0.9692
 #> ________________________________________________________________________________
 ```

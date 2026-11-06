@@ -553,7 +553,7 @@ res <- csem(threecommonfactors, model,
 
 ## Look at the resamples
 res$Estimates$Estimates_resample$Estimates1$User_fun$Resampled[1:4, ]
-#> [1] 0.01910732 0.02393524 0.02641438 0.02070513
+#> [1] 0.02838817 0.03042503 0.02046517 0.02975444
 
 ## Use infer() to compute e.g., the 95% percentile confidence interval
 res_infer <- infer(res, .quantity = "CI_percentile")
@@ -562,8 +562,8 @@ res_infer <- infer(res, .quantity = "CI_percentile")
 res_infer$User_fun 
 #> $CI_percentile
 #>            [,1]
-#> 95%L 0.01948333
-#> 95%U 0.03441668
+#> 95%L 0.02043552
+#> 95%U 0.03120360
 #> 
 
 ## Several quality criteria can be resampled simultaneously
@@ -577,7 +577,7 @@ res <- csem(threecommonfactors, model,
             .tolerance = 1e-04
 )
 res$Estimates$Estimates_resample$Estimates1$SRMR$Resampled[1:4, ]
-#> [1] 0.02597695 0.02130524 0.03050377 0.02901148
+#> [1] 0.02433468 0.02137819 0.03090217 0.03166289
 res$Estimates$Estimates_resample$Estimates1$RMS_theta$Resampled[1:4]
-#> [1] 0.1068957 0.1015375 0.1041664 0.1047833
+#> [1] 0.1078485 0.1014089 0.1110596 0.1070882
 ```
